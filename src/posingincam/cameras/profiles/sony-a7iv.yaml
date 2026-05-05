@@ -1,0 +1,26 @@
+id: sony-a7iv
+display_name: Sony Alpha 7 IV
+manufacturer: Sony
+
+dcf:
+  folder_number: 199
+  folder_tag: MSDCF
+  file_prefix: DSC0
+  starting_index: 1
+
+image:
+  width: 3840
+  height: 2560
+  jpeg_quality: 85
+  color_space: sRGB
+
+exif:
+  make: SONY
+  model: ILCE-7M4
+  software: posingincam/0.1
+  date_time_original: "2000:01:01 00:00:01"
+  spoof_make_model: true
+
+notes: |
+  MVP test target. Profile values to be confirmed against hardware in M2.
+  See docs/CAMERA_TEST_PROTOCOL.md.

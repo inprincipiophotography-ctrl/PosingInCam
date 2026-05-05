@@ -1,0 +1,10 @@
+License: TBD
+
+The project's license has not been finalized. See PRD §10 OQ-02. Until a license file is committed here, the code and content are "all rights reserved" by the original authors.
+
+The current proposal (to be confirmed before v0.1.0):
+
+- **Code (everything in src/, scripts/, tests/)**: MIT.
+- **Pose content and illustrations (everything in poses/ and assets/illustrations/)**: CC BY-SA 4.0 by default; individual contributors may dual-license their submissions.
+
+This file will be replaced with the chosen license text before the v0.1.0 release.
