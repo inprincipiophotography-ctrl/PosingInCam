@@ -46,7 +46,11 @@ Thumbs.db
 /.venv/
 
 # Third-party reference samples (e.g. Cue) used for local EXIF diff only.
-# Do NOT commit — that's their IP.
+# Do NOT commit — that's their IP. See docs/CUE_EXIF_ANALYSIS.md for findings.
 /tests/fixtures/cue-sample/
+/tests/fixtures/Dark Landscape/
+/tests/fixtures/Dark Portrait/
+/tests/fixtures/Light Landscape/
+/tests/fixtures/Light Portrait/
 /tests/fixtures/real-a7iv*.JPG
 /tests/fixtures/real-a7iv*.jpg

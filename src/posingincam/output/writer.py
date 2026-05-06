@@ -35,7 +35,13 @@ def render_card(pose: Pose, profile: CameraProfile, illustration_root: Path) -> 
     jpeg = png_to_jpeg_bytes(png, quality=profile.image.jpeg_quality)
 
     thumb = make_thumbnail_jpeg(illustration_path, quality=profile.image.jpeg_quality)
-    exif = build_exif_bytes(profile, pose, thumb)
+    exif = build_exif_bytes(
+        profile,
+        pose,
+        thumb,
+        image_width=profile.image.width,
+        image_height=profile.image.height,
+    )
     return embed_exif(jpeg, exif)
 
 

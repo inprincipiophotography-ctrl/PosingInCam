@@ -39,10 +39,10 @@ def test_card_jpeg_has_visible_content() -> None:
     body = render_card(pose, profile, illustration_root=REPO_ROOT)
 
     img = Image.open(BytesIO(body))
-    dark = _dark_pixel_count(img, stride=8)
-    # At stride 8 on a 3840x2560 card, we sample ~150_000 points. A normal
-    # card (text + line illustration) hits at least ~2000 of them.
-    assert dark > 1000, f"only {dark} dark pixels — card is essentially blank"
+    dark = _dark_pixel_count(img, stride=4)
+    # Threshold scales with sample density. A normal card (text + line
+    # illustration) on the 1920x1280 profile hits at least ~250 samples.
+    assert dark > 200, f"only {dark} dark pixels — card is essentially blank"
 
 
 def test_card_has_content_in_each_zone() -> None:

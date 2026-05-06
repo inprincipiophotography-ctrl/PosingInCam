@@ -58,5 +58,7 @@ def test_sony_a7iv_profile_values() -> None:
     assert p.dcf.file_name(1) == "DSC00001.JPG"
     assert p.exif.make == "SONY"
     assert p.exif.model == "ILCE-7M4"
-    assert p.image.width == 3840
-    assert p.image.height == 2560
+    # 1920x1280 to match Cue's reference; small files, fast scrolling on LCD.
+    assert p.image.width == 1920
+    assert p.image.height == 1280
+    assert p.image.width / p.image.height == 1.5  # 3:2
