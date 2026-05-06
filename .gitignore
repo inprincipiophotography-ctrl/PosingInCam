@@ -44,3 +44,9 @@ Thumbs.db
 *.draft.yaml
 /dist/
 /.venv/
+
+# Third-party reference samples (e.g. Cue) used for local EXIF diff only.
+# Do NOT commit — that's their IP.
+/tests/fixtures/cue-sample/
+/tests/fixtures/real-a7iv*.JPG
+/tests/fixtures/real-a7iv*.jpg
