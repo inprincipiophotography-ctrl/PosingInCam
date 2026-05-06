@@ -61,6 +61,9 @@ Detailed docs:
 - [Implementation Plan](docs/IMPLEMENTATION_PLAN.md)
 - [Camera Compatibility Matrix](docs/CAMERA_COMPATIBILITY.md)
 - [Pose Schema](docs/POSE_SCHEMA.md)
+- [**M2 Hardware Test Guide**](docs/M2_HARDWARE_TEST.md) — step-by-step Sony A7 IV verification
+- [Camera Test Protocol](docs/CAMERA_TEST_PROTOCOL.md) — generic per-camera test checklist
+- [Camera Test Results](docs/CAMERA_TEST_RESULTS.md) — log of hardware tests
 - [Contributing](CONTRIBUTING.md)
 
 ## Status
