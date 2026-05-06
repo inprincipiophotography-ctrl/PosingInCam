@@ -7,9 +7,9 @@ from pathlib import Path
 import typer
 from rich.console import Console
 
-from posingincam.cameras.registry import get_profile
+from posingincam.cameras.registry import CameraNotFoundError, get_profile
 from posingincam.output.writer import render_cards, write_to_disk
-from posingincam.pose.loader import load_poses
+from posingincam.pose.loader import PoseLoadError, load_poses
 from posingincam.util import find_repo_root
 
 console = Console()
@@ -24,9 +24,18 @@ def command(
 ) -> None:
     """Render cards into <out>/DCIM/<camera-folder>/."""
     repo_root = find_repo_root()
-    profile = get_profile(camera)
+    try:
+        profile = get_profile(camera)
+    except CameraNotFoundError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
 
-    poses = load_poses(repo_root / "poses")
+    try:
+        poses = load_poses(repo_root / "poses")
+    except PoseLoadError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
+
     if pose:
         poses = [p for p in poses if p.id == pose]
         if not poses:
@@ -46,7 +55,7 @@ def command(
     cards = render_cards(poses, profile, illustration_root=repo_root)
     written = write_to_disk(cards, out, overwrite=overwrite)
 
-    total_kb = sum(c.bytes.__sizeof__() for c in cards) / 1024
+    total_kb = sum(len(c.bytes) for c in cards) / 1024
     for path in written:
         size_kb = path.stat().st_size / 1024
         console.print(f"  [green]✓[/green] {path.relative_to(out)}  ({size_kb:.0f} KB)")

@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import typer
 from rich.console import Console
 from rich.table import Table
 
-from posingincam.cameras.registry import get_profile, list_profiles
+from posingincam.cameras.registry import CameraNotFoundError, get_profile, list_profiles
 
 console = Console()
 
@@ -32,7 +33,11 @@ def list_cmd() -> None:
 
 def show_cmd(camera_id: str) -> None:
     """Show details for one camera profile."""
-    p = get_profile(camera_id)
+    try:
+        p = get_profile(camera_id)
+    except CameraNotFoundError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
     console.print(f"[bold]{p.display_name}[/bold] ({p.id})")
     console.print(f"  manufacturer  {p.manufacturer}")
     console.print(f"  DCF folder    {p.dcf.folder_name}")

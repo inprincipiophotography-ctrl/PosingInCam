@@ -120,7 +120,8 @@ Camera-specific naming conventions are codified per profile (see [CAMERA_COMPATI
 - **Quality**: q=85, mozjpeg if available, target ≤300 KB per card.
 - **EXIF Make/Model**: set to the target camera's identifier so playback treats them as native (e.g. `Make: SONY`, `Model: ILCE-7M4`). Optional.
 - **EXIF DateTimeOriginal**: set to a stable, distinguishable date (e.g. 2000-01-01) so they sort to one end of the timeline and don't intermix with real shoots.
-- **EXIF UserComment / ImageDescription**: include `posingincam:<pose-id>:<version>` so cards are programmatically identifiable.
+- **EXIF ImageDescription**: contains the canonical, parseable marker `posingincam:<pose-id>:v<version>` (e.g. `posingincam:P-001:v1`). This is what tooling matches on.
+- **EXIF UserComment**: contains a longer human-readable note including the slug, the camera profile, and a link to the project — for users who inspect a card's metadata in Lightroom.
 
 ### 5.5 Card protection (best-effort)
 

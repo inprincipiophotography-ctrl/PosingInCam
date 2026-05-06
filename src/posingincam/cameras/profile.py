@@ -12,6 +12,7 @@ from ruamel.yaml import YAML
 DCF_FOLDER_TAG_PATTERN = re.compile(r"^[A-Z0-9_]{5}$")
 DCF_FILE_PREFIX_PATTERN = re.compile(r"^[A-Z0-9_]{4}$")
 PROFILE_ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+EXIF_DATETIME_PATTERN = re.compile(r"^\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2}$")
 
 _yaml = YAML(typ="safe")
 
@@ -69,6 +70,15 @@ class ExifConfig(BaseModel):
     software: str = "posingincam/0.1"
     date_time_original: str = "2000:01:01 00:00:01"
     spoof_make_model: bool = True
+
+    @field_validator("date_time_original")
+    @classmethod
+    def _validate_datetime(cls, v: str) -> str:
+        if not EXIF_DATETIME_PATTERN.match(v):
+            raise ValueError(
+                f"date_time_original must match EXIF format YYYY:MM:DD HH:MM:SS, got {v!r}"
+            )
+        return v
 
 
 class CameraProfile(BaseModel):

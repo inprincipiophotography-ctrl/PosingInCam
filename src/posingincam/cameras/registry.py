@@ -10,8 +10,8 @@ from posingincam.cameras.profile import CameraProfile, load_profile
 PROFILES_DIR = Path(__file__).parent / "profiles"
 
 
-class CameraNotFoundError(KeyError):
-    pass
+class CameraNotFoundError(LookupError):
+    """Raised when a camera id isn't in the registry."""
 
 
 @cache

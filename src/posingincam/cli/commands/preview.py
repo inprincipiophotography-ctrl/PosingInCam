@@ -11,9 +11,9 @@ from pathlib import Path
 import typer
 from rich.console import Console
 
-from posingincam.cameras.registry import get_profile
+from posingincam.cameras.registry import CameraNotFoundError, get_profile
 from posingincam.output.writer import render_card
-from posingincam.pose.loader import load_poses
+from posingincam.pose.loader import PoseLoadError, load_poses
 from posingincam.util import find_repo_root
 
 console = Console()
@@ -41,9 +41,18 @@ def command(
 ) -> None:
     """Render one card to a temp file (or --out) and open it."""
     repo_root = find_repo_root()
-    profile = get_profile(camera)
+    try:
+        profile = get_profile(camera)
+    except CameraNotFoundError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
 
-    poses = load_poses(repo_root / "poses")
+    try:
+        poses = load_poses(repo_root / "poses")
+    except PoseLoadError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
+
     pose = next((p for p in poses if p.id == pose_id), None)
     if pose is None:
         console.print(f"[red]pose {pose_id} not found in {repo_root / 'poses'}[/red]")
