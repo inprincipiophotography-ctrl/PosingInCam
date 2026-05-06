@@ -1,0 +1,33 @@
+id: P-001
+slug: walking-hand-in-hand
+title: Walking Hand in Hand
+pack: essential
+illustration: assets/illustrations/walking-hand-in-hand.svg
+
+positioning:
+  her:
+    - On his right, half a step behind, body angled toward him.
+    - Soft chin, relaxed shoulders, eyes toward him on cue.
+  him:
+    - Leads by half a pace, hand low and relaxed.
+    - Eyes forward to start, then a small glance over on cue.
+
+camera_notes:
+  lens: 35mm or 50mm prime
+  aperture: f/2.0
+  angle: Slightly below eye level.
+  distance: 10–15 ft, walking toward camera.
+  notes: Burst at 5–7 fps; the keeper is mid-stride with eye contact.
+
+verbal_cue: |
+  "Walk toward me, hand in hand.
+   Eyes on each other on three — one, two, three."
+
+difficulty: 1
+tags: [walking, intimate, full-body, golden-hour]
+variations:
+  - Add a laugh prompt mid-walk.
+  - Stop mid-walk for a forehead touch.
+authored_by: ""
+art_credit: ""
+version: 1

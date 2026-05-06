@@ -42,3 +42,5 @@ Thumbs.db
 
 # Pose authoring
 *.draft.yaml
+/dist/
+/.venv/

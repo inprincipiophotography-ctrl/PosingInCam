@@ -24,17 +24,34 @@ Each pose is a single YAML file. The CLI renders an SVG layout, rasterizes it to
 ## Quick start
 
 ```bash
-# Install
-pip install -e .
+# Install (Python 3.11+; needs libcairo on Linux: apt install libcairo2)
+python -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
 
 # List available cameras
 posingincam cameras list
 
-# Render the full library for a Sony A7 IV
-posingincam build --camera sony-a7iv --pack essential --out dist/sony-a7iv
+# Validate the pose library
+posingincam validate poses/
 
-# Copy onto SD card (mounted at /Volumes/SDCARD)
-posingincam install --camera sony-a7iv --target /Volumes/SDCARD
+# Render one pose for Sony A7 IV
+posingincam build --camera sony-a7iv --pose P-001 --out dist/sony-a7iv
+
+# Render the full library for a Sony A7 IV
+posingincam build --camera sony-a7iv --out dist/sony-a7iv
+
+# Copy onto SD card (M4 — not yet implemented)
+# posingincam install --camera sony-a7iv --target /Volumes/SDCARD
+```
+
+The build above produces:
+
+```
+dist/sony-a7iv/
+└── DCIM/
+    └── 199MSDCF/
+        └── DSC00001.JPG       ~180 KB · 3840×2560 · EXIF Make=SONY/Model=ILCE-7M4
+                               · embedded 160×120 line-art thumbnail
 ```
 
 Detailed docs:
@@ -48,7 +65,14 @@ Detailed docs:
 
 ## Status
 
-Pre-alpha. Currently scaffolding the repo and locking down architecture decisions. See [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) for the milestone roadmap.
+Pre-alpha.
+
+- **M0** Repo & decisions — done
+- **M1** Render one card to disk — done (P-001 renders end-to-end on `generic-3-2` and `sony-a7iv` profiles)
+- **M2** Sony A7 IV plays it back — pending hardware test
+- **M3+** Multi-camera, contributor flow, library scale — pending
+
+See [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) for the milestone roadmap.
 
 ## License
 

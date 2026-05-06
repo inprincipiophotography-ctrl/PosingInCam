@@ -1,12 +1,14 @@
-"""Typer CLI entrypoint. Commands are stubs until M1+; see docs/IMPLEMENTATION_PLAN.md."""
+"""Typer CLI entrypoint."""
 
 from __future__ import annotations
-
-from pathlib import Path
 
 import typer
 
 from posingincam import __version__
+from posingincam.cli.commands import build as build_cmd
+from posingincam.cli.commands import cameras as cameras_cmd
+from posingincam.cli.commands import preview as preview_cmd
+from posingincam.cli.commands import validate as validate_cmd
 
 app = typer.Typer(
     name="posingincam",
@@ -23,62 +25,23 @@ def version() -> None:
     typer.echo(__version__)
 
 
-@app.command()
-def build(
-    camera: str = typer.Option(..., "--camera", help="Camera profile id (e.g. sony-a7iv)."),
-    pack: str | None = typer.Option(None, "--pack", help="Limit to one pack."),
-    pose: str | None = typer.Option(None, "--pose", help="Render only one pose by id."),
-    out: Path = typer.Option(..., "--out", help="Output directory."),
-) -> None:
-    """Render JPEG cards for the chosen camera into <out>/DCIM/..."""
-    raise NotImplementedError("M2 milestone — see docs/IMPLEMENTATION_PLAN.md")
+app.command(name="build")(build_cmd.command)
+app.command(name="validate")(validate_cmd.command)
+app.command(name="preview")(preview_cmd.command)
+cameras_app.command(name="list")(cameras_cmd.list_cmd)
+cameras_app.command(name="show")(cameras_cmd.show_cmd)
 
 
 @app.command()
-def install(
-    camera: str = typer.Option(..., "--camera"),
-    target: Path = typer.Option(..., "--target", help="Mount path of the SD card."),
-    apply: bool = typer.Option(False, "--apply", help="Actually write. Default is dry-run."),
-) -> None:
-    """Build (if needed) and copy onto an SD card mounted at --target."""
-    raise NotImplementedError("M4 milestone")
+def install() -> None:
+    """Build (if needed) and copy onto an SD card. (M4 milestone.)"""
+    raise NotImplementedError("install is M4 work; see docs/IMPLEMENTATION_PLAN.md")
 
 
 @app.command()
-def validate(
-    path: Path = typer.Argument(Path("poses"), help="Pose file or directory."),
-) -> None:
-    """Validate one or many pose YAMLs against the schema."""
-    raise NotImplementedError("M1 milestone")
-
-
-@app.command()
-def preview(
-    pose_id: str = typer.Argument(..., help="Pose id, e.g. P-001."),
-    camera: str = typer.Option("generic-3-2", "--camera"),
-) -> None:
-    """Render one card to a temp file and open it."""
-    raise NotImplementedError("M1 milestone")
-
-
-@app.command()
-def doctor(
-    target: Path = typer.Option(..., "--target", help="SD card mount to inspect."),
-) -> None:
-    """Diagnose an SD card mount and what install would do."""
-    raise NotImplementedError("M4 milestone")
-
-
-@cameras_app.command("list")
-def cameras_list() -> None:
-    """List all registered camera profiles."""
-    raise NotImplementedError("M3 milestone")
-
-
-@cameras_app.command("show")
-def cameras_show(camera_id: str) -> None:
-    """Show details for one camera profile."""
-    raise NotImplementedError("M3 milestone")
+def doctor() -> None:
+    """Diagnose an SD card mount. (M4 milestone.)"""
+    raise NotImplementedError("doctor is M4 work; see docs/IMPLEMENTATION_PLAN.md")
 
 
 if __name__ == "__main__":
