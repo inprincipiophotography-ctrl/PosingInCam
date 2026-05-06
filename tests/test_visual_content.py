@@ -49,10 +49,9 @@ def test_card_jpeg_has_visible_content() -> None:
 
 
 def test_card_has_content_in_each_zone() -> None:
-    """Title/illustration/right column/cue zones must each have content.
-
-    Catches the failure mode where one section silently disappears
-    (e.g. a transform is wrong, or one section's CSS class breaks).
+    """The four primary zones of the side-by-side layout must each render
+    visible content. Catches regressions where one panel silently disappears
+    (transform wrong, CSS class fails, content overflows off-canvas, ...).
     """
     profile = get_profile("sony-a7iv")
     pose = next(p for p in load_poses(REPO_ROOT / "poses") if p.id == "P-001")
@@ -61,10 +60,11 @@ def test_card_has_content_in_each_zone() -> None:
     w, h = img.size
 
     zones = {
-        "illustration (top half)":       (0,                  0,             w,             int(h * 0.45)),
-        "title strip":                   (0,                  int(h * 0.45), w,             int(h * 0.58)),
-        "her/him panels row":            (0,                  int(h * 0.58), w,             int(h * 0.75)),
-        "say-to-the-couple hero panel":  (0,                  int(h * 0.78), w,             int(h * 0.96)),
+        "left illustration":         (0,      0,             w // 2, h),
+        "right title block":         (w // 2, int(h * 0.10), w,      int(h * 0.30)),
+        "right HER/HIM row":         (w // 2, int(h * 0.32), w,      int(h * 0.50)),
+        "right LENS/CAMERA row":     (w // 2, int(h * 0.50), w,      int(h * 0.65)),
+        "right SAY hero panel":      (w // 2, int(h * 0.65), w,      int(h * 0.85)),
     }
 
     for label, (x0, y0, x1, y1) in zones.items():
