@@ -15,9 +15,12 @@ You don't need to know Python. You'll edit one YAML file.
 1. **Pick a pose ID.** Look at `poses/` and grab the next free `P-NNN`.
 2. **Copy the template.** Duplicate `poses/_template/pose.yaml` to `poses/p-NNN-<your-slug>.yaml`.
 3. **Fill it in.** Follow the [Pose Schema](docs/POSE_SCHEMA.md) — every field is documented, with character limits.
-4. **Add the illustration.** Either:
-   - Drop a single-color line-art SVG in `assets/illustrations/<your-slug>.svg`, **or**
-   - Open the PR with a placeholder note saying you need an illustration; the maintainers will commission one.
+4. **Add the illustration.** Drop a single-color line-art SVG in
+   `assets/illustrations/<your-slug>.svg`. There's a full pipeline (AI
+   prompt template + vector-trace + cleanup checklist) in
+   [docs/ILLUSTRATION_PIPELINE.md](docs/ILLUSTRATION_PIPELINE.md). If you
+   don't have one yet, open the PR with a placeholder note and a
+   maintainer will commission or generate one.
 5. **Validate locally** (if you have Python):
    ```
    pip install -e .

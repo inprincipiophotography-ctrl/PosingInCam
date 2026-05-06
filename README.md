@@ -64,6 +64,8 @@ Detailed docs:
 - [**M2 Hardware Test Guide**](docs/M2_HARDWARE_TEST.md) — step-by-step Sony A7 IV verification
 - [Camera Test Protocol](docs/CAMERA_TEST_PROTOCOL.md) — generic per-camera test checklist
 - [Camera Test Results](docs/CAMERA_TEST_RESULTS.md) — log of hardware tests
+- [**Illustration Pipeline**](docs/ILLUSTRATION_PIPELINE.md) — how to produce real line-art (AI / commission / trace)
+- [Cue EXIF Analysis](docs/CUE_EXIF_ANALYSIS.md) — what we learned from the reference product
 - [Contributing](CONTRIBUTING.md)
 
 ## Status
