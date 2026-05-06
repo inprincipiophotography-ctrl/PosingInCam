@@ -1,75 +1,98 @@
-{# Default landscape pose card. Variables bound from posingincam.render.layout. #}
+{# Dark, info-dense pose card. Illustration top, panels bottom. #}
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {{ width }} {{ height }}" width="{{ width }}" height="{{ height }}">
   <defs>
     <style>
-      .bg     { fill: #ffffff; }
-      .ink    { fill: #111111; }
-      .muted  { fill: #555555; }
-      .accent { fill: #b14a2e; }
-      .rule   { stroke: #cccccc; stroke-width: 2; }
-      .h1     { font-family: 'Georgia','Times New Roman',serif; font-weight: 700; font-size: {{ s(56) }}px; }
-      .id     { font-family: 'Helvetica','Arial',sans-serif; font-weight: 700; font-size: {{ s(28) }}px; letter-spacing: 4px; }
-      .label  { font-family: 'Helvetica','Arial',sans-serif; font-weight: 700; font-size: {{ s(26) }}px; letter-spacing: 6px; }
-      .body   { font-family: 'Helvetica','Arial',sans-serif; font-weight: 400; font-size: {{ s(28) }}px; }
-      .body-sm{ font-family: 'Helvetica','Arial',sans-serif; font-weight: 400; font-size: {{ s(24) }}px; }
-      .cue    { font-family: 'Georgia','Times New Roman',serif; font-style: italic; font-weight: 400; font-size: {{ s(40) }}px; }
-      .footer { font-family: 'Helvetica','Arial',sans-serif; font-weight: 400; font-size: {{ s(20) }}px; fill: #888888; letter-spacing: 2px; }
+      .bg          { fill: #0E1420; }
+      .panel-bg    { fill: #1A2330; }
+      .panel-cue   { fill: #1E3A5F; }
+      .panel-bonus { fill: #5A2E1A; }
+      .border      { fill: none; stroke: #2A3540; stroke-width: 2; }
+      .ink         { fill: #FFFFFF; }
+      .muted       { fill: #A8B0BD; }
+      .label-gold  { fill: #E0A93E; }
+      .label-blue  { fill: #7DB3E8; }
+      .label-orange{ fill: #E8A040; }
+
+      .id-badge    { font-family: 'Helvetica','Arial',sans-serif; font-weight: 700; font-size: {{ s(34) }}px; letter-spacing: 6px; }
+      .pack-badge  { font-family: 'Helvetica','Arial',sans-serif; font-weight: 700; font-size: {{ s(28) }}px; letter-spacing: 8px; }
+      .h1          { font-family: 'Helvetica','Arial',sans-serif; font-weight: 700; font-size: {{ s(96) }}px; }
+      .subtitle    { font-family: 'Helvetica','Arial',sans-serif; font-weight: 400; font-size: {{ s(36) }}px; }
+      .label       { font-family: 'Helvetica','Arial',sans-serif; font-weight: 800; font-size: {{ s(32) }}px; letter-spacing: 6px; }
+      .body        { font-family: 'Helvetica','Arial',sans-serif; font-weight: 400; font-size: {{ s(36) }}px; }
+      .body-sm     { font-family: 'Helvetica','Arial',sans-serif; font-weight: 400; font-size: {{ s(30) }}px; }
+      .cue         { font-family: 'Helvetica','Arial',sans-serif; font-weight: 700; font-size: {{ s(56) }}px; font-style: italic; }
+      .footer      { font-family: 'Helvetica','Arial',sans-serif; font-weight: 400; font-size: {{ s(24) }}px; letter-spacing: 4px; }
     </style>
   </defs>
 
   <rect class="bg" width="100%" height="100%"/>
 
-  {# Header band: title + id #}
-  <g transform="translate({{ s(80) }}, {{ s(110) }})">
-    <text class="id muted">{{ pose.id|upper }}</text>
-    <text class="h1 ink" y="{{ s(70) }}">{{ pose.title }}</text>
-  </g>
-  <line class="rule" x1="{{ s(80) }}" y1="{{ s(220) }}" x2="{{ width - s(80) }}" y2="{{ s(220) }}"/>
+  {# Top corner badges #}
+  <text class="pack-badge label-gold" x="{{ s(80) }}" y="{{ s(80) }}">{{ pose.pack|upper }}</text>
+  <text class="id-badge muted" x="{{ width - s(80) }}" y="{{ s(80) }}" text-anchor="end">{{ pose.id|upper }}</text>
 
-  {# Illustration zone (left half) #}
-  <g transform="translate({{ s(80) }}, {{ s(260) }})">
-    <svg width="{{ s(1500) }}" height="{{ s(1100) }}" viewBox="{{ illustration_viewbox }}" preserveAspectRatio="xMidYMid meet">
+  {# Illustration zone - centered in top half, white strokes on dark via currentColor #}
+  <g transform="translate({{ s(400) }}, {{ s(140) }})" color="#FFFFFF">
+    <svg width="{{ s(3200) }}" height="{{ s(1100) }}" viewBox="{{ illustration_viewbox }}" preserveAspectRatio="xMidYMid meet">
       {{ illustration_svg|safe }}
     </svg>
   </g>
 
-  {# Right column: positioning + camera notes + cue #}
-  <g transform="translate({{ s(1700) }}, {{ s(280) }})">
+  {# Title strip #}
+  <g transform="translate({{ s(80) }}, {{ s(1380) }})">
+    <text class="h1 ink">{{ pose.title }}</text>
+    {% if pose.tags %}
+    <text class="subtitle muted" y="{{ s(50) }}">{{ pose.tags|join(' · ') }}</text>
+    {% endif %}
+  </g>
 
-    <text class="label accent">HER</text>
+  {# HER / HIM two-column panels #}
+  {% set panel_top = 1540 %}
+  {% set panel_h = 380 %}
+  {% set panel_gap = 30 %}
+  {% set col_w = (4000 - 80*2 - panel_gap) / 2 %}
+
+  <g transform="translate({{ s(80) }}, {{ s(panel_top) }})">
+    <rect class="panel-bg" width="{{ s(col_w) }}" height="{{ s(panel_h) }}" rx="{{ s(8) }}"/>
+    <rect class="border"   width="{{ s(col_w) }}" height="{{ s(panel_h) }}" rx="{{ s(8) }}"/>
+    <text class="label label-gold" x="{{ s(40) }}" y="{{ s(70) }}">HER</text>
     {% for line in pose.positioning.her %}
-    <text class="body ink" y="{{ s(60 + loop.index0 * 56) }}">• {{ line }}</text>
+    <text class="body ink" x="{{ s(40) }}" y="{{ s(140 + loop.index0 * 60) }}">· {{ line }}</text>
     {% endfor %}
-
-    <g transform="translate(0, {{ s(60 + (pose.positioning.her|length) * 56 + 40) }})">
-      <text class="label accent">HIM</text>
-      {% for line in pose.positioning.him %}
-      <text class="body ink" y="{{ s(60 + loop.index0 * 56) }}">• {{ line }}</text>
-      {% endfor %}
-    </g>
-
-    <g transform="translate(0, {{ s(60 + (pose.positioning.her|length + pose.positioning.him|length) * 56 + 160) }})">
-      <text class="label accent">CAMERA</text>
-      <text class="body ink"   y="{{ s(60) }}">{{ pose.camera_notes.lens }}  ·  {{ pose.camera_notes.aperture }}</text>
-      <text class="body-sm muted" y="{{ s(110) }}">{{ pose.camera_notes.angle }}</text>
-      <text class="body-sm muted" y="{{ s(150) }}">{{ pose.camera_notes.distance }}</text>
-      {% if pose.camera_notes.notes %}
-      <text class="body-sm muted" y="{{ s(190) }}">{{ pose.camera_notes.notes }}</text>
-      {% endif %}
-    </g>
   </g>
 
-  {# Bottom band: verbal cue, full width #}
-  <line class="rule" x1="{{ s(80) }}" y1="{{ height - s(380) }}" x2="{{ width - s(80) }}" y2="{{ height - s(380) }}"/>
-  <g transform="translate({{ s(80) }}, {{ height - s(310) }})">
-    <text class="label accent">SAY TO THE COUPLE</text>
+  <g transform="translate({{ s(80 + col_w + panel_gap) }}, {{ s(panel_top) }})">
+    <rect class="panel-bg" width="{{ s(col_w) }}" height="{{ s(panel_h) }}" rx="{{ s(8) }}"/>
+    <rect class="border"   width="{{ s(col_w) }}" height="{{ s(panel_h) }}" rx="{{ s(8) }}"/>
+    <text class="label label-gold" x="{{ s(40) }}" y="{{ s(70) }}">HIM</text>
+    {% for line in pose.positioning.him %}
+    <text class="body ink" x="{{ s(40) }}" y="{{ s(140 + loop.index0 * 60) }}">· {{ line }}</text>
+    {% endfor %}
+  </g>
+
+  {# CAMERA panel - full width #}
+  {% set camera_top = panel_top + panel_h + panel_gap %}
+  <g transform="translate({{ s(80) }}, {{ s(camera_top) }})">
+    <rect class="panel-bg" width="{{ s(3840) }}" height="{{ s(220) }}" rx="{{ s(8) }}"/>
+    <rect class="border"   width="{{ s(3840) }}" height="{{ s(220) }}" rx="{{ s(8) }}"/>
+    <text class="label label-gold" x="{{ s(40) }}" y="{{ s(70) }}">CAMERA</text>
+    <text class="body ink" x="{{ s(40) }}" y="{{ s(140) }}">{{ pose.camera_notes.lens }} · {{ pose.camera_notes.aperture }} · {{ pose.camera_notes.angle }}</text>
+    <text class="body-sm muted" x="{{ s(40) }}" y="{{ s(190) }}">{{ pose.camera_notes.distance }}{% if pose.camera_notes.notes %} · {{ pose.camera_notes.notes }}{% endif %}</text>
+  </g>
+
+  {# SAY TO THE COUPLE - blue hero panel #}
+  {% set cue_top = camera_top + 220 + panel_gap %}
+  {% set cue_h = height/s(1) - cue_top - 120 %}
+  <g transform="translate({{ s(80) }}, {{ s(cue_top) }})">
+    <rect class="panel-cue" width="{{ s(3840) }}" height="{{ s(cue_h) }}" rx="{{ s(8) }}"/>
+    <text class="label label-blue" x="{{ s(40) }}" y="{{ s(70) }}">SAY TO THE COUPLE</text>
     {% for line in cue_lines %}
-    <text class="cue ink" y="{{ s(50 + loop.index0 * 60) }}">{{ line }}</text>
+    <text class="cue ink" x="{{ s(40) }}" y="{{ s(150 + loop.index0 * 80) }}">"{{ line }}"</text>
     {% endfor %}
   </g>
 
-  {# Footer #}
-  <text class="footer" x="{{ s(80) }}" y="{{ height - s(50) }}">{{ pose.pack|upper }}  ·  DIFFICULTY {{ '●' * pose.difficulty }}{{ '○' * (3 - pose.difficulty) }}  ·  v{{ pose.version }}</text>
-  <text class="footer" x="{{ width - s(80) }}" y="{{ height - s(50) }}" text-anchor="end">posingincam</text>
+  {# Footer strip #}
+  <text class="footer muted" x="{{ s(80) }}" y="{{ height - s(40) }}">DIFFICULTY {{ '●' * pose.difficulty }}{{ '○' * (3 - pose.difficulty) }}  ·  v{{ pose.version }}</text>
+  <text class="footer muted" x="{{ width - s(80) }}" y="{{ height - s(40) }}" text-anchor="end">posingincam</text>
 </svg>

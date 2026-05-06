@@ -1,54 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   P-001 Walking Hand in Hand
-  Line-art only. No fills. Single ink color so it scales cleanly into
-  the EXIF thumbnail (160x120) for camera grid view.
+  Line-art only. No fills. Uses `currentColor` so the parent <g> in the
+  card template can theme this (white on dark card, dark on light card,
+  dark on white thumbnail). All strokes inherit; explicit colors are only
+  for the muted ground line and travel-arrow annotations.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
-  <g fill="none" stroke="#111111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
 
-    <!-- Ground line -->
-    <line x1="40" y1="360" x2="560" y2="360" stroke="#cccccc" stroke-width="2"/>
+    <!-- Ground line - rendered at half opacity via stroke-opacity -->
+    <line x1="40" y1="360" x2="560" y2="360" stroke="currentColor" stroke-opacity="0.35" stroke-width="2"/>
 
     <!-- HER (left) - walking forward, slight lean toward him -->
-    <!-- head -->
     <circle cx="225" cy="120" r="26"/>
-    <!-- hair suggestion -->
     <path d="M203 110 Q210 90 235 92 Q260 95 252 120"/>
-    <!-- neck + torso -->
     <line x1="225" y1="146" x2="222" y2="220"/>
-    <!-- dress: triangle to ground -->
     <path d="M205 220 L222 220 L240 220 L268 360 L182 360 Z"/>
-    <!-- inner-arm reaching toward him -->
     <path d="M222 175 Q260 200 305 230"/>
-    <!-- outer arm relaxed -->
     <path d="M222 175 Q200 210 195 240"/>
 
     <!-- HIM (right) - leading half a pace, eyes ahead -->
-    <!-- head -->
     <circle cx="385" cy="115" r="28"/>
-    <!-- hair line -->
     <path d="M360 100 Q385 86 412 100"/>
-    <!-- neck + torso -->
     <line x1="385" y1="143" x2="388" y2="230"/>
-    <!-- shoulders / shirt -->
     <path d="M355 165 Q385 150 415 165"/>
-    <!-- legs -->
     <line x1="388" y1="230" x2="370" y2="360"/>
     <line x1="388" y1="230" x2="408" y2="358"/>
-    <!-- inner arm reaching back to her -->
     <path d="M388 200 Q345 215 305 230"/>
-    <!-- outer arm at side -->
     <path d="M388 200 Q420 230 425 270"/>
 
-    <!-- Joined hands -->
-    <circle cx="305" cy="232" r="6" fill="#111111"/>
+    <!-- Joined hands - filled with currentColor -->
+    <circle cx="305" cy="232" r="6" fill="currentColor" stroke="none"/>
 
-    <!-- Direction-of-travel arrow at bottom -->
-    <g stroke="#888888" stroke-width="2">
+    <!-- Direction-of-travel arrow - muted -->
+    <g stroke="currentColor" stroke-opacity="0.45" stroke-width="2">
       <line x1="120" y1="385" x2="80" y2="385"/>
       <polyline points="92,378 80,385 92,392"/>
     </g>
-    <text x="135" y="389" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="#888888">walking toward camera</text>
+    <text x="135" y="389" font-family="Helvetica,Arial,sans-serif" font-size="14"
+          fill="currentColor" fill-opacity="0.45" stroke="none">walking toward camera</text>
   </g>
 </svg>
