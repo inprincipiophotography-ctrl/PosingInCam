@@ -2,25 +2,15 @@
 
 <!-- One sentence: what does this PR change? -->
 
-## Why
-
-<!-- Link to an issue, ADR, or PRD section. -->
-
 ## Type
 
-- [ ] New pose (add or edit a `poses/*.yaml`)
-- [ ] New camera profile (add or edit a `src/posingincam/cameras/profiles/*.yaml`)
-- [ ] Generator code change
+- [ ] New camera support (added rows to `docs/CAMERA_COMPATIBILITY.md` and/or `cardify.sh` vendor branch)
+- [ ] Camera test result (added to `docs/CAMERA_TEST_RESULTS.md`)
+- [ ] `cardify.sh` improvement (script change)
 - [ ] Documentation only
 - [ ] Other:
 
-## Checklist
+## Test plan
 
-- [ ] `posingincam validate poses/` passes (CI will run it).
-- [ ] Tests added or updated where relevant.
-- [ ] If a new camera profile: hardware test photo attached (see `docs/CAMERA_TEST_PROTOCOL.md`).
-- [ ] If a render change: golden-image diffs reviewed.
-
-## Preview
-
-<!-- CI will post a rendered preview here for pose PRs. -->
+<!-- For script changes: did you run shellcheck? Did you test against
+     samples/sony-a7iv/DSC00099.JPG? Did you test on a real camera? -->

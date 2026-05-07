@@ -1,24 +1,23 @@
-# Cue EXIF Analysis (M2 hardware-prep)
+# Cue EXIF Analysis
 
 | Field | Value |
 | --- | --- |
-| **Date** | 2026-05-06 |
-| **Source** | Cue Sampler — Sony, free download from shootwithcue.com |
+| **Source** | Cue Sampler — Sony, free download from [shootwithcue.com](https://www.shootwithcue.com) |
 | **Sample analyzed** | 32 JPEGs across 4 variants (Dark/Light × Landscape/Portrait) |
 | **Tooling** | exiftool 12.76 |
 
-This document captures what we learned by inspecting Cue's actual product. **The sample files themselves are NOT in the repo** — they're third-party IP we used for one-time local diff and have since removed. Findings are summarized here so we don't need them again.
+This document captures what we learned by reverse-engineering Cue's actual product, and is the reasoning behind each step in `cardify.sh`. **The sample files themselves are NOT in the repo** — they're third-party IP, used for one-time local diff and gitignored.
 
-## Key facts
+---
 
-### Cue's EXIF strategy is "real photo template"
+## Cue's strategy: real-photo template
 
 Every Cue card has identical Sony maker notes that look like a real shoot:
 
 | Tag | Value (same across every card we inspected) |
 | --- | --- |
 | `Make` | `SONY` |
-| `Model` | `ILCE-7SM3` (Sony A7S III, not A7 IV) |
+| `Model` | `ILCE-7SM3` (Sony A7S III) |
 | `Software` | `ILCE-7SM3 v2.00` (Sony firmware string format) |
 | `ShutterCount` | `1410` |
 | `InternalSerialNumber` | `44ff0000c209` |
@@ -28,72 +27,71 @@ Every Cue card has identical Sony maker notes that look like a real shoot:
 | `BrightnessValue` | `-13.99` |
 | `Image dimensions` | `1920 × 1280` |
 
-`DateTimeOriginal` increments by ~1 second per card (`22:54:54`, `22:54:55`, `22:54:57`, ...) — they bump the time per file rather than freeze it.
+`DateTimeOriginal` increments by ~1 second per card (`22:54:54`, `22:54:55`, `22:54:57`, ...) — they bump the timestamp per file rather than freeze it.
 
-This is consistent with the workflow:
+Workflow inferred:
 
-1. They took **one** real photo with a Sony A7S III.
-2. They render their card design.
-3. They composite the card onto the photo's pixel data (or replace it).
-4. They re-encode the JPEG but **preserve the entire MakerNotes blob** (the Sony-proprietary IFD that contains shutter count, serial, lens info, etc.).
-5. They bump `DateTimeOriginal` per file.
+1. Take **one** real photo with a Sony A7S III.
+2. Render the card design separately.
+3. Composite the card onto the photo's pixel data.
+4. Re-encode the JPEG but **preserve the entire MakerNotes blob** (the Sony-proprietary IFD that contains shutter count, serial, lens info, etc.).
+5. Bump `DateTimeOriginal` per file.
 
-The smoking gun is identical `ShutterCount: 1410` across 32 cards — that can only happen if you reuse one shot's MakerNotes.
+Smoking gun: identical `ShutterCount: 1410` across 32 cards — only possible by reusing one shot's MakerNotes.
 
-### Tag count: 194 vs 40
+---
 
-Cue ships ~194 EXIF tags per card. Our pre-fix output ships 40. The deltas live in:
+## Tag count: 194 vs ~40 from a naive synth
 
-- **`[ExifIFD]`**: ~30 tags Cue has that we miss (basic shooting params, ExifVersion, FlashpixVersion, ColorSpace, ComponentsConfiguration, scene/exposure metadata).
-- **`[Sony]`**: ~80 maker-note tags (ShutterCount, BatteryLevel, Lens info, Sony Picture Profile, etc.).
-- **`[InteropIFD]`**: `InteropIndex: R98` (DCF basic-file marker) and `InteropVersion: 0100`. **This is critical for DCF recognition.**
-- **`[IFD1]`**: thumbnail-related tags (Make, Model, Software, ModifyDate). We had only the bare thumbnail.
+Cue ships ~194 EXIF tags per card. The deltas between Cue's spec and a naive synthesized JPEG (no MakerNotes, just standard EXIF) are:
+
+- **`[ExifIFD]`**: ~30 tags Cue has — basic shooting params (ExifVersion, FlashpixVersion, ColorSpace, ComponentsConfiguration, scene/exposure metadata).
+- **`[Sony]`**: ~80 maker-note tags (ShutterCount, BatteryLevel, Lens info, Sony Picture Profile, …).
+- **`[InteropIFD]`**: `InteropIndex: R98` (DCF basic-file marker) and `InteropVersion: 0100`. **Critical for DCF recognition.**
+- **`[IFD1]`**: thumbnail-related tags (Make, Model, Software, ModifyDate).
 - **`[PrintIM]`**: Sony-specific print marker.
 
-### Image dimensions: 1920×1280, not full-res
+`cardify.sh` solves all of this at once by **copying the entire EXIF block from a real Sony shot the user provides**, then surgically replacing the parts that have to differ (image dimensions, thumbnail, R98 marker enforcement). That's how we get 1:1 EXIF parity with Cue without having to reconstruct MakerNotes by hand.
 
-Cue ships 1920×1280 (~2.5 MP), not the camera's full resolution. Result: ~150–210 KB per file. We were rendering at 3840×2560 (~10 MP) — same file size because text doesn't compress, but unnecessarily large pixel count for something that's just being scrolled on a 3" LCD.
+---
 
-### No `ImageDescription` marker
+## Image dimensions: 1920×1280
 
-Cue's cards have **no programmatic identifier** in EXIF. Their `UserComment` is empty, no `ImageDescription`. They've chosen invisibility — to a user inspecting the card in Lightroom, it looks like an ordinary Sony shoot.
+Cue always ships 1920×1280 (~2.5 MP) regardless of the card design's aspect ratio. Result: ~150–210 KB per file. Both dimensions are multiples of 16, the JPEG MCU block size — Sony cameras reject non-aligned dimensions on some firmwares.
 
-We have chosen the **opposite**: every PosingInCam card carries `ImageDescription: posingincam:<pose-id>:v<version>` so users can filter our cards out of imports with one rule. That is a deliberate divergence from Cue.
+For portrait cards, Cue still uses 1920×1280 file pixels, with the content rotated 90° CCW into the landscape canvas, and EXIF `Orientation=6` telling the camera to rotate 90° CW for display. This is exactly how a real Sony portrait shot is stored. `cardify.sh` follows this convention so Sony's auto-rotation behaves correctly when the user turns the body.
 
-### DateTime: real recent vs frozen
+---
 
-Cue uses recent timestamps (the day they shipped the pack). Their cards intermix with the user's working photos by date.
+## YCbCr subsampling: 4:2:2
 
-We freeze `DateTimeOriginal` to `2000:01:01 00:00:01` so cards sort to one end of the timeline and never visually mix with shoots. That is also a deliberate divergence.
+Cue uses 4:2:2 chroma subsampling. macOS's `sips` defaults to 4:2:0, which some Sony firmwares reject (the camera shows "unable to display" and falls back to the embedded thumbnail). `cardify.sh` prefers ImageMagick or Pillow specifically for this control; `sips` is only the last-resort fallback.
 
-## What we changed in our pipeline
+---
 
-Implemented in this commit:
+## Conventions we kept different from Cue
 
-1. **Added ~30 EXIF tags to `render/exif.py`**: ExifVersion, FlashpixVersion, ComponentsConfiguration, PixelXDimension/PixelYDimension, YCbCrPositioning, basic shooting params (ExposureTime, FNumber, ISO, ExposureProgram, MeteringMode, etc.), scene metadata, lens hints.
-2. **Added `[InteropIFD]`** with `InteropIndex: R98` and `InteropVersion: 0100`. This is the DCF "basic file" marker.
-3. **Updated `[IFD1]`** (thumbnail IFD) with Make/Model/Software/ModifyDate so it parallels what cameras write.
-4. **Reduced default image size for `sony-a7iv` profile** to 1920×1280 to match Cue.
-5. **Updated `Software` tag** to camera-firmware-style string by default.
-
-## What we deliberately did NOT change
-
-| Cue's choice | Our choice | Why |
+| Cue's choice | Ours | Why |
 | --- | --- | --- |
-| Full Sony MakerNotes blob (~80 tags including ShutterCount, BatteryLevel, etc.) | Skip MakerNotes entirely | Faking Sony's proprietary IFD requires either (a) extracting it from a real shot via `exiftool -tagsFromFile` which adds a binary dependency, or (b) hand-crafting it which is fragile. We bet that Sony A7 IV will accept the file based on the standard EXIF + DCF Interop marker alone. **If hardware test fails, this is the next thing to try.** |
-| No `ImageDescription` marker | Always emit `posingincam:<pose-id>:v<version>` | Filterability in Lightroom is a v1 user story (US-05). We trade invisibility for filterability. |
-| `DateTimeOriginal` = recent | `DateTimeOriginal` = frozen 2000-01-01 | We trade intermixing for visible separation in playback timeline. |
-| Spoof as A7S III | Spoof as actual target body (A7 IV → ILCE-7M4) | A7 IV is our test target. If Sony does Make/Model gating, matching the body makes it more likely to play back. Open question — see ADR 0004. |
+| Full Sony MakerNotes from a Sony A7S III | MakerNotes from the user's own template shot | The user supplies a real photo from their actual body. Make/Model end up matching their exact body (e.g. `ILCE-7M4`), which is more likely to pass any vendor-specific gating than spoofing as a different model. |
+| No `ImageDescription` marker | None either | Removed in cleanup; we no longer need a programmatic marker now that Python tooling is gone. |
+| Recent `DateTimeOriginal`; cards mix with real shoots by date | Inherited from template (then `cardify.sh` does not bump it) | Optional: if you want cards sorted apart from real shoots, edit `cardify.sh` to set a fixed past date. |
 
-## Fallback plan if hardware test still fails after these changes
+---
 
-In priority order:
+## What this informs in `cardify.sh`
 
-1. **Try Cue's exact image size** (already done: 1920×1280).
-2. **Try Cue's exact Make/Model**: change profile to `ILCE-7SM3` instead of `ILCE-7M4`. We know A7S III spoofing works on at least one Sony body.
-3. **Add `--template <real-shot.JPG>` build option** that uses `exiftool -tagsFromFile` to copy Sony MakerNotes from a user-provided real Sony A7 IV shot. This adds an external `exiftool` dependency but gets us 1:1 with Cue's strategy.
-4. **Buy a single Cue Pose Pack** for direct A/B test on the actual hardware. (Roughly $40 last seen; cheap as research.)
+Each numbered step in the script maps to a finding here:
+
+1. **Re-encode (baseline DCT, 4:2:2, q90)** — matches Cue's encoding to bypass Sony firmware quirks.
+2. **`-tagsFromFile -all:all`** — copies the entire EXIF block (including MakerNotes) from the user's template shot.
+3. **Strip IFD1 + ExifImageWidth/Height + ICC + XMP + IPTC** — the template's thumbnail and dimensions are wrong for our card.
+4. **Write actual ExifImageWidth/Height** — 1920×1280.
+5. **Force `R98 - DCF basic file (sRGB)` + `Orientation`** — defensively, in case the template-copy phase silently drops them.
+6. **Generate fresh thumbnail** — from the actual card, embedded in IFD1.
+
+---
 
 ## Anti-pattern reminder
 
-The Cue sample JPGs cannot be redistributed. We used them for one-time analysis under fair-use ("compatibility testing of an interoperable system"), wrote down what we needed to know, and then removed them from the repo. They are gitignored; don't re-add them.
+The Cue sample JPGs cannot be redistributed. We used them for one-time analysis under fair-use ("compatibility testing of an interoperable system"), wrote down what we needed to know, then removed them from the repo. They are gitignored; don't re-add them.

@@ -1,8 +1,11 @@
-"""Side-by-side EXIF diff between a real camera JPEG and our generated card.
+"""Side-by-side EXIF diff between a real Sony JPEG and a cardify.sh output.
+
+Useful when a card doesn't play back on the camera and you want to see what
+EXIF tags the real shot has that ours is missing.
 
 Usage:
-    python scripts/exif_diff.py --real tests/fixtures/real-a7iv.JPG \\
-                                --ours dist/sony-a7iv/DCIM/199MSDCF/DSC00001.JPG
+    python3 scripts/exif_diff.py --real ~/Desktop/template.JPG \\
+                                 --ours ~/Desktop/DSC00099.JPG
 
 Requires `exiftool` on PATH.
 """

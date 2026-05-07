@@ -1,8 +1,8 @@
-# M2 — Sony A7 IV hardware test
+# Hardware Test — Sony A7 IV
 
-> Goal: confirm a real Sony A7 IV plays back our generated JPEGs in single-image view, in grid view (showing the line-art thumbnail), and at full zoom.
+> Goal: confirm a real Sony A7 IV plays back JPEGs produced by `cardify.sh` in single-image view, in grid view (showing the line-art thumbnail), and at full zoom.
 
-This is the first milestone where reality meets spec. Software is done; this guide tells you exactly what to do with the camera in your hands.
+This is the protocol we used to validate the script on real hardware. It applies as-written to any Sony A7-series body and adapts trivially to other vendors.
 
 Time budget: 30–60 minutes if it works first time, 2–3 hours if you have to iterate on EXIF.
 
@@ -13,11 +13,11 @@ Time budget: 30–60 minutes if it works first time, 2–3 hours if you have to 
 - Sony A7 IV body, charged.
 - One SD card you don't mind reformatting.
 - USB SD card reader (or a card slot on your laptop).
-- A laptop with the repo set up (`pip install -e ".[dev]"` already run, see [README](../README.md)).
-- 5–10 minutes of access to a real, recent photo from the same A7 IV — saved as `tests/fixtures/real-a7iv.JPG` for diff. (Skip if not available; we'll work around it.)
-- `exiftool` installed: `brew install exiftool` / `apt install libimage-exiftool-perl`.
+- A laptop with `exiftool` installed: `brew install exiftool` / `apt install libimage-exiftool-perl`.
+- Recommended: `imagemagick` (`brew install imagemagick`) for `cardify.sh`.
+- 5–10 minutes of access to a real, recent photo from the same A7 IV — used as the EXIF template.
 
-Optional but recommended: phone camera or a second photographer to take photos of the camera's screen for the result archive.
+Optional but recommended: a phone camera or a second photographer to take photos of the camera's screen for the result archive.
 
 ---
 
@@ -29,286 +29,171 @@ Optional but recommended: phone camera or a second photographer to take photos o
 Camera menu → Setup → Setup Option → Version
 ```
 
-Write it down — different firmwares behave differently and we want this in the result file.
+Write it down — different firmwares behave differently.
 
 ### Format the card *in the camera*
 
-Not on the laptop. The camera writes its filesystem and DCF skeleton on first format.
+Not on the laptop. The camera writes its filesystem skeleton on first format.
 
 ```
 Menu → Setup → Media → Format
 ```
 
-Choose Slot 1 (or whichever slot you'll use). Confirm.
-
-After formatting, the card has `DCIM/` (possibly empty, possibly with `100MSDCF/`). That's your baseline.
+Choose your slot, confirm.
 
 ### Take 1–2 real photos
 
-Take two normal photos with the camera onto the freshly formatted card. This:
+Take two normal photos with the camera onto the freshly formatted card. This confirms the card is healthy and gives you the **EXIF template** the script needs.
 
-1. Confirms the card is healthy.
-2. Gives you a real Sony JPEG to diff against.
-3. Lets us see exactly what folder + filename Sony assigns on this body + firmware (this may differ from our profile's defaults).
+Eject the card and read it on your laptop:
 
-Eject and read the card on your laptop. Note:
+```
+DCIM/100MSDCF/DSC00001.JPG
+DCIM/100MSDCF/DSC00002.JPG
+```
 
-- The exact folder name (likely `100MSDCF`).
-- The exact filename pattern (likely `DSC00001.JPG`, `DSC00002.JPG`).
+Copy `DSC00001.JPG` to your laptop as `template.JPG`. Note: the exact folder name (likely `100MSDCF`) and file pattern (`DSC0NNNN.JPG`).
 
-If they differ from our `sony-a7iv` profile, **update the profile before continuing** — see [§5 Iterating on the profile](#5-iterating-on-the-profile).
-
-Optionally copy one of those JPEGs to `tests/fixtures/real-a7iv.JPG` for the diff in §4.
+If they differ from `100MSDCF` / `DSC0`, you'll need to edit `cardify.sh` accordingly — see [CAMERA_COMPATIBILITY.md](CAMERA_COMPATIBILITY.md).
 
 ---
 
-## 2. Build and copy
+## 2. Build a card
 
-From the repo root:
-
-```bash
-# 1. Build the cards into a local staging dir.
-posingincam build --camera sony-a7iv --pose P-001 --out dist/sony-a7iv
-
-# 2. Run our DCF compliance check against the output.
-.venv/bin/python -m tests.dcf_validator dist/sony-a7iv
-# Expect: ✓ DCF compliant
-```
-
-Mount your SD card. Find its path:
-
-- macOS: `ls /Volumes/` — looks like `/Volumes/Untitled` or `/Volumes/SONY` if labeled.
-- Linux: `lsblk` then `/media/<user>/<label>` or `mount`.
-- Windows: drive letter, e.g. `D:\`.
-
-**Important**: Sony's first format wrote `DCIM/100MSDCF/`. Our build writes into `DCIM/199MSDCF/`. The two folders coexist by design (folder number 199 keeps us out of the user's working counter). Do not delete the existing `100MSDCF/`.
-
-Copy:
+Design something in Canva (or anywhere). Export as JPEG; size doesn't matter, the script forces 1920×1280.
 
 ```bash
-# macOS / Linux
-rsync -av dist/sony-a7iv/DCIM/ /Volumes/<your-card>/DCIM/
-
-# or with cp
-cp -R dist/sony-a7iv/DCIM/199MSDCF /Volumes/<your-card>/DCIM/
+./cardify.sh -p template.JPG mycard.jpg DSC00099.JPG
 ```
 
-```powershell
-# Windows
-xcopy /E /I dist\sony-a7iv\DCIM\199MSDCF D:\DCIM\199MSDCF
+You should see:
+
+```
+  encoder: imagemagick
+  orientation: portrait (file 1920x1280, EXIF Orientation=6)
+  1/6 re-encoding (baseline, 4:2:2, q90)...
+  2/6 copying Sony EXIF from template...
+  3/6 stripping template-specific tags...
+  4/6 writing dimensions...
+  5/6 forcing R98 + Orientation=6...
+  6/6 thumbnail...
+
+✓ DSC00099.JPG (1920×1280, ~250 KB)
+  Encoding:    Baseline DCT, Huffman coding
+  Subsampling: YCbCr4:2:2 (2 1)
+  Make/Model:  SONY / ILCE-7M4
+  Orientation: Rotate 90 CW
+  DCF marker:  R98 - DCF basic file (sRGB)
 ```
 
-**Eject cleanly.** This matters — pulling the card unsafely can leave half-written FAT entries that the camera reads as corrupt.
+Use `-l` for landscape cards instead of `-p`.
 
 ---
 
-## 3. On-camera verification
+## 3. Copy to the card
 
-Insert the card. Switch to playback mode (▶ button).
+```bash
+ls /Volumes/                              # find your SD card mount
+cp DSC00099.JPG /Volumes/<your-sd>/DCIM/100MSDCF/
+```
 
-Run the checklist below in order. Mark each ✓ / ✗ — write directly into [docs/CAMERA_TEST_RESULTS.md](CAMERA_TEST_RESULTS.md) as you go.
+**Eject cleanly** through Finder (cmd+E or the eject button next to the card name in the sidebar). Don't yank the card — Sony is touchy about half-written FAT entries.
 
-### 3.1 Card mounts without complaints
+---
 
-- [ ] Camera does not prompt to "recover" or "rebuild database" on insertion.
-- [ ] No "no images" / "cannot read card" messages.
+## 4. On-camera verification
 
-If the camera prompts to rebuild the image database, that's usually fine — let it run, then continue. Note it in results.
+Insert the card. Switch to playback mode (▶ button). Run this checklist in order. Mark each ✓ / ✗ — write directly into [CAMERA_TEST_RESULTS.md](CAMERA_TEST_RESULTS.md).
 
-### 3.2 Single-image view (full screen)
+### 4.1 Card mounts cleanly
 
-Scroll backward in playback (left arrow) or jump to the last folder. Find your card.
+- [ ] No "recover database" / "rebuild database" prompt.
+- [ ] No "no images" / "cannot read card" message.
 
-- [ ] The card appears at full resolution. Not a placeholder, not a "?".
-- [ ] Title text is sharp.
-- [ ] Illustration renders clean (no scaling artifacts at 100%).
-- [ ] Verbal cue is legible without zoom.
+If the camera asks to rebuild the image database, let it run. Note it.
 
-### 3.3 Zoom in
+### 4.2 Single-image view
 
-Hit the zoom-in button (toggle on the back wheel) and step in to ~100%.
+Scroll through playback to your card.
 
-- [ ] Zoom works at all.
-- [ ] At max zoom, body text (positioning bullets, camera notes) is sharp and readable.
-- [ ] Pan around with the joystick — no rendering glitches.
+- [ ] Card appears at full resolution. Not a placeholder, not a "?".
+- [ ] Title and body text are sharp.
+- [ ] Illustration (if any) renders clean.
 
-### 3.4 Grid view
+### 4.3 Zoom in
 
-Hit the index/grid button (⊞ icon, usually next to playback). Step out to 9-frame or larger view.
+Hit the zoom-in button (top wheel, right) and step in to ~100%.
 
-- [ ] **Each thumbnail shows the line illustration only** — no text.
+- [ ] Zoom works.
+- [ ] At max zoom, body text is sharp.
+- [ ] Pan around with the joystick, no rendering glitches.
+
+### 4.4 Grid view
+
+Hit the index/grid button (⊞ icon).
+
+- [ ] Each thumbnail shows its illustration cleanly.
 - [ ] No fallback to a generic gray square.
-- [ ] No fallback to scaled-down full card with text bleeding through.
-- [ ] Navigation between thumbnails is smooth (sub-second).
+- [ ] Navigation between thumbnails is smooth.
 
-This is the most important test. If the line-art thumbnail doesn't render, the EXIF 1st-IFD thumbnail isn't being respected. See [§4 Triage](#4-triage).
+### 4.5 Auto-rotation
 
-### 3.5 Coexistence with real photos
+Rotate the camera body 90° in either direction.
 
-- Switch to shoot mode.
-- Take 1 photo.
-- Switch back to playback.
+- [ ] Portrait cards display upright when the camera is held vertically.
+- [ ] Landscape cards display upright when the camera is held horizontally.
+- [ ] Neither is upside-down regardless of rotation direction.
 
-- [ ] The new real photo coexists with the cards. Both visible.
-- [ ] Cards have not been renumbered or moved.
-- [ ] The card folder (`199MSDCF`) and the camera's working folder (likely `100MSDCF`) are both intact.
+### 4.6 Coexistence with real photos
 
-### 3.6 Image info
+- Switch to shoot mode, take 1 photo, switch back to playback.
+- [ ] The new real photo coexists with cards.
+- [ ] Cards have not been renumbered.
 
-Press the info button (DISP) once or twice to surface the metadata overlay.
+### 4.7 Image info
+
+Press the info button (DISP) to surface metadata overlay.
 
 - [ ] Make/Model show as `SONY ILCE-7M4`.
-- [ ] Date shows `2000-01-01` (intentional — distinguishes our cards from real shoots).
 
-### 3.7 Photograph the screen
+### 4.8 Photograph the screen
 
-Take a phone photo of:
-
-1. The card in single-image view.
-2. The grid view showing the line-art thumbnail.
-3. The image info overlay.
-
-Save under `docs/camera-tests/sony-a7iv/<date>/`. These go in the results doc and the eventual public landing page.
+Take phone photos of: single-image view, grid view, and image info overlay. Save under `docs/camera-tests/sony-a7iv/<date>/`.
 
 ---
 
-## 4. Triage — what to do when something fails
+## 5. Triage — what to do when something fails
 
-| Symptom | Most likely cause | What to try |
+| Symptom | Most likely cause | Fix |
 | --- | --- | --- |
-| Camera says "Cannot read image" or shows `?` icon | Filename or folder violates DCF | Double-check the folder is `1NN<5-char-tag>` and file is `<4-char-prefix><4-digit>.JPG`. Re-run `python -m tests.dcf_validator dist/sony-a7iv`. |
-| Image appears but thumbnail in grid is blank/gray | EXIF 1st-IFD thumbnail missing or malformed | Run `exiftool -Thumbnail* dist/sony-a7iv/DCIM/199MSDCF/DSC00001.JPG`. Should print thumbnail metadata. If empty, our embed step failed silently — open an issue. |
-| Image and thumbnail both work, but won't zoom | JPEG is corrupt / non-standard / progressive | Re-encode baseline (already our default). Run `exiftool -JpegProcessing dist/sony-a7iv/.../DSC00001.JPG`; should be `Baseline DCT, Huffman coding`. |
-| Camera prompts "rebuild database" every insert | Our cards aren't being indexed, missing required EXIF | See §4.1 EXIF diff below. |
-| Cards work but appear at top of timeline mixed with shoots | DateTime override didn't stick | `exiftool -DateTimeOriginal -DateTime` should show `2000:01:01 00:00:01`. |
-| Camera says "incompatible image" | Make/Model spoof rejected; firmware checks for additional Sony tags | Try setting `spoof_make_model: false` in the profile, rebuild, retest. If that works, we keep generic Make/Model and document the trade-off. |
+| "Cannot read image" or `?` icon | Filename / folder violates DCF | Confirm folder is `1NNXXXXX` and file is `XXXXNNNN.JPG`. Re-test. |
+| Image appears but grid thumbnail is blank/gray | EXIF 1st-IFD thumbnail missing or malformed | `exiftool -Thumbnail* DSC00099.JPG` should print the thumbnail. If empty, re-run `cardify.sh`. |
+| Image and thumbnail work, but won't zoom | Non-baseline JPEG | Check `exiftool -EncodingProcess`; should be `Baseline DCT, Huffman coding`. |
+| "Unable to display" | Wrong dimensions or 4:2:0 subsampling | Confirm output is 1920×1280 and YCbCr 4:2:2. ImageMagick path produces this; sips fallback may not. |
+| Camera prompts "rebuild database" every insert | Required EXIF missing | EXIF diff against a real Sony shot — see §5.1. |
+| Cards display upside-down when camera is rotated | EXIF Orientation tag wrong | The script writes 6 for portrait / 1 for landscape. If your portrait shows upside-down, try 8 (manually edit the script). |
+| Cards mixed in with real photos in unwanted way | DateTimeOriginal too recent | Edit `cardify.sh` to set `DateTimeOriginal` to a fixed past date (e.g. 2000:01:01). |
 
-### 4.1 EXIF diff against a real Sony JPEG
-
-If something is off and you have a real shot at `tests/fixtures/real-a7iv.JPG`:
+### 5.1 EXIF diff against a real Sony JPEG
 
 ```bash
-# Print full EXIF for both files, sorted, side by side.
-exiftool -G1 -a -s tests/fixtures/real-a7iv.JPG | sort > /tmp/real.txt
-exiftool -G1 -a -s dist/sony-a7iv/DCIM/199MSDCF/DSC00001.JPG | sort > /tmp/ours.txt
+exiftool -G1 -a -s template.JPG       | sort > /tmp/real.txt
+exiftool -G1 -a -s DSC00099.JPG       | sort > /tmp/ours.txt
 diff /tmp/real.txt /tmp/ours.txt | less
 ```
 
-Flag any tag the real file has that ours is missing — especially in the `[ExifIFD]` and `[IFD0]` groups. The ones to watch:
-
-- `Make`, `Model`, `Software` — required.
-- `ExifVersion`, `FlashpixVersion` — sometimes required.
-- `ColorSpace`, `ComponentsConfiguration` — usually required.
-- `ExifImageWidth`, `ExifImageHeight` — should match the actual JPEG.
-- `Compression` (1st IFD), `ThumbnailLength`, `ThumbnailOffset` — required for the embedded thumbnail.
-
-When you find a missing tag that's likely required, file an issue with the diff and we'll add it to `render/exif.py` in a follow-up commit.
-
-### 4.2 Convenience helper script
-
-There's a helper that runs both diffs for you:
+Or use the helper script:
 
 ```bash
-python scripts/exif_diff.py \
-    --real tests/fixtures/real-a7iv.JPG \
-    --ours dist/sony-a7iv/DCIM/199MSDCF/DSC00001.JPG
+python3 scripts/exif_diff.py --real template.JPG --ours DSC00099.JPG
 ```
 
-(See `scripts/exif_diff.py` — it just wraps the exiftool calls and prints a readable side-by-side.)
-
----
-
-## 5. Iterating on the profile
-
-When you change the profile to fix something, do it surgically:
-
-### Folder/file naming was wrong
-
-Edit `src/posingincam/cameras/profiles/sony-a7iv.yaml`:
-
-```yaml
-dcf:
-  folder_number: 199        # change if Sony picks something different
-  folder_tag: MSDCF         # 5 chars, exact Sony convention
-  file_prefix: DSC0         # 4 chars
-  starting_index: 1
-```
-
-Rebuild, re-validate, re-copy, re-test.
-
-### EXIF tag was missing
-
-This requires a code change in `src/posingincam/render/exif.py`. The `0th`, `Exif`, and `1st` dicts are where you add tags. Open a small PR with the diff from §4.1 attached as evidence.
-
-### Spoof toggle
-
-```yaml
-exif:
-  spoof_make_model: false   # try if `true` is being rejected
-```
-
-When `false`, we still write `make`/`model` from the YAML — set them to a vendor-neutral pair (e.g. `make: PosingInCam`, `model: Generic 3:2`).
-
-### Image dimensions
-
-Sony A7 IV's largest JPEG is 7008×4672. We render at 3840×2560 (a comfortable middle, smaller files, fast playback). If the camera refuses 3840×2560 specifically, try 6000×4000 (M-size) or 3504×2336 (S-size) by editing:
-
-```yaml
-image:
-  width: 6000
-  height: 4000
-```
-
-### Always rebuild before retesting
-
-```bash
-rm -rf dist/sony-a7iv
-posingincam build --camera sony-a7iv --pose P-001 --out dist/sony-a7iv
-python -m tests.dcf_validator dist/sony-a7iv
-```
-
-Then re-format the card (or at least delete `199MSDCF/`), re-copy, re-insert. Cameras can cache thumbnails — formatting is the safest reset.
+Flag any tag the real file has that ours is missing — especially in `[ExifIFD]`, `[InteropIFD]`, `[IFD0]`. Open an issue with the diff.
 
 ---
 
 ## 6. Recording results
 
-Open [docs/CAMERA_TEST_RESULTS.md](CAMERA_TEST_RESULTS.md) and add a section with:
+Open [CAMERA_TEST_RESULTS.md](CAMERA_TEST_RESULTS.md) and add a section with date, firmware, body, pass/fail per checklist item, and any quirks.
 
-- Date.
-- Camera firmware.
-- Build commit SHA (`git rev-parse --short HEAD`).
-- Pass/fail per checklist item from §3.
-- Any deviations from defaults (folder number, image size, spoof toggle).
-- Links/paths to the screen photos.
-- Any quirks / surprises.
-
-Commit the results doc with the photos. The first row in this file is the M2 deliverable.
-
----
-
-## 7. Promotion to Tier 1
-
-Sony A7 IV moves from "MVP target" to "Tier 1, supported" when:
-
-- All checklist items in §3 pass.
-- Results recorded in `CAMERA_TEST_RESULTS.md`.
-- Screen photos committed.
-- Profile in the repo matches the tested configuration.
-- ADR 0004 (EXIF spoof strategy) finalized based on what we learned.
-- `docs/CAMERA_COMPATIBILITY.md` Sony A7 IV row updated from "Profile in M2" to "Tier 1 ✓ <date>".
-
-After that, M2 is done and we move to M3 (multi-camera). Any other body should follow the same protocol — that's the point of having the protocol document.
-
----
-
-## 8. If you can't get it working
-
-Don't grind on it indefinitely. After two iteration cycles where the diff doesn't reveal the root cause:
-
-1. Save the failing JPEG.
-2. Save the EXIF diff against the real Sony shot.
-3. Open an issue with both attached.
-4. Try the [generic-3-2](../src/posingincam/cameras/profiles/generic-3-2.yaml) profile as a control — does *that* play back? If yes, the issue is Sony-specific spoofing; if no, it's a deeper JPEG/EXIF problem.
-
-The result of "we tried for two days and Sony rejects our JPEGs" is also a valid M2 outcome — it just changes the project shape (e.g., we'd consider buying a single Cue card to compare its EXIF against ours). Document it and move on.
+The first row in this file is the M2 deliverable — it's the proof a body is supported.

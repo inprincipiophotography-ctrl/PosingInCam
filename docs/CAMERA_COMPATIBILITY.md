@@ -1,101 +1,64 @@
-# Camera Compatibility Matrix
+# Camera Compatibility
+
+What we know about how each vendor stores JPEGs on SD cards. Use this when adapting `cardify.sh` for a body other than Sony A7 IV.
 
 | Field | Value |
 | --- | --- |
-| **Status** | Draft v0.1 |
-| **Last updated** | 2026-05-05 |
+| **Status** | Sony A7-series confirmed; other vendors documented but untested. |
+| **Last updated** | 2026-05-07 |
 
-This document is the source of truth for which cameras we ship a profile for, what their DCF conventions are, and what we have actually tested.
+## DCF reference
 
-## Tiers
+The Design rule for Camera File system (JEITA CP-3461) is what cameras follow when reading SD cards. To be playback-readable, a JPEG must:
 
-- **Tier 1** — must work on launch. Owner-tested with hardware. Profile + golden test + camera-in-loop test result archived.
-- **Tier 2** — profile shipped, community-tested. We accept the profile if a contributor can demonstrate it works.
-- **Tier 3** — best-effort generic profile (`generic-3-2`, `generic-4-3`). May or may not play back correctly.
+- Live under `<volume>/DCIM/`
+- Be inside a subfolder named `NNNXXXXX` where `NNN` ∈ 100..999 and `XXXXX` is 5 alphanumeric (or `_`) characters
+- Be named `XXXXNNNN.JPG` where `XXXX` is 4 alphanumeric (or `_`) characters and `NNNN` ∈ 0001..9999
+- Be a valid baseline EXIF JPEG with at minimum Make/Model/Orientation tags
+- Have an embedded 160×120 thumbnail in EXIF IFD1
+- Carry the `R98` InteropIFD marker (DCF basic file)
 
-## Tier 1 — MVP scope
+## Per-vendor conventions
 
-| Camera | Manufacturer | DCF Folder | DCF File Prefix | Image (W×H) | EXIF Make/Model | Status |
-| --- | --- | --- | --- | --- | --- | --- |
-| Sony A7 IV | Sony | `100MSDCF` | `DSC0` | 3840×2560 | `SONY` / `ILCE-7M4` | Profile in M2 |
-| Sony A7 III | Sony | `100MSDCF` | `DSC0` | 3840×2560 | `SONY` / `ILCE-7M3` | Profile in M3 |
-| Canon R6 Mark II | Canon | `100CANON` | `IMG_` | 3840×2560 | `Canon` / `Canon EOS R6m2` | Profile in M3 |
-| Canon R5 | Canon | `100CANON` | `IMG_` | 3840×2560 | `Canon` / `Canon EOS R5` | Profile in M3 |
-| Nikon Z6 III | Nikon | `100NCZ_6` | `DSC_` | 3840×2560 | `NIKON CORPORATION` / `NIKON Z 6_3` | Profile in M3 |
-| Nikon Z8 | Nikon | `100NCZ_8` | `DSC_` | 3840×2560 | `NIKON CORPORATION` / `NIKON Z 8` | Profile in M3 |
+| Vendor | Folder | File prefix | EXIF Make | EXIF Model example | Status |
+| --- | --- | --- | --- | --- | --- |
+| **Sony** | `100MSDCF` | `DSC0` | `SONY` | `ILCE-7M4`, `ILCE-7SM3` | ✓ A7 IV confirmed (this repo) |
+| Canon | `100CANON` | `IMG_` | `Canon` | `Canon EOS R6m2`, `Canon EOS R5` | untested |
+| Nikon (Z series) | `100NCZ_8` (varies by body) | `DSC_` | `NIKON CORPORATION` | `NIKON Z 8`, `NIKON Z 6_3` | untested |
+| Fujifilm | `100_FUJI` | `DSCF` | `FUJIFILM` | `X-T5` | untested |
+| Panasonic | `100_PANA` | `P101` (varies) | `Panasonic` | `DC-S5M2` | untested |
+| Leica | `100LEICA` | `L100` | `LEICA CAMERA AG` | `SL3` | untested |
 
-> Folder names and file prefixes are based on what these cameras *write*, mirrored in our profile so playback treats our files as native. Exact Nikon Z conventions need confirmation in M3 hardware test.
+> Folder name patterns are best-effort. Many bodies auto-generate the trailing 5 chars from a date if "Date Form" folder naming is enabled (e.g. Sony `10060504`). Check what your specific body writes the first time you take a photo.
 
-## Tier 2 — post-MVP (M6+)
+## Sony quirks (for reference)
 
-| Camera | Manufacturer | DCF Folder | DCF File Prefix |
-| --- | --- | --- | --- |
-| Fujifilm X-T5 | Fujifilm | `100_FUJI` | `DSCF` |
-| Fujifilm X-H2 | Fujifilm | `100_FUJI` | `DSCF` |
-| Panasonic Lumix S5 II | Panasonic | `100_PANA` | `P101` (varies) |
-| Sony A7R V | Sony | `100MSDCF` | `DSC0` |
-| Sony FX3 | Sony | `100MSDCF` | `DSC0` |
-| Canon R7 | Canon | `100CANON` | `IMG_` |
-| Nikon Zf | Nikon | `100NC_ZF` | `DSC_` |
-| Leica SL3 | Leica | `100LEICA` | `L100` |
+- Default folder: `100MSDCF`. New folders auto-created when filename hits 9999.
+- File prefix: `DSC0` (sRGB) or `DSC1`+ (Adobe RGB).
+- Portrait JPEGs are stored as **landscape pixels** (e.g. 6240×4160 even when the body is held vertically) with EXIF `Orientation=6` (rotate 90° CW for display) telling the camera to rotate at playback. `cardify.sh` follows this convention for portrait cards.
+- `MAH_FILE_FORMAT.IND` and `AVCHD/PRIVATE/` are video-related, irrelevant to us.
 
-## Tier 3 — generic fallback
-
-| Profile | Aspect | Notes |
-| --- | --- | --- |
-| `generic-3-2` | 3:2 | Conservative defaults, may need user tweaks. |
-| `generic-4-3` | 4:3 | For micro four thirds (Olympus / OM / Panasonic GH). |
-| `generic-1-1` | 1:1 | For anything weird. |
-
-## DCF reference (recap)
-
-The Design rule for Camera File system (JEITA CP-3461) requires:
-
-- Files live under `<volume>/DCIM/`.
-- Subfolders named `NNNXXXXX` where `NNN` ∈ 100..999 and `XXXXX` is 5 alphanumeric characters.
-- Files named `XXXXNNNN.JPG` where `XXXX` is 4 alphanumeric characters and `NNNN` ∈ 0001..9999.
-- Files are EXIF JPEGs with at minimum Make, Model, Orientation tags and an embedded 160×120 thumbnail.
-
-## Per-vendor quirks (to verify)
-
-Captured here as we learn. Update during M2/M3 hardware testing.
-
-### Sony
-
-- Default folder: `100MSDCF`. Cameras auto-create new folders by incrementing the leading number.
-- File prefix `DSC0` (or `DSC1`, etc., depending on body and adobe RGB toggle).
-- Playback recognizes any DCF-compliant JPEG copied to the card.
-- `MAH_FILE_FORMAT.IND` and other `AVCHD/PRIVATE/` directories are video-related, do not affect us.
-
-### Canon
+## Canon quirks (anticipated)
 
 - Default folder: `100CANON`.
-- File prefix: `IMG_` (sRGB) or `_IMG` (Adobe RGB) — leading underscore convention.
-- `MISC/` folder used for DPOF — we may write a DPOF protect file here in M3.
-- R-series tested to scroll mixed JPEGs in playback OK per online reports.
+- File prefix: `IMG_` (sRGB) or `_IMG` (Adobe RGB).
+- `MISC/` may contain DPOF protect files.
+- Canon Image Verification ("Original Decision Data") if present must be dropped — we don't have a real Canon body to confirm.
 
-### Nikon
+## Nikon quirks (anticipated)
 
-- Default folder name varies by body model: `100NCZ_8` for Z8, `100NCD850` for D850, etc.
+- Folder name varies more than other vendors: `100NCZ_8` for Z 8, `100NCD850` for D850, etc.
 - File prefix: `DSC_` (sRGB) or `_DSC` (Adobe RGB).
-- Nikon NEF is .NEF; we are JPEG-only so no concern.
 
-### Fujifilm
+## Fujifilm quirks (anticipated)
 
-- Default folder: `100_FUJI`.
+- Underscore in folder name (`100_FUJI`) — DCF-valid.
 - File prefix: `DSCF`.
-- Underscore in folder name (still DCF-valid).
 
-### Panasonic
+## Adding a new body to the matrix
 
-- Default folder: `100_PANA`.
-- File prefix varies more than other vendors (`P101`, etc.). May need to allow per-body.
-
-## Adding a new camera profile
-
-1. Read the camera's user manual and confirm the default DCIM folder name and file naming.
-2. Confirm with `exiftool` against a JPEG taken with that camera.
-3. Copy `src/posingincam/cameras/profiles/_template.yaml` and fill in the values.
-4. Build a single pose: `posingincam build --camera <new-id> --pose P-001 --out /tmp/test`.
-5. Copy to a fresh SD card, insert in the camera, verify playback in single + grid view.
-6. Update this matrix and `docs/CAMERA_TEST_RESULTS.md` with results.
+1. Take one photo with the body.
+2. Read it off the card; note the exact folder + filename.
+3. Run `exiftool -G1 -a -s` on it; note Make / Model / Software / MakerNotes blob size.
+4. Try `cardify.sh` against it (you may need to edit the output filename pattern in the script).
+5. Test on the body; document findings in [CAMERA_TEST_RESULTS.md](CAMERA_TEST_RESULTS.md) and update the matrix above.

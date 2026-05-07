@@ -1,32 +1,5 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-.venv/
-venv/
-env/
-.eggs/
-*.egg-info/
-*.egg
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-htmlcov/
-.coverage
-.coverage.*
-.tox/
-.hypothesis/
-
-# Build artifacts
-build/
-dist/
-*.whl
-
-# OS
+# macOS
 .DS_Store
-Thumbs.db
 
 # Editors
 .vscode/
@@ -35,22 +8,29 @@ Thumbs.db
 *.swo
 *~
 
-# Project
-/dist/
-/preview.jpg
-/scratch/
+# Python (legacy; the repo no longer ships Python code, but contributors
+# may still keep a venv around for the exif_diff.py helper script)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
 
-# Pose authoring
-*.draft.yaml
+# Local user files
+/scratch/
 /dist/
-/.venv/
+*.draft.jpg
+*.draft.JPG
 
 # Third-party reference samples (e.g. Cue) used for local EXIF diff only.
 # Do NOT commit — that's their IP. See docs/CUE_EXIF_ANALYSIS.md for findings.
-/tests/fixtures/cue-sample/
-/tests/fixtures/Dark Landscape/
-/tests/fixtures/Dark Portrait/
-/tests/fixtures/Light Landscape/
-/tests/fixtures/Light Portrait/
-/tests/fixtures/real-a7iv*.JPG
-/tests/fixtures/real-a7iv*.jpg
+/tests/
+/cue-sample/
+/Dark Landscape/
+/Dark Portrait/
+/Light Landscape/
+/Light Portrait/
+template-a7iv*.JPG
+template-a7iv*.jpg
+real-a7iv*.JPG
+real-a7iv*.jpg
