@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 #
-# scripts/cardify.sh — turn a Canva (or any) JPEG into a Sony-camera-readable
-# card by copying EXIF metadata from a template Sony shot, while keeping the
-# real image dimensions and generating a fresh thumbnail from the actual card.
+# scripts/cardify.sh — turn any JPEG into a Sony-camera-readable card.
 #
-# Why this matters:
-#   The naive `exiftool -tagsFromFile X.JPG -all:all Y.JPG` copies EVERYTHING,
-#   including the embedded 160x120 thumbnail and the ExifImageWidth/Height
-#   tags. If your card has different dimensions or different visual content
-#   from the template, the camera shows the *template's* thumbnail in grid
-#   view (or rejects the file entirely because dimensions don't match).
+# Pipeline:
+#   1. Re-encode input as BASELINE JPEG (cameras can't decode progressive,
+#      and Canva often exports progressive). This guarantees byte-clean
+#      JPEG markers regardless of source.
+#   2. Copy ALL Sony EXIF metadata from the template, except IFD1 thumbnail
+#      data and ExifImageWidth/Height (which must match real dimensions).
+#   3. Write the actual image dimensions back into ExifImageWidth/Height.
+#   4. Build a fresh 160px-long-side thumbnail from the actual output and
+#      embed it. (Otherwise the camera shows the template's thumbnail in
+#      grid view, or rejects the file.)
 #
 # Requires:
 #   - exiftool   (brew install exiftool)
@@ -17,26 +19,11 @@
 #
 # Usage:
 #   scripts/cardify.sh <template.JPG> <input.jpg> <output.JPG>
-#
-# Example:
-#   scripts/cardify.sh ~/Desktop/sony-template.JPG \
-#                      ~/Desktop/canva-export.jpg \
-#                      ~/Desktop/DSC00099.JPG
-#
-#   <template.JPG>  a real Sony shot you took (or a Cue sample) — we copy EXIF
-#                   metadata from this. Make/Model, R98 DCF marker, Sony
-#                   MakerNotes, all the camera-friendly tags.
-#   <input.jpg>     your Canva (or anywhere) design exported as JPEG.
-#   <output.JPG>    the camera-ready file. Use DSCNNNNN.JPG naming for Sony.
 
 set -euo pipefail
 
 if [ "$#" -ne 3 ]; then
   echo "usage: $0 <template.JPG> <input.jpg> <output.JPG>" >&2
-  echo "" >&2
-  echo "  template = a real Sony shot to copy EXIF from" >&2
-  echo "  input    = your Canva-exported JPEG" >&2
-  echo "  output   = camera-ready filename (DSC00099.JPG style)" >&2
   exit 1
 fi
 
@@ -58,13 +45,15 @@ for tool in exiftool sips; do
   fi
 done
 
-# 1. Start from a fresh copy of the input (we don't mutate the user's source).
-cp "$INPUT" "$OUTPUT"
+# 1. Re-encode input as a clean baseline JPEG. This strips Canva's
+#    progressive encoding (cameras can't decode it) and any junk EXIF.
+#    sips writes baseline JPEG by default with normal compression.
+echo "  re-encoding to baseline JPEG..."
+sips -s format jpeg -s formatOptions 90 "$INPUT" --out "$OUTPUT" >/dev/null
 
-# 2. Copy every EXIF tag from the template EXCEPT:
-#      - IFD1:all       (the thumbnail-IFD that points to template's thumbnail)
-#      - ExifImageWidth / ExifImageHeight  (must match the actual image)
-#      - PreviewImage*  (Sony-specific big preview, will conflict)
+# 2. Copy template's EXIF tags except IFD1 (template's thumbnail) and
+#    ExifImageWidth/Height (we set those to match actual image below).
+echo "  copying Sony EXIF metadata..."
 exiftool \
   -tagsFromFile "$TEMPLATE" \
   -all:all \
@@ -76,8 +65,7 @@ exiftool \
   --PreviewImageLength \
   "$OUTPUT" -overwrite_original >/dev/null
 
-# 3. Read the *actual* image dimensions and write them back to EXIF, so the
-#    camera's "expected size" tags match the real pixel data.
+# 3. Write actual image dimensions into EXIF.
 WIDTH=$(exiftool -ImageWidth -s -s -s "$OUTPUT")
 HEIGHT=$(exiftool -ImageHeight -s -s -s "$OUTPUT")
 exiftool \
@@ -85,23 +73,25 @@ exiftool \
   -ExifImageHeight="$HEIGHT" \
   "$OUTPUT" -overwrite_original >/dev/null
 
-# 4. Build a fresh thumbnail from the OUTPUT image (long edge max 160px) and
-#    embed it. Cameras use this for grid view.
+# 4. Build and embed a fresh thumbnail from the actual output image.
+echo "  generating thumbnail..."
 THUMB=$(mktemp -t cardify-thumb.XXXXXX).jpg
 trap 'rm -f "$THUMB"' EXIT
 sips -Z 160 "$OUTPUT" --out "$THUMB" >/dev/null
 exiftool "-ThumbnailImage<=$THUMB" "$OUTPUT" -overwrite_original >/dev/null
 
-# 5. Summary.
+# 5. Verification + summary.
 SIZE_KB=$(($(stat -f %z "$OUTPUT") / 1024))
+ENCODING=$(exiftool -EncodingProcess -s -s -s "$OUTPUT")
 MAKE=$(exiftool -Make -s -s -s "$OUTPUT")
 MODEL=$(exiftool -Model -s -s -s "$OUTPUT")
-R98=$(exiftool -InteropIndex -s -s -s "$OUTPUT" || echo "(missing)")
+R98=$(exiftool -InteropIndex -s -s -s "$OUTPUT" 2>/dev/null || echo "(missing)")
 
+echo ""
 echo "✓ ${OUTPUT}"
 echo "  ${WIDTH}×${HEIGHT}, ${SIZE_KB} KB"
+echo "  Encoding:      ${ENCODING}"
 echo "  Make/Model:    ${MAKE} / ${MODEL}"
 echo "  DCF marker:    ${R98}"
-echo "  Thumbnail:     embedded ($(sips -g pixelWidth -g pixelHeight "$THUMB" 2>/dev/null | grep -E 'pixel(Width|Height)' | awk '{print $2}' | tr '\n' 'x' | sed 's/x$//'))"
 echo ""
 echo "Drop into DCIM/100MSDCF/ on your SD card and play back on the camera."
