@@ -77,14 +77,25 @@ exiftool -overwrite_original \
 # 4. Write the actual image dimensions into EXIF.
 WIDTH=$(exiftool -ImageWidth -s -s -s "$OUTPUT")
 HEIGHT=$(exiftool -ImageHeight -s -s -s "$OUTPUT")
-echo "  4/5 writing real dimensions ${WIDTH}x${HEIGHT} into EXIF..."
+echo "  4/6 writing real dimensions ${WIDTH}x${HEIGHT} into EXIF..."
 exiftool -overwrite_original \
   "-ExifImageWidth=$WIDTH" \
   "-ExifImageHeight=$HEIGHT" \
   "$OUTPUT" >/dev/null
 
-# 5. Generate fresh thumbnail from output, embed it.
-echo "  5/5 generating + embedding thumbnail..."
+# 5. Force-write the R98 DCF marker. Some exiftool/Sony MakerNotes
+#    interactions silently drop the InteropIFD during tag transfer, so we
+#    write it explicitly here. Without R98 the camera may reject playback.
+echo "  5/6 ensuring DCF marker (R98)..."
+exiftool -overwrite_original \
+  "-InteropIndex=R98" \
+  "-InteropVersion=0100" \
+  "-Orientation=1" \
+  "-YCbCrPositioning=1" \
+  "$OUTPUT" >/dev/null
+
+# 6. Generate fresh thumbnail from output, embed it.
+echo "  6/6 generating + embedding thumbnail..."
 THUMB=$(mktemp -t cardify-thumb.XXXXXX).jpg
 trap 'rm -f "$THUMB"' EXIT
 sips -Z 160 "$OUTPUT" --out "$THUMB" >/dev/null
