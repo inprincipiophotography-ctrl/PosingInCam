@@ -2,16 +2,19 @@
 #
 # scripts/cardify.sh — turn any JPEG into a Sony-camera-readable card.
 #
-# Pipeline:
-#   1. Re-encode input as BASELINE JPEG (cameras can't decode progressive,
-#      and Canva often exports progressive). This guarantees byte-clean
-#      JPEG markers regardless of source.
-#   2. Copy ALL Sony EXIF metadata from the template, except IFD1 thumbnail
-#      data and ExifImageWidth/Height (which must match real dimensions).
-#   3. Write the actual image dimensions back into ExifImageWidth/Height.
-#   4. Build a fresh 160px-long-side thumbnail from the actual output and
-#      embed it. (Otherwise the camera shows the template's thumbnail in
-#      grid view, or rejects the file.)
+# Pipeline (each step is its own simple exiftool call — robust across
+# exiftool 12.x and 13.x and weird shell environments):
+#
+#   1. Re-encode input as BASELINE JPEG via sips. Cameras can't decode
+#      progressive JPEG (which Canva and many tools emit by default),
+#      so they fall back to the embedded thumbnail. This step
+#      guarantees baseline output.
+#   2. Copy ALL EXIF tags from the template onto the output.
+#   3. Delete tags we want to *replace*: IFD1 (template's thumbnail),
+#      ExifImageWidth/Height (template's image size), PreviewImage.
+#   4. Write actual image dimensions into ExifImageWidth/Height.
+#   5. Generate a fresh ~160px thumbnail from the actual output image
+#      and embed it as the new IFD1 thumbnail.
 #
 # Requires:
 #   - exiftool   (brew install exiftool)
@@ -45,42 +48,49 @@ for tool in exiftool sips; do
   fi
 done
 
-# 1. Re-encode input as a clean baseline JPEG. This strips Canva's
-#    progressive encoding (cameras can't decode it) and any junk EXIF.
-#    sips writes baseline JPEG by default with normal compression.
-echo "  re-encoding to baseline JPEG..."
+# 1. Re-encode input as clean baseline JPEG.
+echo "  1/5 re-encoding to baseline JPEG..."
 sips -s format jpeg -s formatOptions 90 "$INPUT" --out "$OUTPUT" >/dev/null
 
-# 2. Copy template's EXIF tags except IFD1 (template's thumbnail) and
-#    ExifImageWidth/Height (we set those to match actual image below).
-echo "  copying Sony EXIF metadata..."
-exiftool \
-  -tagsFromFile "$TEMPLATE" \
-  -all:all \
-  --IFD1:all \
-  --ExifImageWidth \
-  --ExifImageHeight \
-  --PreviewImage \
-  --PreviewImageStart \
-  --PreviewImageLength \
-  "$OUTPUT" -overwrite_original >/dev/null
+# Verify sips actually produced the output file.
+if [ ! -f "$OUTPUT" ]; then
+  echo "error: sips did not create $OUTPUT" >&2
+  exit 1
+fi
 
-# 3. Write actual image dimensions into EXIF.
+# 2. Copy ALL EXIF from template onto output (this picks up Sony Make/Model,
+#    MakerNotes, R98 InteropIFD, FlashpixVersion, etc.).
+echo "  2/5 copying Sony EXIF metadata from template..."
+exiftool -overwrite_original -tagsFromFile "$TEMPLATE" -all:all "$OUTPUT" >/dev/null
+
+# 3. Delete tags that came along with -all:all but shouldn't (they describe
+#    the template, not our card): the template's thumbnail IFD and its
+#    image-size fields and any preview image blob.
+echo "  3/5 stripping template-specific tags..."
+exiftool -overwrite_original \
+  "-IFD1:all=" \
+  "-ExifImageWidth=" \
+  "-ExifImageHeight=" \
+  "-PreviewImage=" \
+  "$OUTPUT" >/dev/null
+
+# 4. Write the actual image dimensions into EXIF.
 WIDTH=$(exiftool -ImageWidth -s -s -s "$OUTPUT")
 HEIGHT=$(exiftool -ImageHeight -s -s -s "$OUTPUT")
-exiftool \
-  -ExifImageWidth="$WIDTH" \
-  -ExifImageHeight="$HEIGHT" \
-  "$OUTPUT" -overwrite_original >/dev/null
+echo "  4/5 writing real dimensions ${WIDTH}x${HEIGHT} into EXIF..."
+exiftool -overwrite_original \
+  "-ExifImageWidth=$WIDTH" \
+  "-ExifImageHeight=$HEIGHT" \
+  "$OUTPUT" >/dev/null
 
-# 4. Build and embed a fresh thumbnail from the actual output image.
-echo "  generating thumbnail..."
+# 5. Generate fresh thumbnail from output, embed it.
+echo "  5/5 generating + embedding thumbnail..."
 THUMB=$(mktemp -t cardify-thumb.XXXXXX).jpg
 trap 'rm -f "$THUMB"' EXIT
 sips -Z 160 "$OUTPUT" --out "$THUMB" >/dev/null
-exiftool "-ThumbnailImage<=$THUMB" "$OUTPUT" -overwrite_original >/dev/null
+exiftool -overwrite_original "-ThumbnailImage<=$THUMB" "$OUTPUT" >/dev/null
 
-# 5. Verification + summary.
+# Summary.
 SIZE_KB=$(($(stat -f %z "$OUTPUT") / 1024))
 ENCODING=$(exiftool -EncodingProcess -s -s -s "$OUTPUT")
 MAKE=$(exiftool -Make -s -s -s "$OUTPUT")
