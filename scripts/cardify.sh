@@ -79,7 +79,19 @@ validate_card() {
   }
 
   check_tag Make             "SONY"                            "Make"
-  check_tag Model            "ILCE-7M4"                        "Model"
+
+  # Model: accept any Sony Alpha body (ILCE-*), not just A7 IV. This covers
+  # A7 III/IV/V (ILCE-7M3/M4/M5), A7R V (ILCE-7RM5), A1 / A1 II (ILCE-1/1M2),
+  # A9 III (ILCE-9M3), A7C II / A7CR, A7S III, etc. The exact model the
+  # output carries is determined by which TEMPLATE file you pass in.
+  val=$(exiftool -Model -s -s -s "$f" 2>/dev/null || echo "")
+  if [[ "$val" =~ ^ILCE- ]]; then
+    echo "  ✓ Model: $val"
+  else
+    echo "  ✗ Model: got '$val', expected ILCE-* (Sony Alpha body)" >&2
+    errs=$((errs + 1))
+  fi
+
   check_tag EncodingProcess  "Baseline DCT"                    "Encoding"
   check_tag InteropIndex     "R98"                             "DCF marker"
   check_tag ExifImageWidth   "1920"                            "Exif width"
