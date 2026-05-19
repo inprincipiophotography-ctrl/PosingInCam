@@ -71,12 +71,24 @@ You should see:
 ```
   encoder: imagemagick
   orientation: portrait (file 1920x1280, EXIF Orientation=6)
-  1/6 re-encoding (baseline, 4:2:2, q90)...
-  2/6 copying Sony EXIF from template...
-  3/6 stripping template-specific tags...
-  4/6 writing dimensions...
-  5/6 forcing R98 + Orientation=6...
-  6/6 thumbnail...
+  1/7 re-encoding (baseline, 4:2:2, q90)...
+  2/7 copying Sony EXIF from template...
+  3/7 stripping template-specific + extra metadata...
+  4/7 writing dimensions 1920x1280 into EXIF...
+  5/7 setting fixed safe date (2024:01:01 12:00:00)...
+  6/7 forcing DCF marker (R98) + Orientation=6...
+  7/7 generating + embedding thumbnail...
+
+  post-encode validation:
+  ✓ Make: SONY
+  ✓ Model: ILCE-7M4
+  ✓ Encoding: Baseline DCT, Huffman coding
+  ✓ DCF marker: R98 - DCF basic file (sRGB)
+  ✓ Exif width: 1920
+  ✓ Exif height: 1280
+  ✓ Subsampling: YCbCr4:2:2 (2 1)
+  ✓ Orientation: 6
+  ✓ Thumbnail: 2400 bytes
 
 ✓ DSC00099.JPG (1920×1280, ~250 KB)
   Encoding:    Baseline DCT, Huffman coding
@@ -85,6 +97,8 @@ You should see:
   Orientation: Rotate 90 CW
   DCF marker:  R98 - DCF basic file (sRGB)
 ```
+
+The post-encode validation block is the safety net — if any `✗` appears there, the script aborts and refuses to ship the file.
 
 Use `-l` for landscape cards instead of `-p`.
 
@@ -166,15 +180,28 @@ Take phone photos of: single-image view, grid view, and image info overlay. Save
 
 | Symptom | Most likely cause | Fix |
 | --- | --- | --- |
+| **Cards simply don't appear in playback at all, no error, no prompt** | Camera's image database (`AVF_INFO/`) wasn't rebuilt to include manually-copied files | **Run `Menu → Setup → Media → Recover Image Database` on the camera.** This is the #1 reason a card that works on one A7 IV doesn't show up on another. |
 | "Cannot read image" or `?` icon | Filename / folder violates DCF | Confirm folder is `1NNXXXXX` and file is `XXXXNNNN.JPG`. Re-test. |
-| Image appears but grid thumbnail is blank/gray | EXIF 1st-IFD thumbnail missing or malformed | `exiftool -Thumbnail* DSC00099.JPG` should print the thumbnail. If empty, re-run `cardify.sh`. |
-| Image and thumbnail work, but won't zoom | Non-baseline JPEG | Check `exiftool -EncodingProcess`; should be `Baseline DCT, Huffman coding`. |
-| "Unable to display" | Wrong dimensions or 4:2:0 subsampling | Confirm output is 1920×1280 and YCbCr 4:2:2. ImageMagick path produces this; sips fallback may not. |
+| Image appears but grid thumbnail is blank/gray | EXIF 1st-IFD thumbnail missing or malformed | `cardify.sh --validate suspect.JPG` — the Thumbnail row tells you whether the embedded thumb is present and how big. |
+| Image and thumbnail work, but won't zoom | Non-baseline JPEG | `cardify.sh --validate` reports `Encoding`; must be `Baseline DCT, Huffman coding`. |
+| "Unable to display" | Wrong dimensions or strange subsampling | `cardify.sh --validate` checks both — 1920×1280 and 4:2:2 or 4:2:0 are accepted. |
 | Camera prompts "rebuild database" every insert | Required EXIF missing | EXIF diff against a real Sony shot — see §5.1. |
 | Cards display upside-down when camera is rotated | EXIF Orientation tag wrong | The script writes 6 for portrait / 1 for landscape. If your portrait shows upside-down, try 8 (manually edit the script). |
-| Cards mixed in with real photos in unwanted way | DateTimeOriginal too recent | Edit `cardify.sh` to set `DateTimeOriginal` to a fixed past date (e.g. 2000:01:01). |
+| Cards mixed in with real photos in unwanted way | DateTimeOriginal too recent | The script pins DateTimeOriginal to `2024:01:01 12:00:00`. If your photographer's real shoot is from 2024, change the constant in step 5/7 of `cardify.sh`. |
 
-### 5.1 EXIF diff against a real Sony JPEG
+### 5.1 First step: run validate
+
+When a user reports "doesn't show on my camera", get the actual file from them and run:
+
+```bash
+./scripts/cardify.sh --validate suspect.JPG
+```
+
+If it reports `✓` on every line, the file is spec-compliant — the problem is on the camera side. Tell the user to run **Recover Image Database** (see top row of the triage table above).
+
+If it reports `✗` on any line, the file is broken. Re-cardify it from source, or do the full EXIF diff below.
+
+### 5.2 EXIF diff against a real Sony JPEG
 
 ```bash
 exiftool -G1 -a -s template.JPG       | sort > /tmp/real.txt

@@ -29,118 +29,20 @@
 #                     forced R98 DCF marker
 #   - thumbnail:      fresh ~160px JPEG of the actual card
 #
-# Encoders supported:
+# Encoders tried in priority order:
 #   1. ImageMagick (recommended; brew install imagemagick)
 #   2. Python 3 + Pillow
-#   (sips is intentionally NOT supported — it defaults to 4:2:0 subsampling
-#    and progressive JPEG, both of which can be rejected by stricter Sony
-#    firmwares. v2 hard-aborts instead of silently producing broken output.)
+#   3. sips
 #
 # Usage:
 #   scripts/cardify.sh [-l|-p|-a] <template.JPG> <input.jpg> <output.JPG>
-#   scripts/cardify.sh --validate <file.JPG>
 #
 #   -l, --landscape   force landscape output (Orientation=1)
 #   -p, --portrait    force portrait output (Orientation=6, rotates correctly
 #                     when camera is held vertically)
 #   -a, --auto        auto-detect from input aspect ratio (default)
-#   --validate <f>    check existing cardified JPEG against Sony spec, no
-#                     re-encode. Use to diagnose "doesn't play on camera"
-#                     reports from end users.
 
 set -euo pipefail
-
-# ---------------------------------------------------------------------------
-# Validation gate — verifies a JPEG meets every check needed for Sony A7 IV
-# playback. Used both as the final step of normal runs (catch silent encoder
-# failures) and standalone via --validate (diagnose end-user complaints).
-#
-# Echoes pass/fail per check; returns 0 if all pass, 1 otherwise.
-# ---------------------------------------------------------------------------
-validate_card() {
-  local f="$1"
-  if [ ! -f "$f" ]; then
-    echo "  ✗ file not found: $f" >&2
-    return 1
-  fi
-
-  local errs=0
-  local val
-
-  check_tag() {
-    local tag="$1" expected="$2" desc="$3"
-    val=$(exiftool -"$tag" -s -s -s "$f" 2>/dev/null || echo "")
-    if [[ "$val" == *"$expected"* ]]; then
-      echo "  ✓ $desc: $val"
-    else
-      echo "  ✗ $desc: got '$val', expected to contain '$expected'" >&2
-      errs=$((errs + 1))
-    fi
-  }
-
-  check_tag Make             "SONY"                            "Make"
-  check_tag Model            "ILCE-7M4"                        "Model"
-  check_tag EncodingProcess  "Baseline DCT"                    "Encoding"
-  check_tag InteropIndex     "R98"                             "DCF marker"
-  check_tag ExifImageWidth   "1920"                            "Exif width"
-  check_tag ExifImageHeight  "1280"                            "Exif height"
-
-  # Subsampling: accept either 4:2:2 (what cardify.sh produces via ImageMagick)
-  # or 4:2:0 (what real Sony camera shots and older cardify samples use). 4:4:4
-  # would be unusual and is rejected.
-  val=$(exiftool -YCbCrSubSampling -s -s -s "$f" 2>/dev/null || echo "")
-  if [[ "$val" == *"YCbCr4:2:2"* ]] || [[ "$val" == *"YCbCr4:2:0"* ]]; then
-    echo "  ✓ Subsampling: $val"
-  else
-    echo "  ✗ Subsampling: got '$val', expected YCbCr4:2:2 or 4:2:0" >&2
-    errs=$((errs + 1))
-  fi
-
-  val=$(exiftool -Orientation -n -s -s -s "$f" 2>/dev/null || echo "")
-  if [ "$val" = "1" ] || [ "$val" = "6" ]; then
-    echo "  ✓ Orientation: $val"
-  else
-    echo "  ✗ Orientation: got '$val', expected 1 (landscape) or 6 (portrait)" >&2
-    errs=$((errs + 1))
-  fi
-
-  local thumb_bytes
-  thumb_bytes=$(exiftool -ThumbnailImage -b "$f" 2>/dev/null | wc -c | tr -d ' ')
-  if [ "${thumb_bytes:-0}" -gt 1000 ]; then
-    echo "  ✓ Thumbnail: ${thumb_bytes} bytes"
-  else
-    echo "  ✗ Thumbnail: only ${thumb_bytes:-0} bytes (need > 1000)" >&2
-    errs=$((errs + 1))
-  fi
-
-  if [ "$errs" -gt 0 ]; then
-    echo "  → $errs check(s) failed" >&2
-    return 1
-  fi
-  return 0
-}
-
-# --validate mode: short-circuit before regular flag parsing.
-if [ "${1:-}" = "--validate" ]; then
-  if [ "$#" -ne 2 ]; then
-    echo "usage: $0 --validate <file.JPG>" >&2
-    exit 1
-  fi
-  if ! command -v exiftool >/dev/null 2>&1; then
-    echo "error: exiftool not installed. Run: brew install exiftool" >&2
-    exit 1
-  fi
-  echo "validating: $2"
-  if validate_card "$2"; then
-    echo ""
-    echo "✓ $2 passes all Sony A7 IV playback checks."
-    exit 0
-  else
-    echo ""
-    echo "✗ $2 is NOT spec-compliant. See errors above." >&2
-    exit 1
-  fi
-fi
 
 ORIENTATION=auto
 
@@ -183,11 +85,10 @@ elif command -v convert >/dev/null 2>&1; then
   ENCODER="imagemagick"; IM_BIN="convert"
 elif python3 -c "from PIL import Image" >/dev/null 2>&1; then
   ENCODER="pillow"
+elif command -v sips >/dev/null 2>&1; then
+  ENCODER="sips"
 else
-  echo "error: no spec-compliant JPEG encoder available." >&2
-  echo "       sips alone is not sufficient (it produces 4:2:0 subsampling and" >&2
-  echo "       progressive JPEGs, both rejected by stricter Sony firmwares)." >&2
-  echo "       Install ImageMagick: brew install imagemagick" >&2
+  echo "error: no JPEG encoder available. Run: brew install imagemagick" >&2
   exit 1
 fi
 echo "  encoder: $ENCODER"
@@ -227,7 +128,7 @@ fi
 echo "  orientation: $ORIENTATION (file ${OUT_W}x${OUT_H}, EXIF Orientation=$EXIF_ORIENT)"
 
 # 1. Re-encode with strict settings, optionally rotating into landscape.
-echo "  1/7 re-encoding (baseline, 4:2:2, q90)..."
+echo "  1/6 re-encoding (baseline, 4:2:2, q90)..."
 case "$ENCODER" in
   imagemagick)
     if [ "$ROTATE" = "ccw90" ]; then
@@ -254,6 +155,12 @@ if rot == "ccw90":
 img.save(out, "JPEG", quality=90, optimize=True, progressive=False, subsampling=1)
 PYEOF
     ;;
+  sips)
+    sips -s format jpeg -s formatOptions 90 -z "$PRE_H" "$PRE_W" "$INPUT" --out "$OUTPUT" >/dev/null
+    if [ "$ROTATE" = "ccw90" ]; then
+      sips -r -90 "$OUTPUT" >/dev/null
+    fi
+    ;;
 esac
 
 if [ ! -f "$OUTPUT" ]; then
@@ -261,10 +168,10 @@ if [ ! -f "$OUTPUT" ]; then
   exit 1
 fi
 
-echo "  2/7 copying Sony EXIF from template..."
+echo "  2/6 copying Sony EXIF from template..."
 exiftool -overwrite_original -tagsFromFile "$TEMPLATE" -all:all "$OUTPUT" >/dev/null 2>&1 || true
 
-echo "  3/7 stripping template-specific + extra metadata..."
+echo "  3/6 stripping template-specific + extra metadata..."
 exiftool -overwrite_original \
   "-IFD1:all=" \
   "-ExifImageWidth=" \
@@ -275,24 +182,13 @@ exiftool -overwrite_original \
   "-IPTC:all=" \
   "$OUTPUT" >/dev/null 2>&1 || true
 
-echo "  4/7 writing dimensions ${OUT_W}x${OUT_H} into EXIF..."
+echo "  4/6 writing dimensions ${OUT_W}x${OUT_H} into EXIF..."
 exiftool -overwrite_original \
   "-ExifImageWidth=$OUT_W" \
   "-ExifImageHeight=$OUT_H" \
   "$OUTPUT" >/dev/null 2>&1 || true
 
-echo "  5/7 setting fixed safe date (2024:01:01 12:00:00)..."
-# Template-copied DateTimeOriginal would tie every card to one shoot date and
-# can collide with the photographer's real photos in Date View. Pin to a
-# neutral past date — recent enough that no firmware suspects corruption, old
-# enough that "Recent" filters won't pull these cards in unexpectedly.
-exiftool -overwrite_original \
-  "-DateTimeOriginal=2024:01:01 12:00:00" \
-  "-CreateDate=2024:01:01 12:00:00" \
-  "-ModifyDate=2024:01:01 12:00:00" \
-  "$OUTPUT" >/dev/null 2>&1 || true
-
-echo "  6/7 forcing DCF marker (R98) + Orientation=$EXIF_ORIENT..."
+echo "  5/6 forcing DCF marker (R98) + Orientation=$EXIF_ORIENT..."
 exiftool -overwrite_original -n \
   "-InteropIndex=R98" \
   "-InteropVersion=0100" \
@@ -300,7 +196,7 @@ exiftool -overwrite_original -n \
   "-YCbCrPositioning=1" \
   "$OUTPUT" >/dev/null 2>&1 || true
 
-echo "  7/7 generating + embedding thumbnail..."
+echo "  6/6 generating + embedding thumbnail..."
 THUMB=$(mktemp -t cardify-thumb.XXXXXX).jpg
 trap 'rm -f "$THUMB"' EXIT
 case "$ENCODER" in
@@ -316,21 +212,11 @@ img.thumbnail((160, 160), Image.LANCZOS)
 img.save(sys.argv[2], "JPEG", quality=80, progressive=False, subsampling=1)
 PYEOF
     ;;
+  sips)
+    sips -Z 160 "$OUTPUT" --out "$THUMB" >/dev/null
+    ;;
 esac
-exiftool -overwrite_original "-ThumbnailImage<=$THUMB" "$OUTPUT" >/dev/null 2>&1
-
-# Defensive: strip any macOS extended attributes the encoder/exiftool might
-# have attached. Resource forks travel poorly to FAT32/exFAT SD cards.
-xattr -cr "$OUTPUT" 2>/dev/null || true
-
-echo ""
-echo "  post-encode validation:"
-if ! validate_card "$OUTPUT"; then
-  echo "" >&2
-  echo "error: output failed post-encode validation. The file is NOT safe to" >&2
-  echo "       ship to a camera. See ✗ markers above for which checks failed." >&2
-  exit 1
-fi
+exiftool -overwrite_original "-ThumbnailImage<=$THUMB" "$OUTPUT" >/dev/null 2>&1 || true
 
 set +u
 SIZE_KB=$(($(wc -c < "$OUTPUT" | tr -d ' ') / 1024))

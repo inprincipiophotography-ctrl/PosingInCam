@@ -65,10 +65,22 @@ Detailed walkthrough: [docs/M2_HARDWARE_TEST.md](docs/M2_HARDWARE_TEST.md).
 2. Forces dimensions to **1920×1280** (multiples of 16, the JPEG MCU block size). Real Sony portrait shots are stored as landscape pixels with the rotation handled by the EXIF `Orientation` tag — we follow the same convention.
 3. **Copies all EXIF tags** from your template (Make, Model, MakerNotes, …).
 4. **Strips template-specific stuff** (the template's thumbnail, dimensions, ICC profile, XMP, IPTC).
-5. Writes the **R98 DCF basic-file marker** (some Sony firmwares gate playback on this).
-6. Generates a fresh **160-px thumbnail** from your card and embeds it.
+5. **Pins date to `2024:01:01 12:00:00`** so cards don't collide with your real shoots in Date View.
+6. Writes the **R98 DCF basic-file marker** (some Sony firmwares gate playback on this).
+7. Generates a fresh **160-px thumbnail** from your card and embeds it.
+8. **Post-encode validation gate** — re-reads the output and aborts if any required tag is missing or wrong. If the script exits 0, the file is verified spec-compliant.
 
 See [docs/CUE_EXIF_ANALYSIS.md](docs/CUE_EXIF_ANALYSIS.md) for the reasoning, including the EXIF teardown of Cue's reference samples that informed every step.
+
+### Diagnosing failed cards
+
+If a card doesn't play back on a camera, run the validator on the suspect file:
+
+```bash
+./cardify.sh --validate suspect.JPG
+```
+
+It returns 0 if the file is spec-compliant (so the problem is camera-side — see [Triage](docs/M2_HARDWARE_TEST.md#5-triage--what-to-do-when-something-fails), most commonly "Recover Image Database" on the camera menu), or 1 with a list of which checks failed (so the file needs to be regenerated).
 
 ---
 
