@@ -5,7 +5,7 @@
 Design pose cards your way (Canva, Figma, Photoshop — whatever), run them through one shell script, drop the result on your SD card, and they show up in your camera's playback alongside your real photos. Scroll between shots; no phone reach.
 
 ```
-Canva design  ──►  cardify.sh  ──►  DSC00099.JPG  ──►  SD card  ──►  Camera playback
+Canva design  ──►  cardify.sh  ──►  DSC09000.JPG  ──►  SD card  ──►  Camera playback
    (any size)        (one cmd)        (Sony-spec)
 ```
 
@@ -42,18 +42,22 @@ Take **one** ordinary photo with your Sony body and copy it off the SD card. We 
 3. Run:
 
 ```bash
-./cardify.sh -p template.JPG mycard.jpg DSC00099.JPG    # -p portrait
+./cardify.sh -p template.JPG mycard.jpg DSC09000.JPG    # -p portrait
 # or
-./cardify.sh -l template.JPG mycard.jpg DSC00100.JPG    # -l landscape
+./cardify.sh -l template.JPG mycard.jpg DSC09001.JPG    # -l landscape
 # or
-./cardify.sh    template.JPG mycard.jpg DSC00101.JPG    # auto-detect
+./cardify.sh    template.JPG mycard.jpg DSC09002.JPG    # auto-detect
 ```
 
 The output is a Sony-spec JPEG: `1920×1280` pixels, baseline DCT, YCbCr 4:2:2, EXIF `Orientation` set so the camera auto-rotates correctly when you turn the body, full Sony Make/Model/MakerNotes copied from the template, R98 DCF marker, embedded thumbnail.
 
+#### Why `DSC09NNN` and not `DSC00099`?
+
+Sony cameras pick the next file number as `max_existing + 1`. If you place a card at `DSC00099.JPG` on a card that already has the photographer's shots up to `DSC00050`, their next shot becomes `DSC00100`, not `00051` — confusing. Using the high `9NNN` range (e.g. `DSC09000`–`DSC09029` for a 30-card pack) keeps the photographer's daily numbering in the `0NNN`–`8NNN` range untouched for years of normal shooting. The cards also pin `DateTimeOriginal` to `2024:01:01` so Date View separates them from current shoots automatically.
+
 ### Drop on SD card
 
-Format the card in the camera once, take one normal photo (creates `DCIM/100MSDCF/`), then on your computer drop your `DSC00099.JPG` into that folder. Eject cleanly. Insert in camera. Hit playback.
+Format the card in the camera once, take one normal photo (creates `DCIM/100MSDCF/`), then on your computer drop your `DSC09000.JPG` into that folder. Eject cleanly. Insert in camera. Hit playback.
 
 Detailed walkthrough: [docs/M2_HARDWARE_TEST.md](docs/M2_HARDWARE_TEST.md).
 

@@ -45,9 +45,10 @@ SD-kartica/
 └── DCIM/
     └── 100MSDCF/
         ├── DSC00001.JPG     ← tvoja stara fotka (ako postoji)
-        ├── DSC00099.JPG     ← pose kartica iz paketa
-        ├── DSC00100.JPG     ← pose kartica iz paketa
-        └── ...
+        ├── DSC09000.JPG     ← pose kartica iz paketa
+        ├── DSC09001.JPG     ← pose kartica iz paketa
+        ├── DSC09002.JPG     ← pose kartica iz paketa
+        └── ...              (kartice idu u 9000-9999 rangeu)
 ```
 
 4. **Eject SD karticu čisto** (na Macu: cmd+E ili klik na eject ikonu pored kartice u Finderu; na Windows-u: "Safely Remove Hardware"). Nemoj fizički izvući karticu prije ejecta — Sony je osjetljiv na nepotpune zapise.
@@ -100,6 +101,16 @@ Kartica je vjerojatno korumpirana na SD (greška pri kopiranju). Re-formatiraj S
 ### "Pojavljuje se ali je rotirano krivo"
 
 Javi nam — to ne bi smjelo biti moguće s validnim fajlovima. Pošalji nam screenshot i kažemo dalje.
+
+### "Moje fotke su preskočile broj — bio sam na DSC00150 i sljedeća je DSC09030"
+
+To je normalno i očekivano. Sony aparat dodjeljuje sljedeći broj kao "najviši postojeći broj na kartici + 1". Naše pose kartice koriste range `DSC09000.JPG` – `DSC09999.JPG` baš zato da budu daleko od tvog dnevnog numeriranja. Kad tvoje fotke dosegnu pose kartice (~9000 fotki, mjeseci/godine), Sony jednostavno nastavi od `DSC09030+`.
+
+Ako te smeta i želiš zadržati svoje fotke u nižim brojevima:
+
+1. Prebaci u **MENU → Setup → File/Folder Settings → File Number → Reset**.  
+   Time će svaka nova folder grupa krenuti od `DSC00001`.
+2. Ili kad popuniš trenutnu folder grupu, **MENU → Setup → File/Folder Settings → Select REC Folder → New Folder** — kreira novi 101MSDCF folder za daljnji shooting, tvoji brojevi krenu opet od 0001 a pose kartice ostanu u 100MSDCF za playback.
 
 ---
 
