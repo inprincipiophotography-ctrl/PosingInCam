@@ -2,157 +2,200 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Pose Reference Pack - Sony Edition</title>
+<title>In Principio Weddings - Pose Reference Pack - Quick Start, Sony</title>
 <style>
   @page {
     size: A4;
-    margin: 0;
-  }
-  @page :first {
     margin: 0;
   }
 
   /* --- Reset & base ----------------------------------------------------- */
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body {
-    font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-family: 'Georgia', 'Times New Roman', serif;
     color: #1a1a1a;
     background: #fdfaf5;
     -webkit-font-smoothing: antialiased;
     font-size: 11pt;
-    line-height: 1.55;
+    line-height: 1.6;
   }
   .page {
     page-break-after: always;
     page-break-inside: avoid;
     width: 210mm;
     height: 297mm;
-    padding: 22mm 18mm;
+    padding: 22mm 22mm;
     position: relative;
     background: #fdfaf5;
   }
   .page:last-child { page-break-after: auto; }
 
-  h1, h2, h3 {
-    font-family: 'Georgia', 'Times New Roman', serif;
+  /* --- Brand mark (top of every page after cover) --------------------- */
+  .brand-mark {
+    text-align: center;
+    margin-bottom: 8mm;
+  }
+  .brand-mark .name {
+    font-family: 'Georgia', serif;
+    font-size: 16pt;
     font-weight: 400;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
     color: #1a1a1a;
+    padding-bottom: 2mm;
+  }
+  .brand-mark .tagline {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 9pt;
+    letter-spacing: 0.15em;
+    color: #6a6258;
+    text-transform: uppercase;
+  }
+  .rule {
+    border: none;
+    border-top: 1px solid #1a1a1a;
+    margin: 6mm 0;
+  }
+  .rule-light {
+    border: none;
+    border-top: 1px solid #c8c0b0;
+    margin: 6mm 0;
   }
 
   /* --- Cover page ------------------------------------------------------- */
   .cover {
-    background: linear-gradient(180deg, #1a1a1a 0%, #2a2520 100%);
-    color: #f4ede0;
-    padding: 0;
+    padding: 38mm 22mm;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background: #fdfaf5;
   }
-  .cover-top {
-    padding: 30mm 18mm 0;
+  .cover-mark {
+    text-align: center;
+  }
+  .cover-mark .name {
+    font-family: 'Georgia', serif;
+    font-size: 22pt;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #1a1a1a;
+    margin-bottom: 3mm;
+  }
+  .cover-mark .tagline {
+    font-style: italic;
+    font-size: 10pt;
+    letter-spacing: 0.2em;
+    color: #6a6258;
+    text-transform: uppercase;
+  }
+  .cover-title-block {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 10mm;
   }
   .cover-eyebrow {
-    font-size: 9pt;
-    letter-spacing: 0.35em;
+    font-family: 'Georgia', serif;
+    font-size: 11pt;
+    letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: #c9a86a;
+    color: #c8362f;
     margin-bottom: 8mm;
   }
   .cover h1 {
-    font-size: 58pt;
-    color: #f4ede0;
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    margin-bottom: 6mm;
+    font-family: 'Georgia', serif;
+    font-size: 52pt;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin-bottom: 8mm;
+    color: #1a1a1a;
   }
   .cover-sub {
     font-family: 'Georgia', serif;
     font-style: italic;
-    font-size: 17pt;
-    color: #c9a86a;
-    margin-bottom: 4mm;
+    font-size: 16pt;
+    color: #6a6258;
   }
-  .cover-tag {
-    font-size: 10pt;
-    color: #a89880;
-    letter-spacing: 0.1em;
-  }
-  .cover-bottom {
-    padding: 0 18mm 22mm;
-    border-top: 1px solid #3a342c;
-    padding-top: 8mm;
-  }
-  .cover-meta {
-    display: flex;
-    justify-content: space-between;
+  .cover-footer {
+    text-align: center;
+    border-top: 1px solid #1a1a1a;
+    padding-top: 6mm;
+    font-family: 'Georgia', serif;
     font-size: 9pt;
-    color: #8e8068;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-  }
-  .cover-illustration {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 18mm;
-  }
-  .cover-illustration svg {
-    width: 100%;
-    max-width: 110mm;
-    opacity: 0.7;
+    color: #6a6258;
   }
 
-  /* --- Standard page ---------------------------------------------------- */
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    border-bottom: 1px solid #d4c8b0;
-    padding-bottom: 5mm;
-    margin-bottom: 10mm;
-  }
-  .page-section {
-    font-size: 9pt;
+  /* --- Standard page section headings ----------------------------------- */
+  .section-head {
+    font-family: 'Georgia', serif;
+    font-size: 11pt;
+    font-weight: 400;
     letter-spacing: 0.3em;
     text-transform: uppercase;
-    color: #8e6f3a;
+    color: #1a1a1a;
+    margin: 8mm 0 4mm;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 3mm;
   }
-  .page-number {
-    font-size: 9pt;
-    color: #8e8068;
+  .section-head .accent {
+    color: #c8362f;
+    margin-right: 2mm;
+  }
+  h2 {
     font-family: 'Georgia', serif;
-    font-style: italic;
-  }
-  .page h2 {
-    font-size: 32pt;
-    line-height: 1.05;
+    font-size: 26pt;
+    font-weight: 400;
+    line-height: 1.1;
+    color: #1a1a1a;
     margin-bottom: 6mm;
-    letter-spacing: -0.02em;
-  }
-  .page-lead {
-    font-size: 13pt;
-    line-height: 1.45;
-    color: #4a4438;
-    margin-bottom: 10mm;
-    font-family: 'Georgia', serif;
-    font-style: italic;
-    max-width: 150mm;
+    letter-spacing: -0.01em;
   }
 
-  /* --- Generic content -------------------------------------------------- */
+  /* --- Body content ----------------------------------------------------- */
   p {
-    margin-bottom: 4mm;
-    color: #2a2520;
+    margin-bottom: 3.5mm;
+    color: #1a1a1a;
   }
-  ul {
-    margin-left: 6mm;
-    margin-bottom: 4mm;
+  ol, ul {
+    margin: 0 0 4mm 7mm;
   }
-  li {
+  ol > li, ul > li {
     margin-bottom: 2mm;
-    color: #2a2520;
+    padding-left: 1mm;
+    color: #1a1a1a;
+  }
+  ol { list-style: none; counter-reset: list-counter; padding-left: 0; margin-left: 0; }
+  ol > li {
+    counter-increment: list-counter;
+    position: relative;
+    padding-left: 8mm;
+  }
+  ol > li::before {
+    content: counter(list-counter) ".";
+    position: absolute;
+    left: 0;
+    font-family: 'Georgia', serif;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+  ul { list-style: none; padding-left: 0; margin-left: 0; }
+  ul > li {
+    position: relative;
+    padding-left: 5mm;
+  }
+  ul > li::before {
+    content: "·";
+    position: absolute;
+    left: 0;
+    color: #c8362f;
+    font-weight: 600;
+    font-size: 12pt;
   }
   strong { color: inherit; font-weight: 600; }
   em { font-style: italic; color: #4a4438; }
@@ -162,166 +205,106 @@
     background: #efe6d3;
     padding: 0.5mm 1.5mm;
     border-radius: 1mm;
-    color: #5a3e1a;
+    color: #5a3326;
   }
 
-  /* --- "What's in the pack" section ------------------------------------ */
-  .pack-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10mm;
-    margin-top: 8mm;
-  }
-  .pack-item {
-    padding: 6mm 7mm;
-    background: #f4ede0;
-    border-left: 2px solid #c9a86a;
-  }
-  .pack-item-title {
-    font-family: 'Georgia', serif;
-    font-size: 12pt;
-    color: #5a3e1a;
-    margin-bottom: 2mm;
-  }
-  .pack-item-body {
+  /* --- Callout boxes ---------------------------------------------------- */
+  .note-box {
+    background: #f7eee0;
+    border-left: 2px solid #c8362f;
+    padding: 4mm 5mm;
+    margin: 5mm 0;
     font-size: 10pt;
-    color: #4a4438;
-    line-height: 1.4;
-  }
-  .compat-box {
-    margin-top: 10mm;
-    padding: 8mm;
-    background: #1a1a1a;
-    color: #f4ede0;
-  }
-  .compat-box h3 {
-    font-size: 10pt;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: #c9a86a;
-    margin-bottom: 4mm;
-    font-family: 'Helvetica Neue', sans-serif;
-    font-weight: 600;
-  }
-  .compat-models {
-    font-size: 11pt;
-    line-height: 1.7;
-  }
-  .compat-note {
-    font-size: 9pt;
-    color: #a89880;
-    margin-top: 4mm;
-    line-height: 1.5;
-  }
-
-  /* --- Step boxes ------------------------------------------------------- */
-  .step {
-    display: grid;
-    grid-template-columns: 22mm 1fr;
-    gap: 4mm;
-    margin-bottom: 9mm;
-    page-break-inside: avoid;
-  }
-  .step-num {
-    font-family: 'Georgia', serif;
-    font-size: 42pt;
-    line-height: 1;
-    color: #c9a86a;
-    font-weight: 400;
-  }
-  .step-body { padding-top: 1mm; }
-  .step-title {
-    font-family: 'Georgia', serif;
-    font-size: 16pt;
-    margin-bottom: 3mm;
-    color: #1a1a1a;
-  }
-  .step-text {
-    font-size: 10.5pt;
-    color: #2a2520;
     line-height: 1.55;
-    margin-bottom: 3mm;
   }
-  .step-text:last-child { margin-bottom: 0; }
-  .step-note {
-    font-size: 9.5pt;
-    color: #6e5c3a;
-    background: #f4ede0;
-    padding: 3mm 4mm;
-    border-left: 2px solid #c9a86a;
-    margin-top: 3mm;
-    line-height: 1.5;
-  }
-  .step-note strong { color: #5a3e1a; }
-
-  /* --- Troubleshooting -------------------------------------------------- */
-  .trouble {
-    margin-bottom: 6mm;
-    padding: 5mm 6mm;
-    background: #f4ede0;
-    border-left: 2px solid #c9a86a;
-    page-break-inside: avoid;
-  }
-  .trouble-symptom {
-    font-family: 'Georgia', serif;
-    font-style: italic;
-    font-size: 11pt;
-    color: #5a3e1a;
-    margin-bottom: 2mm;
-  }
-  .trouble-fix {
-    font-size: 10pt;
-    color: #2a2520;
-    line-height: 1.5;
-  }
-
-  /* --- Footer block ---------------------------------------------------- */
-  .footer-block {
-    margin-top: 12mm;
-    padding-top: 6mm;
-    border-top: 1px solid #d4c8b0;
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
+  .note-box .label {
+    font-weight: 600;
+    color: #c8362f;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     font-size: 9pt;
-    color: #6e5c3a;
-    letter-spacing: 0.05em;
-  }
-  .footer-block .brand {
-    font-family: 'Georgia', serif;
-    font-style: italic;
-    color: #5a3e1a;
-  }
-
-  /* --- Inline icon styling --------------------------------------------- */
-  .inline-icon {
-    display: inline-block;
-    width: 4mm;
-    height: 4mm;
-    vertical-align: -0.5mm;
     margin-right: 1mm;
   }
-
-  /* --- Spacing helpers -------------------------------------------------- */
-  .mt-sm { margin-top: 4mm; }
-  .mt-md { margin-top: 8mm; }
-  .mt-lg { margin-top: 14mm; }
-
-  /* --- Hero highlight on inside pages ---------------------------------- */
-  .highlight-card {
-    margin-top: 8mm;
-    padding: 6mm 7mm;
-    background: #1a1a1a;
-    color: #f4ede0;
-    font-size: 10.5pt;
-    line-height: 1.5;
+  .info-box {
+    background: #e8e0cf;
+    padding: 4mm 5mm;
+    margin: 5mm 0;
+    font-size: 10pt;
+    line-height: 1.55;
+    font-style: italic;
+    color: #4a4438;
   }
-  .highlight-card .lead {
+  .info-box strong { font-style: normal; color: #1a1a1a; }
+
+  /* --- Camera illustration block --------------------------------------- */
+  .camera-block {
+    margin: 8mm 0 6mm;
+    text-align: center;
+  }
+  .camera-block svg {
+    width: 75%;
+    max-width: 120mm;
+    height: auto;
+  }
+  .caption {
+    font-style: italic;
+    font-size: 9pt;
+    color: #6a6258;
+    margin-top: 3mm;
+    text-align: center;
+  }
+
+  /* --- Page footer ----------------------------------------------------- */
+  .page-footer {
+    position: absolute;
+    bottom: 12mm;
+    left: 22mm;
+    right: 22mm;
+    text-align: center;
     font-family: 'Georgia', serif;
-    font-size: 12pt;
-    color: #c9a86a;
+    font-size: 8pt;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #8a8270;
+    border-top: 1px solid #c8c0b0;
+    padding-top: 3mm;
+  }
+
+  .small-caps {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 9.5pt;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  /* --- Last page contact card ----------------------------------------- */
+  .contact-card {
+    text-align: center;
+    padding: 10mm 0;
+    border-top: 1px solid #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
+    margin: 12mm 0;
+  }
+  .contact-card .name {
+    font-family: 'Georgia', serif;
+    font-size: 18pt;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #1a1a1a;
+    margin-bottom: 3mm;
+  }
+  .contact-card .email {
+    font-style: italic;
+    font-size: 11pt;
+    color: #c8362f;
     margin-bottom: 2mm;
-    display: block;
+  }
+  .contact-card .web {
+    font-size: 9pt;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #6a6258;
   }
 </style>
 </head>
@@ -329,276 +312,275 @@
 
 <!-- ================== PAGE 1 - COVER ================== -->
 <section class="page cover">
-  <div class="cover-top">
-    <div class="cover-eyebrow">In Principio · Photography Tools</div>
-    <h1>Pose<br>Reference<br>Pack</h1>
+  <div class="cover-mark">
+    <div class="name">In Principio</div>
+    <div class="tagline">Weddings &middot; Photography Tools</div>
+  </div>
+
+  <div class="cover-title-block">
+    <div class="cover-eyebrow">Pose Reference Pack</div>
+    <h1>Quick Start</h1>
     <div class="cover-sub">Sony Edition</div>
-    <div class="cover-tag">Scroll through poses straight on your camera</div>
   </div>
 
-  <div class="cover-illustration">
-    <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
-      <rect x="60" y="60" width="280" height="130" rx="10" fill="none" stroke="#c9a86a" stroke-width="2"/>
-      <circle cx="200" cy="125" r="48" fill="none" stroke="#c9a86a" stroke-width="2"/>
-      <circle cx="200" cy="125" r="32" fill="none" stroke="#c9a86a" stroke-width="1.5"/>
-      <circle cx="200" cy="125" r="16" fill="none" stroke="#c9a86a" stroke-width="1"/>
-      <rect x="280" y="40" width="40" height="22" rx="4" fill="none" stroke="#c9a86a" stroke-width="1.5"/>
-      <rect x="170" y="44" width="60" height="14" rx="2" fill="none" stroke="#c9a86a" stroke-width="1.5"/>
-      <rect x="60" y="60" width="35" height="130" rx="6" fill="#c9a86a" opacity="0.15"/>
-      <rect x="350" y="100" width="22" height="28" rx="2" fill="none" stroke="#c9a86a" stroke-width="1.5"/>
-      <line x1="354" y1="106" x2="354" y2="110" stroke="#c9a86a" stroke-width="1"/>
-      <line x1="358" y1="106" x2="358" y2="110" stroke="#c9a86a" stroke-width="1"/>
-      <line x1="362" y1="106" x2="362" y2="110" stroke="#c9a86a" stroke-width="1"/>
-      <line x1="366" y1="106" x2="366" y2="110" stroke="#c9a86a" stroke-width="1"/>
-      <path d="M 348 115 Q 335 115 320 115" fill="none" stroke="#c9a86a" stroke-width="1.5" stroke-dasharray="2 2"/>
+  <div class="cover-footer">
+    For Sony A7 III &middot; A7 IV &middot; A7 V &nbsp; &middot; &nbsp; inprincipioweddings.com
+  </div>
+</section>
+
+<!-- ================== PAGE 2 - WHAT YOU'VE PURCHASED ================== -->
+<section class="page">
+  <div class="brand-mark">
+    <div class="name">In Principio</div>
+    <hr class="rule">
+  </div>
+
+  <div class="section-head"><span class="accent">01</span> What you've purchased</div>
+
+  <p>
+    Your Pose Reference Pack download is a ZIP file containing pose reference images prepared specifically for Sony cameras. Every image includes the visual pose, a posing prompt for your subject, framing guidance, and a short note to push the moment further.
+  </p>
+  <p>
+    The pack is designed to scroll through on your camera's LCD between shots, so you spend less time on your phone and more time present with the people in front of you.
+  </p>
+
+  <div class="camera-block">
+    <svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg">
+      <rect x="40" y="20" width="320" height="140" rx="6" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+      <rect x="60" y="40" width="280" height="100" fill="#fdfaf5" stroke="#1a1a1a" stroke-width="0.8"/>
+      <text x="200" y="62" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#1a1a1a" letter-spacing="2">POSE REFERENCE</text>
+      <line x1="80" y1="72" x2="320" y2="72" stroke="#c8362f" stroke-width="0.5"/>
+      <text x="200" y="92" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#1a1a1a">First Look</text>
+      <text x="200" y="108" text-anchor="middle" font-family="Georgia, serif" font-size="8" fill="#6a6258">Groom standing, bride approaching from behind</text>
+      <line x1="120" y1="118" x2="280" y2="118" stroke="#c8c0b0" stroke-width="0.4"/>
+      <text x="130" y="130" font-family="Georgia, serif" font-size="7" fill="#1a1a1a">PROMPT</text>
+      <text x="130" y="138" font-family="Georgia, serif" font-size="7" fill="#6a6258">"Eyes closed, breathe"</text>
+      <text x="220" y="130" font-family="Georgia, serif" font-size="7" fill="#1a1a1a">FRAMING</text>
+      <text x="220" y="138" font-family="Georgia, serif" font-size="7" fill="#6a6258">3/4 vertical, low</text>
+      <rect x="60" y="35" width="280" height="6" fill="#1a1a1a"/>
+      <text x="65" y="40" font-family="Georgia, serif" font-size="5" fill="#fdfaf5" letter-spacing="0.5">100MSDCF</text>
+      <text x="335" y="40" text-anchor="end" font-family="Georgia, serif" font-size="5" fill="#fdfaf5">DSC00012</text>
     </svg>
+    <div class="caption">A pose reference as it appears on the camera's playback screen.</div>
   </div>
 
-  <div class="cover-bottom">
-    <div class="cover-meta">
-      <span>Quick Start Guide</span>
-      <span>Sony A7 III · A7 IV · A7 V</span>
-    </div>
+  <div class="note-box">
+    <span class="label">Before you start</span>
+    The Pose Reference Pack is configured specifically for Sony bodies (A7 III, A7 IV, A7 V verified; other modern Sony Alphas likely compatible). Files prepared for one brand do not work on a different brand. If you are not sure your specific body is supported, write before you set up; we'll confirm.
   </div>
+
+  <div class="page-footer">In Principio Weddings &middot; Pose Reference Pack &middot; Quick Start, Sony</div>
 </section>
 
-<!-- ================== PAGE 2 - WHAT YOU GOT ================== -->
+<!-- ================== PAGE 3 - PREP THE SD CARD ================== -->
 <section class="page">
-  <div class="page-header">
-    <span class="page-section">01 · Welcome</span>
-    <span class="page-number">p. 2</span>
+  <div class="brand-mark">
+    <div class="name">In Principio</div>
+    <hr class="rule">
   </div>
 
-  <h2>What you got</h2>
-  <p class="page-lead">
-    Pose references that load directly into your camera's playback. No phone-checking
-    mid-shoot. No Pinterest-scrolling pauses. Every pose, description and prompt lives
-    on the camera itself.
+  <div class="section-head"><span class="accent">02</span> Prep the SD card</div>
+
+  <p>
+    To make sure the pose references display correctly, your SD card needs the right folder structure. The fastest way to set it up:
   </p>
 
-  <div class="pack-grid">
-    <div class="pack-item">
-      <div class="pack-item-title">JPEG files</div>
-      <div class="pack-item-body">
-        Camera-spec JPEG files, 1920×1280, built with an authentic Sony JPEG fingerprint. They go straight onto an SD card alongside your real photos.
-      </div>
-    </div>
-    <div class="pack-item">
-      <div class="pack-item-title">Pose + prompt</div>
-      <div class="pack-item-body">
-        Every pose includes the visual reference, a posing prompt for your subject, and a short framing note. All legible on a 3.7" camera screen.
-      </div>
-    </div>
-    <div class="pack-item">
-      <div class="pack-item-title">If-Found image</div>
-      <div class="pack-item-body">
-        Bonus: a contact image that lives on the SD card. If you ever lose the card, whoever finds it can reach you through the EXIF metadata.
-      </div>
-    </div>
-    <div class="pack-item">
-      <div class="pack-item-title">This guide</div>
-      <div class="pack-item-body">
-        Setup takes three minutes; do it once and you can forget the process. The pack just becomes part of the camera, like your photos.
-      </div>
-    </div>
+  <ol>
+    <li>Insert an SD card into your camera (slot 1 if you shoot dual-card).</li>
+    <li>Format the card in the camera: <span class="menu-path">MENU &rarr; Setup &rarr; Media &rarr; Format</span>; confirm.</li>
+    <li>Take one photo. This creates the <code>DCIM/100MSDCF/</code> folder that Sony expects.</li>
+    <li>Power off the camera and remove the SD card.</li>
+  </ol>
+
+  <div class="note-box">
+    <span class="label">Heads up</span>
+    Formatting erases anything that's already on the SD card. If you're using a card with photos on it, back them up first; or, if the <code>DCIM/100MSDCF/</code> folder already exists from prior use, you can skip the format and the test photo entirely.
   </div>
 
-  <div class="compat-box">
-    <h3>Tested compatibility</h3>
-    <div class="compat-models">
-      Sony <strong>A7 III</strong> (firmware v4.01) &nbsp;·&nbsp;
-      Sony <strong>A7 IV</strong> &nbsp;·&nbsp;
-      Sony <strong>A7 V</strong>
-    </div>
-    <div class="compat-note">
-      Likely works on A7R V, A1, A1 II, A9 III, A7C II, A7S III (every BIONZ X / XR Sony Alpha body).
-      If you own an older or unusual model and hit a problem, drop us a line; we'll sort it quickly.
-    </div>
-  </div>
-</section>
+  <div class="section-head"><span class="accent">03</span> About the test photo</div>
 
-<!-- ================== PAGE 3 - SETUP STEPS 1-3 ================== -->
-<section class="page">
-  <div class="page-header">
-    <span class="page-section">02 · Setup</span>
-    <span class="page-number">p. 3</span>
-  </div>
-
-  <h2>Prep the SD card</h2>
-  <p class="page-lead">
-    The whole setup takes three minutes. Do it once; the pack stays put and survives
-    any future body upgrade in the Sony Alpha line.
+  <p>
+    The test photo from step 3 lands on the SD card with whatever filename your camera's File Number setting decides. On a fresh body that may be <code>DSC00001.JPG</code>; on a camera that's been shooting for a while, it might be <code>DSC02473.JPG</code> or anything in between. Either is fine.
+  </p>
+  <p>
+    The pose references are numbered starting at <code>DSC00001.JPG</code>, so most of the time your test photo and the pack don't collide and they sit happily side by side in the folder. If they do share a filename, your computer will ask whether to replace; you click Replace and the test photo gets cleanly overwritten by the matching pose.
   </p>
 
-  <div class="step">
-    <div class="step-num">01</div>
-    <div class="step-body">
-      <div class="step-title">Format the SD card in your camera</div>
-      <div class="step-text">
-        Insert the SD card in your camera (slot 1 if you shoot dual-card). Go to <span class="menu-path">MENU → Setup → Media → Format</span> and confirm.
-      </div>
-      <div class="step-text">
-        This wipes the SD card and creates the folder structure Sony expects.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">02</div>
-    <div class="step-body">
-      <div class="step-title">Take one photo</div>
-      <div class="step-text">
-        Shoot anything; a wall, a table, whatever. The camera creates the <code>DCIM/100MSDCF/</code> folder on the SD card and saves your photo there. That's the standard Sony structure we need.
-      </div>
-      <div class="step-text">
-        The filename depends on your camera's File Number setting; it might be <code>DSC00001.JPG</code> on a fresh body, or something like <code>DSC02473.JPG</code> continuing from your shutter counter. Either way works for what comes next.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">03</div>
-    <div class="step-body">
-      <div class="step-title">Insert the SD card into your computer</div>
-      <div class="step-text">
-        Pull the SD card out of the camera and plug it into a Mac or PC via a USB reader or built-in slot.
-      </div>
-      <div class="step-text">
-        The SD card mounts as a volume on your Desktop (on Mac usually as "Untitled"; on Windows as a drive letter).
-      </div>
-    </div>
-  </div>
+  <div class="page-footer">In Principio Weddings &middot; Pose Reference Pack &middot; Quick Start, Sony</div>
 </section>
 
-<!-- ================== PAGE 4 - SETUP STEPS 4-6 ================== -->
+<!-- ================== PAGE 4 - LOADING THE POSES ================== -->
 <section class="page">
-  <div class="page-header">
-    <span class="page-section">02 · Setup (continued)</span>
-    <span class="page-number">p. 4</span>
+  <div class="brand-mark">
+    <div class="name">In Principio</div>
+    <hr class="rule">
   </div>
 
-  <h2>Copy the poses and go</h2>
+  <div class="section-head"><span class="accent">04</span> Loading the poses</div>
 
-  <div class="step">
-    <div class="step-num">04</div>
-    <div class="step-body">
-      <div class="step-title">Copy the poses to the SD card</div>
-      <div class="step-text">
-        From the ZIP you received, open <code>DCIM/100MSDCF/</code> and select every <code>DSC0xxxx.JPG</code> file. Drag and drop them all into the <code>DCIM/100MSDCF/</code> folder on the SD card.
-      </div>
-      <div class="step-text">
-        Your test photo from step 02 stays in the same folder alongside the poses; most of the time its filename won't clash with any pose. If your computer does prompt to replace a file, click <strong>Replace</strong>; that's a clean overwrite, not a delete, and the SD card's file system stays safe.
-      </div>
-      <div class="step-note">
-        <strong>Important:</strong> the pose files <strong>have to go into the 100MSDCF folder</strong>, not into a custom folder. Sony cameras only show files from standard MSDCF folders in playback.
-      </div>
-    </div>
-  </div>
+  <p class="small-caps">Step 1 &nbsp; Extract the download</p>
+  <ol>
+    <li>Locate the Pose Reference Pack ZIP file you downloaded.</li>
+    <li>Mac: double-click the <code>.zip</code> file. Windows: right-click and choose "Extract All."</li>
+    <li>Open the extracted folder. Inside you'll find <code>DCIM/100MSDCF/</code> with the pose files.</li>
+  </ol>
 
-  <div class="step">
-    <div class="step-num">05</div>
-    <div class="step-body">
-      <div class="step-title">Eject the SD card</div>
-      <div class="step-text">
-        <strong>Mac:</strong> click the <code>⏏</code> icon next to the SD card in Finder, or press <code>cmd+E</code>. <strong>Windows:</strong> use "Safely Remove Hardware".
-      </div>
-      <div class="step-text">
-        Don't yank the card before ejecting; Sony is sensitive to incomplete FAT writes and the SD card can refuse to mount the next time.
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">06</div>
-    <div class="step-body">
-      <div class="step-title">Put the SD card back in the camera</div>
-      <div class="step-text">
-        Press <strong>Playback (▶)</strong>. The poses should appear immediately, ready to scroll through.
-      </div>
-      <div class="step-note">
-        <strong>If you don't see the poses right away:</strong> run <span class="menu-path">MENU → Setup → Media → Recover Image Database</span> and confirm <strong>Yes</strong>. Some Sony bodies pick up new files automatically; others want the explicit nudge. The rebuild takes 10-30 seconds; then the poses are there.
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================== PAGE 5 - DAILY USE ================== -->
-<section class="page">
-  <div class="page-header">
-    <span class="page-section">03 · On shoot day</span>
-    <span class="page-number">p. 5</span>
-  </div>
-
-  <h2>On shoot day</h2>
-  <p class="page-lead">
-    The pack lives on the SD card as regular image files. Press <strong>Playback (▶)</strong>
-    on your camera and scroll through the poses with the joystick, exactly the way you
-    review your own photos. Press <strong>DISP</strong> on any pose to reveal the prompt
-    text and framing notes.
+  <p class="small-caps">Step 2 &nbsp; Insert the SD card into your computer</p>
+  <p>
+    Use a card reader connected to your computer rather than connecting your camera directly over USB. Some camera bodies lock the file system in ways that can cause display issues with copied files.
   </p>
 
-  <div class="highlight-card">
-    <span class="lead">Good to know</span>
-    The poses are date-stamped to January 2024 by design. In Date View they appear in a
-    separate group from your current shoots, so they don't clutter your shoot timeline.
-    In Folder View they sit together in the 100MSDCF folder alongside whatever else is
-    on the SD card.
-  </div>
+  <p class="small-caps">Step 3 &nbsp; Find the right folder on the SD card</p>
+  <ol>
+    <li>Open the SD card on your computer.</li>
+    <li>Open the <code>DCIM</code> folder.</li>
+    <li>Inside, you'll see <code>100MSDCF</code> (the standard Sony folder). The pose references go inside this folder; not loose in DCIM, and not in any other folder on the SD card.</li>
+  </ol>
 
-  <div class="footer-block" style="margin-top: 14mm;">
-    <span>That's it. No app. No phone. No signal needed.</span>
-    <span class="brand">In Principio Photography</span>
-  </div>
-</section>
-
-<!-- ================== PAGE 6 - TROUBLESHOOTING + CONTACT ================== -->
-<section class="page">
-  <div class="page-header">
-    <span class="page-section">04 · Help</span>
-    <span class="page-number">p. 6</span>
-  </div>
-
-  <h2>If something doesn't work</h2>
-  <p class="page-lead">
-    Most issues fall into one of three buckets. Fix it yourself in 30 seconds, or write
-    in if that doesn't do it.
+  <p class="small-caps">Step 4 &nbsp; Copy the pose files</p>
+  <p>
+    From the extracted ZIP folder, copy every <code>DSC0xxxx.JPG</code> file into the <code>100MSDCF</code> folder on the SD card. If a file with the same name already exists (from your test photo), confirm Replace; that is a clean overwrite, not a deletion.
   </p>
 
-  <div class="trouble">
-    <div class="trouble-symptom">"I inserted the SD card and the poses aren't showing in playback."</div>
-    <div class="trouble-fix">
-      Most Sony bodies want a small nudge to register newly-added files. Go to <span class="menu-path">MENU → Setup → Media → Recover Image Database</span>; confirm <strong>Yes</strong>; wait 10-30 s. The poses appear right after the rebuild.
-    </div>
+  <div class="note-box">
+    <span class="label">Important</span>
+    Copy only the <code>.JPG</code> files. Do not copy the ZIP itself, this PDF, or any other folders. Sony cameras can be confused by unexpected files or folder structures inside DCIM.
   </div>
 
-  <div class="trouble">
-    <div class="trouble-symptom">"A pose displays, but in the wrong orientation."</div>
-    <div class="trouble-fix">
-      This shouldn't be possible with a valid output from us; please let us know. Send a photo of the camera screen (snap it with your phone) plus your camera model and firmware version (<span class="menu-path">MENU → Setup → Setup Option → Version</span>) and we'll sort it.
-    </div>
+  <p class="small-caps">Step 5 &nbsp; Eject the SD card cleanly</p>
+  <p>
+    Mac: click the <code>&#9167;</code> icon next to the SD card in Finder, or press <code>cmd+E</code>. Windows: use "Safely Remove Hardware." Don't yank the card before ejecting; Sony is sensitive to incomplete FAT writes.
+  </p>
+
+  <div class="page-footer">In Principio Weddings &middot; Pose Reference Pack &middot; Quick Start, Sony</div>
+</section>
+
+<!-- ================== PAGE 5 - USING ON CAMERA + CUSTOMIZING ================== -->
+<section class="page">
+  <div class="brand-mark">
+    <div class="name">In Principio</div>
+    <hr class="rule">
   </div>
 
-  <div class="trouble">
-    <div class="trouble-symptom">"I have an A7R V / A1 II / a newer Sony Alpha; does it work?"</div>
-    <div class="trouble-fix">
-      Most likely yes; every modern Sony Alpha body shares the JPEG validation logic our pipeline targets. We haven't physically tested every model, so if you run into trouble, the fastest first check is to run <strong>Recover Image Database</strong>. If that doesn't help, write in and we'll work it out together.
-    </div>
+  <div class="section-head"><span class="accent">05</span> Using the pack on your camera</div>
+
+  <ol>
+    <li>Insert the SD card into your camera.</li>
+    <li>Power on the camera.</li>
+    <li>Press the Playback button (<strong>&#9654;</strong>).</li>
+    <li>Scroll through the images with the joystick or scroll wheel.</li>
+    <li>The pose references appear alongside any photos already on the SD card.</li>
+    <li>Press <strong>DISP</strong> to reveal the prompt text and framing notes. Zoom in if you want to read details up close.</li>
+  </ol>
+
+  <div class="info-box">
+    <strong>In practice:</strong> many photographers leave their camera in playback between shots, scrolling through references as they direct the couple. The pose reference stays on screen until you press the shutter or exit playback.
   </div>
 
-  <div class="trouble">
-    <div class="trouble-symptom">"Some poses are missing from playback, but the file is on the SD card."</div>
-    <div class="trouble-fix">
-      The camera's image index didn't pick up every file on the last rebuild. Take the SD card out, put it back in, and run <span class="menu-path">MENU → Setup → Media → Recover Image Database</span> again. If the same poses keep failing, write in and include the file numbers so we can check.
-    </div>
+  <div class="note-box">
+    <span class="label">If the pack doesn't show</span>
+    Most Sony bodies want a small nudge to register newly-added files. Go to <span class="menu-path">MENU &rarr; Setup &rarr; Media &rarr; Recover Image Database</span>; confirm <strong>Yes</strong>; wait 10-30 seconds. The pack appears right after the rebuild.
   </div>
 
-  <div class="footer-block" style="margin-top: 14mm;">
-    <span style="font-size: 8.5pt; line-height: 1.5;">
-      Email us with a description of the problem and, if you can, a photo of the camera screen.
-      <br>We'll sort it quickly.
-    </span>
-    <span class="brand" style="font-size: 11pt;">In Principio Photography<br><span style="font-size: 9pt; color: #8e6f3a; font-style: normal;">inprincipiophotography@gmail.com</span></span>
+  <div class="section-head"><span class="accent">06</span> Customizing your pack</div>
+
+  <p>
+    The pack works best when you carry only the references you'll actually use. For a wedding day, you might pull 30-40 across getting-ready, ceremony, and portraits. For a portrait session, 15-20 from the relevant subset.
+  </p>
+  <ol>
+    <li>On your computer, browse the extracted ZIP folder.</li>
+    <li>Identify the pose references relevant to your upcoming session.</li>
+    <li>Copy only those <code>.JPG</code> files into the SD card's <code>100MSDCF</code> folder.</li>
+    <li>For the next session, swap them out: copy in new ones, leave the rest on your computer.</li>
+  </ol>
+
+  <div class="info-box">
+    <strong>Tip:</strong> keep the master ZIP unzipped on your computer. Treat the SD card as a working space that gets reorganized per session.
   </div>
+
+  <div class="page-footer">In Principio Weddings &middot; Pose Reference Pack &middot; Quick Start, Sony</div>
+</section>
+
+<!-- ================== PAGE 6 - EXIF COPYRIGHT + TROUBLESHOOTING ================== -->
+<section class="page">
+  <div class="brand-mark">
+    <div class="name">In Principio</div>
+    <hr class="rule">
+  </div>
+
+  <div class="section-head"><span class="accent">07</span> Bonus: embed your contact in every photo</div>
+
+  <p>
+    Your Sony camera can automatically embed your name, copyright, and contact info into the EXIF metadata of every photo it takes. This protects your work and creates a path back to you if your gear ever gets lost. Set it once and forget it; it stays on across power cycles.
+  </p>
+
+  <p class="small-caps">How to set copyright information on Sony</p>
+  <ol>
+    <li>Press the <strong>MENU</strong> button on your camera.</li>
+    <li>Go to <span class="menu-path">Setup &rarr; Setup Option &rarr; Copyright Info</span> (exact path varies by body).</li>
+    <li>Toggle "Write Copyright Info" to <strong>ON</strong>.</li>
+    <li>Choose "Set Photographer" and enter your name.</li>
+    <li>Choose "Set Copyright" and enter your business name, phone, email, or URL.</li>
+    <li>Press MENU again to exit and save.</li>
+  </ol>
+
+  <div class="info-box">
+    Every photo you take from that point on carries your contact info in its EXIF. A finder can read it from any photo using free tools like ExifTool or any browser-based EXIF reader.
+  </div>
+
+  <div class="section-head"><span class="accent">08</span> If something doesn't work</div>
+
+  <p>If the pose references don't display, display as corrupted images, or your camera shows an error:</p>
+
+  <ol>
+    <li>Confirm you copied only the <code>.JPG</code> files; not the ZIP, this PDF, or any folders.</li>
+    <li>Confirm the JPGs are inside <code>DCIM/100MSDCF/</code>, not loose in DCIM and not in another folder.</li>
+    <li>Run <span class="menu-path">MENU &rarr; Setup &rarr; Media &rarr; Recover Image Database</span> on the camera; confirm Yes; wait for the rebuild.</li>
+    <li>If only a subset displays, take the SD card out and back in, then run Recover Image Database again. Sometimes the index needs a second pass.</li>
+    <li>If nothing on this page resolves it, format the SD card in the camera (back up any existing photos first), take a fresh test photo, and re-copy the pose files.</li>
+  </ol>
+
+  <p>If the issue persists, email us with your camera model, firmware version, and SD card brand. Your feedback helps us refine the product.</p>
+
+  <div class="page-footer">In Principio Weddings &middot; Pose Reference Pack &middot; Quick Start, Sony</div>
+</section>
+
+<!-- ================== PAGE 7 - UPDATES + CONTACT ================== -->
+<section class="page">
+  <div class="brand-mark">
+    <div class="name">In Principio</div>
+    <hr class="rule">
+  </div>
+
+  <div class="section-head"><span class="accent">09</span> A note on updates</div>
+
+  <p>
+    Pose Reference Packs receive free in-place updates. If we correct an error or improve an existing reference, you'll receive the updated file at no additional cost.
+  </p>
+  <p>
+    New packs released after your purchase are sold separately. If you suggest a pose that gets added to the library, you'll receive that new content at no charge as a thank-you.
+  </p>
+
+  <div class="section-head"><span class="accent">10</span> Help us improve this guide</div>
+
+  <p>
+    This guide is written by a working wedding photographer for working wedding photographers. We rely on real users to make it as useful as possible; if you spotted a typo, found that something didn't work as described, or know a tip that would help the next photographer, we'd genuinely like to hear from you.
+  </p>
+  <p>
+    Email feedback directly to the address below. Every message is read personally and contributes to future updates.
+  </p>
+
+  <div class="contact-card">
+    <div class="name">In Principio</div>
+    <div class="email">inprincipiophotography@gmail.com</div>
+    <div class="web">inprincipioweddings.com</div>
+  </div>
+
+  <p style="text-align: center; font-style: italic; color: #6a6258; font-size: 10pt; margin-top: 8mm;">
+    Thank you for trusting our work for your craft.
+  </p>
+
+  <div class="page-footer">In Principio Weddings &middot; Pose Reference Pack &middot; Quick Start, Sony</div>
 </section>
 
 </body>
