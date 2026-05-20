@@ -180,14 +180,16 @@ Take phone photos of: single-image view, grid view, and image info overlay. Save
 
 | Symptom | Most likely cause | Fix |
 | --- | --- | --- |
-| **Cards simply don't appear in playback at all, no error, no prompt** | Camera's image database (`AVF_INFO/`) wasn't rebuilt to include manually-copied files | **Run `Menu → Setup → Media → Recover Image Database` on the camera.** This is the #1 reason a card that works on one A7 IV doesn't show up on another. |
-| "Cannot read image" or `?` icon | Filename / folder violates DCF | Confirm folder is `1NNXXXXX` and file is `XXXXNNNN.JPG`. Re-test. |
+| **Cards simply don't appear in playback at all, no error, no prompt** | Camera's image database (`AVF_INFO/`) wasn't rebuilt to include manually-copied files | **Run `Menu → Setup → Media → Recover Image Database` on the camera.** If that doesn't help (especially on A7 III v4.01+), delete the `AVF_INFO/` folder on the SD card via terminal (`rm -rf /Volumes/<sd>/AVF_INFO/`) before inserting — this forces a clean rebuild from scratch. |
+| **"Unable to display" on older Sony body (A7 III etc.) but works on A7 IV/V from same card** | JPEG bitstream fingerprint mismatch — the card was encoded with ImageMagick/libjpeg quantization tables, which the older firmware rejects. | Use cardify v3+ (encodes via Pillow with the template body's `qtables=...optimize=False`). This is the q-table fingerprint fix — see `docs/CAMERA_TEST_RESULTS.md` 2026-05-20 session. |
+| "Cannot read image" or `?` icon | Filename / folder violates DCF | Confirm folder is `1NNXXXXX` (e.g. `100MSDCF`) and file is `XXXXNNNN.JPG`. Custom folder names like `101POSES` are silently filtered on some Sony bodies. |
 | Image appears but grid thumbnail is blank/gray | EXIF 1st-IFD thumbnail missing or malformed | `cardify.sh --validate suspect.JPG` — the Thumbnail row tells you whether the embedded thumb is present and how big. |
 | Image and thumbnail work, but won't zoom | Non-baseline JPEG | `cardify.sh --validate` reports `Encoding`; must be `Baseline DCT, Huffman coding`. |
-| "Unable to display" | Wrong dimensions or strange subsampling | `cardify.sh --validate` checks both — 1920×1280 and 4:2:2 or 4:2:0 are accepted. |
-| Camera prompts "rebuild database" every insert | Required EXIF missing | EXIF diff against a real Sony shot — see §5.1. |
+| Camera prompts "rebuild database" every insert | Required EXIF missing | EXIF diff against a real Sony shot — see §5.2. |
 | Cards display upside-down when camera is rotated | EXIF Orientation tag wrong | The script writes 6 for portrait / 1 for landscape. If your portrait shows upside-down, try 8 (manually edit the script). |
 | Cards mixed in with real photos in unwanted way | DateTimeOriginal too recent | The script pins DateTimeOriginal to `2024:01:01 12:00:00`. If your photographer's real shoot is from 2024, change the constant in step 5/7 of `cardify.sh`. |
+| Numbering jump (real shot was `DSC00150`, next is `DSC09031`) | Sony assigns the next file number as `max_existing + 1`. The pack uses `DSC09000`–`DSC09NNN` to avoid collisions with daily shooting. | Expected behavior — explain to the customer. To keep daily shots in the low range, they can switch `Menu → Setup → File/Folder Settings → File Number → Reset` or create a new REC folder. |
+| Manually-copied file works on one A7 IV but not on another of the same model | Different cameras built their `AVF_INFO/AVIN0001.BNP` index from different file sets; new files are missing from one body's index | `rm -rf /Volumes/<sd>/AVF_INFO/` on the host, eject, reinsert in the camera, accept the "Recover image database?" prompt. Forces both bodies onto the same index. |
 
 ### 5.1 First step: run validate
 
