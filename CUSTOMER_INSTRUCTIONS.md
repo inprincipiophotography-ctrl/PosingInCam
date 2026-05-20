@@ -86,6 +86,19 @@ Auto-rotacija radi: portrait kartice se uspravljaju kad držiš aparat vertikaln
 
 99% slučajeva: **nisi pokrenuo Recover Image Database** (Korak 3). Pokreni ga.
 
+Ako si pokrenuo i i dalje ne vidiš kartice (rijetko, najčešće na starijim A7 III firmwareima):
+
+1. Izvuci karticu, ubaci u Mac.
+2. Otvori Terminal i pokreni:
+   ```
+   rm -rf /Volumes/<ime-tvoje-kartice>/AVF_INFO/
+   ```
+   (Zamijeni `<ime-tvoje-kartice>` stvarnim imenom. Folder je sakriven u Finderu ali Terminal ga vidi.)
+3. Eject čisto, ubaci nazad u aparat.
+4. Aparat će sam pitati "Recover image database?" → potvrdi Yes.
+
+Ovo nuklearno briše interni indeks i forsira aparat na potpuni rebuild od nule.
+
 ### "Vidim kartice ali nakon par dana ponovo nestanu"
 
 Aparat je vjerojatno opet rebuild-ao DB nakon što si snimao na drugi shoot. Ponovi Korak 3.

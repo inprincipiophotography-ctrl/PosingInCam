@@ -24,8 +24,11 @@ Pulling out your phone mid-shoot to check a pose has three costs: trust erosion 
 ### Prerequisites (one-time)
 
 ```bash
-brew install exiftool imagemagick   # exiftool is mandatory; imagemagick is recommended
+brew install exiftool                # mandatory: EXIF/MakerNotes manipulation
+pip3 install Pillow                  # mandatory: JPEG encoding with Sony q-tables
 ```
+
+Why Pillow over ImageMagick: older Sony bodies (A7 III v4.01 and similar BIONZ X bodies) reject JPEGs encoded with standard libjpeg quantization tables. Pillow lets us reuse the camera template's exact tables, unlocking those bodies. ImageMagick is no longer used.
 
 ### Get the script
 
@@ -112,11 +115,23 @@ It returns 0 if the file is spec-compliant (so the problem is camera-side — se
 
 ## Status
 
-| | |
-| --- | --- |
-| **Sony A7 IV** | Confirmed working (portrait + landscape; auto-rotation correct) |
-| **Other Sony A7-series** | Should work — same EXIF + DCF conventions. Untested. |
-| **Canon EOS R / Nikon Z / Fujifilm / Panasonic** | Different folder/file conventions; same idea but the script needs minor edits per vendor. See [Camera Compatibility](docs/CAMERA_COMPATIBILITY.md) and the issue tracker. |
+Hardware-verified on real bodies (portrait + landscape, auto-rotation correct, full playback + zoom + grid view):
+
+| Body | Status | Note |
+| --- | --- | --- |
+| **Sony A7 III** (firmware v4.01) | ✓ Verified | Requires Pillow encoder for Sony q-table replay — see below |
+| **Sony A7 IV** | ✓ Verified | |
+| **Sony A7 V** | ✓ Verified | |
+| Other Sony Alpha (A7R V, A1, A1 II, A9 III, A7C II, A7S III, …) | Should work | Same q-table approach; needs a real-camera template + hardware test |
+| Canon EOS R / Nikon Z / Fujifilm / OM System | Should work in principle | Different DCF folder/filename conventions; needs per-vendor template + hardware test |
+
+### Why the older Sony A7 III needs special handling
+
+Sony A7 IV / A7 V playback engines accept any standards-compliant baseline JPEG, so cardify worked fine on them with the old ImageMagick-based pipeline. **Sony A7 III with firmware v4.01 (and likely other older Sony bodies)** validates a JPEG "fingerprint" — quantization tables, Huffman tables, and APP-segment structure must match what a real Sony camera produces. ImageMagick/libjpeg output fails this check.
+
+The current pipeline encodes via **Pillow with the template body's exact quantization tables** (`Image.save(..., qtables=template.quantization, optimize=False)`), producing output that's structurally indistinguishable from a real Sony JPEG. This unblocks A7 III playback, hardware-verified.
+
+This is the same wall Cue.io hit when they decided not to support A7 III — and we're past it.
 
 ---
 
