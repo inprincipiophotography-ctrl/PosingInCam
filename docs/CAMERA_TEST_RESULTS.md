@@ -48,6 +48,75 @@ pass / partial / fail — and the reason.
 
 <!-- Append new sessions below this line. Newest first. -->
 
+## Canon EOS R6 Mark II — 2026-05-20 (first Canon hardware verification)
+
+| Field | Value |
+| --- | --- |
+| Body          | Canon EOS R6 Mark II (serial 052220000100, Zlatko Zalec) |
+| Tester        | inprincipiophotography-ctrl + friend |
+| Template used | Same body's own SOOC (`0A0A3799.JPG`) — real working photographer's camera, fresh shot from this session, no Photo Mechanic touch (only `XMP:Rating=0`) |
+| Lens          | EF 50mm f/1.4 USM via EF→RF adapter (irrelevant to playback, recorded for context) |
+| Output spec   | 1920×1280, baseline, YCbCr 4:2:2, template q-tables, no JFIF, YCbCrPositioning=2 (Co-sited) |
+| Output filename | `0A0A4000.JPG` (the body's File Number prefix is `0A0A`, set by the photographer; we matched it for the test) |
+| SD workflow   | `cp -p` into `DCIM/100CANON/`, eject cleanly, insert in camera, press Playback |
+
+### Checklist (Canon R6 Mark II)
+
+- [x] Card mounts without complaints
+- [x] Single-image view renders the pose reference at full resolution
+- [x] No "Cannot display" / corrupted-image error
+- [x] Coexists with the photographer's existing photos in the same folder
+- [x] Make/Model in image info shows as `Canon EOS R6m2` (matches template)
+
+### Notes
+
+This is the project's first hardware-verified Canon body. The cardify v3
+multi-vendor pipeline produced the output unchanged from the Sony path
+(Pillow + template q-tables, JFIF stripped, YCbCrPositioning=2, baseline
+4:2:2, MakerNotes copied via `exiftool -tagsFromFile -all:all`). Only the
+vendor-aware validation regex differs at runtime, and the customer-facing
+DCF folder is `100CANON` instead of `100MSDCF`.
+
+Filename prefix observation: the photographer had set Canon's File Number
+to a custom 4-character prefix (`0A0A`) rather than the default `IMG_`.
+DCF accepts any 4-char prefix, so we matched it (`0A0A4000.JPG`). We did
+not test whether the default `IMG_` prefix would have been filtered by
+this body's playback engine — based on the Sony A7 III lesson (where we
+initially blamed prefix filtering and later traced the real cause to JPEG
+fingerprint validation), prefix probably doesn't matter once the JPEG
+itself passes the encoder fingerprint check.
+
+### What this confirms
+
+- The cardify v3 pipeline works end-to-end on Canon EOS bodies, not only
+  Sony Alpha. The Sony q-tables approach generalises to Canon q-tables
+  without any code change — vendor detection picks the right tables from
+  the template, encoding stays identical.
+- A real-photographer SOOC works as a Canon template. We have not yet
+  tested whether a DPReview "clean" Canon sample (R5 Mark II, the only
+  one of five DPReview Canon samples that was not Photo-Mechanic-touched)
+  works as a cross-body template — see Pending below.
+
+### Pending follow-up
+
+- Cross-body Canon test: rebuild with the DPReview R5 Mark II template
+  (`6220180230.jpg`) as input, output named `0A0A4001.JPG` to match this
+  body's prefix, place on the same SD card, and confirm whether it plays
+  back. If yes, the Sony "one template per vendor lineage" finding
+  extends to Canon and we collapse the Canon SKU to a single template.
+  If no, Canon requires per-body templates (Canon R5 / R6 / R5m2 / R6m2 /
+  R6 Mark III each sourced individually).
+- Other Canon bodies (R5, R6 originals, R5 Mark II hardware, R6 Mark III)
+  remain untested. The R6 Mark II is the entry point; the rest follow
+  the same pattern once a body is available.
+
+### Outcome
+
+**pass.** Canon EOS R6 Mark II playback works with cardify v3 output
+built from the same body's SOOC template, hardware-confirmed.
+
+---
+
 ## Sony A7 III / A7 IV / A7 V — 2026-05-20 (universal compatibility test)
 
 | Field | Value |

@@ -122,8 +122,10 @@ Hardware-verified on real bodies (portrait + landscape, auto-rotation correct, f
 | **Sony A7 III** (firmware v4.01) | ✓ Verified | A7 III SOOC |
 | **Sony A7 IV** | ✓ Verified | A7 III SOOC (same file) |
 | **Sony A7 V** | ✓ Verified | A7 III SOOC (same file) |
-| Other Sony Alpha (A7R V, A1, A1 II, A9 III, A7C II, A7S III, …) | Should work | Same template expected to apply |
-| Canon EOS R / Nikon Z / Fujifilm / OM System | Should work in principle | Needs per-vendor template + hardware test |
+| **Canon EOS R6 Mark II** | ✓ Verified | R6 Mark II SOOC (same body) |
+| Other Sony Alpha (A7R V, A1, A1 II, A9 III, A7C II, A7S III, …) | Should work | Same Sony template expected to apply |
+| Other Canon EOS R (R5, R5 Mark II, R6, R6 Mark III, …) | Likely works | Cross-template untested; per-body sourcing safest until proven otherwise |
+| Nikon Z / Fujifilm / OM System | Should work in principle | Needs per-vendor template + hardware test |
 
 ### One file, every supported Sony body
 
@@ -145,14 +147,16 @@ This is the same wall Cue.io hit when they decided not to support A7 III — and
 
 ### Sourcing strategy (extrapolated to other vendors)
 
-The universal-compatibility finding suggests this rule for adding any new vendor:
+The universal-compatibility finding on Sony suggests this rule for adding any new vendor:
 
 1. **Pick the oldest popular wedding-shooting body in that vendor's current lineup** (e.g. Canon R5 / R6 for Canon, Nikon Z6 II / Z7 II for Nikon, Fuji X-T4 / X-T5 for Fuji).
 2. **Source one real SOOC JPEG from that body** as the template.
 3. **Build and test cards on that body first** — it'll be the strictest validator.
 4. **Newer bodies in the same lineage should work without further changes**, pending hardware verification.
 
-This means realistically **three SKUs (Sony / Canon / Nikon) cover the working-photographer market** rather than the per-model proliferation we initially planned for.
+**Canon status (as of 2026-05-20):** Canon EOS R6 Mark II is verified using its own SOOC as the template; the equivalent of the Sony cross-body test ("can one Canon template cover the whole EOS R lineup?") has not yet been run. Until that test happens, treat Canon as needing one template per body. The DPReview R5 Mark II sample (the only Canon DPReview sample that's not Photo-Mechanic-touched) is the natural candidate for that cross-body test when an older Canon body becomes available.
+
+This still points toward **three SKUs (Sony / Canon / Nikon)** covering the working-photographer market in the limit, rather than the per-model proliferation we initially planned for — but the Canon side needs one more empirical step to confirm.
 
 ---
 
