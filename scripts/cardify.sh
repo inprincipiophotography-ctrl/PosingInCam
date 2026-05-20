@@ -246,11 +246,10 @@ ENCODER=""
 if python3 -c "from PIL import Image" >/dev/null 2>&1; then
   ENCODER="pillow"
 else
-  echo "error: Pillow (Python imaging) is required for spec-compliant Sony JPEG output." >&2
-  echo "       Older Sony bodies (A7 III v4.01 and similar) validate the JPEG" >&2
-  echo "       quantization tables against the originating camera's fingerprint." >&2
-  echo "       Only Pillow can re-encode using the template's q-tables verbatim;" >&2
-  echo "       ImageMagick cannot easily do this." >&2
+  echo "error: Pillow (Python imaging) is required for spec-compliant camera output." >&2
+  echo "       Older camera bodies (e.g. Sony A7 III v4.01) validate the JPEG" >&2
+  echo "       quantization tables against the originating camera's fingerprint;" >&2
+  echo "       only Pillow can re-encode using the template's q-tables verbatim." >&2
   echo "       Install: pip3 install Pillow" >&2
   exit 1
 fi
@@ -302,11 +301,14 @@ import sys
 from PIL import Image
 inp, tpl, out, pw, ph, rot = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5]), sys.argv[6]
 
-# Pull Sony's exact quantization tables out of the real-camera template.
+# Pull the camera's exact quantization tables out of the real-camera template.
+# Works for any vendor — Sony, Canon, and (untested) Nikon all embed q-tables
+# in their JPEGs, and matching them is what makes older bodies' fingerprint
+# validators accept our re-encoded output.
 template = Image.open(tpl)
 qtables = template.quantization
 if not qtables:
-    print("error: template has no quantization tables — is it a real Sony JPEG?", file=sys.stderr)
+    print("error: template has no quantization tables — is it a real camera JPEG?", file=sys.stderr)
     sys.exit(1)
 
 img = Image.open(inp).convert("RGB").resize((pw, ph), Image.LANCZOS)
