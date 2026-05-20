@@ -189,20 +189,18 @@ if ! command -v exiftool >/dev/null 2>&1; then
 fi
 
 ENCODER=""
-if command -v magick >/dev/null 2>&1; then
-  ENCODER="imagemagick"; IM_BIN="magick"
-elif command -v convert >/dev/null 2>&1; then
-  ENCODER="imagemagick"; IM_BIN="convert"
-elif python3 -c "from PIL import Image" >/dev/null 2>&1; then
+if python3 -c "from PIL import Image" >/dev/null 2>&1; then
   ENCODER="pillow"
 else
-  echo "error: no spec-compliant JPEG encoder available." >&2
-  echo "       sips alone is not sufficient (it produces 4:2:0 subsampling and" >&2
-  echo "       progressive JPEGs, both rejected by stricter Sony firmwares)." >&2
-  echo "       Install ImageMagick: brew install imagemagick" >&2
+  echo "error: Pillow (Python imaging) is required for spec-compliant Sony JPEG output." >&2
+  echo "       Older Sony bodies (A7 III v4.01 and similar) validate the JPEG" >&2
+  echo "       quantization tables against the originating camera's fingerprint." >&2
+  echo "       Only Pillow can re-encode using the template's q-tables verbatim;" >&2
+  echo "       ImageMagick cannot easily do this." >&2
+  echo "       Install: pip3 install Pillow" >&2
   exit 1
 fi
-echo "  encoder: $ENCODER"
+echo "  encoder: $ENCODER (Sony q-tables from template)"
 
 # Resolve "auto" by sniffing input aspect.
 if [ "$ORIENTATION" = "auto" ]; then
@@ -238,35 +236,30 @@ else
 fi
 echo "  orientation: $ORIENTATION (file ${OUT_W}x${OUT_H}, EXIF Orientation=$EXIF_ORIENT)"
 
-# 1. Re-encode with strict settings, optionally rotating into landscape.
-echo "  1/7 re-encoding (baseline, 4:2:2, q90)..."
-case "$ENCODER" in
-  imagemagick)
-    if [ "$ROTATE" = "ccw90" ]; then
-      "$IM_BIN" "$INPUT" \
-        -resize "${PRE_W}x${PRE_H}!" \
-        -rotate -90 \
-        -interlace none -sampling-factor 4:2:2 -quality 90 -strip \
-        "$OUTPUT"
-    else
-      "$IM_BIN" "$INPUT" \
-        -resize "${PRE_W}x${PRE_H}!" \
-        -interlace none -sampling-factor 4:2:2 -quality 90 -strip \
-        "$OUTPUT"
-    fi
-    ;;
-  pillow)
-    python3 - "$INPUT" "$OUTPUT" "$PRE_W" "$PRE_H" "$ROTATE" <<'PYEOF'
+# 1. Re-encode using the TEMPLATE's quantization tables — this is the key
+# insight for older Sony body compatibility (A7 III v4.01 validates the JPEG
+# fingerprint and rejects ImageMagick/standard libjpeg encoder output, even
+# with otherwise-identical EXIF). Pillow's qtables= argument lets us reuse
+# the template's exact DQT entries; optimize=False prevents Huffman
+# regeneration that would also fail the fingerprint check.
+echo "  1/7 re-encoding (Sony q-tables from template, baseline, 4:2:2)..."
+python3 - "$INPUT" "$TEMPLATE" "$OUTPUT" "$PRE_W" "$PRE_H" "$ROTATE" <<'PYEOF'
 import sys
 from PIL import Image
-inp, out, pw, ph, rot = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), sys.argv[5]
+inp, tpl, out, pw, ph, rot = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5]), sys.argv[6]
+
+# Pull Sony's exact quantization tables out of the real-camera template.
+template = Image.open(tpl)
+qtables = template.quantization
+if not qtables:
+    print("error: template has no quantization tables — is it a real Sony JPEG?", file=sys.stderr)
+    sys.exit(1)
+
 img = Image.open(inp).convert("RGB").resize((pw, ph), Image.LANCZOS)
 if rot == "ccw90":
     img = img.transpose(Image.ROTATE_90)  # PIL ROTATE_90 = counter-clockwise 90°
-img.save(out, "JPEG", quality=90, optimize=True, progressive=False, subsampling=1)
+img.save(out, "JPEG", qtables=qtables, subsampling=1, progressive=False, optimize=False)
 PYEOF
-    ;;
-esac
 
 if [ ! -f "$OUTPUT" ]; then
   echo "error: encoder did not create $OUTPUT" >&2
@@ -305,31 +298,36 @@ exiftool -overwrite_original \
   "$OUTPUT" >/dev/null 2>&1 || true
 
 echo "  6/7 forcing DCF marker (R98) + Orientation=$EXIF_ORIENT..."
+# YCbCrPositioning=2 (Co-sited) matches what real Sony cameras write. The
+# previous version forced =1 (Centered), which A7 IV/V tolerated but A7 III
+# v4.01 rejected as part of its JPEG fingerprint validation.
 exiftool -overwrite_original -n \
   "-InteropIndex=R98" \
   "-InteropVersion=0100" \
   "-Orientation=$EXIF_ORIENT" \
-  "-YCbCrPositioning=1" \
+  "-YCbCrPositioning=2" \
   "$OUTPUT" >/dev/null 2>&1 || true
 
-echo "  7/7 generating + embedding thumbnail..."
+echo "  7/7 generating + embedding thumbnail (Sony q-tables)..."
 THUMB=$(mktemp -t cardify-thumb.XXXXXX).jpg
 trap 'rm -f "$THUMB"' EXIT
-case "$ENCODER" in
-  imagemagick)
-    "$IM_BIN" "$OUTPUT" -resize 160x120 -quality 80 -strip "$THUMB"
-    ;;
-  pillow)
-    python3 - "$OUTPUT" "$THUMB" <<'PYEOF'
+python3 - "$OUTPUT" "$TEMPLATE" "$THUMB" <<'PYEOF'
 import sys
 from PIL import Image
-img = Image.open(sys.argv[1]).convert("RGB")
+out_path, tpl_path, thumb_path = sys.argv[1], sys.argv[2], sys.argv[3]
+template = Image.open(tpl_path)
+qtables = template.quantization
+img = Image.open(out_path).convert("RGB")
 img.thumbnail((160, 160), Image.LANCZOS)
-img.save(sys.argv[2], "JPEG", quality=80, progressive=False, subsampling=1)
+img.save(thumb_path, "JPEG", qtables=qtables, subsampling=1, progressive=False, optimize=False)
 PYEOF
-    ;;
-esac
 exiftool -overwrite_original "-ThumbnailImage<=$THUMB" "$OUTPUT" >/dev/null 2>&1
+
+# Strip JFIF/APP0 segment. Pillow (like ImageMagick) automatically adds a
+# JFIF marker to every JPEG it writes. Real Sony JPEGs have no JFIF segment
+# at all — the file starts with SOI → APP1 (EXIF) → APP2 (MPF). A7 III v4.01
+# validates this structure and rejects files with unexpected APP0/JFIF.
+exiftool -overwrite_original -JFIF:all= "$OUTPUT" >/dev/null 2>&1 || true
 
 # Defensive: strip any macOS extended attributes the encoder/exiftool might
 # have attached. Resource forks travel poorly to FAT32/exFAT SD cards.
