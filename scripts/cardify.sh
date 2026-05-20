@@ -335,6 +335,17 @@ exiftool -overwrite_original "-ThumbnailImage<=$THUMB" "$OUTPUT" >/dev/null 2>&1
 # have attached. Resource forks travel poorly to FAT32/exFAT SD cards.
 xattr -cr "$OUTPUT" 2>/dev/null || true
 
+# Sync filesystem mtime/atime to the pinned EXIF DateTimeOriginal. Some
+# older Sony firmwares (notably A7 III with v4.01) appear to validate
+# temporal consistency between filesystem timestamps and EXIF dates —
+# manually-injected files with mtime far from their declared shoot date
+# can be filtered out of playback. Reading the date back from the file
+# rather than hardcoding keeps this in sync with step 5/7 above.
+TOUCH_DATE=$(exiftool -DateTimeOriginal -s -s -s -d "%Y%m%d%H%M.%S" "$OUTPUT" 2>/dev/null)
+if [ -n "$TOUCH_DATE" ]; then
+  touch -t "$TOUCH_DATE" "$OUTPUT" 2>/dev/null || true
+fi
+
 echo ""
 echo "  post-encode validation:"
 if ! validate_card "$OUTPUT"; then
