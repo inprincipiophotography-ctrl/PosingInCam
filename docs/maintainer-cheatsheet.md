@@ -16,7 +16,7 @@ Plus na Desktopu trebaš imati:
 | Fajl | Što je | Gdje nabaviti |
 |---|---|---|
 | `cardify.sh` | sama skripta, `chmod +x` | pull s GitHuba (vidi dolje) |
-| `TEMPLATE-A7III.JPG` | Sony template (real SOOC iz A7 III) | prijatelj Ivan, ili A7 V/A7 IV iz DPReview-a |
+| `TEMPLATE-A7III.JPG` | Sony template (real SOOC iz tvog A7 III, ili A7 V/A7 IV iz DPReview-a) | tvoj A7 III SOOC (najpouzdanije), ili DPReview sample |
 | `TEMPLATE-R5M2.JPG` | Canon template (DPReview R5 Mark II clean) | DPReview sample galleries |
 | `canva-exports/` | folder s Canva poza-eksportima | tvoji exports |
 | `TEMPLATE-CANVA.jpg` | jedan single pose za quick testove | bilo koji Canva pose |

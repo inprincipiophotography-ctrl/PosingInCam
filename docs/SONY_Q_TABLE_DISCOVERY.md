@@ -12,10 +12,10 @@ After roughly seven hours of structured binary-search debugging, the difference 
 
 The setup:
 
-- A friend with a Sony A7 III v4.01 took one ordinary SOOC JPEG from his body and shared it.
-- We extracted EXIF, MakerNotes, structure — everything looked clean (Make=SONY, Model=ILCE-7M3, full MakerNotes block, no Photo Mechanic XMP residue).
+- The same photographer brought a third Sony body into the test set, an A7 III on firmware v4.01, alongside the already-verified A7 IV and A7 V.
+- A clean SOOC JPEG was pulled straight off the A7 III's SD card and used as the cardify template. EXIF/MakerNotes inspection looked clean (Make=SONY, Model=ILCE-7M3, full MakerNotes block, no Photo Mechanic XMP residue).
 - Ran `cardify.sh` exactly as we did for A7 IV/V, using this real-camera template.
-- Result on the friend's A7 III: **"Unable to display."** Same card on the A7 IV: plays back. Same card on the A7 V: plays back.
+- Result on the A7 III: **"Unable to display."** Same card on the A7 IV: plays back. Same card on the A7 V: plays back.
 
 ## What we tried (and what it cost)
 
@@ -24,14 +24,14 @@ Every step took 5–15 minutes round-trip (modify file on Mac, eject SD, insert 
 | What we changed | Hypothesis | Outcome |
 | --- | --- | --- |
 | Custom folder name `101POSES` → standard `100MSDCF` | Sony might filter non-standard folder names | Independently true, but not the cause |
-| File prefix `INP` (matching friend's Set File Name) | Sony might filter by current Set File Name | Set File Name does not affect playback visibility |
+| File prefix `INP` (matching the body's Set File Name at the time) | Sony might filter by current Set File Name | Set File Name does not affect playback visibility |
 | EXIF dates pinned to 2024 → reset to today | Sony might validate date freshness | Date not the discriminator |
 | `cp` → `cp -p` (preserve mtime/atime) | Sony might validate filesystem timestamps against EXIF | Helped but not sufficient |
 | `Menu → Recover Image DB` → manual `rm -rf AVF_INFO/` | Sony's normal rebuild might skip externally-added files | True for v4.01, but only relevant once the file itself passes validation |
 | Forced `YCbCrPositioning=1` (Centered) → leave at template's `=2` (Co-sited) | Tag override might break Sony fingerprint | Independently true (Co-sited is correct), but not the cause |
 | Added a 1616×1080 `PreviewImage` via exiftool (the MPF Large Thumbnail real Sony files carry) | A7 III might require MPF preview | Did not change the outcome |
 | Resized output 1920×1280 → 3008×2000 (A7 III's smallest native JPEG size) | Older firmware might validate against its own native sizes | Dimensions not the discriminator |
-| Used the friend's literal SOOC file as the cardify template (instead of a DPReview download) | DPReview samples are sometimes Photo Mechanic-touched | Friend's SOOC is the right template, but using it didn't fix cardify output |
+| Used the A7 III's own literal SOOC file as the cardify template (instead of a DPReview download) | DPReview samples are sometimes Photo Mechanic-touched | Real-body SOOC is the right template, but using it didn't fix cardify output |
 
 What did work, repeatedly:
 
