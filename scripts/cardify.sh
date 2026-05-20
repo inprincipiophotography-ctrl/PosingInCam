@@ -326,6 +326,10 @@ echo "  2/7 copying camera EXIF from template..."
 exiftool -overwrite_original -tagsFromFile "$TEMPLATE" -all:all "$OUTPUT" >/dev/null 2>&1 || true
 
 echo "  3/7 stripping template-specific + extra metadata..."
+# Includes Artist and Copyright: when the template is a real photographer's
+# SOOC (the cleanest source per the q-table discovery), their name carries
+# through every cardify output unless explicitly cleared. We always clear,
+# so production cards never ship with the template-photographer's credit.
 exiftool -overwrite_original \
   "-IFD1:all=" \
   "-ExifImageWidth=" \
@@ -334,6 +338,8 @@ exiftool -overwrite_original \
   "-ICC_Profile:all=" \
   "-XMP:all=" \
   "-IPTC:all=" \
+  "-Artist=" \
+  "-Copyright=" \
   "$OUTPUT" >/dev/null 2>&1 || true
 
 echo "  4/7 writing dimensions ${OUT_W}x${OUT_H} into EXIF..."
