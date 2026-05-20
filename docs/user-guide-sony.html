@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Pose Reference Cards — Sony Edition</title>
+<style>
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  @page :first {
+    margin: 0;
+  }
+
+  /* --- Reset & base ----------------------------------------------------- */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    color: #1a1a1a;
+    background: #fdfaf5;
+    -webkit-font-smoothing: antialiased;
+    font-size: 11pt;
+    line-height: 1.55;
+  }
+  .page {
+    page-break-after: always;
+    page-break-inside: avoid;
+    width: 210mm;
+    height: 297mm;
+    padding: 22mm 18mm;
+    position: relative;
+    background: #fdfaf5;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  h1, h2, h3 {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: #1a1a1a;
+  }
+
+  /* --- Cover page ------------------------------------------------------- */
+  .cover {
+    background: linear-gradient(180deg, #1a1a1a 0%, #2a2520 100%);
+    color: #f4ede0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .cover-top {
+    padding: 30mm 18mm 0;
+  }
+  .cover-eyebrow {
+    font-size: 9pt;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #c9a86a;
+    margin-bottom: 8mm;
+  }
+  .cover h1 {
+    font-size: 58pt;
+    color: #f4ede0;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 6mm;
+  }
+  .cover-sub {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 17pt;
+    color: #c9a86a;
+    margin-bottom: 4mm;
+  }
+  .cover-tag {
+    font-size: 10pt;
+    color: #a89880;
+    letter-spacing: 0.1em;
+  }
+  .cover-bottom {
+    padding: 0 18mm 22mm;
+    border-top: 1px solid #3a342c;
+    padding-top: 8mm;
+  }
+  .cover-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9pt;
+    color: #8e8068;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .cover-illustration {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 18mm;
+  }
+  .cover-illustration svg {
+    width: 100%;
+    max-width: 110mm;
+    opacity: 0.7;
+  }
+
+  /* --- Standard page ---------------------------------------------------- */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid #d4c8b0;
+    padding-bottom: 5mm;
+    margin-bottom: 10mm;
+  }
+  .page-section {
+    font-size: 9pt;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #8e6f3a;
+  }
+  .page-number {
+    font-size: 9pt;
+    color: #8e8068;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+  }
+  .page h2 {
+    font-size: 32pt;
+    line-height: 1.05;
+    margin-bottom: 6mm;
+    letter-spacing: -0.02em;
+  }
+  .page-lead {
+    font-size: 13pt;
+    line-height: 1.45;
+    color: #4a4438;
+    margin-bottom: 10mm;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    max-width: 150mm;
+  }
+
+  /* --- Generic content -------------------------------------------------- */
+  p {
+    margin-bottom: 4mm;
+    color: #2a2520;
+  }
+  ul {
+    margin-left: 6mm;
+    margin-bottom: 4mm;
+  }
+  li {
+    margin-bottom: 2mm;
+    color: #2a2520;
+  }
+  strong { color: inherit; font-weight: 600; }
+  em { font-style: italic; color: #4a4438; }
+  code, .menu-path {
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-size: 9.5pt;
+    background: #efe6d3;
+    padding: 0.5mm 1.5mm;
+    border-radius: 1mm;
+    color: #5a3e1a;
+  }
+
+  /* --- "What's in the pack" section ------------------------------------ */
+  .pack-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10mm;
+    margin-top: 8mm;
+  }
+  .pack-item {
+    padding: 6mm 7mm;
+    background: #f4ede0;
+    border-left: 2px solid #c9a86a;
+  }
+  .pack-item-title {
+    font-family: 'Georgia', serif;
+    font-size: 12pt;
+    color: #5a3e1a;
+    margin-bottom: 2mm;
+  }
+  .pack-item-body {
+    font-size: 10pt;
+    color: #4a4438;
+    line-height: 1.4;
+  }
+  .compat-box {
+    margin-top: 10mm;
+    padding: 8mm;
+    background: #1a1a1a;
+    color: #f4ede0;
+  }
+  .compat-box h3 {
+    font-size: 10pt;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #c9a86a;
+    margin-bottom: 4mm;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: 600;
+  }
+  .compat-models {
+    font-size: 11pt;
+    line-height: 1.7;
+  }
+  .compat-note {
+    font-size: 9pt;
+    color: #a89880;
+    margin-top: 4mm;
+    line-height: 1.5;
+  }
+
+  /* --- Step boxes ------------------------------------------------------- */
+  .step {
+    display: grid;
+    grid-template-columns: 22mm 1fr;
+    gap: 4mm;
+    margin-bottom: 9mm;
+    page-break-inside: avoid;
+  }
+  .step-num {
+    font-family: 'Georgia', serif;
+    font-size: 42pt;
+    line-height: 1;
+    color: #c9a86a;
+    font-weight: 400;
+  }
+  .step-body { padding-top: 1mm; }
+  .step-title {
+    font-family: 'Georgia', serif;
+    font-size: 16pt;
+    margin-bottom: 3mm;
+    color: #1a1a1a;
+  }
+  .step-text {
+    font-size: 10.5pt;
+    color: #2a2520;
+    line-height: 1.55;
+    margin-bottom: 3mm;
+  }
+  .step-text:last-child { margin-bottom: 0; }
+  .step-note {
+    font-size: 9.5pt;
+    color: #6e5c3a;
+    background: #f4ede0;
+    padding: 3mm 4mm;
+    border-left: 2px solid #c9a86a;
+    margin-top: 3mm;
+    line-height: 1.5;
+  }
+  .step-note strong { color: #5a3e1a; }
+
+  /* --- Troubleshooting -------------------------------------------------- */
+  .trouble {
+    margin-bottom: 6mm;
+    padding: 5mm 6mm;
+    background: #f4ede0;
+    border-left: 2px solid #c9a86a;
+    page-break-inside: avoid;
+  }
+  .trouble-symptom {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 11pt;
+    color: #5a3e1a;
+    margin-bottom: 2mm;
+  }
+  .trouble-fix {
+    font-size: 10pt;
+    color: #2a2520;
+    line-height: 1.5;
+  }
+
+  /* --- Footer block ---------------------------------------------------- */
+  .footer-block {
+    margin-top: 12mm;
+    padding-top: 6mm;
+    border-top: 1px solid #d4c8b0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 9pt;
+    color: #6e5c3a;
+    letter-spacing: 0.05em;
+  }
+  .footer-block .brand {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    color: #5a3e1a;
+  }
+
+  /* --- Inline icon styling --------------------------------------------- */
+  .inline-icon {
+    display: inline-block;
+    width: 4mm;
+    height: 4mm;
+    vertical-align: -0.5mm;
+    margin-right: 1mm;
+  }
+
+  /* --- Spacing helpers -------------------------------------------------- */
+  .mt-sm { margin-top: 4mm; }
+  .mt-md { margin-top: 8mm; }
+  .mt-lg { margin-top: 14mm; }
+
+  /* --- Hero highlight on inside pages ---------------------------------- */
+  .highlight-card {
+    margin-top: 8mm;
+    padding: 6mm 7mm;
+    background: #1a1a1a;
+    color: #f4ede0;
+    font-size: 10.5pt;
+    line-height: 1.5;
+  }
+  .highlight-card .lead {
+    font-family: 'Georgia', serif;
+    font-size: 12pt;
+    color: #c9a86a;
+    margin-bottom: 2mm;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<!-- ================== PAGE 1 — COVER ================== -->
+<section class="page cover">
+  <div class="cover-top">
+    <div class="cover-eyebrow">In Principio · Photography Tools</div>
+    <h1>Pose<br>Reference<br>Cards</h1>
+    <div class="cover-sub">Sony Edition</div>
+    <div class="cover-tag">Listaj poze direktno na svom aparatu</div>
+  </div>
+
+  <div class="cover-illustration">
+    <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+      <!-- Stylized camera body -->
+      <rect x="60" y="60" width="280" height="130" rx="10" fill="none" stroke="#c9a86a" stroke-width="2"/>
+      <!-- Lens -->
+      <circle cx="200" cy="125" r="48" fill="none" stroke="#c9a86a" stroke-width="2"/>
+      <circle cx="200" cy="125" r="32" fill="none" stroke="#c9a86a" stroke-width="1.5"/>
+      <circle cx="200" cy="125" r="16" fill="none" stroke="#c9a86a" stroke-width="1"/>
+      <!-- Top dial -->
+      <rect x="280" y="40" width="40" height="22" rx="4" fill="none" stroke="#c9a86a" stroke-width="1.5"/>
+      <!-- Hot shoe -->
+      <rect x="170" y="44" width="60" height="14" rx="2" fill="none" stroke="#c9a86a" stroke-width="1.5"/>
+      <!-- Side grip -->
+      <rect x="60" y="60" width="35" height="130" rx="6" fill="#c9a86a" opacity="0.15"/>
+      <!-- Card icon, top right -->
+      <rect x="350" y="100" width="22" height="28" rx="2" fill="none" stroke="#c9a86a" stroke-width="1.5"/>
+      <line x1="354" y1="106" x2="354" y2="110" stroke="#c9a86a" stroke-width="1"/>
+      <line x1="358" y1="106" x2="358" y2="110" stroke="#c9a86a" stroke-width="1"/>
+      <line x1="362" y1="106" x2="362" y2="110" stroke="#c9a86a" stroke-width="1"/>
+      <line x1="366" y1="106" x2="366" y2="110" stroke="#c9a86a" stroke-width="1"/>
+      <!-- Arrow from card to camera -->
+      <path d="M 348 115 Q 335 115 320 115" fill="none" stroke="#c9a86a" stroke-width="1.5" stroke-dasharray="2 2"/>
+    </svg>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="cover-meta">
+      <span>Quick Start Guide</span>
+      <span>Sony A7 III · A7 IV · A7 V</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================== PAGE 2 — UVOD ================== -->
+<section class="page">
+  <div class="page-header">
+    <span class="page-section">01 · Dobrodošli</span>
+    <span class="page-number">str. 2</span>
+  </div>
+
+  <h2>Što si dobio</h2>
+  <p class="page-lead">
+    Pose reference kartice koje se učitavaju direktno u playback aparata.
+    Bez vađenja telefona usred shoota. Bez pauza za scrollanje Pinteresta.
+    Sve poze, opisi i prompts su ti na samom aparatu.
+  </p>
+
+  <div class="pack-grid">
+    <div class="pack-item">
+      <div class="pack-item-title">JPEG kartice</div>
+      <div class="pack-item-body">
+        Camera-spec JPEG fajlovi, 1920×1280, izgrađeni s autentičnim Sony JPEG fingerprint-om. Idu direktno na SD karticu kao tvoje regularne fotke.
+      </div>
+    </div>
+    <div class="pack-item">
+      <div class="pack-item-title">Pose + opis</div>
+      <div class="pack-item-body">
+        Svaka kartica ima vizualnu pozu, prompt za poziranje, i kratku napomenu o framing-u. Sve čitljivo s 3.7" ekrana aparata.
+      </div>
+    </div>
+    <div class="pack-item">
+      <div class="pack-item-title">If Found kartica</div>
+      <div class="pack-item-body">
+        Bonus: jedna stealth kontakt kartica koja sjedi na SD-u. Ako ikad izgubiš karticu, finder zna kako te kontaktirati preko EXIF metapodataka.
+      </div>
+    </div>
+    <div class="pack-item">
+      <div class="pack-item-title">Ovaj guide</div>
+      <div class="pack-item-body">
+        Setup zahtijeva tri minute jednom. Nakon toga zaboraviš proces — kartice su dio aparata kao i tvoje fotke.
+      </div>
+    </div>
+  </div>
+
+  <div class="compat-box">
+    <h3>Testirana kompatibilnost</h3>
+    <div class="compat-models">
+      Sony <strong>A7 III</strong> (firmware v4.01) &nbsp;·&nbsp;
+      Sony <strong>A7 IV</strong> &nbsp;·&nbsp;
+      Sony <strong>A7 V</strong>
+    </div>
+    <div class="compat-note">
+      Vjerojatno radi i na A7R V, A1, A1 II, A9 III, A7C II, A7S III (svi BIONZ X / XR Sony Alpha bodije).
+      Ako imaš stariji ili neki rijetki model i naletiš na problem, javi se — riješimo brzo.
+    </div>
+  </div>
+</section>
+
+<!-- ================== PAGE 3 — SETUP KORACI 1-2 ================== -->
+<section class="page">
+  <div class="page-header">
+    <span class="page-section">02 · Setup</span>
+    <span class="page-number">str. 3</span>
+  </div>
+
+  <h2>Pripremi SD karticu</h2>
+  <p class="page-lead">
+    Cijeli setup traje tri minute. Napraviš jednom, kartice su tu trajno — i preživljavaju
+    bilo koju buduću promjenu aparata u Sony Alpha liniji.
+  </p>
+
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <div class="step-title">Formatiraj SD karticu u aparatu</div>
+      <div class="step-text">
+        Ubaci SD karticu u svoj aparat. Idi na <span class="menu-path">MENU → Setup → Media → Format</span> i potvrdi.
+      </div>
+      <div class="step-text">
+        Ovaj korak briše sve s kartice i kreira strukturu koju Sony očekuje. <strong>Preporučujemo dedicated SD karticu samo za pose reference</strong> — tako se ne miješa s tvojim shoot karticama.
+      </div>
+      <div class="step-note">
+        <strong>Tip:</strong> stara 16 GB ili 32 GB SD kartica je više nego dovoljna. Pose kartice ukupno zauzimaju ~25 MB.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <div class="step-title">Snimi jednu fotku</div>
+      <div class="step-text">
+        Snimi bilo što — zid, stol, što god. Aparat će automatski kreirati folder <code>DCIM/100MSDCF/</code> na kartici. To je standardna Sony struktura koju trebamo.
+      </div>
+      <div class="step-text">
+        Tvoja prva fotka ostaje na kartici kao <code>DSC00001.JPG</code> — možeš je obrisati kasnije ako želiš.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <div class="step-title">Ubaci SD karticu u računalo</div>
+      <div class="step-text">
+        Izvuci SD iz aparata i ubaci u Mac/PC preko USB čitača ili built-in slota.
+      </div>
+      <div class="step-text">
+        Kartica će se mountati kao volume na Desktopu (na Macu obično "Untitled"; na Windowsima kao slovo diska).
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== PAGE 4 — SETUP KORACI 4-6 ================== -->
+<section class="page">
+  <div class="page-header">
+    <span class="page-section">02 · Setup (nastavak)</span>
+    <span class="page-number">str. 4</span>
+  </div>
+
+  <h2>Prebaci kartice i pokreni</h2>
+
+  <div class="step">
+    <div class="step-num">04</div>
+    <div class="step-body">
+      <div class="step-title">Kopiraj pose kartice na SD</div>
+      <div class="step-text">
+        Iz ZIP-a koji si dobio, otvori folder <code>DCIM/100MSDCF/</code> i selektiraj sve <code>DSC09xxx.JPG</code> fajlove.
+      </div>
+      <div class="step-text">
+        Drag &amp; drop sve fajlove u <code>DCIM/100MSDCF/</code> folder na SD kartici. Vidjet ćeš kako se kopiraju jedan po jedan.
+      </div>
+      <div class="step-note">
+        <strong>Važno:</strong> kartice <strong>moraju ići u 100MSDCF folder</strong>, ne u custom imenovan folder. Sony aparat filtrira playback samo na standardne MSDCF foldere.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">05</div>
+    <div class="step-body">
+      <div class="step-title">Eject SD karticu</div>
+      <div class="step-text">
+        <strong>Mac:</strong> klikni <code>⏏</code> ikonu pored kartice u Finderu, ili <code>cmd+E</code>. <strong>Windows:</strong> "Safely Remove Hardware".
+      </div>
+      <div class="step-text">
+        Nemoj fizički izvlačiti karticu prije ejecta — Sony je osjetljiv na nepotpune FAT zapise.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">06</div>
+    <div class="step-body">
+      <div class="step-title">Recover Image Database</div>
+      <div class="step-text">
+        Ubaci SD natrag u aparat. Idi na <span class="menu-path">MENU → Setup → Media → Recover Image Database</span> → potvrdi <strong>Yes</strong>.
+      </div>
+      <div class="step-text">
+        Aparat 10–30 sekundi indeksira sve fajlove na kartici. Kad završi, pritisni <strong>Playback (▶)</strong> dugme. Sve pose kartice su tamo.
+      </div>
+      <div class="step-note">
+        <strong>Ovaj korak je nužan svaki put kad dodaješ/mijenjaš fajlove preko računala.</strong> Sony aparat čuva interni indeks koji se ne osvježi sam dok ručno ne pokreneš Recover.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== PAGE 5 — DAILY USE ================== -->
+<section class="page">
+  <div class="page-header">
+    <span class="page-section">03 · Korištenje</span>
+    <span class="page-number">str. 5</span>
+  </div>
+
+  <h2>Na shoot dan</h2>
+  <p class="page-lead">
+    Workflow tijekom shoota: jednostavan kao listanje vlastitih fotki.
+    Joystick za navigaciju, zoom za detalj, info dugme za prompt teksta.
+  </p>
+
+  <div class="highlight-card">
+    <span class="lead">Preporučena postavka prije shoota</span>
+    Postavi <span class="menu-path" style="background: #2a2520; color: #c9a86a;">MENU → Playback → View Mode → Folder View (Still)</span>.
+    U Folder View modu sve pose kartice su grupirane na jednom mjestu — listaj ih joystickom kao standardnu fotografsku reference.
+    U Date View modu su separirane od tvojih shoot fotki (kartice su date-stampane na siječanj 2024), što je dobro ako ne želiš mix.
+  </div>
+
+  <h3 style="font-size: 14pt; margin-top: 12mm; margin-bottom: 5mm;">Workflow tijekom shoota</h3>
+
+  <div class="step">
+    <div class="step-num">→</div>
+    <div class="step-body">
+      <div class="step-title">Prije svake nove poze</div>
+      <div class="step-text">
+        Pritisni <strong>Playback</strong>, navigiraj joystickom do željene pose kartice. Pokaži ju klijentu na ekranu aparata.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">⊕</div>
+    <div class="step-body">
+      <div class="step-title">Detalji u prompt-u</div>
+      <div class="step-text">
+        Pritisni <strong>DISP</strong> dugme da otkriješ tekst nad slikom — opis poze, napomene o framing-u, light direction.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">○</div>
+    <div class="step-body">
+      <div class="step-title">Povratak u shoot mode</div>
+      <div class="step-text">
+        Half-press shutter dugme — aparat momentalno izlazi iz playback-a i spreman si za snimanje. Bez gubljenja sekundi.
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-block" style="margin-top: 12mm;">
+    <span>Šta NE radiš: ne vadiš telefon. Ne otključavaš zaslon. Ne tražiš mreža.</span>
+    <span class="brand">In Principio Photography</span>
+  </div>
+</section>
+
+<!-- ================== PAGE 6 — TROUBLESHOOTING + KONTAKT ================== -->
+<section class="page">
+  <div class="page-header">
+    <span class="page-section">04 · Pomoć</span>
+    <span class="page-number">str. 6</span>
+  </div>
+
+  <h2>Ako nešto ne radi</h2>
+  <p class="page-lead">
+    99% problema su jedan od ova tri scenarija. Riješi sam u 30 sekundi, ili javi ako ne uspije.
+  </p>
+
+  <div class="trouble">
+    <div class="trouble-symptom">"Ubacim karticu i ne vidim pose kartice u playbacku."</div>
+    <div class="trouble-fix">
+      Nisi pokrenuo <strong>Recover Image Database</strong> (Korak 06). Sony aparat čuva interni indeks koji ignorira manualno-dodane fajlove dok ne pokreneš rebuild. Idi na <span class="menu-path">MENU → Setup → Media → Recover Image Database</span> → potvrdi <strong>Yes</strong> → pričekaj 10–30 s.
+    </div>
+  </div>
+
+  <div class="trouble">
+    <div class="trouble-symptom">"Moja sljedeća fotka je preskočila na DSC09031 umjesto DSC00151."</div>
+    <div class="trouble-fix">
+      Ovo je <strong>očekivano i normalno</strong>. Sony dodjeljuje sljedeći broj kao "najviši postojeći + 1". Pose kartice koriste range <code>DSC09xxx</code> da budu daleko od tvog dnevnog numeriranja. Kad shotaš preko 9050, Sony jednostavno nastavi od 9051. Ako želiš zadržati niže brojeve: <span class="menu-path">MENU → Setup → File/Folder Settings → File Number → Reset</span>.
+    </div>
+  </div>
+
+  <div class="trouble">
+    <div class="trouble-symptom">"Kartica se prikazuje, ali u krivoj orijentaciji."</div>
+    <div class="trouble-fix">
+      Ne bi se smjelo dogoditi s validnim cardify outputom — javi nam. Pošalji fotku ekrana aparata (snimi telefonom) plus model i firmware verziju aparata (<span class="menu-path">MENU → Setup → Setup Option → Version</span>) i rješavamo.
+    </div>
+  </div>
+
+  <div class="trouble">
+    <div class="trouble-symptom">"Imam A7R V / A1 II / drugi noviji Sony Alpha — radi li?"</div>
+    <div class="trouble-fix">
+      Vjerojatno da — svi moderni Sony Alpha bodije dijele JPEG validation logiku koju naš pipeline producira. Nismo svaki model fizički testirali, pa ako naletiš na problem, najlakša provjera: pokreni <strong>Recover Image Database</strong>. Ako ni to ne pomogne, javi se.
+    </div>
+  </div>
+
+  <div class="footer-block" style="margin-top: 14mm;">
+    <span style="font-size: 8.5pt; line-height: 1.5;">
+      Pošalji nam email s opisom problema i, ako možeš, fotkom ekrana aparata.
+      <br>Riješimo brzo.
+    </span>
+    <span class="brand" style="font-size: 11pt;">In Principio Photography<br><span style="font-size: 9pt; color: #8e6f3a; font-style: normal;">hello@inprincipio.photo</span></span>
+  </div>
+</section>
+
+</body>
+</html>
