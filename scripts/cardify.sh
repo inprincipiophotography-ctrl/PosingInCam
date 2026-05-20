@@ -254,7 +254,7 @@ else
   echo "       Install: pip3 install Pillow" >&2
   exit 1
 fi
-echo "  encoder: $ENCODER (Sony q-tables from template)"
+echo "  encoder: $ENCODER (template q-tables, vendor-native)"
 
 # Resolve "auto" by sniffing input aspect.
 if [ "$ORIENTATION" = "auto" ]; then
@@ -296,7 +296,7 @@ echo "  orientation: $ORIENTATION (file ${OUT_W}x${OUT_H}, EXIF Orientation=$EXI
 # with otherwise-identical EXIF). Pillow's qtables= argument lets us reuse
 # the template's exact DQT entries; optimize=False prevents Huffman
 # regeneration that would also fail the fingerprint check.
-echo "  1/7 re-encoding (Sony q-tables from template, baseline, 4:2:2)..."
+echo "  1/7 re-encoding (template q-tables, baseline, 4:2:2)..."
 python3 - "$INPUT" "$TEMPLATE" "$OUTPUT" "$PRE_W" "$PRE_H" "$ROTATE" <<'PYEOF'
 import sys
 from PIL import Image
@@ -320,7 +320,7 @@ if [ ! -f "$OUTPUT" ]; then
   exit 1
 fi
 
-echo "  2/7 copying Sony EXIF from template..."
+echo "  2/7 copying camera EXIF from template..."
 exiftool -overwrite_original -tagsFromFile "$TEMPLATE" -all:all "$OUTPUT" >/dev/null 2>&1 || true
 
 echo "  3/7 stripping template-specific + extra metadata..."
@@ -362,7 +362,7 @@ exiftool -overwrite_original -n \
   "-YCbCrPositioning=2" \
   "$OUTPUT" >/dev/null 2>&1 || true
 
-echo "  7/7 generating + embedding thumbnail (Sony q-tables)..."
+echo "  7/7 generating + embedding thumbnail (template q-tables)..."
 THUMB=$(mktemp -t cardify-thumb.XXXXXX).jpg
 trap 'rm -f "$THUMB"' EXIT
 python3 - "$OUTPUT" "$TEMPLATE" "$THUMB" <<'PYEOF'
