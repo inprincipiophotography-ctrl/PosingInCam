@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 #
-# scripts/cardify.sh — turn any JPEG into a Sony-camera-readable card.
+# scripts/cardify.sh — turn any JPEG into a camera-readable playback card.
 #
-# Replicates real-Sony JPEG storage convention:
+# Vendor is auto-detected from the template's EXIF Make tag.
+#   - Make=SONY  → Sony Alpha output, customer SD path DCIM/100MSDCF/DSC0NNNN.JPG
+#   - Make=Canon → Canon EOS output, customer SD path DCIM/100CANON/IMG_NNNN.JPG
+# (Nikon, Fujifilm, OM System: not yet supported; extend the case in the
+# vendor-detection block and add a regex entry in validate_card().)
+#
+# Replicates real-camera JPEG storage convention:
 #   - file pixel dimensions are ALWAYS 1920x1280 (landscape)
 #   - portrait cards: content rotated 90° CCW into the landscape canvas,
 #                     then EXIF Orientation=6 tells the camera to rotate
@@ -44,16 +50,19 @@
 #   -p, --portrait    force portrait output (Orientation=6, rotates correctly
 #                     when camera is held vertically)
 #   -a, --auto        auto-detect from input aspect ratio (default)
-#   --validate <f>    check existing cardified JPEG against Sony spec, no
-#                     re-encode. Use to diagnose "doesn't play on camera"
-#                     reports from end users.
+#   --validate <f>    check existing cardified JPEG against the supported
+#                     camera spec, no re-encode. Vendor is detected from
+#                     the file's own Make tag. Use to diagnose "doesn't play
+#                     on camera" reports from end users.
 
 set -euo pipefail
 
 # ---------------------------------------------------------------------------
-# Validation gate — verifies a JPEG meets every check needed for Sony A7 IV
-# playback. Used both as the final step of normal runs (catch silent encoder
-# failures) and standalone via --validate (diagnose end-user complaints).
+# Validation gate — verifies a JPEG meets every check needed for camera
+# playback. Vendor (Sony or Canon) is auto-detected from the Make tag of
+# the file being validated; the Model regex is picked accordingly. Used
+# both as the final step of normal runs (catch silent encoder failures)
+# and standalone via --validate (diagnose end-user complaints).
 #
 # Echoes pass/fail per check; returns 0 if all pass, 1 otherwise.
 # ---------------------------------------------------------------------------
@@ -78,18 +87,39 @@ validate_card() {
     fi
   }
 
-  check_tag Make             "SONY"                            "Make"
+  # Make + Model: vendor is auto-detected from the Make tag of the file under
+  # test. Each vendor has its own model-naming convention; the regex below
+  # gates against that. To add Nikon / Fujifilm / OM System, extend the case.
+  #   Sony Alpha:  Make=SONY,  Model=ILCE-7M3 / ILCE-7M4 / ILCE-1M2 / etc.
+  #   Canon EOS R: Make=Canon, Model=Canon EOS R5 / R5m2 / R6 / R6m2 / R6 Mark III / etc.
+  local make_val model_val expected_model_pattern vendor_label
+  make_val=$(exiftool -Make -s -s -s "$f" 2>/dev/null || echo "")
+  case "$make_val" in
+    SONY)
+      echo "  ✓ Make: $make_val"
+      expected_model_pattern='^ILCE-'
+      vendor_label='Sony Alpha (ILCE-*)'
+      ;;
+    Canon)
+      echo "  ✓ Make: $make_val"
+      expected_model_pattern='^Canon EOS '
+      vendor_label='Canon EOS (R / Rm2 / Mark III)'
+      ;;
+    *)
+      echo "  ✗ Make: got '$make_val', expected SONY or Canon" >&2
+      errs=$((errs + 1))
+      expected_model_pattern=''
+      ;;
+  esac
 
-  # Model: accept any Sony Alpha body (ILCE-*), not just A7 IV. This covers
-  # A7 III/IV/V (ILCE-7M3/M4/M5), A7R V (ILCE-7RM5), A1 / A1 II (ILCE-1/1M2),
-  # A9 III (ILCE-9M3), A7C II / A7CR, A7S III, etc. The exact model the
-  # output carries is determined by which TEMPLATE file you pass in.
-  val=$(exiftool -Model -s -s -s "$f" 2>/dev/null || echo "")
-  if [[ "$val" =~ ^ILCE- ]]; then
-    echo "  ✓ Model: $val"
-  else
-    echo "  ✗ Model: got '$val', expected ILCE-* (Sony Alpha body)" >&2
-    errs=$((errs + 1))
+  if [ -n "$expected_model_pattern" ]; then
+    model_val=$(exiftool -Model -s -s -s "$f" 2>/dev/null || echo "")
+    if [[ "$model_val" =~ $expected_model_pattern ]]; then
+      echo "  ✓ Model: $model_val"
+    else
+      echo "  ✗ Model: got '$model_val', expected $vendor_label" >&2
+      errs=$((errs + 1))
+    fi
   fi
 
   check_tag EncodingProcess  "Baseline DCT"                    "Encoding"
@@ -145,7 +175,7 @@ if [ "${1:-}" = "--validate" ]; then
   echo "validating: $2"
   if validate_card "$2"; then
     echo ""
-    echo "✓ $2 passes all Sony A7 IV playback checks."
+    echo "✓ $2 passes all camera playback checks."
     exit 0
   else
     echo ""
@@ -187,6 +217,30 @@ if ! command -v exiftool >/dev/null 2>&1; then
   echo "error: exiftool not installed. Run: brew install exiftool" >&2
   exit 1
 fi
+
+# Auto-detect vendor from the template's Make tag. The output ends up with
+# the same Make/Model/MakerNotes as the template (we copy via -tagsFromFile
+# -all:all), so the template determines the vendor of the resulting card.
+TEMPLATE_MAKE=$(exiftool -Make -s -s -s "$TEMPLATE" 2>/dev/null || echo "")
+case "$TEMPLATE_MAKE" in
+  SONY)
+    VENDOR="sony"
+    DCF_FOLDER="100MSDCF"
+    DCF_PREFIX="DSC0"
+    ;;
+  Canon)
+    VENDOR="canon"
+    DCF_FOLDER="100CANON"
+    DCF_PREFIX="IMG_"
+    ;;
+  *)
+    echo "error: unsupported template Make: '$TEMPLATE_MAKE'" >&2
+    echo "       Supported: SONY, Canon. Open an issue to request a new vendor." >&2
+    exit 1
+    ;;
+esac
+echo "  vendor: $VENDOR (template Make: $TEMPLATE_MAKE)"
+echo "  customer SD layout for this vendor: DCIM/$DCF_FOLDER/${DCF_PREFIX}NNNN.JPG"
 
 ENCODER=""
 if python3 -c "from PIL import Image" >/dev/null 2>&1; then
