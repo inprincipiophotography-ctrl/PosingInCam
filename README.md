@@ -117,21 +117,42 @@ It returns 0 if the file is spec-compliant (so the problem is camera-side — se
 
 Hardware-verified on real bodies (portrait + landscape, auto-rotation correct, full playback + zoom + grid view):
 
-| Body | Status | Note |
+| Body | Status | Template used |
 | --- | --- | --- |
-| **Sony A7 III** (firmware v4.01) | ✓ Verified | Requires Pillow encoder for Sony q-table replay — see below |
-| **Sony A7 IV** | ✓ Verified | |
-| **Sony A7 V** | ✓ Verified | |
-| Other Sony Alpha (A7R V, A1, A1 II, A9 III, A7C II, A7S III, …) | Should work | Same q-table approach; needs a real-camera template + hardware test |
-| Canon EOS R / Nikon Z / Fujifilm / OM System | Should work in principle | Different DCF folder/filename conventions; needs per-vendor template + hardware test |
+| **Sony A7 III** (firmware v4.01) | ✓ Verified | A7 III SOOC |
+| **Sony A7 IV** | ✓ Verified | A7 III SOOC (same file) |
+| **Sony A7 V** | ✓ Verified | A7 III SOOC (same file) |
+| Other Sony Alpha (A7R V, A1, A1 II, A9 III, A7C II, A7S III, …) | Should work | Same template expected to apply |
+| Canon EOS R / Nikon Z / Fujifilm / OM System | Should work in principle | Needs per-vendor template + hardware test |
+
+### One file, every supported Sony body
+
+**A single cardified JPEG, encoded with quantization tables from a Sony A7 III, plays back correctly on all three tested bodies (A7 III, A7 IV, A7 V) from one shared SD card with zero per-model adjustment.** This is the key strategic finding from hardware testing:
+
+- The **oldest supported body has the strictest JPEG validator**. A7 III v4.01 rejects standard libjpeg/ImageMagick output as "Unable to display"; it accepts only files whose JPEG structure matches a real Sony fingerprint.
+- The **newer bodies (A7 IV, A7 V) are tolerant** — they accept anything the strict validator passes, and more.
+- Therefore: **a file built to satisfy the oldest body works on every newer body in the same lineage**. One template, one output, every Sony Alpha (within the BIONZ X / XR ecosystem).
+
+This collapses what was looking like a per-model template matrix (10+ Sony SKUs) into a single Sony SKU — sourced from the oldest popular wedding-shooting body in each vendor's line.
 
 ### Why the older Sony A7 III needs special handling
 
 Sony A7 IV / A7 V playback engines accept any standards-compliant baseline JPEG, so cardify worked fine on them with the old ImageMagick-based pipeline. **Sony A7 III with firmware v4.01 (and likely other older Sony bodies)** validates a JPEG "fingerprint" — quantization tables, Huffman tables, and APP-segment structure must match what a real Sony camera produces. ImageMagick/libjpeg output fails this check.
 
-The current pipeline encodes via **Pillow with the template body's exact quantization tables** (`Image.save(..., qtables=template.quantization, optimize=False)`), producing output that's structurally indistinguishable from a real Sony JPEG. This unblocks A7 III playback, hardware-verified.
+The current pipeline encodes via **Pillow with the template body's exact quantization tables** (`Image.save(..., qtables=template.quantization, optimize=False)`), producing output that's structurally indistinguishable from a real Sony JPEG. This unblocks A7 III playback, hardware-verified — and as the universal-compatibility finding above shows, the same output also satisfies every newer Sony body.
 
 This is the same wall Cue.io hit when they decided not to support A7 III — and we're past it.
+
+### Sourcing strategy (extrapolated to other vendors)
+
+The universal-compatibility finding suggests this rule for adding any new vendor:
+
+1. **Pick the oldest popular wedding-shooting body in that vendor's current lineup** (e.g. Canon R5 / R6 for Canon, Nikon Z6 II / Z7 II for Nikon, Fuji X-T4 / X-T5 for Fuji).
+2. **Source one real SOOC JPEG from that body** as the template.
+3. **Build and test cards on that body first** — it'll be the strictest validator.
+4. **Newer bodies in the same lineage should work without further changes**, pending hardware verification.
+
+This means realistically **three SKUs (Sony / Canon / Nikon) cover the working-photographer market** rather than the per-model proliferation we initially planned for.
 
 ---
 
