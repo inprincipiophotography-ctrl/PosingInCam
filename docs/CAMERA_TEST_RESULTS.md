@@ -48,6 +48,38 @@ pass / partial / fail — and the reason.
 
 <!-- Append new sessions below this line. Newest first. -->
 
+## Canon EOS R6 Mark III — 2026-05-21 (Canon cross-body verification, maintainer-reported)
+
+| Field | Value |
+| --- | --- |
+| Body          | Canon EOS R6 Mark III (friend-owned; serial / firmware not recorded) |
+| Tester        | inprincipiophotography-ctrl + friend |
+| Template used | Maintainer's recollection: cardified output from **Zlatkov R6 Mark II SOOC template** (file `0A0A4000.JPG` from the previous day's R6 Mark II session), sent over to the R6 Mark III owner via messenger and dropped onto their SD card. |
+| Output spec   | Inherits from the R6 Mark II cardify run on 2026-05-20: 1920×1280, baseline, YCbCr 4:2:2, template (R6m2) q-tables, no JFIF, YCbCrPositioning=2 (Co-sited) |
+| Hardware result | Played back correctly on the R6 Mark III body; no "cannot display" error reported. |
+
+### What this confirms (with one asterisk)
+
+If the maintainer's recollection of the file is correct, this is the same finding pattern as Sony: **the template from the older body in the line plays back correctly on the newer body**. A single Canon template — specifically the Zlatkov R6 Mark II SOOC — covers both R6 Mark II and R6 Mark III playback engines.
+
+### What's uncertain
+
+The maintainer didn't keep a record of which exact file went to the friend; the conclusion above is based on best recollection ("mislim da je bio Zlatkov file"). The candidate files on the maintainer's Desktop at that moment were:
+
+- `0A0A4000.JPG` — cardified with Zlatkov R6 Mark II SOOC template (this is the recollected file)
+- Possibly something newer cardified with the R6 Mark III SOOC template received the same day, though no such build command was recorded
+
+To turn this into a firmly-grounded cross-body finding, the maintainer would need to either:
+
+- Re-run the test with a freshly-built, known-template file (cardify with Zlatkov template, take note of filename, send and confirm), OR
+- Verify the file that was sent (if still accessible on Mac / in messenger thread) via `exiftool -Model` to read which body's Make/Model the template injected.
+
+### Outcome (provisional)
+
+**pass — provisionally cross-body confirmed (older template → newer body).** Treat as strong evidence for "one Canon template covers the EOS R6 line"; downgrade if a future re-test shows otherwise.
+
+---
+
 ## Canon EOS R6 Mark II — 2026-05-20 (first Canon hardware verification)
 
 | Field | Value |

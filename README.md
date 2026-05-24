@@ -123,8 +123,9 @@ Hardware-verified on real bodies (portrait + landscape, auto-rotation correct, f
 | **Sony A7 IV** | ✓ Verified | A7 III SOOC (same file) |
 | **Sony A7 V** | ✓ Verified | A7 III SOOC (same file) |
 | **Canon EOS R6 Mark II** | ✓ Verified | R6 Mark II SOOC (same body) |
+| **Canon EOS R6 Mark III** | ✓ Verified (provisional, cross-body) | R6 Mark II SOOC played back on an R6 Mark III friend's body — see `docs/CAMERA_TEST_RESULTS.md` for caveat |
 | Other Sony Alpha (A7R V, A1, A1 II, A9 III, A7C II, A7S III, …) | Should work | Same Sony template expected to apply |
-| Other Canon EOS R (R5, R5 Mark II, R6, R6 Mark III, …) | Likely works | Cross-template untested; per-body sourcing safest until proven otherwise |
+| Other Canon EOS R (R5, R5 Mark II, R6, R5 Mark III, …) | Likely works | R6 Mark II → R6 Mark III cross-body succeeded; full lineup probable, hardware-untested on the other bodies |
 | Nikon Z (Z6 III primary template, Z8 fallback) | Code-ready, untested on hardware | Clean DPReview Z6 III SOOC; needs hardware verification on real Z body |
 | Fujifilm / OM System | Not yet supported | Cardify vendor switch needs an additional case |
 
@@ -155,9 +156,9 @@ The universal-compatibility finding on Sony suggests this rule for adding any ne
 3. **Build and test cards on that body first** — it'll be the strictest validator.
 4. **Newer bodies in the same lineage should work without further changes**, pending hardware verification.
 
-**Canon status (as of 2026-05-20):** Canon EOS R6 Mark II is verified using its own SOOC as the template; the equivalent of the Sony cross-body test ("can one Canon template cover the whole EOS R lineup?") has not yet been run. Until that test happens, treat Canon as needing one template per body. The DPReview R5 Mark II sample (the only Canon DPReview sample that's not Photo-Mechanic-touched) is the natural candidate for that cross-body test when an older Canon body becomes available.
+**Canon status (as of 2026-05-21):** Canon EOS R6 Mark II hardware-verified with its own SOOC as the template (2026-05-20). The cross-body equivalent of the Sony test was attempted the next day with R6 Mark III — a friend dropped the existing R6 Mark II-templated card onto their R6 Mark III body and it played back correctly. The maintainer's recollection of which file was sent is informal (see `docs/CAMERA_TEST_RESULTS.md` for the caveat), so the cross-body finding is treated as "provisional, strong evidence" rather than fully nailed down. A future re-test with a recorded file would convert it to strict verification.
 
-This still points toward **three SKUs (Sony / Canon / Nikon)** covering the working-photographer market in the limit, rather than the per-model proliferation we initially planned for — but the Canon side needs one more empirical step to confirm.
+This continues to point toward **three SKUs (Sony / Canon / Nikon)** covering the working-photographer market — one template per vendor, sourced from a strict-validator body in each line.
 
 ---
 
