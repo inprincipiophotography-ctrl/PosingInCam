@@ -54,15 +54,24 @@ fi
 
 # Detect vendor from template Make → pick output filename pattern.
 MAKE=$(exiftool -Make -s -s -s "$TEMPLATE" 2>/dev/null || echo "")
+# Vendor decides the default output filename pattern, but the template's
+# own filename takes precedence when it looks like a real-camera DCF name
+# (8 characters total, last 4 are digits — e.g. 0A0A3799, IMG_5000,
+# DSC09014). This matters because cameras let photographers set custom
+# 3-4 char File Number prefixes (Canon "Set File Name", Sony "Set File
+# Name", Nikon "File Naming"), and a customer's body may filter playback
+# by current prefix on some firmwares. Reusing the template body's prefix
+# is the safest bet — it's the only setting we've actually hardware-tested
+# the resulting JPEGs against.
 case "$MAKE" in
   SONY)
-    PATTERN="DSC%05d.JPG"
+    DEFAULT_PATTERN="DSC%05d.JPG"
     ;;
   Canon)
-    PATTERN="IMG_%04d.JPG"
+    DEFAULT_PATTERN="IMG_%04d.JPG"
     ;;
   "NIKON CORPORATION")
-    PATTERN="DSC_%04d.JPG"
+    DEFAULT_PATTERN="DSC_%04d.JPG"
     ;;
   *)
     echo "error: unsupported template vendor: '$MAKE'" >&2
@@ -70,6 +79,23 @@ case "$MAKE" in
     exit 1
     ;;
 esac
+
+TEMPLATE_BASENAME=$(basename "$TEMPLATE")
+TEMPLATE_STEM="${TEMPLATE_BASENAME%.*}"
+if [ ${#TEMPLATE_STEM} -eq 8 ] && [[ "${TEMPLATE_STEM:4}" =~ ^[0-9]{4}$ ]]; then
+  # Template is in DCF form (e.g. 0A0A3799.JPG, IMG_5000.JPG, DSC09014.JPG).
+  # Reuse its 4-char prefix so output filenames match the body's File Name
+  # setting — that's what we've actually hardware-tested.
+  TEMPLATE_PREFIX="${TEMPLATE_STEM:0:4}"
+  PATTERN="${TEMPLATE_PREFIX}%04d.JPG"
+  PREFIX_SOURCE="template filename ($TEMPLATE_BASENAME)"
+else
+  # Template was renamed (e.g. TEMPLATE-R6M2.JPG) — fall back to vendor
+  # default. Customer's body may or may not filter by prefix; vendor
+  # default is the most-commonly-accepted choice.
+  PATTERN="$DEFAULT_PATTERN"
+  PREFIX_SOURCE="vendor default for $MAKE"
+fi
 
 # Handle ZIP source or directory source. ZIPs extract next to themselves
 # into a folder named after the ZIP stem; idempotent if the folder already
@@ -116,6 +142,7 @@ fi
 
 echo ""
 echo "Template: $TEMPLATE  (vendor: $MAKE)"
+echo "Prefix:   $(printf "$PATTERN" 1 | sed 's/.JPG$//')  ← $PREFIX_SOURCE"
 echo "Source:   $INPUT_DIR  ($TOTAL file(s))"
 echo "Output:   $OUT"
 echo ""
