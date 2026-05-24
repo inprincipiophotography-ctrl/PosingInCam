@@ -125,7 +125,8 @@ Hardware-verified on real bodies (portrait + landscape, auto-rotation correct, f
 | **Canon EOS R6 Mark II** | ✓ Verified | R6 Mark II SOOC (same body) |
 | Other Sony Alpha (A7R V, A1, A1 II, A9 III, A7C II, A7S III, …) | Should work | Same Sony template expected to apply |
 | Other Canon EOS R (R5, R5 Mark II, R6, R6 Mark III, …) | Likely works | Cross-template untested; per-body sourcing safest until proven otherwise |
-| Nikon Z / Fujifilm / OM System | Should work in principle | Needs per-vendor template + hardware test |
+| Nikon Z (Z6 III primary template, Z8 fallback) | Code-ready, untested on hardware | Clean DPReview Z6 III SOOC; needs hardware verification on real Z body |
+| Fujifilm / OM System | Not yet supported | Cardify vendor switch needs an additional case |
 
 ### One file, every supported Sony body
 

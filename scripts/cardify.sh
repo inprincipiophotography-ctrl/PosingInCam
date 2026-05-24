@@ -3,9 +3,11 @@
 # scripts/cardify.sh — turn any JPEG into a camera-readable playback card.
 #
 # Vendor is auto-detected from the template's EXIF Make tag.
-#   - Make=SONY  → Sony Alpha output, customer SD path DCIM/100MSDCF/DSC0NNNN.JPG
-#   - Make=Canon → Canon EOS output, customer SD path DCIM/100CANON/IMG_NNNN.JPG
-# (Nikon, Fujifilm, OM System: not yet supported; extend the case in the
+#   - Make=SONY              → Sony Alpha output, DCIM/100MSDCF/DSC0NNNN.JPG
+#   - Make=Canon             → Canon EOS output, DCIM/100CANON/IMG_NNNN.JPG
+#   - Make=NIKON CORPORATION → Nikon Z output, DCIM/100NCZ_X/DSC_NNNN.JPG
+#                              (X varies per body — 8 for Z8, 6 for Z6/Z6 III, etc.)
+# (Fujifilm, OM System: not yet supported; extend the case in the
 # vendor-detection block and add a regex entry in validate_card().)
 #
 # Replicates real-camera JPEG storage convention:
@@ -105,8 +107,15 @@ validate_card() {
       expected_model_pattern='^Canon EOS '
       vendor_label='Canon EOS (R / Rm2 / Mark III)'
       ;;
+    "NIKON CORPORATION")
+      echo "  ✓ Make: $make_val"
+      # Nikon Z naming is non-uniform across bodies: "NIKON Z 8" (space)
+      # vs "NIKON Z6_3" (underscore). Match the common prefix.
+      expected_model_pattern='^NIKON Z'
+      vendor_label='Nikon Z (Z 8 / Z6_3 / Z9 / etc.)'
+      ;;
     *)
-      echo "  ✗ Make: got '$make_val', expected SONY or Canon" >&2
+      echo "  ✗ Make: got '$make_val', expected SONY, Canon, or NIKON CORPORATION" >&2
       errs=$((errs + 1))
       expected_model_pattern=''
       ;;
@@ -233,9 +242,19 @@ case "$TEMPLATE_MAKE" in
     DCF_FOLDER="100CANON"
     DCF_PREFIX="IMG_"
     ;;
+  "NIKON CORPORATION")
+    VENDOR="nikon"
+    # Nikon Z DCF folder is body-specific: Z8 → 100NCZ_8, Z9 → 100NCZ_9,
+    # Z6/Z6 II/Z6 III → 100NCZ_6, Z7/Z7 II → 100NCZ_7. The customer copies
+    # files into whichever folder their own body created on first format;
+    # we just note the generic shape here.
+    DCF_FOLDER="100NCZ_X"
+    DCF_PREFIX="DSC_"
+    ;;
   *)
     echo "error: unsupported template Make: '$TEMPLATE_MAKE'" >&2
-    echo "       Supported: SONY, Canon. Open an issue to request a new vendor." >&2
+    echo "       Supported: SONY, Canon, NIKON CORPORATION." >&2
+    echo "       Open an issue to request a new vendor." >&2
     exit 1
     ;;
 esac

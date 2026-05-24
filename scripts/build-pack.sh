@@ -61,9 +61,12 @@ case "$MAKE" in
   Canon)
     PATTERN="IMG_%04d.JPG"
     ;;
+  "NIKON CORPORATION")
+    PATTERN="DSC_%04d.JPG"
+    ;;
   *)
     echo "error: unsupported template vendor: '$MAKE'" >&2
-    echo "       Supported: SONY, Canon." >&2
+    echo "       Supported: SONY, Canon, NIKON CORPORATION." >&2
     exit 1
     ;;
 esac

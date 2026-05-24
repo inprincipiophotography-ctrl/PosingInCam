@@ -135,8 +135,9 @@ diskutil eject /Volumes/<sd>
 |---|---|---|---|---|
 | Sony Alpha | `SONY` | `DSC0` | `100MSDCF` | 5 (`DSC00001`) |
 | Canon EOS | `Canon` | `IMG_` | `100CANON` | 4 (`IMG_0001`) |
+| Nikon Z | `NIKON CORPORATION` | `DSC_` | `100NCZ_X` (body-specific X) | 4 (`DSC_0001`) |
 
-Cardify auto-detektira vendor iz template Make taga; output filename ti zadaješ ručno (mora matchati prefix/digit konvenciju vendora ili Sony/Canon firmware odbija u playbacku).
+Cardify + build-pack auto-detektiraju vendor iz template Make tag-a i biraju ispravan output filename pattern. Nikon DCF folder je body-specific: Z8 → `100NCZ_8`, Z6/Z6 II/Z6 III → `100NCZ_6`, Z7/Z7 II → `100NCZ_7`, Z9 → `100NCZ_9`. Customer kopira fajlove u onaj folder koji je njegov body sam kreirao.
 
 ---
 
@@ -144,6 +145,7 @@ Cardify auto-detektira vendor iz template Make taga; output filename ti zadaješ
 
 - **Sony A7 III/IV/V cluster**: jedan template iz najstarijeg dostupnog body-ja pokriva sve (BIONZ X/XR ekosystem). Real SOOC > DPReview ako body je A7 III firmware v4.01+.
 - **Canon EOS R cluster**: R5 Mark II je clean iz DPReview. R5/R6/R6 Mark III su Photo Mechanic-touched (možda neće raditi na strožim bodijima). Real SOOC od prijatelja je idealno.
+- **Nikon Z cluster**: Z6 III iz DPReview je clean (gold-standard). Z8 iz DPReview je Photo Mechanic-touched. Hardware verifikacija na Z6 II/III ili Z8 body-ju ostaje pending.
 - **Nikon/Fuji/OM**: još nije code-supported. Treba dodati `case` block u cardify (vidi `docs/SONY_Q_TABLE_DISCOVERY.md` § Sourcing strategy).
 
 ---
