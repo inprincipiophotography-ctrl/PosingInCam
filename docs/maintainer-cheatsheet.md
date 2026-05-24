@@ -59,37 +59,41 @@ Vendor se auto-detektira iz template-ovog Make taga (SONY → sony, Canon → ca
 
 ### Sony
 
-```bash
-TEMPLATE=~/Desktop/TEMPLATE-A7III.JPG
-INPUT_DIR=~/Desktop/canva-exports
-OUTPUT_DIR=~/Desktop/customer-pack-sony
+## Bulk (cijeli paket od 30+ poza) — `build-pack.sh`
 
-mkdir -p "$OUTPUT_DIR"
-counter=1
-for input in $(ls "$INPUT_DIR"/*.jpg | sort -V); do
-  output="$OUTPUT_DIR/$(printf "DSC%05d.JPG" "$counter")"
-  ~/Desktop/cardify.sh -a "$TEMPLATE" "$input" "$output"
-  counter=$((counter + 1))
-done
+Wrapper around cardify koji petlja, auto-detektira vendor, automatski imenuje output. Jedna komanda umjesto šest linija bash-a.
+
+```bash
+~/Desktop/build-pack.sh <template.JPG> <input.zip ili folder> [output-dir]
 ```
+
+Input može biti **ZIP fajl** (auto-extracts) ili **folder** s `.jpg` exportima. Output dir je opcionalni; ako se ne preda, defaultira na `<source-stem>-pack/` pored input-a.
+
+### Sony
+
+```bash
+~/Desktop/build-pack.sh ~/Desktop/TEMPLATE-A7III.JPG ~/Desktop/SONY-DAY.zip
+```
+
+Producira `~/Desktop/SONY-DAY-pack/DSC00001.JPG`–`DSC0NNNNN.JPG` (5-digit, Sony konvencija).
 
 ### Canon
 
 ```bash
-TEMPLATE=~/Desktop/TEMPLATE-R5M2.JPG
-INPUT_DIR=~/Desktop/canva-exports
-OUTPUT_DIR=~/Desktop/customer-pack-canon
-
-mkdir -p "$OUTPUT_DIR"
-counter=1
-for input in $(ls "$INPUT_DIR"/*.jpg | sort -V); do
-  output="$OUTPUT_DIR/$(printf "IMG_%04d.JPG" "$counter")"
-  ~/Desktop/cardify.sh -a "$TEMPLATE" "$input" "$output"
-  counter=$((counter + 1))
-done
+~/Desktop/build-pack.sh ~/Desktop/TEMPLATE-R6M2.JPG ~/Desktop/canva-canon.zip
 ```
 
-**Razlika**: Sony output `DSC00001.JPG` (5 digit), Canon output `IMG_0001.JPG` (4 digit). Cardify zna oba — samo treba pravilno output filename.
+Producira `~/Desktop/canva-canon-pack/IMG_0001.JPG`–`IMG_NNNN.JPG` (4-digit, Canon konvencija).
+
+**Vendor + filename pattern se auto-pickaju iz template Make tag-a** — ne moraš ih ručno specificirati.
+
+### Update build-pack.sh s GitHuba (kad se izmijeni)
+
+```bash
+gh api -H "Accept: application/vnd.github.raw" \
+  "/repos/inprincipiophotography-ctrl/PosingInCam/contents/scripts/build-pack.sh?ref=claude/photography-pose-app-jGwu9" \
+  > ~/Desktop/build-pack.sh && chmod +x ~/Desktop/build-pack.sh
+```
 
 ---
 
