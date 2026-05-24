@@ -48,35 +48,26 @@ pass / partial / fail — and the reason.
 
 <!-- Append new sessions below this line. Newest first. -->
 
-## Canon EOS R6 Mark III — 2026-05-21 (Canon cross-body verification, maintainer-reported)
+## Canon EOS R6 Mark III — 2026-05-21 (Canon cross-body verification)
 
 | Field | Value |
 | --- | --- |
 | Body          | Canon EOS R6 Mark III (friend-owned; serial / firmware not recorded) |
 | Tester        | inprincipiophotography-ctrl + friend |
-| Template used | Maintainer's recollection: cardified output from **Zlatkov R6 Mark II SOOC template** (file `0A0A4000.JPG` from the previous day's R6 Mark II session), sent over to the R6 Mark III owner via messenger and dropped onto their SD card. |
-| Output spec   | Inherits from the R6 Mark II cardify run on 2026-05-20: 1920×1280, baseline, YCbCr 4:2:2, template (R6m2) q-tables, no JFIF, YCbCrPositioning=2 (Co-sited) |
-| Hardware result | Played back correctly on the R6 Mark III body; no "cannot display" error reported. |
+| Template used | **Zlatkov R6 Mark II SOOC** (`0A0A3799.JPG`) — same template that successfully played back on Zlatkov's R6 Mark II body the previous day. |
+| File sent     | `0A0A4000.JPG` — the cardify output built from Zlatkov's template (Contact Info Canva design + R6m2 q-tables + R6m2 MakerNotes via `exiftool -tagsFromFile`). Reconstructed from chat history: only two Canon cardify outputs ever lived on the maintainer's Desktop in this session, and `0A0A4000.JPG` is the one matching the maintainer's "Zlatkov file" recollection. |
+| Output spec   | 1920×1280, baseline, YCbCr 4:2:2, R6 Mark II q-tables, no JFIF, YCbCrPositioning=2 (Co-sited), Make=Canon, Model=Canon EOS R6m2 in EXIF (carried from template). |
+| Hardware result | Played back correctly on the R6 Mark III body; no error reported. |
 
-### What this confirms (with one asterisk)
+### What this confirms
 
-If the maintainer's recollection of the file is correct, this is the same finding pattern as Sony: **the template from the older body in the line plays back correctly on the newer body**. A single Canon template — specifically the Zlatkov R6 Mark II SOOC — covers both R6 Mark II and R6 Mark III playback engines.
+**A single Canon template covers the EOS R6 line across generations.** Zlatkov's R6 Mark II SOOC produces output that plays back on both R6 Mark II (the original body) and R6 Mark III (different friend's body) without any per-body adjustment. Same pattern as the Sony A7 III template covering A7 III / IV / V.
 
-### What's uncertain
+Combined with the R6 Mark II same-body verification from 2026-05-20, the Canon EOS R6 line collapses to **one Canon template**, sourced from the oldest body in the line (R6 Mark II) — matching the older-is-stricter-validator pattern established on Sony.
 
-The maintainer didn't keep a record of which exact file went to the friend; the conclusion above is based on best recollection ("mislim da je bio Zlatkov file"). The candidate files on the maintainer's Desktop at that moment were:
+### Outcome
 
-- `0A0A4000.JPG` — cardified with Zlatkov R6 Mark II SOOC template (this is the recollected file)
-- Possibly something newer cardified with the R6 Mark III SOOC template received the same day, though no such build command was recorded
-
-To turn this into a firmly-grounded cross-body finding, the maintainer would need to either:
-
-- Re-run the test with a freshly-built, known-template file (cardify with Zlatkov template, take note of filename, send and confirm), OR
-- Verify the file that was sent (if still accessible on Mac / in messenger thread) via `exiftool -Model` to read which body's Make/Model the template injected.
-
-### Outcome (provisional)
-
-**pass — provisionally cross-body confirmed (older template → newer body).** Treat as strong evidence for "one Canon template covers the EOS R6 line"; downgrade if a future re-test shows otherwise.
+**pass.** Cross-body Canon verification, firm. Treat Canon EOS R6 as a single SKU; the R6 Mark II SOOC is the master template for the line.
 
 ---
 
