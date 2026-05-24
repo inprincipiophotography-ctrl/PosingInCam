@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>In Principio - Pose Reference Pack - Canon</title>
+<style>
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  /* --- Base ------------------------------------------------------------- */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: #1a2620;
+    background: #fbf8f2;
+    -webkit-font-smoothing: antialiased;
+    font-size: 11pt;
+    line-height: 1.65;
+  }
+  .page {
+    page-break-after: always;
+    page-break-inside: avoid;
+    width: 210mm;
+    height: 297mm;
+    padding: 28mm 28mm;
+    position: relative;
+    background: #fbf8f2;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  /* --- Logo (cover only) ----------------------------------------------- */
+  .logo {
+    text-align: center;
+    margin: 0 auto;
+  }
+  .logo .word {
+    font-family: 'Georgia', serif;
+    font-weight: 400;
+    color: #1a2620;
+    letter-spacing: 0.15em;
+    line-height: 1;
+  }
+  .logo .word-large {
+    font-size: 42pt;
+    margin-bottom: 6mm;
+  }
+  .logo .word-small {
+    font-size: 11pt;
+    letter-spacing: 0.32em;
+    color: #1a2620;
+    text-transform: uppercase;
+  }
+
+  /* --- Cover page ------------------------------------------------------ */
+  .cover {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fbf8f2;
+  }
+  .cover-top { padding: 42mm 28mm 0; }
+  .cover-mid {
+    flex: 1;
+    padding: 0 28mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+  .cover-eyebrow {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 12pt;
+    color: #a83e2f;
+    letter-spacing: 0.05em;
+    margin-bottom: 6mm;
+  }
+  .cover h1 {
+    font-family: 'Georgia', serif;
+    font-size: 56pt;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: #1a2620;
+    margin-bottom: 8mm;
+  }
+  .cover-tag {
+    font-family: 'Georgia', serif;
+    font-size: 11pt;
+    color: #4a5048;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+  .cover-bottom {
+    padding: 0 28mm 30mm;
+    text-align: center;
+  }
+  .cover-rule {
+    width: 30mm;
+    margin: 0 auto 5mm;
+    border: none;
+    border-top: 1px solid #1a2620;
+  }
+  .cover-foot {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 9.5pt;
+    color: #4a5048;
+    letter-spacing: 0.05em;
+  }
+
+  /* --- Inner page section heading -------------------------------------- */
+  .section {
+    margin-top: 6mm;
+    margin-bottom: 8mm;
+  }
+  .section .number {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 11pt;
+    color: #a83e2f;
+    letter-spacing: 0.04em;
+    margin-bottom: 1.5mm;
+  }
+  h2 {
+    font-family: 'Georgia', serif;
+    font-size: 30pt;
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: #1a2620;
+    margin-bottom: 5mm;
+  }
+  h3 {
+    font-family: 'Georgia', serif;
+    font-size: 14pt;
+    font-weight: 400;
+    color: #1a2620;
+    margin-top: 8mm;
+    margin-bottom: 3mm;
+  }
+  .h3-rule {
+    border: none;
+    border-top: 1.5px solid #a83e2f;
+    margin: 0 0 5mm;
+    width: 14mm;
+  }
+
+  /* --- Lead / body ----------------------------------------------------- */
+  .lead {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 13.5pt;
+    line-height: 1.45;
+    color: #2a3530;
+    margin-bottom: 8mm;
+    max-width: 145mm;
+  }
+  p {
+    margin-bottom: 4mm;
+    color: #1a2620;
+  }
+
+  /* --- Numbered / bullet lists, no boxes ------------------------------- */
+  ol, ul {
+    margin: 4mm 0 6mm 0;
+    padding-left: 0;
+    list-style: none;
+  }
+  ol { counter-reset: c; }
+  ol > li {
+    counter-increment: c;
+    position: relative;
+    padding-left: 11mm;
+    margin-bottom: 4mm;
+    color: #1a2620;
+    font-size: 11.5pt;
+    line-height: 1.55;
+  }
+  ol > li::before {
+    content: counter(c);
+    position: absolute;
+    left: 0;
+    width: 7mm;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 14pt;
+    font-weight: 600;
+    color: #a83e2f;
+    line-height: 1;
+    padding-top: 0.5mm;
+  }
+  ul > li {
+    position: relative;
+    padding-left: 7mm;
+    margin-bottom: 2.5mm;
+    color: #1a2620;
+  }
+  ul > li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: #a83e2f;
+    font-weight: 600;
+  }
+
+  strong { color: inherit; font-weight: 600; }
+  em { font-style: italic; color: #2a3530; }
+  code, .menu-path {
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-size: 9.5pt;
+    color: #a83e2f;
+    background: transparent;
+    padding: 0;
+    font-weight: 500;
+  }
+
+  /* --- Aside (replaces colored boxes) --------------------------------- */
+  .aside {
+    border-left: 2px solid #a83e2f;
+    padding-left: 6mm;
+    margin: 6mm 0;
+    font-style: italic;
+    font-size: 10.5pt;
+    line-height: 1.55;
+    color: #2a3530;
+  }
+  .aside strong {
+    font-style: normal;
+    font-weight: 600;
+    color: #a83e2f;
+    display: inline;
+    margin-right: 1mm;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 9.5pt;
+  }
+
+  /* --- Hairline section separator on long pages ----------------------- */
+  hr.div {
+    border: none;
+    border-top: 1px solid #c5beae;
+    margin: 10mm 0;
+  }
+
+  /* --- Page footer ----------------------------------------------------- */
+  .page-footer {
+    position: absolute;
+    bottom: 14mm;
+    left: 28mm;
+    right: 28mm;
+    text-align: center;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 8.5pt;
+    letter-spacing: 0.04em;
+    color: #6a6258;
+  }
+  .page-footer .num {
+    color: #a83e2f;
+    font-style: normal;
+    letter-spacing: 0.2em;
+    font-weight: 600;
+  }
+
+  /* --- Closing block on final page ------------------------------------ */
+  .close {
+    text-align: center;
+    margin-top: 10mm;
+    padding-top: 6mm;
+    border-top: 1px solid #1a2620;
+  }
+  .close .ip {
+    font-family: 'Georgia', serif;
+    font-size: 12pt;
+    letter-spacing: 0.25em;
+    color: #1a2620;
+    margin-bottom: 1.5mm;
+  }
+  .close .by {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 9.5pt;
+    color: #4a5048;
+    margin-bottom: 3mm;
+  }
+  .close .email {
+    font-style: italic;
+    font-size: 10pt;
+    color: #2a3530;
+    margin-bottom: 1mm;
+  }
+  .close .web {
+    color: #6a6258;
+    letter-spacing: 0.2em;
+    font-size: 8.5pt;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<!-- ================== COVER ================== -->
+<section class="page cover">
+  <div class="cover-top">
+    <div class="logo">
+      <div class="word word-large">IN PRINCIPIO</div>
+      <div class="word word-small">Weddings by Kim &amp; Ivan</div>
+    </div>
+  </div>
+
+  <div class="cover-mid">
+    <div class="cover-eyebrow">a quick start companion to your</div>
+    <h1>Pose Reference Pack</h1>
+    <div class="cover-tag">Canon Edition</div>
+  </div>
+
+  <div class="cover-bottom">
+    <hr class="cover-rule">
+    <div class="cover-foot">For Canon EOS R6 Mark II and R6 Mark III &nbsp;·&nbsp; inprincipioweddings.com</div>
+  </div>
+</section>
+
+<!-- ================== PAGE 2 - WELCOME ================== -->
+<section class="page">
+  <div class="section">
+    <div class="number">i.</div>
+    <h2>Welcome</h2>
+  </div>
+
+  <p class="lead">
+    Thank you for choosing this pack. What follows is everything you need to
+    move it from a file on your computer to a working part of your camera; it
+    should take about three minutes the first time you do it.
+  </p>
+
+  <p>
+    The pack you've downloaded is a small set of JPEG image files prepared specifically for Canon EOS R bodies. Each image carries a posing reference, a short prompt to use with the couple, and a framing note. The files were built and tested on real cameras (R6 Mark II and R6 Mark III) so that, once they are on a memory card, your camera treats them as ordinary photos and lets you scroll through them on the back screen the same way you would your own work.
+  </p>
+
+  <p>
+    No app. No phone. No signal. Just the camera you're already holding.
+  </p>
+
+  <hr class="div">
+
+  <h3>A note before you begin</h3>
+  <hr class="h3-rule">
+
+  <p>
+    Each camera brand stores JPEGs in its own way, and files prepared for one brand are not portable to another. This pack is for Canon EOS R bodies only. If you mainly shoot Sony, Nikon, Fujifilm, or anything else, write to us before you set up so we can confirm whether a build for your body exists yet.
+  </p>
+
+  <p>
+    The instructions on the following pages assume the same conditions we tested under: a clean SD card, formatted in the camera, plus a moment with the card in your computer to copy files across. Nothing exotic.
+  </p>
+
+  <div class="page-footer">
+    <span class="num">II</span> &nbsp;·&nbsp; Welcome
+  </div>
+</section>
+
+<!-- ================== PAGE 3 - SET UP ================== -->
+<section class="page">
+  <div class="section">
+    <div class="number">ii.</div>
+    <h2>Set up the SD card</h2>
+  </div>
+
+  <p class="lead">
+    The pack needs to live in the folder Canon cameras expect to find photos in.
+    This is a one-time setup; afterwards, you only touch the card again to
+    swap references in or out.
+  </p>
+
+  <h3>Format the card</h3>
+  <hr class="h3-rule">
+
+  <ol>
+    <li>Insert the memory card into your camera (your primary slot if you shoot dual-card; either an SD or CFexpress card works).</li>
+    <li>Open <code>MENU → Wrench (Setup) → Format card</code> and confirm.</li>
+    <li>Take one ordinary photo; a wall, a coffee cup, anything. This is what makes the camera create the <code>DCIM/100CANON/</code> folder the pack needs.</li>
+    <li>Power the camera down and take the card out.</li>
+  </ol>
+
+  <div class="aside">
+    <strong>If the folder already exists.</strong>
+    If you're working with a card that has been used in a Canon before, the <code>DCIM/100CANON/</code> folder is probably already there. You can skip the format and the test photo entirely; just back up whatever you'd like to keep, since the next step adds files to that folder.
+  </div>
+
+  <div class="page-footer">
+    <span class="num">III</span> &nbsp;·&nbsp; Set up the SD card
+  </div>
+</section>
+
+<!-- ================== PAGE 4 - COPY FILES ================== -->
+<section class="page">
+  <div class="section">
+    <div class="number">ii. <em>continued</em></div>
+    <h2>Copy the files across</h2>
+  </div>
+
+  <p class="lead">
+    Once the card has a folder Canon recognises, the rest is a straight
+    file-copy step. A card reader does this more reliably than connecting
+    the camera over USB.
+  </p>
+
+  <ol>
+    <li>Connect the memory card to your computer with a card reader. Avoid plugging the camera itself in over USB; some bodies lock the file system in ways that can confuse what comes next.</li>
+    <li>Unzip the pack you downloaded. Inside you'll find a <code>DCIM/100CANON/</code> folder containing the JPEG files.</li>
+    <li>Open the card's <code>DCIM/100CANON/</code> folder and drop every JPEG file from the pack into it.</li>
+    <li>If the computer asks whether to replace a file, choose Replace; this happens only if your test photo and one of the pack files share a filename, and the replacement is a clean overwrite.</li>
+    <li>Eject the card cleanly. On Mac: click the eject arrow next to the card in Finder, or press <code>⌘E</code>. On Windows: use Safely Remove Hardware.</li>
+  </ol>
+
+  <div class="aside">
+    <strong>Important.</strong>
+    Copy only the JPEG files; not the ZIP itself, not this PDF, not any other folders. The camera can be confused by anything other than image files inside <code>DCIM</code>.
+  </div>
+
+  <div class="aside">
+    <strong>About the file names.</strong>
+    The pack files are named to match a common Canon File Number prefix. If your camera has its own custom prefix set (Canon menu &rarr; File numbering / Set File Name), the pack files will sit alongside your own photos with a different prefix; both will appear in playback. There's no need to change your camera's setting.
+  </div>
+
+  <div class="page-footer">
+    <span class="num">IV</span> &nbsp;·&nbsp; Copy the files across
+  </div>
+</section>
+
+<!-- ================== PAGE 4 - ON SHOOT DAY ================== -->
+<section class="page">
+  <div class="section">
+    <div class="number">iii.</div>
+    <h2>On shoot day</h2>
+  </div>
+
+
+  <p class="lead">
+    The pack lives on the memory card as ordinary photos. There is no app to open,
+    no menu to navigate to; everything works through the same playback
+    controls you already use.
+  </p>
+
+  <ol>
+    <li>Insert the card and power the camera on.</li>
+    <li>Press the Playback button (<strong>▶</strong>). The pack appears in the gallery alongside any shoot photos already on the card.</li>
+    <li>Scroll through with the multi-controller or the rear control wheel.</li>
+    <li>Press <strong>INFO</strong> on any reference to reveal the prompt text and framing notes.</li>
+    <li>To leave playback and go back to shooting, half-press the shutter.</li>
+  </ol>
+
+  <div class="aside">
+    <strong>In practice.</strong>
+    Some photographers leave the camera in playback between frames and only exit when ready to release the shutter. The reference stays on screen until the shutter is pressed, so it can stay open while you direct the couple.
+  </div>
+
+  <h3>If the pack doesn't appear</h3>
+  <hr class="h3-rule">
+
+  <p>
+    Canon EOS R bodies pick the pack up the moment the card goes in — there's no equivalent of the rebuild-database step some other brands require. If you don't see the references in playback, the cause is almost always something on the card itself: files not in <code>DCIM/100CANON/</code>, the camera looking at the wrong slot, or a JPEG that didn't copy cleanly. See the troubleshooting page for the short list.
+  </p>
+
+  <h3>Carrying only what you need</h3>
+  <hr class="h3-rule">
+
+  <p>
+    The pack works best when the card holds only the references that fit the day in front of you. For a wedding you may pull thirty or forty across getting-ready, ceremony, and portraits; for a portrait session, less. Keep the master pack unzipped on your computer and treat the SD card as a working space you re-arrange between sessions.
+  </p>
+
+  <div class="page-footer">
+    <span class="num">V</span> &nbsp;·&nbsp; On shoot day
+  </div>
+</section>
+
+<!-- ================== PAGE 5 - CARE & CONTACT ================== -->
+<section class="page">
+  <div class="section">
+    <div class="number">iv.</div>
+    <h2>Care, troubles, and how to reach us</h2>
+  </div>
+
+  <p class="lead">
+    Most issues come down to one of two things: the files weren't copied
+    into the right folder, or the camera is looking at the wrong card slot.
+    Both take less than a minute to resolve.
+  </p>
+
+  <h3>If something looks wrong on the camera</h3>
+  <hr class="h3-rule">
+
+  <p>
+    If the references don't show at all, or appear as corrupted images, walk back through this short list:
+  </p>
+
+  <ul>
+    <li>The files copied across are only <code>.JPG</code>; no ZIP, no folders, no other formats.</li>
+    <li>They are inside <code>DCIM/100CANON/</code>, and not loose in <code>DCIM</code> or in any other folder.</li>
+    <li>If you shoot dual-card, the camera is set to play back the slot the pack is on (<code>MENU → Wrench (Setup) → Record/play settings</code> or similar — exact name varies by body).</li>
+    <li>The card was ejected cleanly from the computer before going back into the camera; sudden disconnects can leave the file system half-written.</li>
+  </ul>
+
+  <p>
+    If the issue stays after all four checks, format the card in the camera again (after backing up anything you want to keep), take a fresh test photo, and re-copy the pack. A fresh format resolves the great majority of edge cases.
+  </p>
+
+  <h3>If you'd like to reach us</h3>
+  <hr class="h3-rule">
+
+  <p>
+    The contact form on <code>inprincipioweddings.com</code> reaches us directly; the pack is small enough that personal replies are still the norm. The most useful thing you can include is your camera body and firmware version (<code>MENU → Wrench (Setup) → Firmware Ver.</code>) plus a short description of what's happening. If you can, attach a photo of the camera screen taken with your phone.
+  </p>
+
+  <div class="close">
+    <div class="ip">IN PRINCIPIO</div>
+    <div class="by">Weddings by Kim &amp; Ivan</div>
+    <div class="web">inprincipioweddings.com</div>
+  </div>
+</section>
+
+</body>
+</html>
