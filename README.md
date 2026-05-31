@@ -9,7 +9,7 @@ Canva design  ──►  cardify.sh  ──►  DSC09000.JPG  ──►  SD card
    (any size)        (one cmd)        (Sony-spec)
 ```
 
-Built for working photographers. Currently focused on **Sony A7-series**; other bodies welcome — see [Camera Compatibility](docs/CAMERA_COMPATIBILITY.md).
+Built for working photographers. Hardware-verified on **Sony A7-series, Canon EOS R, and Nikon Z** bodies; other bodies welcome — see [Camera Compatibility](docs/CAMERA_COMPATIBILITY.md).
 
 ---
 
@@ -124,9 +124,11 @@ Hardware-verified on real bodies (portrait + landscape, auto-rotation correct, f
 | **Sony A7 V** | ✓ Verified | A7 III SOOC (same file) |
 | **Canon EOS R6 Mark II** | ✓ Verified | R6 Mark II SOOC (same body) |
 | **Canon EOS R6 Mark III** | ✓ Verified (cross-body) | R6 Mark II SOOC template played back on a different friend's R6 Mark III body |
+| **Nikon Z8** | ✓ Verified (cross-body) | Z6 III SOOC template |
+| **Nikon Z9** | ✓ Verified (cross-body) | Z6 III SOOC template (same file as Z8) |
 | Other Sony Alpha (A7R V, A1, A1 II, A9 III, A7C II, A7S III, …) | Should work | Same Sony template expected to apply |
 | Other Canon EOS R (R5, R5 Mark II, R6, R5 Mark III, …) | Likely works | R6 line cross-body confirmed; R5 line untested on hardware but expected to follow the same pattern |
-| Nikon Z (Z6 III primary template, Z8 fallback) | Code-ready, untested on hardware | Clean DPReview Z6 III SOOC; needs hardware verification on real Z body |
+| Other Nikon Z (Z6 III, Z6 II, Z7 II, Zf, Z5, …) | Likely works | Z8 / Z9 cross-body confirmed; rest untested on hardware but expected to follow the same pattern |
 | Fujifilm / OM System | Not yet supported | Cardify vendor switch needs an additional case |
 
 ### One file, every supported Sony body
@@ -158,7 +160,9 @@ The universal-compatibility finding on Sony suggests this rule for adding any ne
 
 **Canon status (as of 2026-05-21):** Canon EOS R6 Mark II hardware-verified with its own SOOC as the template (2026-05-20). The next day a different friend's R6 Mark III played back the same R6 Mark II-templated card without modification — cross-body Canon verification, firm. The R6 line therefore collapses to one Canon template (the older R6 Mark II SOOC), same shape as the Sony A7 III template covering A7 IV / V. The R5 line remains untested but is expected to follow the same pattern.
 
-This confirms **three SKUs (Sony / Canon / Nikon)** are enough to cover the working-photographer market — one template per vendor, sourced from a strict-validator body in each line.
+**Nikon status (as of 2026-05-31):** Nikon Z8 and Z9 both hardware-verified, cross-body, from a single clean Nikon Z6 III SOOC template — a friend placed the same pack on both pro bodies and every reference played back natively. The Nikon Z line therefore collapses to one template, same shape as Sony and Canon. One Nikon wrinkle: the DCF folder name encodes the body (`100NCZ_8` on a Z8, `100NCZ_9` on a Z9, `100NCZ_6` / `100NCZ_7` on the Z6 / Z7 lines) rather than being a single fixed folder, so the customer copies the pack into whichever `100NCZ_…` folder their own body created. Going to production.
+
+This confirms **three SKUs (Sony / Canon / Nikon)** are enough to cover the working-photographer market — one template per vendor, all three now hardware-verified cross-body.
 
 ---
 

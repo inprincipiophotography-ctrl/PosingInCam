@@ -18,6 +18,7 @@ Plus na Desktopu trebaš imati:
 | `cardify.sh` | sama skripta, `chmod +x` | pull s GitHuba (vidi dolje) |
 | `TEMPLATE-A7III.JPG` | Sony template (real SOOC iz tvog A7 III, ili A7 V/A7 IV iz DPReview-a) | tvoj A7 III SOOC (najpouzdanije), ili DPReview sample |
 | `TEMPLATE-R6M2.JPG` | Canon master template (Zlatkov R6 Mark II SOOC) | prijatelj Zlatkov — hardware-verified cross-body na R6 Mark II + R6 Mark III |
+| `NIKON-SOOC.JPG` | Nikon master template (Z6 III SOOC, Model `NIKON Z6_3`) | clean out-of-camera Z6 III — hardware-verified cross-body na Z8 + Z9 |
 | `canva-exports/` | folder s Canva poza-eksportima | tvoji exports |
 | `TEMPLATE-CANVA.jpg` | jedan single pose za quick testove | bilo koji Canva pose |
 
@@ -51,7 +52,12 @@ Primjer Canon:
 ~/Desktop/cardify.sh -a ~/Desktop/TEMPLATE-R6M2.JPG ~/Desktop/pose.jpg ~/Desktop/IMG_0001.JPG
 ```
 
-Vendor se auto-detektira iz template-ovog Make taga (SONY → sony, Canon → canon).
+Primjer Nikon:
+```bash
+~/Desktop/cardify.sh -a ~/Desktop/NIKON-SOOC.JPG ~/Desktop/pose.jpg ~/Desktop/DSC_0001.JPG
+```
+
+Vendor se auto-detektira iz template-ovog Make taga (SONY → sony, Canon → canon, NIKON CORPORATION → nikon).
 
 ---
 
@@ -84,6 +90,14 @@ Producira `~/Desktop/SONY-DAY-pack/DSC00001.JPG`–`DSC0NNNNN.JPG` (5-digit, Son
 ```
 
 Producira `~/Desktop/canva-canon-pack/IMG_0001.JPG`–`IMG_NNNN.JPG` (4-digit, Canon konvencija).
+
+### Nikon
+
+```bash
+~/Desktop/build-pack.sh ~/Desktop/NIKON-SOOC.JPG ~/Desktop/canva-nikon.zip
+```
+
+Producira `~/Desktop/canva-nikon-pack/DSC_0001.JPG`–`DSC_NNNN.JPG` (4-digit, Nikon konvencija).
 
 **Vendor + filename pattern se auto-pickaju iz template Make tag-a** — ne moraš ih ručno specificirati.
 
@@ -119,12 +133,16 @@ cp -p ~/Desktop/customer-pack-sony/*.JPG /Volumes/<sd>/DCIM/100MSDCF/
 # Canon pack na Canon SD:
 cp -p ~/Desktop/customer-pack-canon/*.JPG /Volumes/<sd>/DCIM/100CANON/
 
+# Nikon pack na Nikon karticu (folder je body-specific — Z8=100NCZ_8, Z9=100NCZ_9):
+cp -p ~/Desktop/customer-pack-nikon/*.JPG /Volumes/<sd>/DCIM/100NCZ_8/
+
 # 3. Eject čisto:
 diskutil eject /Volumes/<sd>
 
 # 4. Insert u kameru → Playback. Ako pose-i ne vide:
-#    Sony: MENU → Setup → Media → Recover Image Database
+#    Sony:  MENU → Setup → Media → Recover Image Database
 #    Canon: rijetko treba — obično se odmah vide
+#    Nikon: PLAYBACK MENU → Playback folder → All
 ```
 
 ---
@@ -145,8 +163,8 @@ Cardify + build-pack auto-detektiraju vendor iz template Make tag-a i biraju isp
 
 - **Sony A7 III/IV/V cluster**: jedan template iz najstarijeg dostupnog body-ja pokriva sve (BIONZ X/XR ekosystem). Real SOOC > DPReview ako body je A7 III firmware v4.01+.
 - **Canon EOS R6 cluster**: Zlatkov R6 Mark II SOOC je master template — hardware-verified i na R6 Mark II i na R6 Mark III (cross-body). Jedan fajl pokriva liniju. R5 line untested ali expected da prati isti pattern.
-- **Nikon Z cluster**: Z6 III iz DPReview je clean (gold-standard). Z8 iz DPReview je Photo Mechanic-touched. Hardware verifikacija na Z6 II/III ili Z8 body-ju ostaje pending.
-- **Nikon/Fuji/OM**: još nije code-supported. Treba dodati `case` block u cardify (vidi `docs/SONY_Q_TABLE_DISCOVERY.md` § Sourcing strategy).
+- **Nikon Z cluster**: `NIKON-SOOC.JPG` (clean Z6 III SOOC, Model `NIKON Z6_3`) je master template — hardware-verified cross-body na Z8 + Z9. Jedan fajl pokriva liniju. DCF folder je body-specific (`100NCZ_8`, `100NCZ_9`, `100NCZ_6`, `100NCZ_7`), pa customer kopira u onaj koji mu je kamera sama kreirala.
+- **Fuji/OM**: još nije code-supported. Treba dodati `case` block u cardify (vidi `docs/SONY_Q_TABLE_DISCOVERY.md` § Sourcing strategy).
 
 ---
 

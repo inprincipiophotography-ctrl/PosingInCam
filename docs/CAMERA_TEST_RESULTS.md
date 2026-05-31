@@ -48,6 +48,32 @@ pass / partial / fail — and the reason.
 
 <!-- Append new sessions below this line. Newest first. -->
 
+## Nikon Z8 / Z9 — 2026-05-31 (first Nikon hardware verification, cross-body)
+
+| Field | Value |
+| --- | --- |
+| Bodies tested | Nikon Z8 and Nikon Z9 (friend-owned; serials / firmware not recorded) |
+| Tester        | inprincipiophotography-ctrl + friend |
+| Template used | **Nikon Z6 III SOOC** (`NIKON-SOOC.JPG`, Model `NIKON Z6_3`, firmware Ver.02.00) — clean out-of-camera JPEG, sRGB, R98 DCF marker, ColorSpace=1, no Photo Mechanic touch. |
+| File(s) sent  | Cardify output built from the Z6 III template (Canva pose design + Z6 III q-tables + Nikon MakerNotes via `exiftool -tagsFromFile -all:all`), named `DSC_xxxx.JPG`. The **same files** were placed on both bodies' cards. |
+| Output spec   | 1920×1280, baseline, YCbCr 4:2:2, Z6 III q-tables, no JFIF, YCbCrPositioning=2 (Co-sited), Make=`NIKON CORPORATION`, Model=`NIKON Z6_3` in EXIF (carried from template). |
+| DCF folder    | Body-specific: files copied into each body's own first folder (`100NCZ_8` on the Z8, `100NCZ_9` on the Z9). |
+| Hardware result | Played back correctly on both the Z8 and the Z9; every reference shown, no error, full playback. Friend reported "works as it should" on both bodies. |
+
+### What this confirms
+
+**A single Nikon Z template covers the pro Z line cross-body.** One clean Z6 III SOOC produces output that plays back on both a Z8 and a Z9 with no per-body adjustment — the same one-template-per-vendor-lineage pattern already confirmed on Sony (A7 III → IV / V) and Canon (R6 Mark II → R6 Mark III).
+
+Note the template body here (Z6 III) is *not* the oldest of the three — unlike Sony/Canon, where we deliberately sourced the oldest body as the strictest validator, the Nikon template was simply the clean SOOC we had on hand. It still works cross-body on the older Z8 and Z9, which reinforces that modern Nikon Z playback engines are tolerant of a well-formed Z-series JPEG fingerprint (the strict-validator problem was specific to the older Sony A7 III firmware).
+
+The only Nikon-specific wrinkle is the **DCF folder name, which encodes the body** (`100NCZ_8`, `100NCZ_9`, `100NCZ_6`, `100NCZ_7`, …) rather than being a single fixed folder like Sony's `100MSDCF` or Canon's `100CANON`. The customer copies the pack into whichever `100NCZ_…` folder their own body created; this is called out explicitly in the Nikon customer guide.
+
+### Outcome
+
+**pass on both bodies.** Cross-body Nikon verification, firm. Treat Nikon Z as a single SKU; the Z6 III SOOC (`NIKON-SOOC.JPG`) is the master template for the line. Going to production.
+
+---
+
 ## Canon EOS R6 Mark III — 2026-05-21 (Canon cross-body verification)
 
 | Field | Value |
