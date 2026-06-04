@@ -12,24 +12,24 @@ const CAMERAS: { id: Vendor; name: string; note: string }[] = [
 
 const INSTRUCTIONS: Record<Vendor, string> = {
   sony:
-    "SONY — Recover Image Database je OBAVEZAN korak.\n" +
-    "1. MENU → Setup → Media → Format (formatiraj karticu u aparatu).\n" +
-    "2. Snimi jednu običnu fotku da nastane DCIM/100MSDCF/.\n" +
-    "3. Kopiraj sve .JPG iz ZIP-a (DCIM/100MSDCF/) u istu mapu na kartici.\n" +
-    "4. MENU → Setup → Media → Recover Image Database → potvrdi.\n" +
-    "5. ▶ Playback — kartice su među fotkama.",
+    "SONY — Recover Image Database is REQUIRED.\n" +
+    "1. MENU → Setup → Media → Format the card (in camera).\n" +
+    "2. Take one ordinary photo so DCIM/100MSDCF/ is created.\n" +
+    "3. Copy all .JPG from the ZIP (DCIM/100MSDCF/) into that folder on the card.\n" +
+    "4. MENU → Setup → Media → Recover Image Database → confirm.\n" +
+    "5. ▶ Playback — the cards appear among your photos.",
   canon:
-    "CANON — plug & play, bez rebuilda baze.\n" +
-    "1. MENU → (alat) → Format card.\n" +
-    "2. Snimi jednu fotku da nastane DCIM/100CANON/.\n" +
-    "3. Kopiraj .JPG iz ZIP-a u DCIM/100CANON/ na kartici.\n" +
-    "4. Ubaci karticu → ▶ Playback. (INFO za detalje.)",
+    "CANON — plug & play, no database rebuild.\n" +
+    "1. MENU → (wrench) → Format card.\n" +
+    "2. Take one photo so DCIM/100CANON/ is created.\n" +
+    "3. Copy the .JPG from the ZIP into DCIM/100CANON/ on the card.\n" +
+    "4. Insert the card → ▶ Playback. (Press INFO for details.)",
   nikon:
-    "NIKON — kopiraj u mapu koju je TVOJ aparat napravio.\n" +
-    "1. MENU → (alat) → Format memory card.\n" +
-    "2. Snimi fotku — nastane DCIM/100NCZ_… (npr. 100NCZ_8).\n" +
-    "3. Kopiraj DSC_*.JPG iz ZIP-a u TU mapu (ne u 100NCZ_X).\n" +
-    "4. Ako ne vidiš: PLAYBACK MENU → Playback folder → All.\n" +
+    "NIKON — copy into the folder YOUR camera created.\n" +
+    "1. MENU → (wrench) → Format memory card.\n" +
+    "2. Take a photo — DCIM/100NCZ_… is created (e.g. 100NCZ_8).\n" +
+    "3. Copy the DSC_*.JPG from the ZIP into THAT folder (not 100NCZ_X).\n" +
+    "4. If you don't see them: PLAYBACK MENU → Playback folder → All.\n" +
     "5. ▶ Playback.",
 };
 
@@ -61,7 +61,7 @@ export default function PoseCards() {
   const generate = async () => {
     if (!vendor || !items.length) return;
     setBusy(true);
-    setStatus({ msg: "Pripremam i konvertiram…", kind: "" });
+    setStatus({ msg: "Preparing and converting…", kind: "" });
     try {
       const blob = await buildCards(vendor, orientation, items.map((i) => i.file));
       const a = document.createElement("a");
@@ -70,7 +70,7 @@ export default function PoseCards() {
       document.body.appendChild(a);
       a.click();
       a.remove();
-      setStatus({ msg: "✓ Gotovo! Preuzimanje pose-cards.zip je krenulo.", kind: "ok" });
+      setStatus({ msg: "✓ Done! Your pose-cards.zip is downloading.", kind: "ok" });
       setShowInstr(true);
     } catch (err) {
       setStatus({ msg: "✗ " + (err as Error).message, kind: "err" });
@@ -85,17 +85,17 @@ export default function PoseCards() {
     <div className={styles.wrap}>
       <section className={styles.intro}>
         <p className={styles.eyebrow}>Pose Reference Cards</p>
-        <h1>Tvoje poze, na ekranu aparata.</h1>
+        <h1>Your poses, on your camera screen.</h1>
         <p className={styles.lede}>
-          Uploadaj svoje dizajne, preuzmi gotov paket za SD karticu i listaj poze u playbacku —
-          bez aplikacije, bez telefona, bez signala. Samo aparat koji već držiš.
+          Upload your designs, download a ready-to-copy SD-card pack, and scroll through your poses
+          in playback — no app, no phone, no signal. Just the camera you're already holding.
         </p>
       </section>
 
       {/* Step 1 — camera */}
       <section className={styles.step}>
         <h2>
-          <span className={styles.num}>i</span> Odaberi aparat
+          <span className={styles.num}>i</span> Choose your camera
         </h2>
         <div className={styles.cameras}>
           {CAMERAS.map((c) => (
@@ -116,7 +116,7 @@ export default function PoseCards() {
       {/* Step 2 — upload */}
       <section className={styles.step}>
         <h2>
-          <span className={styles.num}>ii</span> Dodaj svoje dizajne
+          <span className={styles.num}>ii</span> Add your designs
         </h2>
         <label
           className={`${styles.drop} ${over ? styles.dropOver : ""}`}
@@ -142,12 +142,12 @@ export default function PoseCards() {
             hidden
             onChange={(e) => addFiles(e.target.files)}
           />
-          <span className={styles.dropTitle}>Povuci slike ovamo ili klikni za odabir</span>
-          <span className={styles.dropSub}>JPG, PNG, WEBP · landscape ili portrait</span>
+          <span className={styles.dropTitle}>Drag images here or click to choose</span>
+          <span className={styles.dropSub}>JPG, PNG, WEBP · landscape or portrait</span>
         </label>
 
         <div className={styles.orient}>
-          <span>Orijentacija:</span>
+          <span>Orientation:</span>
           {(["auto", "landscape", "portrait"] as Orientation[]).map((o) => (
             <label key={o}>
               <input
@@ -168,7 +168,7 @@ export default function PoseCards() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className={styles.screenImg} src={items[selected]?.url} alt="" />
               <span className={styles.screenCount}>
-                {items.length} {items.length === 1 ? "kartica" : "kartice/kartica"}
+                {items.length} {items.length === 1 ? "card" : "cards"}
               </span>
             </div>
             <div className={styles.filmstrip}>
@@ -190,10 +190,10 @@ export default function PoseCards() {
       {/* Step 3 — generate */}
       <section className={styles.step}>
         <h2>
-          <span className={styles.num}>iii</span> Generiraj &amp; preuzmi
+          <span className={styles.num}>iii</span> Generate &amp; download
         </h2>
         <button type="button" className={styles.go} disabled={!canGo} onClick={generate}>
-          {busy ? "Radim…" : "Generiraj kartice"}
+          {busy ? "Working…" : "Generate cards"}
         </button>
         <p className={`${styles.status} ${status.kind === "ok" ? styles.ok : ""} ${status.kind === "err" ? styles.err : ""}`}>
           {status.msg}
@@ -204,10 +204,10 @@ export default function PoseCards() {
       {showInstr && vendor && (
         <section className={`${styles.step} ${styles.instructions}`}>
           <h2>
-            <span className={styles.num}>iv</span> Stavi na karticu
+            <span className={styles.num}>iv</span> Put it on your card
           </h2>
           <pre>{INSTRUCTIONS[vendor]}</pre>
-          <p className={styles.muted}>Iste upute (HR + EN) nalaze se i u preuzetom ZIP-u.</p>
+          <p className={styles.muted}>The same instructions are included in the downloaded ZIP.</p>
         </section>
       )}
     </div>

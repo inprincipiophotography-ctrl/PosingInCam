@@ -116,13 +116,12 @@ def build_zip(designs: list[tuple[str, bytes]], vendor: str, orientation: str = 
         )
     qtables, exif_base = encoder.template_meta(template_path)
 
-    hr, en = instructions(vendor)
+    _hr, en = instructions(vendor)
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
         for i, (_orig_name, image_bytes) in enumerate(designs):
             card = encoder.convert_with(image_bytes, qtables, exif_base, orientation)
             arcname = f"DCIM/{v.folder}/{encoder.filename_for(vendor, i)}"
             zf.writestr(arcname, card)
-        zf.writestr("PROCITAJ-ME.txt", hr + "\n")
         zf.writestr("README.txt", en + "\n")
     return buf.getvalue()

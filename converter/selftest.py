@@ -120,7 +120,6 @@ def main() -> int:
     expected = [
         "DCIM/100MSDCF/DSC09000.JPG",
         "DCIM/100MSDCF/DSC09001.JPG",
-        "PROCITAJ-ME.txt",
         "README.txt",
     ]
     for name in expected:

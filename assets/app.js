@@ -11,24 +11,24 @@ const camButtons = Array.from(document.querySelectorAll(".cam"));
 
 const INSTRUCTIONS = {
   sony:
-    "SONY — Recover Image Database je OBAVEZAN korak.\n" +
-    "1. MENU → Setup → Media → Format (formatiraj karticu u aparatu).\n" +
-    "2. Snimi jednu običnu fotku da nastane DCIM/100MSDCF/.\n" +
-    "3. Kopiraj sve .JPG iz ZIP-a (DCIM/100MSDCF/) u istu mapu na kartici.\n" +
-    "4. MENU → Setup → Media → Recover Image Database → potvrdi.\n" +
-    "5. ▶ Playback — kartice su među fotkama.",
+    "SONY — Recover Image Database is REQUIRED.\n" +
+    "1. MENU → Setup → Media → Format the card (in camera).\n" +
+    "2. Take one ordinary photo so DCIM/100MSDCF/ is created.\n" +
+    "3. Copy all .JPG from the ZIP (DCIM/100MSDCF/) into that folder on the card.\n" +
+    "4. MENU → Setup → Media → Recover Image Database → confirm.\n" +
+    "5. ▶ Playback — the cards appear among your photos.",
   canon:
-    "CANON — plug & play, bez rebuilda baze.\n" +
-    "1. MENU → (alat) → Format card.\n" +
-    "2. Snimi jednu fotku da nastane DCIM/100CANON/.\n" +
-    "3. Kopiraj .JPG iz ZIP-a u DCIM/100CANON/ na kartici.\n" +
-    "4. Ubaci karticu → ▶ Playback. (INFO za detalje.)",
+    "CANON — plug & play, no database rebuild.\n" +
+    "1. MENU → (wrench) → Format card.\n" +
+    "2. Take one photo so DCIM/100CANON/ is created.\n" +
+    "3. Copy the .JPG from the ZIP into DCIM/100CANON/ on the card.\n" +
+    "4. Insert the card → ▶ Playback. (Press INFO for details.)",
   nikon:
-    "NIKON — kopiraj u mapu koju je TVOJ aparat napravio.\n" +
-    "1. MENU → (alat) → Format memory card.\n" +
-    "2. Snimi fotku — nastane DCIM/100NCZ_… (npr. 100NCZ_8).\n" +
-    "3. Kopiraj DSC_*.JPG iz ZIP-a u TU mapu (ne u 100NCZ_X).\n" +
-    "4. Ako ne vidiš: PLAYBACK MENU → Playback folder → All.\n" +
+    "NIKON — copy into the folder YOUR camera created.\n" +
+    "1. MENU → (wrench) → Format memory card.\n" +
+    "2. Take a photo — DCIM/100NCZ_… is created (e.g. 100NCZ_8).\n" +
+    "3. Copy the DSC_*.JPG from the ZIP into THAT folder (not 100NCZ_X).\n" +
+    "4. If you don't see them: PLAYBACK MENU → Playback folder → All.\n" +
     "5. ▶ Playback.",
 };
 
@@ -70,7 +70,7 @@ function renderPreview() {
   wrap.hidden = false;
   $("screen-img").src = state.items[state.selected].url;
   $("screen-count").textContent =
-    state.items.length + (state.items.length === 1 ? " kartica" : " kartice/kartica");
+    state.items.length + (state.items.length === 1 ? " card" : " cards");
   const strip = $("filmstrip");
   strip.innerHTML = "";
   state.items.forEach((it, i) => {
@@ -114,7 +114,7 @@ $("go").addEventListener("click", async () => {
   const go = $("go"), status = $("status");
   go.disabled = true;
   status.className = "status";
-  status.textContent = "Pripremam slike…";
+  status.textContent = "Preparing images…";
 
   try {
     const fd = new FormData();
@@ -125,11 +125,11 @@ $("go").addEventListener("click", async () => {
       const blob = await downscale(it.file);
       fd.append("files", blob, `design-${++i}.jpg`);
     }
-    status.textContent = "Konvertiram i pakiram…";
+    status.textContent = "Converting and packaging…";
 
     const resp = await fetch(API, { method: "POST", body: fd });
     if (!resp.ok) {
-      let msg = "Greška " + resp.status;
+      let msg = "Error " + resp.status;
       try { msg = (await resp.json()).error || msg; } catch (_) {}
       throw new Error(msg);
     }
@@ -140,7 +140,7 @@ $("go").addEventListener("click", async () => {
     document.body.appendChild(a); a.click(); a.remove();
 
     status.className = "status ok";
-    status.textContent = "✓ Gotovo! Preuzimanje pose-cards.zip je krenulo.";
+    status.textContent = "✓ Done! Your pose-cards.zip is downloading.";
     showInstructions();
   } catch (err) {
     status.className = "status err";

@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="hr">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pose Cards · IN PRINCIPIO</title>
-  <meta name="description" content="Pretvori svoje pose dizajne u kartice koje se prikazuju na ekranu fotoaparata." />
+  <meta name="description" content="Turn your pose designs into cards that display on your camera screen." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
@@ -21,14 +21,14 @@
   <main class="wrap">
     <section class="intro">
       <p class="eyebrow">Pose Reference Cards</p>
-      <h1>Tvoje poze, na ekranu aparata.</h1>
-      <p class="lede">Uploadaj svoje dizajne, preuzmi gotov paket za SD karticu i listaj poze
-        u playbacku — bez aplikacije, bez telefona, bez signala. Samo aparat koji već držiš.</p>
+      <h1>Your poses, on your camera screen.</h1>
+      <p class="lede">Upload your designs, download a ready-to-copy SD-card pack, and scroll through
+        your poses in playback — no app, no phone, no signal. Just the camera you're already holding.</p>
     </section>
 
     <!-- Step 1 -->
     <section class="step">
-      <h2><span class="num">i</span> Odaberi aparat</h2>
+      <h2><span class="num">i</span> Choose your camera</h2>
       <div class="cameras" id="cameras">
         <button class="cam" data-vendor="sony">Sony <small>Alpha · A7 III/IV/V</small></button>
         <button class="cam" data-vendor="canon">Canon <small>EOS R · R6</small></button>
@@ -38,15 +38,15 @@
 
     <!-- Step 2 -->
     <section class="step">
-      <h2><span class="num">ii</span> Dodaj svoje dizajne</h2>
+      <h2><span class="num">ii</span> Add your designs</h2>
       <label class="drop" id="drop">
         <input type="file" id="file" accept="image/*" multiple hidden />
-        <span class="drop-title">Povuci slike ovamo ili klikni za odabir</span>
-        <span class="drop-sub">JPG, PNG, WEBP · landscape ili portrait</span>
+        <span class="drop-title">Drag images here or click to choose</span>
+        <span class="drop-sub">JPG, PNG, WEBP · landscape or portrait</span>
       </label>
 
       <div class="orient" id="orient">
-        <span>Orijentacija:</span>
+        <span>Orientation:</span>
         <label><input type="radio" name="orient" value="auto" checked /> Auto</label>
         <label><input type="radio" name="orient" value="landscape" /> Landscape</label>
         <label><input type="radio" name="orient" value="portrait" /> Portrait</label>
@@ -63,16 +63,16 @@
 
     <!-- Step 3 -->
     <section class="step">
-      <h2><span class="num">iii</span> Generiraj &amp; preuzmi</h2>
-      <button class="go" id="go" disabled>Generiraj kartice</button>
+      <h2><span class="num">iii</span> Generate &amp; download</h2>
+      <button class="go" id="go" disabled>Generate cards</button>
       <p class="status" id="status"></p>
     </section>
 
     <!-- Step 4 -->
     <section class="step instructions" id="instructions" hidden>
-      <h2><span class="num">iv</span> Stavi na karticu</h2>
+      <h2><span class="num">iv</span> Put it on your card</h2>
       <pre id="instr-text"></pre>
-      <p class="muted">Iste upute (HR + EN) nalaze se i u preuzetom ZIP-u.</p>
+      <p class="muted">The same instructions are included in the downloaded ZIP.</p>
     </section>
   </main>
 
