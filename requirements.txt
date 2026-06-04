@@ -1,0 +1,5 @@
+# Dependencies for the Vercel Python function (api/convert.py).
+# NOT used by the scripts/cardify.sh CLI — that keeps using system Pillow + exiftool.
+Pillow>=10
+piexif>=1.1.3
+Flask>=3.0

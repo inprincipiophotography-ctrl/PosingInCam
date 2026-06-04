@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pose Cards · IN PRINCIPIO</title>
+  <meta name="description" content="Pretvori svoje pose dizajne u kartice koje se prikazuju na ekranu fotoaparata." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <header class="site">
+    <div class="logo">
+      <div class="word-lg">IN PRINCIPIO</div>
+      <div class="word-sm">Weddings by Kim &amp; Ivan</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="intro">
+      <p class="eyebrow">Pose Reference Cards</p>
+      <h1>Tvoje poze, na ekranu aparata.</h1>
+      <p class="lede">Uploadaj svoje dizajne, preuzmi gotov paket za SD karticu i listaj poze
+        u playbacku — bez aplikacije, bez telefona, bez signala. Samo aparat koji već držiš.</p>
+    </section>
+
+    <!-- Step 1 -->
+    <section class="step">
+      <h2><span class="num">i</span> Odaberi aparat</h2>
+      <div class="cameras" id="cameras">
+        <button class="cam" data-vendor="sony">Sony <small>Alpha · A7 III/IV/V</small></button>
+        <button class="cam" data-vendor="canon">Canon <small>EOS R · R6</small></button>
+        <button class="cam" data-vendor="nikon">Nikon <small>Z · Z6/Z8/Z9</small></button>
+      </div>
+    </section>
+
+    <!-- Step 2 -->
+    <section class="step">
+      <h2><span class="num">ii</span> Dodaj svoje dizajne</h2>
+      <label class="drop" id="drop">
+        <input type="file" id="file" accept="image/*" multiple hidden />
+        <span class="drop-title">Povuci slike ovamo ili klikni za odabir</span>
+        <span class="drop-sub">JPG, PNG, WEBP · landscape ili portrait</span>
+      </label>
+
+      <div class="orient" id="orient">
+        <span>Orijentacija:</span>
+        <label><input type="radio" name="orient" value="auto" checked /> Auto</label>
+        <label><input type="radio" name="orient" value="landscape" /> Landscape</label>
+        <label><input type="radio" name="orient" value="portrait" /> Portrait</label>
+      </div>
+
+      <div class="screen-wrap" id="preview" hidden>
+        <div class="screen">
+          <img id="screen-img" alt="" />
+          <span class="screen-count" id="screen-count"></span>
+        </div>
+        <div class="filmstrip" id="filmstrip"></div>
+      </div>
+    </section>
+
+    <!-- Step 3 -->
+    <section class="step">
+      <h2><span class="num">iii</span> Generiraj &amp; preuzmi</h2>
+      <button class="go" id="go" disabled>Generiraj kartice</button>
+      <p class="status" id="status"></p>
+    </section>
+
+    <!-- Step 4 -->
+    <section class="step instructions" id="instructions" hidden>
+      <h2><span class="num">iv</span> Stavi na karticu</h2>
+      <pre id="instr-text"></pre>
+      <p class="muted">Iste upute (HR + EN) nalaze se i u preuzetom ZIP-u.</p>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <span>IN PRINCIPIO — Weddings by Kim &amp; Ivan</span>
+    <a href="https://inprincipioweddings.com">inprincipioweddings.com</a>
+  </footer>
+
+  <script src="/assets/app.js"></script>
+</body>
+</html>
