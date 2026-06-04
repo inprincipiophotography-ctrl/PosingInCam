@@ -84,9 +84,10 @@ def validate(out: bytes, vendor: str, expect_orient: int) -> list[tuple[str, boo
 
 def main() -> int:
     os.makedirs(OUT_DIR, exist_ok=True)
-    template = os.path.join(TEMPLATES, "sony.JPG")
-    if not os.path.exists(template):
-        print(f"missing template: {template}", file=sys.stderr)
+    try:
+        template = encoder.template_path_for("sony")
+    except FileNotFoundError as e:
+        print(e, file=sys.stderr)
         return 2
 
     cases = [

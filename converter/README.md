@@ -17,7 +17,7 @@ This package is fully self-contained. It **does not import, modify, or run**
 | `pack.py`      | `build_zip(designs, vendor, ...)` → SD-card ZIP (`DCIM/<folder>/…` + HR/EN instructions). |
 | `cli.py`       | Local end-to-end: images → ZIP. |
 | `selftest.py`  | Verifies output against the spec (mirrors `cardify.sh` validate_card, in pure Python). |
-| `templates/`   | Bundled SOOC templates (`sony.JPG`, `canon.JPG`, `nikon.JPG`). See its README. |
+| `templates/`   | Per-vendor SOOC templates (`templates/<vendor>/`), kept under their real DCF filename so the output prefix is read off the name (build-pack.sh behaviour). See its README. |
 | `requirements.txt` | `Pillow`, `piexif`. |
 
 ## Use

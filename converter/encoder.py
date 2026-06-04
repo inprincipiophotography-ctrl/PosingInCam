@@ -27,6 +27,7 @@ rejects the output, the documented fallback is the Docker+exiftool path.
 from __future__ import annotations
 
 import io
+import os
 import copy
 import struct
 from dataclasses import dataclass
@@ -48,28 +49,67 @@ _INTEROP_VERSION = 2   # b"0100"
 @dataclass(frozen=True)
 class Vendor:
     key: str
-    folder: str   # DCF folder on the SD card
-    prefix: str   # DCF filename prefix
-    template: str # template filename inside converter/templates/
-    make: str     # expected EXIF Make (for validation)
-    model_prefix: str  # expected EXIF Model prefix (for validation)
+    folder: str          # default DCF folder on the SD card
+    default_prefix: str  # fallback prefix, only if the template filename isn't DCF-form
+    make: str            # expected EXIF Make (for validation)
+    model_prefix: str    # expected EXIF Model prefix (for validation)
 
 
-# Vendor → SD layout (mirrors cardify.sh:234-260). Cards are numbered sequentially
-# with 4 digits starting at 0001 (Sony DSC00001, Canon IMG_0001, Nikon DSC_0001).
+# Vendor → SD layout (mirrors cardify.sh:234-260 + docs/CAMERA_COMPATIBILITY.md).
+# IMPORTANT: the real output PREFIX is read from the template's own DCF filename
+# (build-pack.sh:83-98) — e.g. a Canon body whose files are named 0A0A3799.JPG
+# yields prefix "0A0A", not "IMG_". default_prefix is only used when the template
+# was renamed away from its DCF name. Cards are numbered 0001.. (4 digits; DCF
+# rule CAMERA_COMPATIBILITY.md:16 — NNNN ∈ 0001..9999).
 VENDORS: dict[str, Vendor] = {
-    "sony":  Vendor("sony",  "100MSDCF", "DSC0", "sony.JPG",  "SONY",  "ILCE-"),
-    "canon": Vendor("canon", "100CANON", "IMG_", "canon.JPG", "Canon", "Canon EOS "),
-    "nikon": Vendor("nikon", "100NCZ_X", "DSC_", "nikon.JPG", "NIKON CORPORATION", "NIKON Z"),
+    "sony":  Vendor("sony",  "100MSDCF", "DSC0", "SONY",  "ILCE-"),
+    "canon": Vendor("canon", "100CANON", "IMG_", "Canon", "Canon EOS "),
+    "nikon": Vendor("nikon", "100NCZ_X", "DSC_", "NIKON CORPORATION", "NIKON Z"),
 }
 
 START_NUMBER = 1
 
+TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+_IMG_EXTS = (".jpg", ".jpeg")
 
-def filename_for(vendor: str, index: int) -> str:
-    """Card filename for the index-th card (0-based), e.g. sony,0 -> DSC00001.JPG."""
-    v = VENDORS[vendor]
-    return f"{v.prefix}{START_NUMBER + index:04d}.JPG"
+
+def template_path_for(vendor: str, templates_dir: str = TEMPLATES_DIR) -> str:
+    """Return the bundled SOOC template for a vendor.
+
+    Templates live in per-vendor folders (templates/<vendor>/) under their REAL
+    camera filename, so the DCF prefix can be read off the name exactly like
+    build-pack.sh does.
+    """
+    vdir = os.path.join(templates_dir, vendor)
+    if os.path.isdir(vdir):
+        for name in sorted(os.listdir(vdir)):
+            if name.lower().endswith(_IMG_EXTS):
+                return os.path.join(vdir, name)
+    raise FileNotFoundError(
+        f"no template for {vendor}: drop a real straight-out-of-camera JPEG "
+        f"(keep its original filename, e.g. 0A0A3799.JPG) into "
+        f"converter/templates/{vendor}/"
+    )
+
+
+def dcf_prefix(template_path: str, default: str) -> str:
+    """The 4-char DCF filename prefix to use for output cards.
+
+    Mirrors build-pack.sh:83-90: if the template's filename is a real DCF name
+    (8 chars, last 4 are digits — e.g. 0A0A3799, IMG_5000, DSC09014) reuse its
+    first 4 chars; otherwise fall back to the vendor default.
+    """
+    stem = os.path.splitext(os.path.basename(template_path))[0]
+    if len(stem) == 8 and stem[4:8].isdigit():
+        return stem[:4]
+    return default
+
+
+def filename_for(vendor: str, index: int, prefix: str | None = None) -> str:
+    """Card filename for the index-th card (0-based), e.g. (sony, 0, "DSC0") ->
+    DSC00001.JPG. If prefix is None, the vendor default prefix is used."""
+    p = prefix or VENDORS[vendor].default_prefix
+    return f"{p}{START_NUMBER + index:04d}.JPG"
 
 
 # -----------------------------------------------------------------------------

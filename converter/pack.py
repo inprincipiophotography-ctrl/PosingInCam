@@ -108,12 +108,8 @@ def build_zip(designs: list[tuple[str, bytes]], vendor: str, orientation: str = 
         raise ValueError("no designs provided")
 
     v = encoder.VENDORS[vendor]
-    template_path = os.path.join(template_dir, v.template)
-    if not os.path.exists(template_path):
-        raise FileNotFoundError(
-            f"missing template for {vendor}: {template_path} — upload a real "
-            f"straight-out-of-camera JPEG named {v.template}"
-        )
+    template_path = encoder.template_path_for(vendor, template_dir)
+    prefix = encoder.dcf_prefix(template_path, v.default_prefix)  # build-pack.sh:83-98
     qtables, exif_base = encoder.template_meta(template_path)
 
     _hr, en = instructions(vendor)
@@ -121,7 +117,7 @@ def build_zip(designs: list[tuple[str, bytes]], vendor: str, orientation: str = 
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
         for i, (_orig_name, image_bytes) in enumerate(designs):
             card = encoder.convert_with(image_bytes, qtables, exif_base, orientation)
-            arcname = f"DCIM/{v.folder}/{encoder.filename_for(vendor, i)}"
+            arcname = f"DCIM/{v.folder}/{encoder.filename_for(vendor, i, prefix)}"
             zf.writestr(arcname, card)
         zf.writestr("README.txt", en + "\n")
     return buf.getvalue()
