@@ -118,8 +118,8 @@ def main() -> int:
     names = zipfile.ZipFile(io.BytesIO(zip_bytes)).namelist()
     print(f"\n=== pack → {zpath}  ({len(zip_bytes)//1024} KB) ===")
     expected = [
-        "DCIM/100MSDCF/DSC09000.JPG",
-        "DCIM/100MSDCF/DSC09001.JPG",
+        "DCIM/100MSDCF/DSC00001.JPG",
+        "DCIM/100MSDCF/DSC00002.JPG",
         "README.txt",
     ]
     for name in expected:

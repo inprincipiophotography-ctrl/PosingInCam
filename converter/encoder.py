@@ -55,19 +55,19 @@ class Vendor:
     model_prefix: str  # expected EXIF Model prefix (for validation)
 
 
-# Vendor → SD layout (mirrors cardify.sh:234-260). Numbering uses 4 digits in the
-# 9000+ range so cards never collide with the photographer's real shots.
+# Vendor → SD layout (mirrors cardify.sh:234-260). Cards are numbered sequentially
+# with 4 digits starting at 0001 (Sony DSC00001, Canon IMG_0001, Nikon DSC_0001).
 VENDORS: dict[str, Vendor] = {
     "sony":  Vendor("sony",  "100MSDCF", "DSC0", "sony.JPG",  "SONY",  "ILCE-"),
     "canon": Vendor("canon", "100CANON", "IMG_", "canon.JPG", "Canon", "Canon EOS "),
     "nikon": Vendor("nikon", "100NCZ_X", "DSC_", "nikon.JPG", "NIKON CORPORATION", "NIKON Z"),
 }
 
-START_NUMBER = 9000
+START_NUMBER = 1
 
 
 def filename_for(vendor: str, index: int) -> str:
-    """Card filename for the index-th card (0-based), e.g. sony,0 -> DSC09000.JPG."""
+    """Card filename for the index-th card (0-based), e.g. sony,0 -> DSC00001.JPG."""
     v = VENDORS[vendor]
     return f"{v.prefix}{START_NUMBER + index:04d}.JPG"
 
