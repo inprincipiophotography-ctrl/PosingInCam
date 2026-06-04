@@ -1,0 +1,12 @@
+# Keep the public deployment limited to the Pose Cards web app.
+# converter/ stays — the Python function imports it (vercel.json includeFiles).
+# Everything below is the CLI / docs / source bundles that must NOT be served
+# at the public deployment URL.
+scripts/
+docs/
+samples/
+web-next/
+.github/
+*.md
+LICENSE
+.gitignore
