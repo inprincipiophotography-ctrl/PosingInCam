@@ -6,6 +6,7 @@ scripts/
 docs/
 samples/
 web-next/
+supabase/
 .github/
 *.md
 LICENSE
