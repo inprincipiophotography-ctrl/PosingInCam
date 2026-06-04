@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pose Cards · IN PRINCIPIO</title>
-  <meta name="description" content="Turn your pose designs into cards that display on your camera screen." />
+  <meta name="description" content="Turn any image into a card that displays on your camera screen." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
@@ -16,14 +16,16 @@
       <div class="word-lg">IN PRINCIPIO</div>
       <div class="word-sm">Weddings by Kim &amp; Ivan</div>
     </div>
+    <div class="account" id="account" hidden></div>
   </header>
 
   <main class="wrap">
     <section class="intro">
-      <p class="eyebrow">Pose Reference Cards</p>
-      <h1>Your poses, on your camera screen.</h1>
-      <p class="lede">Upload your designs, download a ready-to-copy SD-card pack, and scroll through
-        your poses in playback — no app, no phone, no signal. Just the camera you're already holding.</p>
+      <p class="eyebrow">Camera Cards</p>
+      <h1>Any image, on your camera screen.</h1>
+      <p class="lede">Upload any image — poses, references, moodboards, shot lists — download a
+        ready-to-copy SD-card pack, and scroll through them in playback. No app, no phone, no signal.
+        Just the camera you're already holding.</p>
     </section>
 
     <!-- Step 1 -->
@@ -38,7 +40,7 @@
 
     <!-- Step 2 -->
     <section class="step">
-      <h2><span class="num">ii</span> Add your designs</h2>
+      <h2><span class="num">ii</span> Add your images</h2>
       <label class="drop" id="drop">
         <input type="file" id="file" accept="image/*" multiple hidden />
         <span class="drop-title">Drag images here or click to choose</span>
@@ -66,6 +68,7 @@
       <h2><span class="num">iii</span> Generate &amp; download</h2>
       <button class="go" id="go" disabled>Generate cards</button>
       <p class="status" id="status"></p>
+      <div class="upsell" id="upsell" hidden></div>
     </section>
 
     <!-- Step 4 -->
@@ -81,6 +84,20 @@
     <a href="https://inprincipioweddings.com">inprincipioweddings.com</a>
   </footer>
 
+  <!-- Login modal (only shown when the paywall is active) -->
+  <div class="modal" id="login-modal" hidden>
+    <div class="modal-card">
+      <h3>Sign in</h3>
+      <p class="muted">We'll email you a magic link — no password.</p>
+      <input type="email" id="login-email" placeholder="you@email.com" autocomplete="email" />
+      <button class="go" id="login-send">Send magic link</button>
+      <p class="status" id="login-status"></p>
+      <button class="link-btn" id="login-close">Close</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/auth.js"></script>
   <script src="/assets/app.js"></script>
 </body>
 </html>

@@ -1,11 +1,12 @@
 "use strict";
 
-const API = "/api/convert";          // same-origin Vercel function
-const MAX_EDGE = 2400;               // downscale before upload (Vercel ~4.5MB body limit)
+const API = "/api/convert";
+const ME = "/api/me";
+const MAX_EDGE = 2400;        // downscale before upload (Vercel ~4.5MB body limit)
 const JPEG_Q = 0.9;
+const STRIPE_READY = false;   // flipped on once Stripe checkout is wired
 
 const state = { vendor: null, items: [], selected: 0 };
-
 const $ = (id) => document.getElementById(id);
 const camButtons = Array.from(document.querySelectorAll(".cam"));
 
@@ -43,14 +44,11 @@ camButtons.forEach((btn) => {
 
 /* ---------- file input + drag/drop ---------- */
 const drop = $("drop");
-const fileInput = $("file");
-fileInput.addEventListener("change", (e) => addFiles(e.target.files));
+$("file").addEventListener("change", (e) => addFiles(e.target.files));
 ["dragenter", "dragover"].forEach((ev) =>
-  drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); })
-);
+  drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
 ["dragleave", "drop"].forEach((ev) =>
-  drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); })
-);
+  drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
 drop.addEventListener("drop", (e) => addFiles(e.dataTransfer.files));
 
 function addFiles(fileList) {
@@ -69,8 +67,7 @@ function renderPreview() {
   if (!state.items.length) { wrap.hidden = true; return; }
   wrap.hidden = false;
   $("screen-img").src = state.items[state.selected].url;
-  $("screen-count").textContent =
-    state.items.length + (state.items.length === 1 ? " card" : " cards");
+  $("screen-count").textContent = state.items.length + (state.items.length === 1 ? " card" : " cards");
   const strip = $("filmstrip");
   strip.innerHTML = "";
   state.items.forEach((it, i) => {
@@ -82,10 +79,7 @@ function renderPreview() {
   });
 }
 
-/* ---------- enable/disable ---------- */
-function refresh() {
-  $("go").disabled = !(state.vendor && state.items.length);
-}
+function refresh() { $("go").disabled = !(state.vendor && state.items.length); }
 
 /* ---------- downscale ---------- */
 function loadImage(file) {
@@ -106,12 +100,15 @@ async function downscale(file) {
   return await new Promise((res) => canvas.toBlob(res, "image/jpeg", JPEG_Q));
 }
 
-/* ---------- generate ---------- */
 const orientValue = () => document.querySelector('input[name="orient"]:checked').value;
 
+/* ---------- generate ---------- */
 $("go").addEventListener("click", async () => {
   if (!state.vendor || !state.items.length) return;
+  if (window.__paywall && !PoseAuth.token()) { openLogin(); return; }
+
   const go = $("go"), status = $("status");
+  $("upsell").hidden = true;
   go.disabled = true;
   status.className = "status";
   status.textContent = "Preparing images…";
@@ -127,21 +124,39 @@ $("go").addEventListener("click", async () => {
     }
     status.textContent = "Converting and packaging…";
 
-    const resp = await fetch(API, { method: "POST", body: fd });
+    const tok = window.__paywall ? PoseAuth.token() : null;
+    const resp = await fetch(API, {
+      method: "POST",
+      body: fd,
+      headers: tok ? { Authorization: "Bearer " + tok } : undefined,
+    });
+
+    if (resp.status === 402) {
+      let j = {}; try { j = await resp.json(); } catch (_) {}
+      status.className = "status err";
+      status.textContent = "✗ " + (j.error || "Upgrade required.");
+      showUpsell();
+      renderAccount();
+      return;
+    }
     if (!resp.ok) {
       let msg = "Error " + resp.status;
       try { msg = (await resp.json()).error || msg; } catch (_) {}
       throw new Error(msg);
     }
+
     const blob = await resp.blob();
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "pose-cards.zip";
     document.body.appendChild(a); a.click(); a.remove();
 
+    const wm = resp.headers.get("X-Watermarked") === "1";
     status.className = "status ok";
-    status.textContent = "✓ Done! Your pose-cards.zip is downloading.";
+    status.textContent = "✓ Done! Your pose-cards.zip is downloading." +
+      (wm ? "  (free preview — watermarked)" : "");
     showInstructions();
+    renderAccount();
   } catch (err) {
     status.className = "status err";
     status.textContent = "✗ " + err.message;
@@ -155,3 +170,73 @@ function showInstructions() {
   $("instructions").hidden = false;
   $("instructions").scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
+
+function showUpsell() {
+  const el = $("upsell");
+  el.hidden = false;
+  el.innerHTML = STRIPE_READY
+    ? '<button class="go" data-plan="pro">Go Pro</button>' +
+      '<button class="link-btn" data-plan="pack20">Buy 20-pack</button>'
+    : '<p class="muted">You\'ve used your free previews. Pro &amp; the 20-pack are launching soon — thanks for trying it!</p>';
+}
+
+/* ---------- auth / account ---------- */
+async function renderAccount() {
+  const el = $("account");
+  if (!window.__paywall) { el.hidden = true; return; }
+  el.hidden = false;
+  const tok = PoseAuth.token();
+  if (!tok) {
+    el.innerHTML = '<button class="link-btn" id="signin-btn">Sign in</button>';
+    $("signin-btn").onclick = openLogin;
+    return;
+  }
+  el.innerHTML = '<span class="acct-info" id="acct-info">…</span>' +
+    '<button class="link-btn" id="signout-btn">Sign out</button>';
+  $("signout-btn").onclick = async () => { await PoseAuth.signOut(); };
+  try {
+    const r = await fetch(ME, { headers: { Authorization: "Bearer " + tok } });
+    const j = await r.json();
+    const who = j.email || (PoseAuth.user() && PoseAuth.user().email) || "signed in";
+    let badge;
+    if (j.plan === "pro") badge = "Pro";
+    else if ((j.credits || 0) > 0) badge = j.credits + " credits";
+    else badge = (j.free_left ?? 0) + " free left";
+    $("acct-info").textContent = who + " · " + badge;
+  } catch (_) {
+    $("acct-info").textContent = (PoseAuth.user() && PoseAuth.user().email) || "signed in";
+  }
+}
+
+/* ---------- login modal ---------- */
+function openLogin() { $("login-modal").hidden = false; $("login-email").focus(); }
+$("login-close").onclick = () => { $("login-modal").hidden = true; };
+$("login-send").onclick = async () => {
+  const email = $("login-email").value.trim();
+  const st = $("login-status");
+  if (!email) { st.className = "status err"; st.textContent = "Enter your email."; return; }
+  st.className = "status"; st.textContent = "Sending…";
+  try {
+    await PoseAuth.signIn(email);
+    st.className = "status ok";
+    st.textContent = "Check your email for the magic link.";
+  } catch (e) {
+    st.className = "status err";
+    st.textContent = e.message || "Could not send link.";
+  }
+};
+
+/* ---------- boot ---------- */
+(async function boot() {
+  try {
+    const j = await (await fetch(API, { method: "GET" })).json();
+    window.__paywall = !!j.paywall;
+  } catch (_) {
+    window.__paywall = false;
+  }
+  if (window.__paywall && window.PoseAuth) {
+    await PoseAuth.init(() => { renderAccount(); $("login-modal").hidden = true; });
+  } else {
+    $("account").hidden = true;
+  }
+})();
