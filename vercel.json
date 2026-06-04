@@ -2,7 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/convert.py": {
-      "includeFiles": "converter/**"
+      "includeFiles": "{converter,webauth}/**"
+    },
+    "api/me.py": {
+      "includeFiles": "webauth/**"
     }
   }
 }

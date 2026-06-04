@@ -1,34 +1,36 @@
 """
 Vercel Python serverless function: POST design images -> SD-card ZIP.
 
-Deployed by Vercel at /api/convert (any file under /api is a function).
-Uses the repo's converter/ package (bundled via vercel.json includeFiles).
+When the paywall env vars (SUPABASE_*) are set, requests must carry a Supabase
+access token (Authorization: Bearer ...) and are metered:
+  Free: 2 cards, watermarked · 20-pack: credits · Pro: unlimited.
+Without those env vars the converter stays open (no login, no watermark).
 
+Uses the repo's converter/ + webauth/ packages (bundled via vercel.json).
 The original scripts/cardify.sh CLI is not involved.
 """
 
 import os
 import sys
 
-# Make the top-level converter/ package importable (it sits next to /api).
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from flask import Flask, request, Response, jsonify  # noqa: E402
 from converter import pack, encoder  # noqa: E402
+from webauth import auth  # noqa: E402
 
 app = Flask(__name__)
 
 MAX_FILES = 30
-MAX_BYTES_PER_FILE = 15 * 1024 * 1024  # individual image cap
+MAX_BYTES_PER_FILE = 15 * 1024 * 1024
 
 
 @app.after_request
 def _cors(resp):
-    # Same-origin in the standalone app; permissive so the page can also be
-    # hosted elsewhere (e.g. later embedded from the NotaLucis web) during testing.
     resp.headers["Access-Control-Allow-Origin"] = "*"
     resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
-    resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    resp.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type"
+    resp.headers["Access-Control-Expose-Headers"] = "X-Tier, X-Watermarked"
     return resp
 
 
@@ -38,7 +40,7 @@ def convert(path):
     if request.method == "OPTIONS":
         return ("", 204)
     if request.method == "GET":
-        return jsonify(ok=True, vendors=sorted(encoder.VENDORS))
+        return jsonify(ok=True, vendors=sorted(encoder.VENDORS), paywall=auth.paywall_enabled())
 
     vendor = (request.form.get("vendor") or "sony").strip().lower()
     orientation = (request.form.get("orientation") or "auto").strip().lower()
@@ -64,16 +66,40 @@ def convert(path):
     if not designs:
         return jsonify(error="uploaded files were empty"), 400
 
+    # --- paywall (active only when SUPABASE_* env vars are set) ---
+    watermark = False
+    uid = profile = None
+    tier = "open"
+    if auth.paywall_enabled():
+        try:
+            uid, _email = auth.verify_user(request.headers.get("Authorization"))
+        except auth.AuthError as e:
+            return jsonify(error=e.message), e.status
+        profile = auth.get_profile(uid)
+        decision = auth.decide(profile, len(designs))
+        if not decision["allowed"]:
+            return jsonify(error=decision["message"], need_payment=True,
+                           free_left=decision.get("free_left"),
+                           credits=decision.get("credits")), 402
+        watermark = decision["watermark"]
+        tier = decision["tier"]
+
     try:
-        zip_bytes = pack.build_zip(designs, vendor, orientation)
+        zip_bytes = pack.build_zip(designs, vendor, orientation, watermark=watermark)
     except FileNotFoundError as e:
-        # Missing vendor template (e.g. canon/nikon not uploaded yet).
         return jsonify(error=str(e)), 400
     except Exception as e:  # pragma: no cover
         return jsonify(error=f"conversion failed: {e}"), 500
 
+    if auth.paywall_enabled() and uid:
+        auth.consume(uid, profile, len(designs), tier, vendor)
+
     return Response(
         zip_bytes,
         mimetype="application/zip",
-        headers={"Content-Disposition": 'attachment; filename="pose-cards.zip"'},
+        headers={
+            "Content-Disposition": 'attachment; filename="pose-cards.zip"',
+            "X-Tier": tier,
+            "X-Watermarked": "1" if watermark else "0",
+        },
     )
