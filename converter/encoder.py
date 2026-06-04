@@ -32,7 +32,7 @@ import copy
 import struct
 from dataclasses import dataclass
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import PIL.JpegImagePlugin as JpegPlugin
 import piexif
 
@@ -218,6 +218,32 @@ def _make_thumbnail(card: Image.Image, qtables) -> bytes:
     return _rebuild_jpeg(raw, app1=None)  # strip JFIF from the embedded thumb too
 
 
+def _watermark(img: Image.Image) -> Image.Image:
+    """Overlay a tiled diagonal PREVIEW watermark (free tier). Uses Pillow's
+    built-in font so it needs no font files (works on Vercel)."""
+    base = img.convert("RGBA")
+    try:
+        font = ImageFont.load_default(size=46)
+    except TypeError:  # older Pillow without the size argument
+        font = ImageFont.load_default()
+    text = "IN PRINCIPIO  ·  PREVIEW"
+    box = ImageDraw.Draw(base).textbbox((0, 0), text, font=font, stroke_width=2)
+    tw, th = box[2] - box[0], box[3] - box[1]
+    tile = Image.new("RGBA", (tw + 24, th + 24), (0, 0, 0, 0))
+    ImageDraw.Draw(tile).text((12, 12), text, font=font, fill=(255, 255, 255, 78),
+                              stroke_width=2, stroke_fill=(0, 0, 0, 70))
+    tile = tile.rotate(30, expand=True, resample=Image.BICUBIC)
+    overlay = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    step_x, step_y = tile.width + 60, tile.height + 40
+    row = 0
+    for y in range(-tile.height, base.height + tile.height, step_y):
+        x0 = -tile.width + (step_x // 2 if row % 2 else 0)
+        for x in range(x0, base.width + tile.width, step_x):
+            overlay.alpha_composite(tile, (x, y))
+        row += 1
+    return Image.alpha_composite(base, overlay).convert("RGB")
+
+
 def _build_exif(exif_base: dict, exif_orient: int, thumb: bytes) -> bytes:
     """Build the output EXIF by cloning the template's real-camera EXIF and
     surgically overriding the parts that must differ for our card — the same
@@ -277,23 +303,25 @@ def template_meta(template_path: str) -> tuple[list, dict]:
     return qtables, ex
 
 
-def convert(image_bytes: bytes, template_path: str, orientation: str = "auto") -> bytes:
+def convert(image_bytes: bytes, template_path: str, orientation: str = "auto",
+            watermark: bool = False) -> bytes:
     """Convert a design image into a camera-ready playback-card JPEG.
 
     Args:
         image_bytes: the user's design export (any size / format Pillow can open).
         template_path: a real straight-out-of-camera JPEG for this vendor.
         orientation: "auto" (from input aspect), "landscape", or "portrait".
+        watermark: overlay a PREVIEW watermark (free tier).
 
     Returns:
         JPEG bytes: 1920x1280, baseline 4:2:2, template q-tables, DCF/EXIF set.
     """
     qtables, exif_base = template_meta(template_path)
-    return convert_with(image_bytes, qtables, exif_base, orientation)
+    return convert_with(image_bytes, qtables, exif_base, orientation, watermark)
 
 
 def convert_with(image_bytes: bytes, qtables: list, exif_base: dict,
-                 orientation: str = "auto") -> bytes:
+                 orientation: str = "auto", watermark: bool = False) -> bytes:
     """Like convert(), but with template metadata already read — lets a batch
     read the template once and reuse it for every card."""
     src = Image.open(io.BytesIO(image_bytes))
@@ -306,6 +334,8 @@ def convert_with(image_bytes: bytes, qtables: list, exif_base: dict,
     card = src.convert("RGB").resize((pre_w, pre_h), Image.LANCZOS)
     if rotate:
         card = card.transpose(Image.ROTATE_90)  # PIL ROTATE_90 == CCW (cardify.sh:335)
+    if watermark:
+        card = _watermark(card)
 
     raw = _encode_with_qtables(card, qtables)
     thumb = _make_thumbnail(card, qtables)

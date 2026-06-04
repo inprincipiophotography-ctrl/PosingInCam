@@ -89,7 +89,7 @@ def instructions(vendor: str) -> tuple[str, str]:
 
 
 def build_zip(designs: list[tuple[str, bytes]], vendor: str, orientation: str = "auto",
-              template_dir: str = TEMPLATES_DIR) -> bytes:
+              watermark: bool = False, template_dir: str = TEMPLATES_DIR) -> bytes:
     """Convert every design and return a ZIP laid out like an SD card.
 
     Args:
@@ -116,7 +116,7 @@ def build_zip(designs: list[tuple[str, bytes]], vendor: str, orientation: str = 
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
         for i, (_orig_name, image_bytes) in enumerate(designs):
-            card = encoder.convert_with(image_bytes, qtables, exif_base, orientation)
+            card = encoder.convert_with(image_bytes, qtables, exif_base, orientation, watermark)
             arcname = f"DCIM/{v.folder}/{encoder.filename_for(vendor, i, prefix)}"
             zf.writestr(arcname, card)
         zf.writestr("README.txt", en + "\n")
