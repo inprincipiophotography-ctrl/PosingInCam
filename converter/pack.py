@@ -114,13 +114,13 @@ def build_zip(designs: list[tuple[str, bytes]], vendor: str, orientation: str = 
             f"missing template for {vendor}: {template_path} — upload a real "
             f"straight-out-of-camera JPEG named {v.template}"
         )
-    qtables, make, model = encoder.template_meta(template_path)
+    qtables, exif_base = encoder.template_meta(template_path)
 
     hr, en = instructions(vendor)
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
         for i, (_orig_name, image_bytes) in enumerate(designs):
-            card = encoder.convert_with(image_bytes, qtables, make, model, orientation)
+            card = encoder.convert_with(image_bytes, qtables, exif_base, orientation)
             arcname = f"DCIM/{v.folder}/{encoder.filename_for(vendor, i)}"
             zf.writestr(arcname, card)
         zf.writestr("PROCITAJ-ME.txt", hr + "\n")

@@ -27,6 +27,7 @@ rejects the output, the documented fallback is the Docker+exiftool path.
 from __future__ import annotations
 
 import io
+import copy
 import struct
 from dataclasses import dataclass
 
@@ -177,56 +178,63 @@ def _make_thumbnail(card: Image.Image, qtables) -> bytes:
     return _rebuild_jpeg(raw, app1=None)  # strip JFIF from the embedded thumb too
 
 
-def _build_exif(make: bytes, model: bytes, exif_orient: int, thumb: bytes) -> bytes:
-    zeroth = {
-        piexif.ImageIFD.Make: make,
-        piexif.ImageIFD.Model: model,
-        piexif.ImageIFD.Orientation: exif_orient,
-        piexif.ImageIFD.YCbCrPositioning: 2,        # Co-sited (cardify.sh:389)
-        piexif.ImageIFD.XResolution: (350, 1),
-        piexif.ImageIFD.YResolution: (350, 1),
-        piexif.ImageIFD.ResolutionUnit: 2,
-        piexif.ImageIFD.DateTime: FIXED_DATE,
-    }
-    exif = {
-        piexif.ExifIFD.DateTimeOriginal: FIXED_DATE,
-        piexif.ExifIFD.DateTimeDigitized: FIXED_DATE,
-        piexif.ExifIFD.PixelXDimension: OUT_W,      # ExifImageWidth  (cardify.sh:365-368)
-        piexif.ExifIFD.PixelYDimension: OUT_H,      # ExifImageHeight
-        piexif.ExifIFD.ColorSpace: 1,               # sRGB
-    }
-    # Only InteropIndex=R98 (the DCF marker the validator checks). piexif's
-    # Interop tag table doesn't define InteropVersion, and it isn't required.
-    interop = {_INTEROP_INDEX: b"R98"}  # cardify.sh:386
-    first = {
+def _build_exif(exif_base: dict, exif_orient: int, thumb: bytes) -> bytes:
+    """Build the output EXIF by cloning the template's real-camera EXIF and
+    surgically overriding the parts that must differ for our card — the same
+    philosophy as cardify.sh's ``-tagsFromFile -all:all`` then targeted edits
+    (cardify.sh:345-390), but in pure Python. MakerNotes are intentionally left
+    out (see module docstring)."""
+    ex = copy.deepcopy(exif_base)
+    ex.setdefault("0th", {})
+    ex.setdefault("Exif", {})
+
+    ex["0th"][piexif.ImageIFD.Orientation] = exif_orient
+    ex["0th"][piexif.ImageIFD.YCbCrPositioning] = 2          # Co-sited (cardify.sh:389)
+    ex["0th"][piexif.ImageIFD.DateTime] = FIXED_DATE
+    ex["Exif"][piexif.ExifIFD.DateTimeOriginal] = FIXED_DATE  # cardify.sh:375-379
+    ex["Exif"][piexif.ExifIFD.DateTimeDigitized] = FIXED_DATE
+    ex["Exif"][piexif.ExifIFD.PixelXDimension] = OUT_W        # ExifImageWidth  (cardify.sh:365-368)
+    ex["Exif"][piexif.ExifIFD.PixelYDimension] = OUT_H        # ExifImageHeight
+    ex["Exif"].pop(piexif.ExifIFD.MakerNote, None)           # never carry MakerNotes
+
+    ex["Interop"] = {_INTEROP_INDEX: b"R98"}                  # DCF marker (cardify.sh:386)
+    ex["GPS"] = {}
+    ex["1st"] = {
         piexif.ImageIFD.Compression: 6,
         piexif.ImageIFD.XResolution: (72, 1),
         piexif.ImageIFD.YResolution: (72, 1),
         piexif.ImageIFD.ResolutionUnit: 2,
         piexif.ImageIFD.Orientation: exif_orient,
     }
-    return piexif.dump({"0th": zeroth, "Exif": exif, "Interop": interop,
-                        "1st": first, "thumbnail": thumb})
+    ex["thumbnail"] = thumb
+    return piexif.dump(ex)
 
 
-def template_meta(template_path: str) -> tuple[list, bytes, bytes]:
-    """Return (qtables, make, model) read from a real-camera template JPEG.
+def template_meta(template_path: str) -> tuple[list, dict]:
+    """Return (qtables, exif_base) read from a real-camera template JPEG.
 
     qtables is normalised to a list-of-tables (each 64 ints), the format Pillow's
     ``save(qtables=...)`` accepts most reliably across versions.
+
+    exif_base is the template's EXIF (so the output inherits Make/Model and the
+    full standard tag set of a real shot), with the per-card / unsafe parts
+    removed: MakerNotes (offset-fragile + not load-bearing), the template's own
+    thumbnail/IFD1, and GPS.
     """
     tpl = Image.open(template_path)
     if not tpl.quantization:
         raise ValueError("template has no quantization tables — is it a real camera JPEG?")
     qtables = [list(tpl.quantization[k]) for k in sorted(tpl.quantization)]
+
     ex = piexif.load(template_path)
-    make = ex["0th"].get(piexif.ImageIFD.Make, b"")
-    model = ex["0th"].get(piexif.ImageIFD.Model, b"")
-    if isinstance(make, str):
-        make = make.encode()
-    if isinstance(model, str):
-        model = model.encode()
-    return qtables, make, model
+    ex.setdefault("0th", {})
+    ex.setdefault("Exif", {})
+    ex["Exif"].pop(piexif.ExifIFD.MakerNote, None)
+    ex.pop("1st", None)
+    ex["thumbnail"] = None
+    ex["GPS"] = {}
+    ex["Interop"] = {}
+    return qtables, ex
 
 
 def convert(image_bytes: bytes, template_path: str, orientation: str = "auto") -> bytes:
@@ -240,11 +248,11 @@ def convert(image_bytes: bytes, template_path: str, orientation: str = "auto") -
     Returns:
         JPEG bytes: 1920x1280, baseline 4:2:2, template q-tables, DCF/EXIF set.
     """
-    qtables, make, model = template_meta(template_path)
-    return convert_with(image_bytes, qtables, make, model, orientation)
+    qtables, exif_base = template_meta(template_path)
+    return convert_with(image_bytes, qtables, exif_base, orientation)
 
 
-def convert_with(image_bytes: bytes, qtables: list, make: bytes, model: bytes,
+def convert_with(image_bytes: bytes, qtables: list, exif_base: dict,
                  orientation: str = "auto") -> bytes:
     """Like convert(), but with template metadata already read — lets a batch
     read the template once and reuse it for every card."""
@@ -261,5 +269,5 @@ def convert_with(image_bytes: bytes, qtables: list, make: bytes, model: bytes,
 
     raw = _encode_with_qtables(card, qtables)
     thumb = _make_thumbnail(card, qtables)
-    app1 = _frame_app1(_build_exif(make, model, exif_orient, thumb))
+    app1 = _frame_app1(_build_exif(exif_base, exif_orient, thumb))
     return _rebuild_jpeg(raw, app1)
