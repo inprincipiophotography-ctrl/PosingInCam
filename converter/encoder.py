@@ -332,10 +332,10 @@ def convert_with(image_bytes: bytes, qtables: list, exif_base: dict,
         pre_w, pre_h, rotate, exif_orient = 1920, 1280, False, 1
 
     card = src.convert("RGB").resize((pre_w, pre_h), Image.LANCZOS)
+    if watermark:
+        card = _watermark(card)  # before rotate so it stays aligned with the photo
     if rotate:
         card = card.transpose(Image.ROTATE_90)  # PIL ROTATE_90 == CCW (cardify.sh:335)
-    if watermark:
-        card = _watermark(card)
 
     raw = _encode_with_qtables(card, qtables)
     thumb = _make_thumbnail(card, qtables)
