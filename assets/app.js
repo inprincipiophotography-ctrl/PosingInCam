@@ -412,3 +412,13 @@ function handleCheckoutReturn() {
   }
   history.replaceState({}, "", location.pathname);
 }
+
+/* ---------- hero video: slow playback for a smoother, cinematic loop ---------- */
+(function heroVideo() {
+  const v = document.querySelector(".hero-media");
+  if (!v) return;
+  const RATE = 0.6;
+  const apply = () => { try { v.playbackRate = RATE; } catch (_) {} };
+  ["loadedmetadata", "canplay", "play"].forEach((e) => v.addEventListener(e, apply));
+  apply();
+})();

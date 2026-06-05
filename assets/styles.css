@@ -101,6 +101,13 @@ img{max-width:100%}
   width:100%;height:auto;border-radius:20px;
   border:1px solid var(--border-soft);box-shadow:var(--shadow-lg);display:block;
 }
+/* gentle entrance + a slow float so the hero loop feels alive, not looped */
+.hero-media{animation:heroFade 1.1s ease both}
+@keyframes heroFade{from{opacity:0}to{opacity:1}}
+@keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@media(prefers-reduced-motion:no-preference){
+  .hero-visual{animation:heroFloat 7s ease-in-out infinite}
+}
 
 /* ---------- showcase band ---------- */
 .showcase{max-width:var(--maxw);margin:0 auto;padding:8px clamp(18px,4vw,40px) 24px}
