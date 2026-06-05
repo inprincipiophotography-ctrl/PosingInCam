@@ -22,7 +22,7 @@ SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
 SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
 JWT_SECRET = os.environ.get("SUPABASE_JWT_SECRET", "")
 
-FREE_LIMIT = 2
+FREE_LIMIT = 3
 _TIMEOUT = 10
 
 

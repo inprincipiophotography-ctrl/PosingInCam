@@ -254,10 +254,10 @@ async function renderPricing() {
   const toggle = $("price-toggle");
   if (!grid) return;
 
-  let data = { prices: {}, free_limit: 2, pack_size: 20 };
+  let data = { prices: {}, free_limit: 3, pack_size: 20 };
   try { data = await (await fetch("/api/prices")).json(); } catch (_) {}
   const P = data.prices || {};
-  const freeN = data.free_limit ?? 2;
+  const freeN = data.free_limit ?? 3;
   const packN = data.pack_size ?? 20;
   const hasM = !!P.monthly, hasY = !!P.yearly, hasPack = !!P.pack20;
 
