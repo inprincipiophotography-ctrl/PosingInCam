@@ -271,6 +271,23 @@ img{max-width:100%}
 .modal-card .go{width:100%}
 .modal-card .link-btn{display:block;margin:10px auto 0}
 
+/* ---------- hover interactions ---------- */
+.how-step,.idea,.price-card{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.pack-card img,.showcase-item img{transition:transform .2s ease,box-shadow .2s ease}
+.idea::before{transition:width .2s ease}
+.how-step:hover,.idea:hover{transform:translateY(-4px);border-color:rgba(124,58,237,.35);box-shadow:var(--shadow-lg)}
+.idea:hover::before{width:42px}
+.price-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.price-card.featured:hover{box-shadow:0 0 0 1px var(--accent) inset,var(--shadow-lg)}
+.pack-card img:hover{transform:translateY(-5px) scale(1.015);box-shadow:0 26px 60px rgba(0,0,0,.18)}
+.showcase-item img:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.pack-includes li:hover{border-color:var(--accent);color:var(--ink)}
+.btn:hover{transform:translateY(-1px)}
+.site-foot a:hover{color:var(--accent)}
+@media(prefers-reduced-motion:reduce){
+  .how-step:hover,.idea:hover,.price-card:hover,.pack-card img:hover,.showcase-item img:hover,.btn:hover{transform:none}
+}
+
 /* ---------- responsive ---------- */
 @media(max-width:880px){
   .hero{grid-template-columns:1fr;gap:30px}
