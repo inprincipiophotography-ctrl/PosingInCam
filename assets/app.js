@@ -166,13 +166,13 @@ $("go").addEventListener("click", async () => {
     const blob = await resp.blob();
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "pose-cards.zip";
+    a.download = "camera-cards.zip";
     document.body.appendChild(a); a.click(); a.remove();
 
     const wm = resp.headers.get("X-Watermarked") === "1";
     status.className = "status ok";
-    status.textContent = "✓ Done! Your pose-cards.zip is downloading." +
-      (wm ? "  (free preview, watermarked)" : "");
+    status.textContent = "✓ Done! Your camera-cards.zip is downloading." +
+      (wm ? "  (free, watermarked)" : "");
     showInstructions();
     renderAccount();
   } catch (err) {
@@ -194,16 +194,16 @@ function showUpsell() {
   el.hidden = false;
   if (window.__stripe) {
     el.innerHTML =
-      '<p class="muted" style="margin:0 0 12px">You\'ve used your free previews. Go unlimited or grab a 20-pack:</p>' +
+      '<p class="muted" style="margin:0 0 12px">You\'ve used your free conversions. Go unlimited or buy a credit pack:</p>' +
       '<div class="buy-row">' +
         '<button class="go" data-kind="monthly">Go Pro (monthly)</button>' +
         '<button class="go ghost" data-kind="yearly">Pro (yearly)</button>' +
-        '<button class="link-btn" data-kind="pack20">Buy 20 cards</button>' +
+        '<button class="link-btn" data-kind="pack20">Buy 20 credits</button>' +
       '</div>';
     el.querySelectorAll("[data-kind]").forEach((b) =>
       b.addEventListener("click", () => startCheckout(b.dataset.kind, b)));
   } else {
-    el.innerHTML = '<p class="muted">You\'ve used your free previews. Paid plans are launching soon. Thanks for trying it!</p>';
+    el.innerHTML = '<p class="muted">You\'ve used your free conversions. Paid plans are launching soon. Thanks for trying it!</p>';
   }
 }
 
@@ -289,8 +289,8 @@ async function renderPricing() {
         name: "Free",
         amount: "€0",
         per: "",
-        note: "No card needed",
-        feats: ["Sony · Canon · Nikon", freeN + " preview cards", "Watermarked output"],
+        note: "No credit card",
+        feats: ["Sony · Canon · Nikon", freeN + " conversions", "Watermarked output"],
         cta: '<button class="btn btn-ghost" data-go="tool">Start free</button>',
       }) +
       card({
@@ -300,19 +300,19 @@ async function renderPricing() {
         amount: proAmt || "",
         per: proAmt ? (cycle === "yearly" ? "/yr" : "/mo") : "",
         note: proNote,
-        feats: ["Unlimited cards", "No watermark", "All three brands", "Cancel anytime"],
+        feats: ["Unlimited conversions", "No watermark", "All three brands", "Cancel anytime"],
         cta: (hasM || hasY)
           ? '<button class="btn btn-primary" data-buy="' + cycle + '">Go Pro</button>'
           : '<button class="btn btn-primary" disabled>Coming soon</button>',
       }) +
       card({
-        name: packN + "-pack",
+        name: "Credits",
         amount: hasPack ? fmtMoney(P.pack20) : "",
         per: hasPack ? " once" : "",
         note: "One-time, no subscription",
-        feats: [packN + " cards", "No watermark", "Never expires"],
+        feats: [packN + " conversions", "No watermark", "Never expires"],
         cta: hasPack
-          ? '<button class="btn btn-ghost" data-buy="pack20">Buy ' + packN + "</button>"
+          ? '<button class="btn btn-ghost" data-buy="pack20">Buy ' + packN + " credits</button>"
           : '<button class="btn btn-ghost" disabled>Coming soon</button>',
       });
 

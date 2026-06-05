@@ -20,8 +20,9 @@
     </a>
     <nav class="nav-links">
       <a href="#how">How it works</a>
-      <a href="#packs">Pose packs</a>
       <a href="#pricing">Pricing</a>
+      <a href="#packs">Pose packs</a>
+      <a href="#faq">FAQ</a>
       <div class="account" id="account" hidden></div>
     </nav>
   </header>
@@ -31,7 +32,7 @@
     <section class="hero">
       <div class="hero-text">
         <p class="eyebrow">For photographers</p>
-        <h1>Any image, on the screen you're already looking at.</h1>
+        <h1>Any image, on the camera screen you're already holding.</h1>
         <p class="lede">Copy a random image to your SD card and your camera won't show it. We convert any
           image into the format your camera expects, so it shows in playback like a real photo.
           No app, no phone, no awkward pauses.</p>
@@ -41,7 +42,7 @@
         </div>
         <div class="trust">
           <span class="trust-item">✓ Sony · Canon · Nikon</span>
-          <span class="trust-item">✓ 3 free, no card needed</span>
+          <span class="trust-item">✓ 3 free, no credit card</span>
         </div>
       </div>
       <div class="hero-visual">
@@ -88,6 +89,7 @@
         <span class="flow-chip">Screenshots</span>
         <span class="flow-chip">Photos</span>
       </div>
+      <p class="flow-trust">Tested on Sony A7 III/IV/V, Canon R6 and Nikon Z6/Z8/Z9. They're ordinary JPEGs, so nothing can harm your camera or card.</p>
     </section>
 
     <!-- What you can put on your camera -->
@@ -117,7 +119,7 @@
         </div>
         <div class="how-step">
           <span class="how-num">2</span>
-          <h3>Download the pack</h3>
+          <h3>Download your files</h3>
           <p>We convert each one into a camera-ready file and hand you a ready-to-copy SD-card folder.</p>
         </div>
         <div class="how-step">
@@ -132,6 +134,7 @@
     <section class="tool" id="tool">
       <p class="eyebrow center">The tool</p>
       <h2 class="section-h center">Convert any image.</h2>
+      <p class="tool-sub">Upload your own images and we make them camera-ready. Free includes 3 conversions with a small watermark. You sign in with an email link, no password and no credit card.</p>
       <div class="tool-card">
         <!-- Step 1 -->
         <div class="field">
@@ -169,14 +172,14 @@
         <!-- Step 3 -->
         <div class="field">
           <label class="field-label"><span class="step-dot">3</span> Generate &amp; download</label>
-          <button class="go" id="go" disabled>Generate cards</button>
+          <button class="go" id="go" disabled>Convert &amp; download</button>
           <p class="status" id="status"></p>
           <div class="upsell" id="upsell" hidden></div>
         </div>
 
         <!-- Instructions (after generate) -->
         <div class="instructions" id="instructions" hidden>
-          <label class="field-label">Put it on your card</label>
+          <label class="field-label">Put it on your SD card</label>
           <pre id="instr-text"></pre>
           <p class="muted">The same instructions are included in the downloaded ZIP.</p>
         </div>
@@ -187,6 +190,7 @@
     <section class="pricing" id="pricing">
       <p class="eyebrow center">Pricing</p>
       <h2 class="section-h center">Simple, fair, cancel anytime.</h2>
+      <p class="pricing-sub">Plans for the converter tool. Looking for our ready-made wedding poses instead? See the packs below.</p>
       <div class="price-toggle" id="price-toggle" hidden>
         <button class="active" data-cycle="monthly">Monthly</button>
         <button data-cycle="yearly">Yearly</button>
@@ -199,7 +203,7 @@
       <p class="eyebrow center">Wedding pose packs</p>
       <h2 class="section-h center">Rather have 50 wedding poses ready to go?</h2>
       <p class="packs-lede">Our In-Camera Posing packs are 50 ready-made wedding poses for couples, bridal and
-        group shots, dropped straight onto your card. Every card gives you a reference photo, the camera
+        group shots, dropped straight onto your card. Each one gives you a reference photo, the camera
         settings, a posing hack, and the exact words to say to your couple. New poses added regularly.</p>
 
       <div class="packs-track">
@@ -219,7 +223,22 @@
 
       <div class="packs-cta">
         <a class="btn btn-primary" href="https://www.inprincipioweddings.com/store/in-camera-posing" target="_blank" rel="noopener">Browse the pose packs →</a>
-        <p class="packs-note">50 wedding pose cards · Sony, Canon &amp; Nikon · one-time purchase on inprincipioweddings.com</p>
+        <p class="packs-note">50 wedding poses for Sony, Canon and Nikon. A one-time purchase on our store, separate from the tool plans above.</p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+      <p class="eyebrow center">FAQ</p>
+      <h2 class="section-h center">Good to know.</h2>
+      <div class="faq-list">
+        <details class="faq-item"><summary>Will it work on my camera?</summary><p>Tested on Sony A7 III/IV/V, Canon R6 and Nikon Z6/Z8/Z9, and it works on most recent Sony Alpha, Canon EOS R and Nikon Z bodies. Pick your brand in the tool above.</p></details>
+        <details class="faq-item"><summary>Is it safe for my camera and SD card?</summary><p>Yes. You only copy ordinary JPEG files to the card, the same kind your camera already makes. Nothing is installed and your existing photos are untouched.</p></details>
+        <details class="faq-item"><summary>Why won't a normal image show on my camera?</summary><p>Cameras only display files saved in their own format: the right size, the right metadata and the right folder. We convert any image to match, so it appears in playback like a photo you shot.</p></details>
+        <details class="faq-item"><summary>Do I need an account?</summary><p>Yes, you sign in with a one-time email link, no password. The free plan includes 3 conversions with a small watermark; paid plans remove it.</p></details>
+        <details class="faq-item"><summary>What's the difference between the tool and the pose packs?</summary><p>The tool converts your own images (designs, shot lists, anything). The pose packs are 50 ready-made wedding poses we shot and designed, sold separately on our store.</p></details>
+        <details class="faq-item"><summary>Anything special per camera?</summary><p>Sony needs one extra step (Recover Image Database), which is in the included instructions. Canon and Nikon are essentially plug and play.</p></details>
+        <details class="faq-item"><summary>Who made this?</summary><p>We're Kim &amp; Ivan, the wedding photographers behind In Principio. We built this for our own shoots and opened it up to other photographers.</p></details>
       </div>
     </section>
   </main>
