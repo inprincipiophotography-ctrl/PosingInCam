@@ -109,21 +109,28 @@ img{max-width:100%}
   .hero-visual{animation:heroFloat 7s ease-in-out infinite}
 }
 
-/* ---------- any image -> camera flow ---------- */
-.flow{max-width:var(--maxw);margin:0 auto;padding:6px clamp(18px,4vw,40px) 18px;display:flex;align-items:center;justify-content:center;gap:clamp(18px,4vw,44px);flex-wrap:wrap}
-.flow-node{display:flex;flex-direction:column;align-items:center;gap:12px}
-.flow-cap{margin:0;color:var(--muted);font-size:13px;font-weight:500;letter-spacing:.02em}
-.flow-inputs{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:260px;background:var(--surface);border:1px solid var(--border-soft);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
-.flow-chip{background:var(--surface-2);border:1px solid var(--border-soft);border-radius:9px;padding:9px 10px;font-size:12.5px;color:var(--ink-2);text-align:center;white-space:nowrap}
-.flow-go{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--accent-2)}
-.flow-arrow{font-size:28px;line-height:1}
-.flow-go-label{font-family:var(--serif);font-style:italic;font-size:15px}
-.flow-screen{position:relative;width:260px;aspect-ratio:3/2;background:#1c1c1e;border-radius:14px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;overflow:hidden}
-.flow-photo{width:62%;height:80%;border-radius:6px;background:linear-gradient(135deg,#48484a,#2c2c2e);box-shadow:0 2px 10px rgba(0,0,0,.4)}
-.flow-tag{position:absolute;right:10px;bottom:9px;background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;font-size:11px;letter-spacing:.04em;padding:3px 9px;border-radius:14px;font-family:var(--mono)}
-@media(max-width:620px){
-  .flow{flex-direction:column;gap:14px}
-  .flow-arrow{transform:rotate(90deg)}
+/* ---------- what it does: any image -> camera ---------- */
+.flow{max-width:var(--maxw);margin:0 auto;padding:clamp(40px,6vw,72px) clamp(18px,4vw,40px)}
+.flow-sub{max-width:58ch;margin:8px auto 0;color:var(--ink-2);font-size:clamp(16px,2.2vw,18px);font-weight:300;text-align:center}
+.flow-stage{display:flex;align-items:center;justify-content:center;gap:clamp(16px,3.5vw,40px);flex-wrap:wrap;margin-top:clamp(28px,4vw,44px)}
+.flow-item{display:flex;flex-direction:column;align-items:center;gap:14px;margin:0}
+.flow-box{height:clamp(250px,33vw,350px);border-radius:18px;box-shadow:var(--shadow-lg);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.flow-in{width:clamp(190px,23vw,240px);background:linear-gradient(160deg,#faf8ff,#f1ebff);border:1px solid rgba(124,58,237,.18);color:var(--accent-2)}
+.flow-in svg{width:clamp(52px,8vw,68px);height:auto}
+.flow-out{background:#000}
+.flow-out img{height:100%;width:auto;display:block}
+.flow-cap{font-size:14px;font-weight:600;color:var(--ink);letter-spacing:.01em}
+.flow-link{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--accent-2)}
+.flow-badge{display:flex;align-items:center;justify-content:center;width:50px;height:50px;border-radius:50%;background:var(--accent);color:#fff;font-size:23px;box-shadow:0 8px 22px rgba(124,58,237,.32)}
+.flow-link-label{font-family:var(--serif);font-style:italic;font-size:15px}
+.flow-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 10px;margin:clamp(26px,4vw,40px) auto 0;max-width:640px}
+.flow-chip{background:var(--surface);border:1px solid var(--border-soft);border-radius:999px;padding:7px 15px;font-size:13px;color:var(--ink-2);box-shadow:var(--shadow)}
+@media(max-width:680px){
+  .flow-stage{flex-direction:column;gap:16px}
+  .flow-badge{transform:rotate(90deg)}
+  .flow-box{height:auto}
+  .flow-in{height:190px;width:min(300px,82vw)}
+  .flow-out img{height:auto;width:min(300px,82vw)}
 }
 
 /* ---------- showcase band ---------- */

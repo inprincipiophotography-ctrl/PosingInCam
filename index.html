@@ -53,36 +53,40 @@
       </div>
     </section>
 
-    <!-- Any image -> camera, at a glance -->
-    <section class="flow" aria-label="Any image becomes a file your camera can display">
-      <div class="flow-node">
-        <div class="flow-inputs">
-          <span class="flow-chip">Canva design</span>
-          <span class="flow-chip">Shot list</span>
-          <span class="flow-chip">Moodboard</span>
-          <span class="flow-chip">Screenshot</span>
+    <!-- What it does: any image -> your camera (before / after) -->
+    <section class="flow" id="flow">
+      <p class="eyebrow center">What it does</p>
+      <h2 class="section-h center">From any image to your camera screen.</h2>
+      <p class="flow-sub">Your camera won't show a photo it didn't take. We convert any image into the exact
+        format it expects, so it lands in playback like a real shot.</p>
+      <div class="flow-stage">
+        <div class="flow-item">
+          <div class="flow-box flow-in">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="6" y="9" width="36" height="30" rx="4"/>
+              <circle cx="17" cy="19" r="3.4"/>
+              <path d="M7 34l10-9 7 6 8-8 9 8"/>
+            </svg>
+          </div>
+          <span class="flow-cap">Any image</span>
         </div>
-        <p class="flow-cap">Any image you have</p>
-      </div>
-      <div class="flow-go" aria-hidden="true">
-        <span class="flow-arrow">→</span>
-        <span class="flow-go-label">we convert</span>
-      </div>
-      <div class="flow-node">
-        <div class="flow-screen">
-          <span class="flow-photo"></span>
-          <span class="flow-tag">DSC00001.JPG</span>
+        <div class="flow-link" aria-hidden="true">
+          <span class="flow-badge">→</span>
+          <span class="flow-link-label">we convert</span>
         </div>
-        <p class="flow-cap">Shows on your camera</p>
+        <figure class="flow-item">
+          <div class="flow-box flow-out">
+            <img src="/assets/showcase/cam-shot.jpg" alt="A pose card displayed on a camera's back screen, held in one hand" loading="lazy" />
+          </div>
+          <figcaption class="flow-cap">On your camera</figcaption>
+        </figure>
       </div>
-    </section>
-
-    <!-- Showcase band -->
-    <section class="showcase" id="showcase" hidden>
-      <div class="showcase-track">
-        <figure class="showcase-item"><img src="/assets/showcase/01.jpg" alt="Pose card on a camera screen" onload="document.getElementById('showcase').hidden=false" onerror="this.closest('.showcase-item').remove()" /></figure>
-        <figure class="showcase-item"><img src="/assets/showcase/02.jpg" alt="Scroll through poses like photos" onload="document.getElementById('showcase').hidden=false" onerror="this.closest('.showcase-item').remove()" /></figure>
-        <figure class="showcase-item"><img src="/assets/showcase/03.jpg" alt="No phone, no Pinterest" onload="document.getElementById('showcase').hidden=false" onerror="this.closest('.showcase-item').remove()" /></figure>
+      <div class="flow-chips">
+        <span class="flow-chip">Canva exports</span>
+        <span class="flow-chip">Shot lists</span>
+        <span class="flow-chip">Moodboards</span>
+        <span class="flow-chip">Screenshots</span>
+        <span class="flow-chip">Photos</span>
       </div>
     </section>
 
