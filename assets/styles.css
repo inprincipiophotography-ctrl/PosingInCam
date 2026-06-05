@@ -111,9 +111,9 @@ img{max-width:100%}
 
 /* ---------- showcase band ---------- */
 .showcase{max-width:var(--maxw);margin:0 auto;padding:8px clamp(18px,4vw,40px) 24px}
-.showcase-track{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 12px;-webkit-overflow-scrolling:touch}
-.showcase-item{flex:0 0 auto;width:300px;max-width:78vw;margin:0;scroll-snap-align:center}
-.showcase-item img{width:100%;height:auto;border-radius:14px;border:1px solid var(--border-soft);box-shadow:var(--shadow);display:block}
+.showcase-track{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:4px 0 12px}
+.showcase-item{margin:0}
+.showcase-item img{width:100%;height:auto;border-radius:16px;border:1px solid var(--border-soft);box-shadow:var(--shadow);display:block}
 
 /* ---------- how it works ---------- */
 .how{max-width:var(--maxw);margin:0 auto;padding:clamp(48px,7vw,84px) clamp(18px,4vw,40px)}
@@ -225,8 +225,8 @@ img{max-width:100%}
 /* ---------- ready-made packs ---------- */
 .packs{max-width:var(--maxw);margin:0 auto;padding:clamp(48px,7vw,84px) clamp(18px,4vw,40px)}
 .packs-lede{max-width:62ch;margin:6px auto 0;color:var(--ink-2);font-size:17px;font-weight:300;text-align:center}
-.packs-track{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:34px 2px 8px;-webkit-overflow-scrolling:touch}
-.pack-card{flex:0 0 auto;width:300px;max-width:74vw;margin:0;scroll-snap-align:center}
+.packs-track{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:30px 0 8px}
+.pack-card{margin:0}
 .pack-card img{width:100%;height:auto;border-radius:16px;border:1px solid var(--border-soft);box-shadow:var(--shadow-lg);display:block;background:var(--surface)}
 .pack-includes{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 12px;margin:22px auto 0;padding:0;max-width:720px}
 .pack-includes li{position:relative;padding:7px 15px 7px 32px;background:var(--surface);border:1px solid var(--border-soft);border-radius:999px;font-size:14px;color:var(--ink-2);box-shadow:var(--shadow)}
@@ -269,6 +269,8 @@ img{max-width:100%}
   .how-grid,.price-grid{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto}
   .how-grid{margin-top:32px}
   .price-card.featured{order:-1}
+  .showcase-track{grid-template-columns:1fr;max-width:440px;margin:0 auto}
+  .packs-track{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:560px){
   .cameras{grid-template-columns:1fr}
