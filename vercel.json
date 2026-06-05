@@ -5,6 +5,7 @@
     "api/me.py": { "includeFiles": "webauth/**" },
     "api/checkout.py": { "includeFiles": "webauth/**" },
     "api/portal.py": { "includeFiles": "webauth/**" },
-    "api/webhook.py": { "includeFiles": "webauth/**" }
+    "api/webhook.py": { "includeFiles": "webauth/**" },
+    "api/prices.py": { "includeFiles": "webauth/**" }
   }
 }

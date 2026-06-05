@@ -241,6 +241,98 @@ async function startPortal() {
   }
 }
 
+/* ---------- pricing section ---------- */
+function fmtMoney(o) {
+  if (!o || o.amount == null) return null;
+  const sym = o.currency === "EUR" ? "€" : (o.currency || "") + " ";
+  const n = Number(o.amount);
+  return sym + (Number.isInteger(n) ? n : n.toFixed(2));
+}
+
+async function renderPricing() {
+  const grid = $("price-grid");
+  const toggle = $("price-toggle");
+  if (!grid) return;
+
+  let data = { prices: {}, free_limit: 2, pack_size: 20 };
+  try { data = await (await fetch("/api/prices")).json(); } catch (_) {}
+  const P = data.prices || {};
+  const freeN = data.free_limit ?? 2;
+  const packN = data.pack_size ?? 20;
+  const hasM = !!P.monthly, hasY = !!P.yearly, hasPack = !!P.pack20;
+
+  let cycle = hasM ? "monthly" : (hasY ? "yearly" : "monthly");
+  toggle.hidden = !(hasM && hasY);
+
+  const card = (o) =>
+    '<div class="price-card' + (o.featured ? " featured" : "") + '">' +
+      (o.badge ? '<span class="price-badge">' + o.badge + "</span>" : "") +
+      '<div class="price-name">' + o.name + "</div>" +
+      '<div class="price-amount">' + o.amount +
+        (o.per ? '<span class="per">' + o.per + "</span>" : "") + "</div>" +
+      '<p class="price-note">' + (o.note || "") + "</p>" +
+      '<ul class="price-feats">' + o.feats.map((f) => "<li>" + f + "</li>").join("") + "</ul>" +
+      o.cta +
+    "</div>";
+
+  function paint() {
+    const pro = P[cycle];
+    const proAmt = fmtMoney(pro);
+    let proNote = "Unlimited, no watermark";
+    if (cycle === "yearly" && hasY) {
+      const sym = P.yearly.currency === "EUR" ? "€" : P.yearly.currency + " ";
+      proNote = sym + (P.yearly.amount / 12).toFixed(2) + "/mo, billed yearly";
+    }
+
+    grid.innerHTML =
+      card({
+        name: "Free",
+        amount: "€0",
+        per: "",
+        note: "No card needed",
+        feats: ["Sony · Canon · Nikon", freeN + " preview cards", "Watermarked output"],
+        cta: '<button class="btn btn-ghost" data-go="tool">Start free</button>',
+      }) +
+      card({
+        featured: true,
+        badge: "Most popular",
+        name: "Pro",
+        amount: proAmt || "—",
+        per: proAmt ? (cycle === "yearly" ? "/yr" : "/mo") : "",
+        note: proNote,
+        feats: ["Unlimited cards", "No watermark", "All three brands", "Cancel anytime"],
+        cta: (hasM || hasY)
+          ? '<button class="btn btn-primary" data-buy="' + cycle + '">Go Pro</button>'
+          : '<button class="btn btn-primary" disabled>Coming soon</button>',
+      }) +
+      card({
+        name: packN + "-pack",
+        amount: hasPack ? fmtMoney(P.pack20) : "—",
+        per: hasPack ? " once" : "",
+        note: "One-time, no subscription",
+        feats: [packN + " cards", "No watermark", "Never expires"],
+        cta: hasPack
+          ? '<button class="btn btn-ghost" data-buy="pack20">Buy ' + packN + "</button>"
+          : '<button class="btn btn-ghost" disabled>Coming soon</button>',
+      });
+
+    grid.querySelectorAll("[data-buy]").forEach((b) =>
+      b.addEventListener("click", () => startCheckout(b.dataset.buy, b)));
+    grid.querySelectorAll('[data-go="tool"]').forEach((b) =>
+      b.addEventListener("click", () =>
+        document.getElementById("tool").scrollIntoView({ behavior: "smooth" })));
+  }
+
+  toggle.querySelectorAll("button").forEach((b) =>
+    b.addEventListener("click", () => {
+      cycle = b.dataset.cycle;
+      toggle.querySelectorAll("button").forEach((x) => x.classList.toggle("active", x === b));
+      paint();
+    }));
+
+  paint();
+}
+
 /* ---------- auth / account ---------- */
 async function renderAccount() {
   const el = $("account");
@@ -304,6 +396,7 @@ $("login-send").onclick = async () => {
   } else {
     $("account").hidden = true;
   }
+  renderPricing();
   handleCheckoutReturn();
 })();
 

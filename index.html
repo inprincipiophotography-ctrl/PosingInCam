@@ -3,92 +3,147 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pose Cards · IN PRINCIPIO</title>
-  <meta name="description" content="Turn any image into a card that displays on your camera screen." />
+  <title>Camera Cards · IN PRINCIPIO</title>
+  <meta name="description" content="Put any image — poses, references, shot lists — on your camera screen. No app, no phone, no signal." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>
 <body>
-  <header class="site">
-    <div class="logo">
-      <div class="word-lg">IN PRINCIPIO</div>
-      <div class="word-sm">Weddings by Kim &amp; Ivan</div>
-    </div>
-    <div class="account" id="account" hidden></div>
+  <!-- Nav -->
+  <header class="nav">
+    <a class="brand" href="/">
+      <span class="brand-mark"></span>
+      <span class="brand-name">Camera Cards</span>
+      <span class="brand-by">by In Principio</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <div class="account" id="account" hidden></div>
+    </nav>
   </header>
 
-  <main class="wrap">
-    <section class="intro">
-      <p class="eyebrow">Camera Cards</p>
-      <h1>Any image, on your camera screen.</h1>
-      <p class="lede">Upload any image — poses, references, moodboards, shot lists — download a
-        ready-to-copy SD-card pack, and scroll through them in playback. No app, no phone, no signal.
-        Just the camera you're already holding.</p>
-    </section>
-
-    <!-- Showcase: auto-shows once /assets/showcase/0N.jpg images exist -->
-    <section class="showcase" id="showcase" hidden>
-      <p class="eyebrow">See it in playback</p>
-      <h2 class="showcase-h">No phone. No Pinterest. No awkward pauses.</h2>
-      <p class="lede">Load your pose references, shot lists or moodboards onto the camera screen and
-        flip through them in playback — right where you're already looking.</p>
-      <div class="showcase-track">
-        <figure class="showcase-item"><img src="/assets/showcase/01.jpg" alt="Pose reference card on a camera screen" onload="document.getElementById('showcase').hidden=false" onerror="this.closest('.showcase-item').remove()" /></figure>
-        <figure class="showcase-item"><img src="/assets/showcase/02.jpg" alt="Scroll through poses on the camera like photos" onload="document.getElementById('showcase').hidden=false" onerror="this.closest('.showcase-item').remove()" /></figure>
-        <figure class="showcase-item"><img src="/assets/showcase/03.jpg" alt="A pose card shown on the camera screen" onload="document.getElementById('showcase').hidden=false" onerror="this.closest('.showcase-item').remove()" /></figure>
-      </div>
-    </section>
-
-    <!-- Step 1 -->
-    <section class="step">
-      <h2><span class="num">i</span> Choose your camera</h2>
-      <div class="cameras" id="cameras">
-        <button class="cam" data-vendor="sony">Sony <small>Alpha · A7 III/IV/V</small></button>
-        <button class="cam" data-vendor="canon">Canon <small>EOS R · R6</small></button>
-        <button class="cam" data-vendor="nikon">Nikon <small>Z · Z6/Z8/Z9</small></button>
-      </div>
-    </section>
-
-    <!-- Step 2 -->
-    <section class="step">
-      <h2><span class="num">ii</span> Add your images</h2>
-      <label class="drop" id="drop">
-        <input type="file" id="file" accept="image/*" multiple hidden />
-        <span class="drop-title">Drag images here or click to choose</span>
-        <span class="drop-sub">JPG, PNG, WEBP · landscape or portrait</span>
-      </label>
-
-      <div class="orient" id="orient">
-        <span>Orientation:</span>
-        <label><input type="radio" name="orient" value="auto" checked /> Auto</label>
-        <label><input type="radio" name="orient" value="landscape" /> Landscape</label>
-        <label><input type="radio" name="orient" value="portrait" /> Portrait</label>
-      </div>
-
-      <div class="screen-wrap" id="preview" hidden>
-        <div class="screen">
-          <img id="screen-img" alt="" />
-          <span class="screen-count" id="screen-count"></span>
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">For wedding &amp; portrait photographers</p>
+        <h1>Your next pose, on the screen you're already looking at.</h1>
+        <p class="lede">Load poses, references, shot lists — any image — onto your camera and scroll
+          through them in playback. No app. No phone. No awkward pauses.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#tool">Try it free →</a>
+          <a class="btn btn-ghost" href="#how">See how it works</a>
         </div>
-        <div class="filmstrip" id="filmstrip"></div>
+        <div class="trust">
+          <span class="trust-item">✓ Sony · Canon · Nikon</span>
+          <span class="trust-item">✓ 2 free, no card needed</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="/assets/showcase/01.jpg" alt="A pose reference card shown on a camera's back screen"
+             onerror="this.closest('.hero-visual').style.display='none'" />
       </div>
     </section>
 
-    <!-- Step 3 -->
-    <section class="step">
-      <h2><span class="num">iii</span> Generate &amp; download</h2>
-      <button class="go" id="go" disabled>Generate cards</button>
-      <p class="status" id="status"></p>
-      <div class="upsell" id="upsell" hidden></div>
+    <!-- Showcase band -->
+    <section class="showcase" id="showcase" hidden>
+      <div class="showcase-track">
+        <figure class="showcase-item"><img src="/assets/showcase/01.jpg" alt="Pose card on a camera screen" onload="document.getElementById('showcase').hidden=false" onerror="this.closest('.showcase-item').remove()" /></figure>
+        <figure class="showcase-item"><img src="/assets/showcase/02.jpg" alt="Scroll through poses like photos" onload="document.getElementById('showcase').hidden=false" onerror="this.closest('.showcase-item').remove()" /></figure>
+        <figure class="showcase-item"><img src="/assets/showcase/03.jpg" alt="No phone, no Pinterest" onload="document.getElementById('showcase').hidden=false" onerror="this.closest('.showcase-item').remove()" /></figure>
+      </div>
     </section>
 
-    <!-- Step 4 -->
-    <section class="step instructions" id="instructions" hidden>
-      <h2><span class="num">iv</span> Put it on your card</h2>
-      <pre id="instr-text"></pre>
-      <p class="muted">The same instructions are included in the downloaded ZIP.</p>
+    <!-- How it works -->
+    <section class="how" id="how">
+      <p class="eyebrow center">How it works</p>
+      <h2 class="section-h center">Three steps, two minutes.</h2>
+      <div class="how-grid">
+        <div class="how-step">
+          <span class="how-num">1</span>
+          <h3>Upload your images</h3>
+          <p>Pose designs, references, shot lists, moodboards — anything. Pick your camera brand.</p>
+        </div>
+        <div class="how-step">
+          <span class="how-num">2</span>
+          <h3>Download the pack</h3>
+          <p>We convert each one into a camera-ready file and hand you a ready-to-copy SD-card folder.</p>
+        </div>
+        <div class="how-step">
+          <span class="how-num">3</span>
+          <h3>Scroll on your camera</h3>
+          <p>Copy to the card, hit playback, and flip through your references — right in the viewfinder moment.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- The tool -->
+    <section class="tool" id="tool">
+      <p class="eyebrow center">The tool</p>
+      <h2 class="section-h center">Make your cards.</h2>
+      <div class="tool-card">
+        <!-- Step 1 -->
+        <div class="field">
+          <label class="field-label"><span class="step-dot">1</span> Choose your camera</label>
+          <div class="cameras" id="cameras">
+            <button class="cam" data-vendor="sony">Sony <small>Alpha · A7 III/IV/V</small></button>
+            <button class="cam" data-vendor="canon">Canon <small>EOS R · R6</small></button>
+            <button class="cam" data-vendor="nikon">Nikon <small>Z · Z6/Z8/Z9</small></button>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="field">
+          <label class="field-label"><span class="step-dot">2</span> Add your images</label>
+          <label class="drop" id="drop">
+            <input type="file" id="file" accept="image/*" multiple hidden />
+            <span class="drop-title">Drag images here or click to choose</span>
+            <span class="drop-sub">JPG, PNG, WEBP · landscape or portrait</span>
+          </label>
+          <div class="orient" id="orient">
+            <span>Orientation:</span>
+            <label><input type="radio" name="orient" value="auto" checked /> Auto</label>
+            <label><input type="radio" name="orient" value="landscape" /> Landscape</label>
+            <label><input type="radio" name="orient" value="portrait" /> Portrait</label>
+          </div>
+          <div class="screen-wrap" id="preview" hidden>
+            <div class="screen">
+              <img id="screen-img" alt="" />
+              <span class="screen-count" id="screen-count"></span>
+            </div>
+            <div class="filmstrip" id="filmstrip"></div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="field">
+          <label class="field-label"><span class="step-dot">3</span> Generate &amp; download</label>
+          <button class="go" id="go" disabled>Generate cards</button>
+          <p class="status" id="status"></p>
+          <div class="upsell" id="upsell" hidden></div>
+        </div>
+
+        <!-- Instructions (after generate) -->
+        <div class="instructions" id="instructions" hidden>
+          <label class="field-label">Put it on your card</label>
+          <pre id="instr-text"></pre>
+          <p class="muted">The same instructions are included in the downloaded ZIP.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing" id="pricing">
+      <p class="eyebrow center">Pricing</p>
+      <h2 class="section-h center">Simple, fair, cancel anytime.</h2>
+      <div class="price-toggle" id="price-toggle" hidden>
+        <button class="active" data-cycle="monthly">Monthly</button>
+        <button data-cycle="yearly">Yearly</button>
+      </div>
+      <div class="price-grid" id="price-grid"><!-- rendered by app.js --></div>
     </section>
   </main>
 
@@ -97,7 +152,7 @@
     <a href="https://inprincipioweddings.com">inprincipioweddings.com</a>
   </footer>
 
-  <!-- Login modal (only shown when the paywall is active) -->
+  <!-- Login modal (only used when the paywall is active) -->
   <div class="modal" id="login-modal" hidden>
     <div class="modal-card">
       <h3>Sign in</h3>

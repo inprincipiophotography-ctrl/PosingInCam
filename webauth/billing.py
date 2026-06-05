@@ -35,6 +35,34 @@ def enabled() -> bool:
     return bool(STRIPE_SECRET and any(PRICE_FOR.values()))
 
 
+_prices_cache = None
+
+
+def get_prices() -> dict:
+    """Public pricing for the page: {kind: {amount, currency, interval}}.
+    Read once from Stripe and cached per warm instance."""
+    global _prices_cache
+    if _prices_cache is not None:
+        return _prices_cache
+    out = {}
+    if enabled():
+        stripe = _stripe()
+        for kind, pid in PRICE_FOR.items():
+            if not pid:
+                continue
+            try:
+                p = json.loads(str(stripe.Price.retrieve(pid)))  # stripe>=15 objs aren't dicts
+                out[kind] = {
+                    "amount": (p.get("unit_amount") or 0) / 100.0,
+                    "currency": (p.get("currency") or "eur").upper(),
+                    "interval": (p.get("recurring") or {}).get("interval"),  # 'month'|'year'|None
+                }
+            except Exception:
+                pass
+    _prices_cache = out
+    return out
+
+
 def _stripe():
     import stripe
     stripe.api_key = STRIPE_SECRET
