@@ -290,7 +290,7 @@ async function renderPricing() {
         amount: "€0",
         per: "",
         note: "No credit card",
-        feats: ["Sony · Canon · Nikon", freeN + " conversions", "Watermarked output"],
+        feats: ["Sony · Canon · Nikon", freeN + " conversions", "Watermarked"],
         cta: '<button class="btn btn-ghost" data-go="tool">Start free</button>',
       }) +
       card({

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Camera Cards · IN PRINCIPIO</title>
-  <meta name="description" content="Put any image on your camera screen: poses, shot lists, timelines, cheat sheets. No app, no phone, no signal." />
+  <title>Camera Cards · Put any image on your camera screen</title>
+  <meta name="description" content="Put any image on your camera screen: poses, shot lists, timelines, cheat sheets. No app, no phone, no awkward pauses." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
@@ -56,7 +56,7 @@
     <!-- What it does: any image -> your camera (before / after) -->
     <section class="flow" id="flow">
       <p class="eyebrow center">Why it works</p>
-      <h2 class="section-h center">Your camera only plays its own files.</h2>
+      <h2 class="section-h center">Your camera only shows its own files.</h2>
       <p class="flow-sub">So a Canva export or a screenshot won't show up on its own. We convert any image
         into the exact format your camera expects, and it lands in playback like a photo you shot.</p>
       <div class="flow-stage">
@@ -93,9 +93,9 @@
         <div class="idea"><h3>Pose references</h3><p>Ready the second you need one.</p></div>
         <div class="idea"><h3>Shot list</h3><p>Tick off every must-have frame.</p></div>
         <div class="idea"><h3>Family &amp; group combos</h3><p>Named groupings, so formals fly by.</p></div>
-        <div class="idea"><h3>Day timeline</h3><p>Know what is coming next at a glance.</p></div>
+        <div class="idea"><h3>Day timeline</h3><p>Know what's coming next at a glance.</p></div>
         <div class="idea"><h3>Camera cheat sheet</h3><p>Settings for tricky light.</p></div>
-        <div class="idea"><h3>&ldquo;If found&rdquo; card</h3><p>Your contact info, in case it is lost.</p></div>
+        <div class="idea"><h3>&ldquo;If found&rdquo; card</h3><p>Your contact info, in case it's lost.</p></div>
       </div>
     </section>
 
@@ -124,9 +124,9 @@
 
     <!-- The tool -->
     <section class="tool" id="tool">
-      <p class="eyebrow center">The tool</p>
+      <p class="eyebrow center">Try it</p>
       <h2 class="section-h center">Convert any image.</h2>
-      <p class="tool-sub">Upload your own images and we make them camera-ready. Free includes 3 conversions with a small watermark. You sign in with an email link, no password and no credit card.</p>
+      <p class="tool-sub">Upload your own images and we make them camera-ready. Free includes 3 conversions with a small watermark. Sign in with an email link, no password and no credit card.</p>
       <div class="tool-card">
         <!-- Step 1 -->
         <div class="field">
@@ -152,6 +152,7 @@
             <label><input type="radio" name="orient" value="landscape" /> Landscape</label>
             <label><input type="radio" name="orient" value="portrait" /> Portrait</label>
           </div>
+          <p class="orient-hint">Auto fits it for you. Pick Portrait or Landscape to force it.</p>
           <div class="screen-wrap" id="preview" hidden>
             <div class="screen">
               <img id="screen-img" alt="" />
@@ -163,8 +164,9 @@
 
         <!-- Step 3 -->
         <div class="field">
-          <label class="field-label"><span class="step-dot">3</span> Generate &amp; download</label>
+          <label class="field-label"><span class="step-dot">3</span> Convert &amp; download</label>
           <button class="go" id="go" disabled>Convert &amp; download</button>
+          <p class="go-hint">You get a ZIP with a ready-to-copy SD-card folder and instructions.</p>
           <p class="status" id="status"></p>
           <div class="upsell" id="upsell" hidden></div>
         </div>
