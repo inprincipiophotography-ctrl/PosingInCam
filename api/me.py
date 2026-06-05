@@ -34,4 +34,4 @@ def me(path):
     except auth.AuthError as e:
         return jsonify(error=e.message), e.status
     profile = auth.get_profile(uid)
-    return jsonify(paywall=True, email=email, **auth.account_state(profile))
+    return jsonify(paywall=True, email=email, **auth.account_state(profile, email))

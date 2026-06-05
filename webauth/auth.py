@@ -25,6 +25,10 @@ JWT_SECRET = os.environ.get("SUPABASE_JWT_SECRET", "")
 FREE_LIMIT = 3
 _TIMEOUT = 10
 
+# Comp accounts: emails that always get Pro for free (no Stripe). Set PRO_EMAILS
+# in the env as a comma-separated list, e.g. "me@example.com, friend@example.com".
+COMP_EMAILS = {e.strip().lower() for e in os.environ.get("PRO_EMAILS", "").split(",") if e.strip()}
+
 
 class AuthError(Exception):
     def __init__(self, status: int, message: str):
@@ -119,11 +123,16 @@ def is_pro(profile: dict) -> bool:
             and _future(profile.get("current_period_end")))
 
 
-def decide(profile: dict, n: int) -> dict:
+def is_comp(email: str | None) -> bool:
+    """True for comp (free Pro) accounts listed in PRO_EMAILS."""
+    return bool(email) and email.strip().lower() in COMP_EMAILS
+
+
+def decide(profile: dict, n: int, email: str = "") -> dict:
     """Decide whether n cards are allowed and whether to watermark."""
     credits = int(profile.get("credits") or 0)
     free_used = int(profile.get("free_used") or 0)
-    if is_pro(profile):
+    if is_pro(profile) or is_comp(email):
         return {"allowed": True, "watermark": False, "tier": "pro"}
     if credits >= n:
         return {"allowed": True, "watermark": False, "tier": "credits"}
@@ -155,9 +164,9 @@ def consume(uid: str, profile: dict, n: int, tier: str, vendor: str) -> None:
         pass
 
 
-def account_state(profile: dict) -> dict:
+def account_state(profile: dict, email: str = "") -> dict:
     """Compact entitlement summary for the account bar."""
-    return {"plan": "pro" if is_pro(profile) else "free",
+    return {"plan": "pro" if (is_pro(profile) or is_comp(email)) else "free",
             "credits": int(profile.get("credits") or 0),
             "free_left": max(0, FREE_LIMIT - int(profile.get("free_used") or 0)),
             "free_limit": FREE_LIMIT}

@@ -73,11 +73,11 @@ def convert(path):
     tier = "open"
     if auth.paywall_enabled():
         try:
-            uid, _email = auth.verify_user(request.headers.get("Authorization"))
+            uid, email = auth.verify_user(request.headers.get("Authorization"))
         except auth.AuthError as e:
             return jsonify(error=e.message), e.status
         profile = auth.get_profile(uid)
-        decision = auth.decide(profile, len(designs))
+        decision = auth.decide(profile, len(designs), email)
         if not decision["allowed"]:
             return jsonify(error=decision["message"], need_payment=True,
                            free_left=decision.get("free_left"),
