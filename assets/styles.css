@@ -97,7 +97,7 @@ img{max-width:100%}
 .trust-item{white-space:nowrap}
 
 .hero-visual{position:relative}
-.hero-visual img{
+.hero-visual img,.hero-visual video{
   width:100%;height:auto;border-radius:20px;
   border:1px solid var(--border-soft);box-shadow:var(--shadow-lg);display:block;
 }

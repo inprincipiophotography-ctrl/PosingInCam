@@ -43,8 +43,11 @@
         </div>
       </div>
       <div class="hero-visual">
-        <img src="/assets/showcase/01.jpg" alt="A pose reference card shown on a camera's back screen"
-             onerror="this.closest('.hero-visual').style.display='none'" />
+        <video class="hero-media" autoplay muted loop playsinline preload="auto"
+               poster="/assets/showcase/01.jpg"
+               aria-label="Pose reference cards scrolling on a camera's back screen">
+          <source src="/assets/showcase/timeline.mp4" type="video/mp4" />
+        </video>
       </div>
     </section>
 
