@@ -4,7 +4,7 @@ const API = "/api/convert";
 const ME = "/api/me";
 const MAX_EDGE = 2400;        // downscale before upload (Vercel ~4.5MB body limit)
 const JPEG_Q = 0.9;
-const STRIPE_READY = false;   // flipped on once Stripe checkout is wired
+// Stripe availability comes from the API health flag (window.__stripe).
 
 const state = { vendor: null, items: [], selected: 0 };
 const $ = (id) => document.getElementById(id);
@@ -192,10 +192,53 @@ function showInstructions() {
 function showUpsell() {
   const el = $("upsell");
   el.hidden = false;
-  el.innerHTML = STRIPE_READY
-    ? '<button class="go" data-plan="pro">Go Pro</button>' +
-      '<button class="link-btn" data-plan="pack20">Buy 20-pack</button>'
-    : '<p class="muted">You\'ve used your free previews. Pro &amp; the 20-pack are launching soon — thanks for trying it!</p>';
+  if (window.__stripe) {
+    el.innerHTML =
+      '<p class="muted" style="margin:0 0 12px">You\'ve used your free previews. Go unlimited or grab a 20-pack:</p>' +
+      '<div class="buy-row">' +
+        '<button class="go" data-kind="monthly">Go Pro — monthly</button>' +
+        '<button class="go ghost" data-kind="yearly">Pro — yearly</button>' +
+        '<button class="link-btn" data-kind="pack20">Buy 20 cards</button>' +
+      '</div>';
+    el.querySelectorAll("[data-kind]").forEach((b) =>
+      b.addEventListener("click", () => startCheckout(b.dataset.kind, b)));
+  } else {
+    el.innerHTML = '<p class="muted">You\'ve used your free previews. Paid plans are launching soon — thanks for trying it!</p>';
+  }
+}
+
+async function startCheckout(kind, btn) {
+  const tok = PoseAuth.token();
+  if (!tok) { openLogin(); return; }
+  if (btn) btn.disabled = true;
+  try {
+    const r = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + tok, "Content-Type": "application/json" },
+      body: JSON.stringify({ kind }),
+    });
+    const j = await r.json();
+    if (!r.ok || !j.url) throw new Error(j.error || "Could not start checkout.");
+    window.location.href = j.url;
+  } catch (e) {
+    $("status").className = "status err";
+    $("status").textContent = "✗ " + e.message;
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function startPortal() {
+  const tok = PoseAuth.token();
+  if (!tok) return;
+  try {
+    const r = await fetch("/api/portal", { method: "POST", headers: { Authorization: "Bearer " + tok } });
+    const j = await r.json();
+    if (!r.ok || !j.url) throw new Error(j.error || "Could not open billing.");
+    window.location.href = j.url;
+  } catch (e) {
+    $("status").className = "status err";
+    $("status").textContent = "✗ " + e.message;
+  }
 }
 
 /* ---------- auth / account ---------- */
@@ -210,14 +253,16 @@ async function renderAccount() {
     return;
   }
   el.innerHTML = '<span class="acct-info" id="acct-info">…</span>' +
+    '<button class="link-btn" id="manage-btn" hidden>Billing</button>' +
     '<button class="link-btn" id="signout-btn">Sign out</button>';
   $("signout-btn").onclick = async () => { await PoseAuth.signOut(); };
+  $("manage-btn").onclick = startPortal;
   try {
     const r = await fetch(ME, { headers: { Authorization: "Bearer " + tok } });
     const j = await r.json();
     const who = j.email || (PoseAuth.user() && PoseAuth.user().email) || "signed in";
     let badge;
-    if (j.plan === "pro") badge = "Pro";
+    if (j.plan === "pro") { badge = "Pro"; if (window.__stripe) $("manage-btn").hidden = false; }
     else if ((j.credits || 0) > 0) badge = j.credits + " credits";
     else badge = (j.free_left ?? 0) + " free left";
     $("acct-info").textContent = who + " · " + badge;
@@ -249,12 +294,28 @@ $("login-send").onclick = async () => {
   try {
     const j = await (await fetch(API, { method: "GET" })).json();
     window.__paywall = !!j.paywall;
+    window.__stripe = !!j.stripe;
   } catch (_) {
     window.__paywall = false;
+    window.__stripe = false;
   }
   if (window.__paywall && window.PoseAuth) {
     await PoseAuth.init(() => { renderAccount(); $("login-modal").hidden = true; });
   } else {
     $("account").hidden = true;
   }
+  handleCheckoutReturn();
 })();
+
+function handleCheckoutReturn() {
+  const c = new URLSearchParams(location.search).get("checkout");
+  if (!c) return;
+  if (c === "success") {
+    const status = $("status");
+    status.className = "status ok";
+    status.textContent = "✓ Payment received — your account is updating. Thank you!";
+    let n = 0;
+    const t = setInterval(() => { renderAccount(); if (++n >= 4) clearInterval(t); }, 2000);
+  }
+  history.replaceState({}, "", location.pathname);
+}

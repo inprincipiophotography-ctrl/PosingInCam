@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from flask import Flask, request, Response, jsonify  # noqa: E402
 from converter import pack, encoder  # noqa: E402
-from webauth import auth  # noqa: E402
+from webauth import auth, billing  # noqa: E402
 
 app = Flask(__name__)
 
@@ -40,7 +40,8 @@ def convert(path):
     if request.method == "OPTIONS":
         return ("", 204)
     if request.method == "GET":
-        return jsonify(ok=True, vendors=sorted(encoder.VENDORS), paywall=auth.paywall_enabled())
+        return jsonify(ok=True, vendors=sorted(encoder.VENDORS),
+                       paywall=auth.paywall_enabled(), stripe=billing.enabled())
 
     vendor = (request.form.get("vendor") or "sony").strip().lower()
     orientation = (request.form.get("orientation") or "auto").strip().lower()

@@ -160,6 +160,9 @@ a{color:var(--accent-2);text-decoration:none}
 
 /* upsell */
 .upsell{margin-top:14px}
+.buy-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.go.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent);box-shadow:none}
+.go.ghost:hover{background:rgba(124,58,237,.06)}
 
 /* login modal */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
