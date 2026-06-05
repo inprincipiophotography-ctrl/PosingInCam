@@ -22,6 +22,9 @@ def webhook(path):
         return ("", 200)  # nothing configured; acknowledge and ignore
     payload = request.get_data()  # raw body required for signature verification
     sig = request.headers.get("Stripe-Signature", "")
+    print(f"[webhook] payload_len={len(payload)} sig_present={bool(sig)} "
+          f"secret_len={len(billing.WEBHOOK_SECRET)} secret_prefix={billing.WEBHOOK_SECRET[:6]!r}",
+          file=sys.stderr)
     try:
         billing.handle_webhook(payload, sig)
     except Exception as e:  # bad signature / processing error
