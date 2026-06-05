@@ -4,7 +4,7 @@
 -- never by the client.
 --
 -- Unit = one converted card (image):
---   Free:    2 cards total, watermarked
+--   Free:    3 cards total, watermarked
 --   20-pack: 20 credits (one-time), no watermark
 --   Pro:     unlimited, no watermark
 
@@ -63,3 +63,12 @@ alter table public.conversions enable row level security;
 drop policy if exists "read own conversions" on public.conversions;
 create policy "read own conversions" on public.conversions
   for select using (auth.uid() = user_id);
+
+-- Stripe webhook idempotency: each processed event id is recorded once, so a
+-- retried or duplicate delivery can't double-apply credits. Written ONLY by the
+-- server (service role); RLS enabled with no policies = no client access.
+create table if not exists public.stripe_events (
+  id          text primary key,                          -- Stripe event id (evt_...)
+  created_at  timestamptz not null default now()
+);
+alter table public.stripe_events enable row level security;

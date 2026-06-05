@@ -71,13 +71,14 @@ def _stripe():
 
 # --- Supabase writes (service role, bypasses RLS) ---------------------------
 def _patch(match_field: str, match_val: str, patch: dict) -> None:
-    requests.patch(
+    r = requests.patch(
         f"{auth.SUPABASE_URL}/rest/v1/profiles",
         params={match_field: f"eq.{match_val}"},
         headers=auth._headers({"Prefer": "return=minimal"}),
         json={**patch, "updated_at": auth._now()},
         timeout=_TIMEOUT,
     )
+    r.raise_for_status()  # raise on failure so the webhook 4xx's and Stripe retries
 
 
 def _iso(unix_ts) -> str | None:
@@ -129,12 +130,49 @@ def _retrieve_sub(stripe, sub_id) -> dict:
     return json.loads(str(stripe.Subscription.retrieve(sub_id)))
 
 
+def _claim_event(eid) -> bool:
+    """Record the Stripe event id for idempotency. Returns True if it was ALREADY
+    processed (caller should skip). Degrades gracefully — if the stripe_events
+    table is missing or unreachable, proceeds without dedup (current behaviour)."""
+    if not eid:
+        return False
+    try:
+        r = requests.post(f"{auth.SUPABASE_URL}/rest/v1/stripe_events",
+                          headers=auth._headers({"Prefer": "return=minimal"}),
+                          json={"id": eid}, timeout=_TIMEOUT)
+    except Exception:
+        return False
+    return r.status_code == 409  # primary-key conflict -> this event is a duplicate
+
+
+def _release_event(eid) -> None:
+    """Undo a claim so Stripe's retry can reprocess a failed event."""
+    if not eid:
+        return
+    try:
+        requests.delete(f"{auth.SUPABASE_URL}/rest/v1/stripe_events",
+                        params={"id": f"eq.{eid}"}, headers=auth._headers(), timeout=_TIMEOUT)
+    except Exception:
+        pass
+
+
 def handle_webhook(payload: bytes, sig: str) -> None:
     stripe = _stripe()
     stripe.Webhook.construct_event(payload, sig, WEBHOOK_SECRET)  # verify signature only
     # stripe-python >=15 objects are NOT dicts (.get() raises AttributeError);
     # use the raw verified JSON as plain dicts instead.
     event = json.loads(payload)
+    eid = event.get("id")
+    if _claim_event(eid):           # already handled (Stripe retry / duplicate delivery)
+        return
+    try:
+        _process_event(stripe, event)
+    except Exception:
+        _release_event(eid)         # let Stripe's retry reprocess this event
+        raise
+
+
+def _process_event(stripe, event: dict) -> None:
     etype = event.get("type")
     obj = (event.get("data") or {}).get("object") or {}
 
