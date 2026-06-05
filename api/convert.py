@@ -12,6 +12,8 @@ The original scripts/cardify.sh CLI is not involved.
 
 import os
 import sys
+import threading
+import time
 import traceback
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -25,10 +27,48 @@ app = Flask(__name__)
 MAX_FILES = 30
 MAX_BYTES_PER_FILE = 15 * 1024 * 1024
 
+# --- best-effort per-IP rate limit ------------------------------------------
+# Serverless instances don't share memory, so this caps abuse per warm instance
+# rather than globally — a cheap first layer on top of the per-account metering
+# (free/credits/pro) the paywall already enforces. Tunable via env; RATE_MAX=0
+# disables it.
+_RL_WINDOW = int(os.environ.get("RATE_WINDOW_SEC", "60"))
+_RL_MAX = int(os.environ.get("RATE_MAX", "20"))
+_rl_lock = threading.Lock()
+_rl_hits = {}  # ip -> [timestamps within the window]
+
+
+def _client_ip():
+    # Vercel sets x-real-ip to the actual peer; x-forwarded-for's first hop is
+    # client-spoofable, so prefer x-real-ip and fall back conservatively.
+    ip = request.headers.get("x-real-ip")
+    if ip:
+        return ip.strip()
+    xff = request.headers.get("x-forwarded-for", "")
+    return (xff.split(",")[0].strip() if xff else request.remote_addr) or "?"
+
+
+def _rate_limited(ip):
+    if _RL_MAX <= 0:
+        return False
+    now = time.time()
+    cutoff = now - _RL_WINDOW
+    with _rl_lock:
+        hits = [t for t in _rl_hits.get(ip, ()) if t >= cutoff]
+        limited = len(hits) >= _RL_MAX
+        if not limited:
+            hits.append(now)
+        _rl_hits[ip] = hits
+        if len(_rl_hits) > 4096:  # bound memory on busy instances
+            for k in [k for k, v in _rl_hits.items() if not v or v[-1] < cutoff]:
+                _rl_hits.pop(k, None)
+        return limited
+
 
 @app.after_request
 def _cors(resp):
-    resp.headers["Access-Control-Allow-Origin"] = "*"
+    resp.headers["Access-Control-Allow-Origin"] = billing.safe_origin(request.headers.get("Origin"))
+    resp.headers["Vary"] = "Origin"
     resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
     resp.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type"
     resp.headers["Access-Control-Expose-Headers"] = "X-Tier, X-Watermarked"
@@ -43,6 +83,11 @@ def convert(path):
     if request.method == "GET":
         return jsonify(ok=True, vendors=sorted(encoder.VENDORS),
                        paywall=auth.paywall_enabled(), stripe=billing.enabled())
+
+    if _rate_limited(_client_ip()):
+        resp = jsonify(error="Too many requests — please wait a moment and try again.")
+        resp.headers["Retry-After"] = str(_RL_WINDOW)
+        return resp, 429
 
     vendor = (request.form.get("vendor") or "sony").strip().lower()
     orientation = (request.form.get("orientation") or "auto").strip().lower()

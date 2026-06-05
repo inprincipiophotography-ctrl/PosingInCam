@@ -13,7 +13,8 @@ app = Flask(__name__)
 
 @app.after_request
 def _cors(resp):
-    resp.headers["Access-Control-Allow-Origin"] = "*"
+    resp.headers["Access-Control-Allow-Origin"] = billing.safe_origin(request.headers.get("Origin"))
+    resp.headers["Vary"] = "Origin"
     resp.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
     return resp
 
