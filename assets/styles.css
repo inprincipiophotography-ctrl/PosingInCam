@@ -290,6 +290,8 @@ img{max-width:100%}
 .faq-item summary::after{content:"+";color:var(--accent-2);font-weight:400;font-size:24px;line-height:1;flex:0 0 auto;transition:transform .2s ease}
 .faq-item[open] summary::after{transform:rotate(45deg)}
 .faq-item p{margin:0;padding:0 20px 18px;color:var(--ink-2);font-size:15px;font-weight:300;line-height:1.65}
+.faq-item p a{text-decoration:underline;text-underline-offset:2px}
+.faq-item p a:hover{color:var(--accent)}
 
 /* ---------- footer ---------- */
 .site-foot{
