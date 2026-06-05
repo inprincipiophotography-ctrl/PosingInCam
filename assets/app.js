@@ -10,6 +10,18 @@ const state = { vendor: null, items: [], selected: 0 };
 const $ = (id) => document.getElementById(id);
 const camButtons = Array.from(document.querySelectorAll(".cam"));
 
+// True when this page load is the return from a Supabase magic-link sign-in.
+const cameFromAuthLink = /access_token=|[?&]code=|type=(magiclink|recovery|signup)/i.test(
+  location.hash + location.search);
+let _jumpedToTool = false;
+function jumpToToolAfterLogin() {
+  if (_jumpedToTool || !cameFromAuthLink) return;
+  if (window.PoseAuth && PoseAuth.token()) {
+    _jumpedToTool = true;
+    requestAnimationFrame(() => $("tool") && $("tool").scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
+}
+
 const INSTRUCTIONS = {
   sony:
     "SONY: Recover Image Database is REQUIRED.\n" +
@@ -399,7 +411,8 @@ $("login-send").onclick = async () => {
     window.__stripe = false;
   }
   if (window.__paywall && window.PoseAuth) {
-    await PoseAuth.init(() => { renderAccount(); $("login-modal").hidden = true; });
+    await PoseAuth.init(() => { renderAccount(); $("login-modal").hidden = true; jumpToToolAfterLogin(); });
+    jumpToToolAfterLogin();
   } else {
     $("account").hidden = true;
   }
