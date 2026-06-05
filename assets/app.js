@@ -71,12 +71,30 @@ function renderPreview() {
   const strip = $("filmstrip");
   strip.innerHTML = "";
   state.items.forEach((it, i) => {
+    const w = document.createElement("div");
+    w.className = "thumb-wrap" + (i === state.selected ? " sel" : "");
     const t = document.createElement("img");
     t.src = it.url;
-    t.className = i === state.selected ? "sel" : "";
+    t.className = "thumb";
     t.addEventListener("click", () => { state.selected = i; renderPreview(); });
-    strip.appendChild(t);
+    const x = document.createElement("button");
+    x.type = "button";
+    x.className = "thumb-x";
+    x.textContent = "×";
+    x.title = "Remove";
+    x.addEventListener("click", (e) => { e.stopPropagation(); removeItem(i); });
+    w.appendChild(t);
+    w.appendChild(x);
+    strip.appendChild(w);
   });
+}
+
+function removeItem(i) {
+  try { URL.revokeObjectURL(state.items[i].url); } catch (_) {}
+  state.items.splice(i, 1);
+  if (state.selected >= state.items.length) state.selected = Math.max(0, state.items.length - 1);
+  renderPreview();
+  refresh();
 }
 
 function refresh() { $("go").disabled = !(state.vendor && state.items.length); }

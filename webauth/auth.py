@@ -58,15 +58,41 @@ def _future(ts) -> bool:
         return False
 
 
+_ASYM = {"ES256", "RS256", "ES384", "RS384", "ES512", "RS512"}
+_jwks_client = None
+
+
+def _jwks():
+    global _jwks_client
+    if _jwks_client is None:
+        from jwt import PyJWKClient
+        _jwks_client = PyJWKClient(f"{SUPABASE_URL}/auth/v1/.well-known/jwks.json")
+    return _jwks_client
+
+
 def verify_user(authorization: str | None) -> tuple[str, str]:
-    """Verify a Supabase access token (HS256). Returns (user_id, email)."""
+    """Verify a Supabase access token and return (user_id, email).
+
+    Supabase signs access tokens either with the legacy shared secret (HS256) or,
+    on newer projects, with asymmetric keys (ES256/RS256) exposed via JWKS. We
+    branch on the token's alg header so both work.
+    """
     if not authorization or not authorization.lower().startswith("bearer "):
         raise AuthError(401, "Sign in to continue.")
     token = authorization.split(" ", 1)[1].strip()
-    import jwt  # lazy: keeps module import light and avoids needing jwt in open mode
+    import jwt
     try:
-        claims = jwt.decode(token, JWT_SECRET, algorithms=["HS256"], audience="authenticated")
-    except Exception as e:  # expired / bad signature / wrong aud
+        alg = jwt.get_unverified_header(token).get("alg", "")
+        if alg == "HS256":
+            claims = jwt.decode(token, JWT_SECRET, algorithms=["HS256"], audience="authenticated")
+        elif alg in _ASYM:
+            key = _jwks().get_signing_key_from_jwt(token).key
+            claims = jwt.decode(token, key, algorithms=[alg], audience="authenticated")
+        else:
+            raise AuthError(401, f"Unsupported token algorithm: {alg or 'none'}.")
+    except AuthError:
+        raise
+    except Exception as e:
         raise AuthError(401, f"Session invalid ({e.__class__.__name__}). Sign in again.")
     uid = claims.get("sub")
     if not uid:

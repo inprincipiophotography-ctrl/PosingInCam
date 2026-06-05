@@ -103,9 +103,12 @@ a{color:var(--accent-2);text-decoration:none}
   -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
   color:#fff;font-size:12px;letter-spacing:.03em;padding:4px 11px;border-radius:20px;
 }
-.filmstrip{display:flex;gap:8px;overflow-x:auto;padding:12px 2px 2px}
-.filmstrip img{height:54px;width:auto;border-radius:8px;border:1px solid var(--border);cursor:pointer;flex:0 0 auto}
-.filmstrip img.sel{outline:2px solid var(--accent);outline-offset:1px}
+.filmstrip{display:flex;gap:10px;overflow-x:auto;padding:14px 4px 6px}
+.thumb-wrap{position:relative;flex:0 0 auto}
+.thumb-wrap .thumb{height:54px;width:auto;border-radius:8px;border:1px solid var(--border);cursor:pointer;display:block}
+.thumb-wrap.sel .thumb{outline:2px solid var(--accent);outline-offset:1px}
+.thumb-x{position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;border:1px solid #fff;background:var(--ink);color:#fff;font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.thumb-x:hover{background:var(--err)}
 
 /* go button + status */
 .go{
