@@ -87,10 +87,10 @@ def convert(path):
 
     try:
         zip_bytes = pack.build_zip(designs, vendor, orientation, watermark=watermark)
-    except FileNotFoundError as e:
+    except (FileNotFoundError, ValueError) as e:
         return jsonify(error=str(e)), 400
-    except Exception as e:  # pragma: no cover
-        return jsonify(error=f"conversion failed: {e}"), 500
+    except Exception:  # pragma: no cover
+        return jsonify(error="conversion failed"), 500
 
     if auth.paywall_enabled() and uid:
         auth.consume(uid, profile, len(designs), tier, vendor)

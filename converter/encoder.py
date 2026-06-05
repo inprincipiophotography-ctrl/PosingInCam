@@ -32,7 +32,7 @@ import copy
 import struct
 from dataclasses import dataclass
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 import PIL.JpegImagePlugin as JpegPlugin
 import piexif
 
@@ -40,6 +40,11 @@ import piexif
 OUT_W = 1920
 OUT_H = 1280
 FIXED_DATE = b"2024:01:01 12:00:00"  # cardify.sh:375-379
+
+# Reject inputs whose header pixel count exceeds this (decompression-bomb / OOM
+# guard). Checked before the image is decoded, so a crafted file can't blow up
+# the function's memory. 40 MP is generous for any real design or photo.
+MAX_INPUT_PIXELS = 40_000_000
 
 # Interop IFD tag numbers (piexif's named constants are unreliable across versions)
 _INTEROP_INDEX = 1     # "R98" → DCF basic-file marker
@@ -204,6 +209,25 @@ def _resolve_orientation(image: Image.Image, orientation: str) -> str:
     return orientation
 
 
+def _fit(img: Image.Image, w: int, h: int, bg=(255, 255, 255)) -> Image.Image:
+    """Scale *img* to fit within w×h preserving aspect ratio (never stretch or
+    crop) and centre it on a solid background. A design already at the target
+    ratio fills the frame exactly with no bars; any other shape (square,
+    portrait photo, screenshot) keeps its proportions with letterbox bars."""
+    img = img.convert("RGB")
+    iw, ih = img.size
+    if (iw, ih) == (w, h):
+        return img
+    scale = min(w / iw, h / ih)
+    nw, nh = max(1, round(iw * scale)), max(1, round(ih * scale))
+    resized = img.resize((nw, nh), Image.LANCZOS)
+    if (nw, nh) == (w, h):
+        return resized
+    canvas = Image.new("RGB", (w, h), bg)
+    canvas.paste(resized, ((w - nw) // 2, (h - nh) // 2))
+    return canvas
+
+
 def _encode_with_qtables(image: Image.Image, qtables) -> bytes:
     """Pillow JPEG encode reusing the template's exact q-tables (cardify.sh:333-336)."""
     buf = io.BytesIO()
@@ -324,14 +348,24 @@ def convert_with(image_bytes: bytes, qtables: list, exif_base: dict,
                  orientation: str = "auto", watermark: bool = False) -> bytes:
     """Like convert(), but with template metadata already read — lets a batch
     read the template once and reuse it for every card."""
-    src = Image.open(io.BytesIO(image_bytes))
+    try:
+        src = Image.open(io.BytesIO(image_bytes))
+    except Exception:
+        raise ValueError("could not read image (unsupported or corrupt file)")
+    if src.width * src.height > MAX_INPUT_PIXELS:
+        raise ValueError(
+            f"image too large ({src.width}x{src.height}); "
+            f"max {MAX_INPUT_PIXELS // 1_000_000} megapixels"
+        )
+    src = ImageOps.exif_transpose(src)  # honour the source's own EXIF orientation
+
     orientation = _resolve_orientation(src, orientation)
     if orientation == "portrait":
         pre_w, pre_h, rotate, exif_orient = 1280, 1920, True, 6
     else:
         pre_w, pre_h, rotate, exif_orient = 1920, 1280, False, 1
 
-    card = src.convert("RGB").resize((pre_w, pre_h), Image.LANCZOS)
+    card = _fit(src, pre_w, pre_h)         # letterbox to the frame, never stretch
     if watermark:
         card = _watermark(card)  # before rotate so it stays aligned with the photo
     if rotate:
