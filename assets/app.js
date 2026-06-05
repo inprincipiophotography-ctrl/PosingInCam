@@ -422,3 +422,43 @@ function handleCheckoutReturn() {
   ["loadedmetadata", "canplay", "play"].forEach((e) => v.addEventListener(e, apply));
   apply();
 })();
+
+/* ---------- scroll polish: reveal on scroll + nav shadow ---------- */
+(function scrollPolish() {
+  const nav = document.querySelector(".nav");
+  if (nav) {
+    const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+  if (!("IntersectionObserver" in window)) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const groups = [
+    ".flow .eyebrow, .flow .section-h, .flow-sub, .flow-stage, .flow-trust, .flow-safe",
+    ".ideas .eyebrow, .ideas .section-h",
+    "stagger:.ideas .idea",
+    ".how .eyebrow, .how .section-h",
+    "stagger:.how .how-step",
+    ".tool .eyebrow, .tool .section-h, .tool-sub, .tool-card",
+    ".pricing .eyebrow, .pricing .section-h, .pricing-sub, .price-grid",
+    ".packs .eyebrow, .packs .section-h, .packs-lede, .packs-track, .pack-includes, .packs-cta",
+    ".faq .eyebrow, .faq .section-h",
+    "stagger:.faq .faq-item",
+  ];
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+
+  groups.forEach((g) => {
+    const stagger = g.startsWith("stagger:");
+    const sel = stagger ? g.slice(8) : g;
+    document.querySelectorAll(sel).forEach((el, i) => {
+      el.classList.add("reveal");
+      if (stagger) el.style.transitionDelay = Math.min(i, 6) * 70 + "ms";
+      io.observe(el);
+    });
+  });
+})();

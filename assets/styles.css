@@ -329,6 +329,20 @@ img{max-width:100%}
   .how-step:hover,.idea:hover,.price-card:hover,.pack-card img:hover,.showcase-item img:hover,.btn:hover{transform:none}
 }
 
+/* ---------- motion: scroll reveal, hero load, nav shadow ---------- */
+.nav{transition:box-shadow .25s ease}
+.nav.scrolled{box-shadow:0 6px 22px rgba(0,0,0,.06)}
+@media (prefers-reduced-motion:no-preference){
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s cubic-bezier(.2,.6,.2,1),transform .6s cubic-bezier(.2,.6,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  .hero-text>*{animation:heroUp .7s both cubic-bezier(.2,.6,.2,1)}
+  .hero-text>h1{animation-delay:.08s}
+  .hero-text>.lede{animation-delay:.16s}
+  .hero-text>.cta-row{animation-delay:.24s}
+  .hero-text>.trust{animation-delay:.32s}
+  @keyframes heroUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+}
+
 /* ---------- responsive ---------- */
 @media(max-width:880px){
   .hero{grid-template-columns:1fr;gap:30px}
