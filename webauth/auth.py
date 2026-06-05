@@ -77,9 +77,9 @@ def _jwks():
 def verify_user(authorization: str | None) -> tuple[str, str]:
     """Verify a Supabase access token and return (user_id, email).
 
-    Supabase signs access tokens either with the legacy shared secret (HS256) or,
-    on newer projects, with asymmetric keys (ES256/RS256) exposed via JWKS. We
-    branch on the token's alg header so both work.
+    This project signs access tokens with asymmetric keys (ES256/RS256) exposed
+    via JWKS, so we accept ONLY those. HS256 (the legacy shared-secret path) is
+    rejected, so even a leaked JWT secret can never be used to forge a token.
     """
     if not authorization or not authorization.lower().startswith("bearer "):
         raise AuthError(401, "Sign in to continue.")
@@ -87,9 +87,7 @@ def verify_user(authorization: str | None) -> tuple[str, str]:
     import jwt
     try:
         alg = jwt.get_unverified_header(token).get("alg", "")
-        if alg == "HS256":
-            claims = jwt.decode(token, JWT_SECRET, algorithms=["HS256"], audience="authenticated")
-        elif alg in _ASYM:
+        if alg in _ASYM:
             key = _jwks().get_signing_key_from_jwt(token).key
             claims = jwt.decode(token, key, algorithms=[alg], audience="authenticated")
         else:
