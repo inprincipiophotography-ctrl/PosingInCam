@@ -7,5 +7,9 @@
     "api/portal.py": { "includeFiles": "webauth/**" },
     "api/webhook.py": { "includeFiles": "webauth/**" },
     "api/prices.py": { "includeFiles": "webauth/**" }
-  }
+  },
+  "redirects": [
+    { "source": "/webauth/:p*", "destination": "/", "permanent": false },
+    { "source": "/converter/:p*", "destination": "/", "permanent": false }
+  ]
 }

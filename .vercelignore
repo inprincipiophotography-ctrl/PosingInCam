@@ -8,6 +8,7 @@ samples/
 web-next/
 supabase/
 .github/
+tests/
 *.md
 LICENSE
 .gitignore
