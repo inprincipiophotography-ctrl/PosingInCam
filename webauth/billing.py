@@ -57,6 +57,18 @@ def _iso(unix_ts) -> str | None:
     return dt.datetime.fromtimestamp(int(unix_ts), dt.timezone.utc).isoformat()
 
 
+def _period_end(sub) -> str | None:
+    """Subscription period end, tolerant of API versions: recent versions
+    (2025-basil / 2026-dahlia) moved current_period_end onto the items."""
+    cpe = sub.get("current_period_end")
+    if not cpe:
+        try:
+            cpe = sub["items"]["data"][0]["current_period_end"]
+        except (KeyError, IndexError, TypeError):
+            cpe = None
+    return _iso(cpe)
+
+
 # --- Checkout / portal ------------------------------------------------------
 def create_checkout(uid: str, email: str, kind: str, origin: str) -> str:
     price = PRICE_FOR.get(kind)
@@ -103,6 +115,8 @@ def handle_webhook(payload: bytes, sig: str) -> None:
 
     elif etype == "invoice.paid":
         sub_id = obj.get("subscription")
+        if not sub_id:  # newer API versions nest it under parent
+            sub_id = ((obj.get("parent") or {}).get("subscription_details") or {}).get("subscription")
         if sub_id:
             _sync_subscription(stripe.Subscription.retrieve(sub_id))
 
@@ -113,7 +127,7 @@ def _set_pro(uid: str, customer: str, sub) -> None:
     _patch("id", uid, {
         "plan": "pro",
         "subscription_status": sub.get("status"),
-        "current_period_end": _iso(sub.get("current_period_end")),
+        "current_period_end": _period_end(sub),
         "stripe_customer_id": customer,
     })
 
@@ -133,5 +147,5 @@ def _sync_subscription(sub) -> None:
     _patch("stripe_customer_id", customer, {
         "plan": "pro" if active else "free",
         "subscription_status": sub.get("status"),
-        "current_period_end": _iso(sub.get("current_period_end")),
+        "current_period_end": _period_end(sub),
     })
