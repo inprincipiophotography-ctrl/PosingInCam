@@ -21,6 +21,7 @@
   --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{color-scheme:light}
 body{
   margin:0;
