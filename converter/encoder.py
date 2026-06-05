@@ -46,9 +46,8 @@ FIXED_DATE = b"2024:01:01 12:00:00"  # cardify.sh:375-379
 # the function's memory. 40 MP is generous for any real design or photo.
 MAX_INPUT_PIXELS = 40_000_000
 
-# Interop IFD tag numbers (piexif's named constants are unreliable across versions)
+# Interop IFD tag number (piexif's named constants are unreliable across versions)
 _INTEROP_INDEX = 1     # "R98" → DCF basic-file marker
-_INTEROP_VERSION = 2   # b"0100"
 
 
 @dataclass(frozen=True)

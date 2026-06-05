@@ -36,6 +36,6 @@ def checkout(path):
     origin = request.headers.get("Origin") or "https://posing-in-cam.vercel.app"
     try:
         url = billing.create_checkout(uid, email, kind, origin)
-    except Exception as e:  # pragma: no cover
-        return jsonify(error=f"checkout failed: {e}"), 400
+    except Exception:  # pragma: no cover
+        return jsonify(error="Could not start checkout. Please try again."), 400
     return jsonify(url=url)

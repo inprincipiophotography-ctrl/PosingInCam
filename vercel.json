@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/convert.py": { "includeFiles": "{converter,webauth}/**" },
+    "api/convert.py": { "includeFiles": "{converter,webauth}/**", "maxDuration": 60 },
     "api/me.py": { "includeFiles": "webauth/**" },
     "api/checkout.py": { "includeFiles": "webauth/**" },
     "api/portal.py": { "includeFiles": "webauth/**" },

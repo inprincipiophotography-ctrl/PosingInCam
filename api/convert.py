@@ -3,7 +3,7 @@ Vercel Python serverless function: POST design images -> SD-card ZIP.
 
 When the paywall env vars (SUPABASE_*) are set, requests must carry a Supabase
 access token (Authorization: Bearer ...) and are metered:
-  Free: 2 cards, watermarked · 20-pack: credits · Pro: unlimited.
+  Free: 3 cards, watermarked · 20-pack: credits · Pro: unlimited.
 Without those env vars the converter stays open (no login, no watermark).
 
 Uses the repo's converter/ + webauth/ packages (bundled via vercel.json).
@@ -99,7 +99,7 @@ def convert(path):
         zip_bytes,
         mimetype="application/zip",
         headers={
-            "Content-Disposition": 'attachment; filename="pose-cards.zip"',
+            "Content-Disposition": 'attachment; filename="camera-cards.zip"',
             "X-Tier": tier,
             "X-Watermarked": "1" if watermark else "0",
         },

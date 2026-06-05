@@ -94,7 +94,7 @@ def build_zip(designs: list[tuple[str, bytes]], vendor: str, orientation: str = 
 
     Args:
         designs: list of (original_filename, image_bytes). Order is preserved;
-                 cards are numbered DSC09000, DSC09001, ... in that order.
+                 cards are numbered <prefix>0001, <prefix>0002, ... in that order.
         vendor:  "sony" | "canon" | "nikon".
         orientation: "auto" | "landscape" | "portrait" (applied to every design).
         template_dir: where the bundled vendor templates live.

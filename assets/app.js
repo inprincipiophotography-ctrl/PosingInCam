@@ -52,9 +52,16 @@ $("file").addEventListener("change", (e) => addFiles(e.target.files));
 drop.addEventListener("drop", (e) => addFiles(e.dataTransfer.files));
 
 function addFiles(fileList) {
+  let skipped = 0;
   for (const file of fileList) {
     if (!file.type.startsWith("image/")) continue;
+    if (/heic|heif/i.test(file.type) || /\.(heic|heif)$/i.test(file.name)) { skipped++; continue; }
     state.items.push({ file, url: URL.createObjectURL(file) });
+  }
+  if (skipped) {
+    const st = $("status");
+    st.className = "status err";
+    st.textContent = "✗ HEIC photos aren't supported in browsers yet. On iPhone: Settings → Camera → Formats → Most Compatible, or export the image as JPG/PNG.";
   }
   state.selected = 0;
   renderPreview();

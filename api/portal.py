@@ -36,6 +36,6 @@ def portal(path):
     origin = request.headers.get("Origin") or "https://posing-in-cam.vercel.app"
     try:
         url = billing.create_portal(customer, origin)
-    except Exception as e:  # pragma: no cover
-        return jsonify(error=f"portal failed: {e}"), 400
+    except Exception:  # pragma: no cover
+        return jsonify(error="Could not open billing. Please try again."), 400
     return jsonify(url=url)

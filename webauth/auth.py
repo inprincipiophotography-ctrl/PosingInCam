@@ -118,9 +118,15 @@ def get_profile(uid: str) -> dict:
 
 
 def is_pro(profile: dict) -> bool:
-    return (profile.get("plan") == "pro"
-            and profile.get("subscription_status") in ("active", "trialing")
-            and _future(profile.get("current_period_end")))
+    if profile.get("plan") != "pro":
+        return False
+    if profile.get("subscription_status") not in ("active", "trialing"):
+        return False
+    # Active/trialing subscription grants Pro. A recorded period_end must still be
+    # in the future (backstop for a missed cancellation); a missing/unparseable
+    # end does NOT lock out an otherwise-active subscriber.
+    cpe = profile.get("current_period_end")
+    return cpe is None or _future(cpe)
 
 
 def is_comp(email: str | None) -> bool:
