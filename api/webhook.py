@@ -5,6 +5,7 @@ customer.subscription.deleted, invoice.paid."""
 
 import os
 import sys
+import traceback
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -24,5 +25,7 @@ def webhook(path):
     try:
         billing.handle_webhook(payload, sig)
     except Exception as e:  # bad signature / processing error
+        print(f"[webhook] error: {e!r}", file=sys.stderr)
+        traceback.print_exc()
         return jsonify(error=str(e)), 400
     return jsonify(received=True)
