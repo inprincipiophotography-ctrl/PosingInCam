@@ -10,16 +10,15 @@ const state = { vendor: null, items: [], selected: 0 };
 const $ = (id) => document.getElementById(id);
 const camButtons = Array.from(document.querySelectorAll(".cam"));
 
-// True when this page load is the return from a Supabase magic-link sign-in.
-const cameFromAuthLink = /access_token=|[?&]code=|type=(magiclink|recovery|signup)/i.test(
-  location.hash + location.search);
-let _jumpedToTool = false;
-function jumpToToolAfterLogin() {
-  if (_jumpedToTool || !cameFromAuthLink) return;
-  if (window.PoseAuth && PoseAuth.token()) {
-    _jumpedToTool = true;
-    requestAnimationFrame(() => $("tool") && $("tool").scrollIntoView({ behavior: "smooth", block: "start" }));
-  }
+// Signed-in users get the converter first. We remember sign-in in localStorage so
+// the inline <head> script can reorder before paint (no flash) on return visits.
+function syncSignedInLayout() {
+  const signedIn = !!(window.PoseAuth && PoseAuth.token());
+  document.documentElement.classList.toggle("signed-in", signedIn);
+  try {
+    if (signedIn) localStorage.setItem("pic_signed_in", "1");
+    else localStorage.removeItem("pic_signed_in");
+  } catch (_) {}
 }
 
 const INSTRUCTIONS = {
@@ -411,11 +410,11 @@ $("login-send").onclick = async () => {
     window.__stripe = false;
   }
   if (window.__paywall && window.PoseAuth) {
-    await PoseAuth.init(() => { renderAccount(); $("login-modal").hidden = true; jumpToToolAfterLogin(); });
-    jumpToToolAfterLogin();
+    await PoseAuth.init(() => { renderAccount(); $("login-modal").hidden = true; syncSignedInLayout(); });
   } else {
     $("account").hidden = true;
   }
+  syncSignedInLayout();
   renderPricing();
   handleCheckoutReturn();
 })();
