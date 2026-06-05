@@ -15,6 +15,16 @@ Tracked so nothing gets lost between sessions. (Excluded from the public deploy.
 - [ ] **ROTATE Supabase `secret` key + `JWT secret`** (Dashboard → Settings → API).
       They were shared in chat during setup; anon/publishable keys are public and fine.
       → After rotating, update `SUPABASE_SERVICE_KEY` + `SUPABASE_JWT_SECRET` in Vercel and redeploy.
+- [ ] **ROTATE the Stripe test secret key** (Developers → API keys → roll) — also shared in chat.
 - [ ] (optional) Enable Stripe Tax for EU VAT.
+
+## 🚀 Go live (test → live)
+Everything above is in Stripe **test/sandbox** mode. To take real payments:
+- [ ] Activate the Stripe account fully (business details + bank account for payouts).
+- [ ] Recreate the 3 prices in **live** mode; create a **live** webhook endpoint
+      (`https://posing-in-cam.vercel.app/api/webhook`, same 4 events) → get `whsec_…`.
+- [ ] In Vercel, swap the 5 Stripe env vars to live values
+      (`sk_live_…`, live `price_…` ×3, live `whsec_…`) → Redeploy.
+- [ ] Re-test once with a real card, then refund/cancel.
 
 > Reminder owner: Claude will surface the rotation step when the full paywall is verified live.
