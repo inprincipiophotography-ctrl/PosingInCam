@@ -1,5 +1,5 @@
 /* Pose Cards — light theme in the NotaLucis design language:
-   Inter + Instrument Serif, violet accent, soft dot grid, gentle shadows. */
+   Inter + Instrument Serif, red accent, soft dot grid, gentle shadows. */
 :root{
   --bg:#fbfbfd;
   --surface:#ffffff;        /* cards */
@@ -9,10 +9,10 @@
   --ink:#1d1d1f;            /* primary text */
   --ink-2:#424245;
   --muted:#86868b;          /* Apple gray */
-  --accent:#7c3aed;         /* violet-600 (CTA on white) */
-  --accent-2:#6d28d9;       /* violet-700 (text accents) */
-  --accent-strong:#6d28d9;
-  --accent-soft:rgba(124,58,237,.08);
+  --accent:#a40000;         /* red-600 (CTA on white) */
+  --accent-2:#7e0000;       /* red-700 (text accents) */
+  --accent-strong:#7e0000;
+  --accent-soft:rgba(164,0,0,.08);
   --ok:#059669;
   --err:#e11d48;
   --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
@@ -37,7 +37,7 @@ body{
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
 }
-::selection{background:rgba(124,58,237,.18)}
+::selection{background:rgba(164,0,0,.18)}
 a{color:var(--accent-2);text-decoration:none}
 img{max-width:100%}
 
@@ -58,7 +58,7 @@ img{max-width:100%}
   border-bottom:1px solid var(--border-soft);
 }
 .brand{display:flex;align-items:center;gap:9px;color:var(--ink)}
-.brand-mark{width:20px;height:20px;border-radius:7px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);box-shadow:0 2px 8px rgba(124,58,237,.35);flex:0 0 auto}
+.brand-mark{width:20px;height:20px;border-radius:7px;background:linear-gradient(135deg,#c01818,#7e0000);box-shadow:0 2px 8px rgba(164,0,0,.35);flex:0 0 auto}
 .brand-name{font-weight:600;font-size:16px;letter-spacing:-.01em}
 .brand-by{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--muted)}
 .nav-links{display:flex;align-items:center;gap:22px}
@@ -72,7 +72,7 @@ img{max-width:100%}
   font-family:var(--sans);font-size:16px;font-weight:500;padding:13px 24px;cursor:pointer;
   transition:transform .05s,box-shadow .15s,background .15s,border-color .15s,color .15s;
 }
-.btn-primary{background:var(--accent);color:#fff;box-shadow:0 6px 20px rgba(124,58,237,.24)}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 6px 20px rgba(164,0,0,.24)}
 .btn-primary:hover{background:var(--accent-strong)}
 .btn-primary:active{transform:translateY(1px)}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
@@ -115,13 +115,13 @@ img{max-width:100%}
 .flow-stage{display:flex;align-items:center;justify-content:center;gap:clamp(16px,3.5vw,40px);flex-wrap:wrap;margin-top:clamp(28px,4vw,44px)}
 .flow-item{display:flex;flex-direction:column;align-items:center;gap:14px;margin:0}
 .flow-box{height:clamp(250px,33vw,350px);border-radius:18px;box-shadow:var(--shadow-lg);overflow:hidden;display:flex;align-items:center;justify-content:center}
-.flow-in{width:clamp(190px,23vw,240px);background:linear-gradient(160deg,#faf8ff,#f1ebff);border:1px solid rgba(124,58,237,.18);color:var(--accent-2)}
+.flow-in{width:clamp(190px,23vw,240px);background:linear-gradient(160deg,#fff6f6,#ffe9e9);border:1px solid rgba(164,0,0,.18);color:var(--accent-2)}
 .flow-in svg{width:clamp(52px,8vw,68px);height:auto}
 .flow-out{background:#000}
 .flow-out img{height:100%;width:auto;display:block}
 .flow-cap{font-size:14px;font-weight:600;color:var(--ink);letter-spacing:.01em}
 .flow-link{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--accent-2)}
-.flow-badge{display:flex;align-items:center;justify-content:center;width:50px;height:50px;border-radius:50%;background:var(--accent);color:#fff;font-size:23px;box-shadow:0 8px 22px rgba(124,58,237,.32)}
+.flow-badge{display:flex;align-items:center;justify-content:center;width:50px;height:50px;border-radius:50%;background:var(--accent);color:#fff;font-size:23px;box-shadow:0 8px 22px rgba(164,0,0,.32)}
 .flow-link-label{font-family:var(--serif);font-style:italic;font-size:15px}
 .flow-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 10px;margin:clamp(26px,4vw,40px) auto 0;max-width:640px}
 .flow-chip{background:var(--surface);border:1px solid var(--border-soft);border-radius:999px;padding:7px 15px;font-size:13px;color:var(--ink-2);box-shadow:var(--shadow)}
@@ -219,7 +219,7 @@ img{max-width:100%}
 .go{
   background:var(--accent);color:#fff;border:none;border-radius:12px;
   font-family:var(--sans);font-size:16px;font-weight:500;padding:13px 26px;cursor:pointer;
-  transition:background .15s,transform .05s,box-shadow .15s;box-shadow:0 6px 20px rgba(124,58,237,.22);
+  transition:background .15s,transform .05s,box-shadow .15s;box-shadow:0 6px 20px rgba(164,0,0,.22);
 }
 .go:hover{background:var(--accent-strong)}
 .go:active{transform:translateY(1px)}
@@ -245,7 +245,7 @@ img{max-width:100%}
 .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
 .price-card{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border-soft);border-radius:20px;padding:30px 26px;box-shadow:var(--shadow)}
 .price-card.featured{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,var(--shadow-lg)}
-.price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--accent);color:#fff;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 4px 12px rgba(124,58,237,.3)}
+.price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--accent);color:#fff;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 4px 12px rgba(164,0,0,.3)}
 .price-name{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .price-amount{font-family:var(--serif);font-weight:400;font-size:46px;line-height:1;margin:12px 0 2px;color:var(--ink)}
 .price-amount .per{font-family:var(--sans);font-size:15px;color:var(--muted);font-weight:400;letter-spacing:0}
@@ -270,13 +270,13 @@ img{max-width:100%}
 /* ---------- clarifier subs + trust ---------- */
 .tool-sub,.pricing-sub{max-width:60ch;margin:8px auto 0;text-align:center;color:var(--ink-2);font-size:16px;font-weight:300}
 .flow-trust{max-width:62ch;margin:24px auto 0;text-align:center;color:var(--muted);font-size:13.5px;line-height:1.6}
-.flow-safe{max-width:46ch;margin:14px auto 0;text-align:center;color:var(--ink);font-size:14px;font-weight:600;background:var(--accent-soft);border:1px solid rgba(124,58,237,.2);border-radius:14px;padding:10px 18px}
+.flow-safe{max-width:46ch;margin:14px auto 0;text-align:center;color:var(--ink);font-size:14px;font-weight:600;background:var(--accent-soft);border:1px solid rgba(164,0,0,.2);border-radius:14px;padding:10px 18px}
 
 /* ---------- faq ---------- */
 .faq{max-width:760px;margin:0 auto;padding:clamp(48px,7vw,84px) clamp(18px,4vw,40px)}
 .faq-list{margin-top:34px;display:flex;flex-direction:column;gap:10px}
 .faq-item{background:var(--surface);border:1px solid var(--border-soft);border-radius:14px;box-shadow:var(--shadow);transition:border-color .2s ease}
-.faq-item[open]{border-color:rgba(124,58,237,.3)}
+.faq-item[open]{border-color:rgba(164,0,0,.3)}
 .faq-item summary{cursor:pointer;list-style:none;padding:18px 20px;font-size:16px;font-weight:600;color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:14px}
 .faq-item summary::-webkit-details-marker{display:none}
 .faq-item summary::after{content:"+";color:var(--accent-2);font-weight:400;font-size:24px;line-height:1;flex:0 0 auto;transition:transform .2s ease}
@@ -298,7 +298,7 @@ img{max-width:100%}
 .link-btn:hover{text-decoration:underline}
 
 /* ---------- upsell (after free limit, inside tool) ---------- */
-.upsell{margin-top:16px;padding:16px 18px;background:var(--accent-soft);border:1px solid rgba(124,58,237,.18);border-radius:14px}
+.upsell{margin-top:16px;padding:16px 18px;background:var(--accent-soft);border:1px solid rgba(164,0,0,.18);border-radius:14px}
 .buy-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .go.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent);box-shadow:none}
 .go.ghost:hover{background:var(--accent-soft)}
@@ -315,7 +315,7 @@ img{max-width:100%}
 .how-step,.idea,.price-card{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
 .pack-card img,.showcase-item img{transition:transform .2s ease,box-shadow .2s ease}
 .idea::before{transition:width .2s ease}
-.how-step:hover,.idea:hover{transform:translateY(-4px);border-color:rgba(124,58,237,.35);box-shadow:var(--shadow-lg)}
+.how-step:hover,.idea:hover{transform:translateY(-4px);border-color:rgba(164,0,0,.35);box-shadow:var(--shadow-lg)}
 .idea:hover::before{width:42px}
 .price-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
 .price-card.featured:hover{box-shadow:0 0 0 1px var(--accent) inset,var(--shadow-lg)}
