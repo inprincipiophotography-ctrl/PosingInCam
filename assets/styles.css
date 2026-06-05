@@ -42,7 +42,7 @@ a{color:var(--accent-2);text-decoration:none}
 img{max-width:100%}
 
 /* shared section rhythm */
-.hero,.showcase,.how,.tool,.pricing{scroll-margin-top:72px}
+.hero,.showcase,.how,.tool,.pricing,.packs{scroll-margin-top:72px}
 .eyebrow{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--accent-2);margin:0 0 10px}
 .eyebrow.center{text-align:center}
 .section-h{font-family:var(--serif);font-weight:400;font-size:clamp(28px,4.6vw,40px);line-height:1.12;letter-spacing:-.01em;margin:0 0 8px;color:var(--ink)}
@@ -214,6 +214,18 @@ img{max-width:100%}
 .price-feats li{position:relative;padding-left:24px;color:var(--ink-2);font-size:14px;line-height:1.45}
 .price-feats li::before{content:"✓";position:absolute;left:0;top:0;color:var(--accent-2);font-weight:700}
 .price-card .btn{width:100%;margin-top:auto}
+
+/* ---------- ready-made packs ---------- */
+.packs{max-width:var(--maxw);margin:0 auto;padding:clamp(48px,7vw,84px) clamp(18px,4vw,40px)}
+.packs-lede{max-width:62ch;margin:6px auto 0;color:var(--ink-2);font-size:17px;font-weight:300;text-align:center}
+.packs-track{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:34px 2px 8px;-webkit-overflow-scrolling:touch}
+.pack-card{flex:0 0 auto;width:300px;max-width:74vw;margin:0;scroll-snap-align:center}
+.pack-card img{width:100%;height:auto;border-radius:16px;border:1px solid var(--border-soft);box-shadow:var(--shadow-lg);display:block;background:var(--surface)}
+.pack-includes{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 12px;margin:22px auto 0;padding:0;max-width:720px}
+.pack-includes li{position:relative;padding:7px 15px 7px 32px;background:var(--surface);border:1px solid var(--border-soft);border-radius:999px;font-size:14px;color:var(--ink-2);box-shadow:var(--shadow)}
+.pack-includes li::before{content:"✓";position:absolute;left:14px;top:7px;color:var(--accent-2);font-weight:700}
+.packs-cta{text-align:center;margin-top:30px}
+.packs-note{color:var(--muted);font-size:13px;margin:14px 0 0}
 
 /* ---------- footer ---------- */
 .site-foot{

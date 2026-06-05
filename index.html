@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Camera Cards · IN PRINCIPIO</title>
-  <meta name="description" content="Put any image — poses, references, shot lists — on your camera screen. No app, no phone, no signal." />
+  <meta name="description" content="Put your poses, references and shot lists on your camera screen. No app, no phone, no signal." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
@@ -20,6 +20,7 @@
     </a>
     <nav class="nav-links">
       <a href="#how">How it works</a>
+      <a href="#packs">Pose packs</a>
       <a href="#pricing">Pricing</a>
       <div class="account" id="account" hidden></div>
     </nav>
@@ -31,11 +32,11 @@
       <div class="hero-text">
         <p class="eyebrow">For photographers</p>
         <h1>Your next pose, on the screen you're already looking at.</h1>
-        <p class="lede">Load poses, references, shot lists — any image — onto your camera and scroll
+        <p class="lede">Load your poses, references and shot lists onto your camera and scroll
           through them in playback. No app. No phone. No awkward pauses.</p>
         <div class="cta-row">
           <a class="btn btn-primary" href="#tool">Try it free →</a>
-          <a class="btn btn-ghost" href="#how">See how it works</a>
+          <a class="btn btn-ghost" href="#packs">See the pose packs</a>
         </div>
         <div class="trust">
           <span class="trust-item">✓ Sony · Canon · Nikon</span>
@@ -68,7 +69,7 @@
         <div class="how-step">
           <span class="how-num">1</span>
           <h3>Upload your images</h3>
-          <p>Pose designs, references, shot lists, moodboards — anything. Pick your camera brand.</p>
+          <p>Pose designs, references, shot lists, moodboards, anything you want. Pick your camera brand.</p>
         </div>
         <div class="how-step">
           <span class="how-num">2</span>
@@ -78,7 +79,7 @@
         <div class="how-step">
           <span class="how-num">3</span>
           <h3>Scroll on your camera</h3>
-          <p>Copy to the card, hit playback, and flip through your references — right in the viewfinder moment.</p>
+          <p>Copy to the card, hit playback, and flip through your references between shots.</p>
         </div>
       </div>
     </section>
@@ -148,10 +149,39 @@
       </div>
       <div class="price-grid" id="price-grid"><!-- rendered by app.js --></div>
     </section>
+
+    <!-- Ready-made pose packs (links out to the In Principio store) -->
+    <section class="packs" id="packs">
+      <p class="eyebrow center">Ready-made packs</p>
+      <h2 class="section-h center">Rather have 50 poses ready to go?</h2>
+      <p class="packs-lede">Our In-Camera Posing packs drop straight onto your card. Every card gives you a
+        reference photo, the camera settings, a posing hack, and the exact words to say to your couple.
+        New poses added regularly.</p>
+
+      <div class="packs-track">
+        <figure class="pack-card"><img src="/assets/showcase/pack-01.jpg" alt="In-Camera Posing card: Dance and Spin" loading="lazy" /></figure>
+        <figure class="pack-card"><img src="/assets/showcase/pack-04.jpg" alt="In-Camera Posing card: Vogue" loading="lazy" /></figure>
+        <figure class="pack-card"><img src="/assets/showcase/pack-02.jpg" alt="In-Camera Posing pose card" loading="lazy" /></figure>
+        <figure class="pack-card"><img src="/assets/showcase/pack-03.jpg" alt="In-Camera Posing pose card" loading="lazy" /></figure>
+      </div>
+
+      <ul class="pack-includes">
+        <li>Reference photo</li>
+        <li>What to say to the couple</li>
+        <li>Camera settings</li>
+        <li>A posing hack</li>
+        <li>The energy to aim for</li>
+      </ul>
+
+      <div class="packs-cta">
+        <a class="btn btn-primary" href="https://www.inprincipioweddings.com/store" target="_blank" rel="noopener">Browse the pose packs →</a>
+        <p class="packs-note">50 cards · Sony, Canon &amp; Nikon · one-time purchase on inprincipioweddings.com</p>
+      </div>
+    </section>
   </main>
 
   <footer class="site-foot">
-    <span>IN PRINCIPIO — Weddings by Kim &amp; Ivan</span>
+    <span>IN PRINCIPIO · Weddings by Kim &amp; Ivan</span>
     <a href="https://inprincipioweddings.com">inprincipioweddings.com</a>
   </footer>
 
@@ -159,7 +189,7 @@
   <div class="modal" id="login-modal" hidden>
     <div class="modal-card">
       <h3>Sign in</h3>
-      <p class="muted">We'll email you a magic link — no password.</p>
+      <p class="muted">We'll email you a magic link. No password.</p>
       <input type="email" id="login-email" placeholder="you@email.com" autocomplete="email" />
       <button class="go" id="login-send">Send magic link</button>
       <p class="status" id="login-status"></p>

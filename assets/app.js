@@ -12,22 +12,22 @@ const camButtons = Array.from(document.querySelectorAll(".cam"));
 
 const INSTRUCTIONS = {
   sony:
-    "SONY — Recover Image Database is REQUIRED.\n" +
+    "SONY: Recover Image Database is REQUIRED.\n" +
     "1. MENU → Setup → Media → Format the card (in camera).\n" +
     "2. Take one ordinary photo so DCIM/100MSDCF/ is created.\n" +
     "3. Copy all .JPG from the ZIP (DCIM/100MSDCF/) into that folder on the card.\n" +
     "4. MENU → Setup → Media → Recover Image Database → confirm.\n" +
-    "5. ▶ Playback — the cards appear among your photos.",
+    "5. ▶ Playback. The cards appear among your photos.",
   canon:
-    "CANON — plug & play, no database rebuild.\n" +
+    "CANON: plug & play, no database rebuild.\n" +
     "1. MENU → (wrench) → Format card.\n" +
     "2. Take one photo so DCIM/100CANON/ is created.\n" +
     "3. Copy the .JPG from the ZIP into DCIM/100CANON/ on the card.\n" +
     "4. Insert the card → ▶ Playback. (Press INFO for details.)",
   nikon:
-    "NIKON — copy into the folder YOUR camera created.\n" +
+    "NIKON: copy into the folder YOUR camera created.\n" +
     "1. MENU → (wrench) → Format memory card.\n" +
-    "2. Take a photo — DCIM/100NCZ_… is created (e.g. 100NCZ_8).\n" +
+    "2. Take a photo. DCIM/100NCZ_… is created (e.g. 100NCZ_8).\n" +
     "3. Copy the DSC_*.JPG from the ZIP into THAT folder (not 100NCZ_X).\n" +
     "4. If you don't see them: PLAYBACK MENU → Playback folder → All.\n" +
     "5. ▶ Playback.",
@@ -172,7 +172,7 @@ $("go").addEventListener("click", async () => {
     const wm = resp.headers.get("X-Watermarked") === "1";
     status.className = "status ok";
     status.textContent = "✓ Done! Your pose-cards.zip is downloading." +
-      (wm ? "  (free preview — watermarked)" : "");
+      (wm ? "  (free preview, watermarked)" : "");
     showInstructions();
     renderAccount();
   } catch (err) {
@@ -196,14 +196,14 @@ function showUpsell() {
     el.innerHTML =
       '<p class="muted" style="margin:0 0 12px">You\'ve used your free previews. Go unlimited or grab a 20-pack:</p>' +
       '<div class="buy-row">' +
-        '<button class="go" data-kind="monthly">Go Pro — monthly</button>' +
-        '<button class="go ghost" data-kind="yearly">Pro — yearly</button>' +
+        '<button class="go" data-kind="monthly">Go Pro (monthly)</button>' +
+        '<button class="go ghost" data-kind="yearly">Pro (yearly)</button>' +
         '<button class="link-btn" data-kind="pack20">Buy 20 cards</button>' +
       '</div>';
     el.querySelectorAll("[data-kind]").forEach((b) =>
       b.addEventListener("click", () => startCheckout(b.dataset.kind, b)));
   } else {
-    el.innerHTML = '<p class="muted">You\'ve used your free previews. Paid plans are launching soon — thanks for trying it!</p>';
+    el.innerHTML = '<p class="muted">You\'ve used your free previews. Paid plans are launching soon. Thanks for trying it!</p>';
   }
 }
 
@@ -297,7 +297,7 @@ async function renderPricing() {
         featured: true,
         badge: "Most popular",
         name: "Pro",
-        amount: proAmt || "—",
+        amount: proAmt || "",
         per: proAmt ? (cycle === "yearly" ? "/yr" : "/mo") : "",
         note: proNote,
         feats: ["Unlimited cards", "No watermark", "All three brands", "Cancel anytime"],
@@ -307,7 +307,7 @@ async function renderPricing() {
       }) +
       card({
         name: packN + "-pack",
-        amount: hasPack ? fmtMoney(P.pack20) : "—",
+        amount: hasPack ? fmtMoney(P.pack20) : "",
         per: hasPack ? " once" : "",
         note: "One-time, no subscription",
         feats: [packN + " cards", "No watermark", "Never expires"],
@@ -406,7 +406,7 @@ function handleCheckoutReturn() {
   if (c === "success") {
     const status = $("status");
     status.className = "status ok";
-    status.textContent = "✓ Payment received — your account is updating. Thank you!";
+    status.textContent = "✓ Payment received. Your account is updating. Thank you!";
     let n = 0;
     const t = setInterval(() => { renderAccount(); if (++n >= 4) clearInterval(t); }, 2000);
   }

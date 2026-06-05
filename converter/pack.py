@@ -30,7 +30,7 @@ _INSTRUCTIONS = {
             "3. Kopiraj sve .JPG iz DCIM/100MSDCF/ ovog ZIP-a u istoimenu mapu na kartici.\n"
             "4. NAJVAŽNIJE: MENU → Setup → Media → Recover Image Database → potvrdi.\n"
             "   Bez ovog koraka aparat NEĆE prikazati kartice.\n"
-            "5. Pritisni ▶ Playback i listaj — pose kartice su među fotkama."
+            "5. Pritisni ▶ Playback i listaj, pose kartice su među fotkama."
         ),
         "en": (
             "1. In camera: MENU → Setup → Media → Format the card.\n"
@@ -38,7 +38,7 @@ _INSTRUCTIONS = {
             "3. Copy every .JPG from this ZIP's DCIM/100MSDCF/ into that folder on the card.\n"
             "4. MOST IMPORTANT: MENU → Setup → Media → Recover Image Database → confirm.\n"
             "   Without this the camera will NOT show the cards.\n"
-            "5. Press ▶ Playback and scroll — the pose cards appear among your shots."
+            "5. Press ▶ Playback and scroll. The pose cards appear among your shots."
         ),
     },
     "canon": {
@@ -47,14 +47,14 @@ _INSTRUCTIONS = {
             "1. U aparatu: MENU → (alat) → Format card.\n"
             "2. Snimi jednu običnu fotku da aparat napravi DCIM/100CANON/ mapu.\n"
             "3. Kopiraj sve .JPG iz DCIM/100CANON/ ovog ZIP-a u istoimenu mapu na kartici.\n"
-            "4. Canon ne treba rebuild baze — ubaci karticu i pritisni ▶ Playback.\n"
+            "4. Canon ne treba rebuild baze. Ubaci karticu i pritisni ▶ Playback.\n"
             "   (INFO prikazuje dodatne podatke.)"
         ),
         "en": (
             "1. In camera: MENU → (wrench) → Format card.\n"
             "2. Take one ordinary photo so the camera creates DCIM/100CANON/.\n"
             "3. Copy every .JPG from this ZIP's DCIM/100CANON/ into that folder on the card.\n"
-            "4. No database rebuild on Canon — insert the card and press ▶ Playback.\n"
+            "4. No database rebuild on Canon. Insert the card and press ▶ Playback.\n"
             "   (Press INFO to reveal extra details.)"
         ),
     },
@@ -62,18 +62,18 @@ _INSTRUCTIONS = {
         "folder": "DCIM/100NCZ_X/",
         "hr": (
             "1. U aparatu: MENU → (alat) → Format memory card.\n"
-            "2. Snimi jednu običnu fotku — aparat napravi mapu DCIM/100NCZ_… (npr. 100NCZ_8 za Z8).\n"
+            "2. Snimi jednu običnu fotku, aparat napravi mapu DCIM/100NCZ_… (npr. 100NCZ_8 za Z8).\n"
             "3. Kopiraj DSC_*.JPG iz ovog ZIP-a u TU mapu koju je tvoj aparat napravio\n"
-            "   (NE u 100NCZ_X — to je samo primjer imena).\n"
+            "   (NE u 100NCZ_X, to je samo primjer imena).\n"
             "4. Nikon ne treba rebuild baze. Ako kartice ne vidiš:\n"
             "   PLAYBACK MENU → Playback folder → All.\n"
             "5. Pritisni ▶ Playback i listaj."
         ),
         "en": (
             "1. In camera: MENU → (wrench) → Format memory card.\n"
-            "2. Take one ordinary photo — the camera creates DCIM/100NCZ_… (e.g. 100NCZ_8 for Z8).\n"
+            "2. Take one ordinary photo, the camera creates DCIM/100NCZ_… (e.g. 100NCZ_8 for Z8).\n"
             "3. Copy the DSC_*.JPG from this ZIP into THAT folder your camera made\n"
-            "   (NOT 100NCZ_X — that name is just a placeholder).\n"
+            "   (NOT 100NCZ_X, that name is just a placeholder).\n"
             "4. No database rebuild on Nikon. If you don't see the cards:\n"
             "   PLAYBACK MENU → Playback folder → All.\n"
             "5. Press ▶ Playback and scroll."
