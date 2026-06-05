@@ -13,6 +13,7 @@ Env: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET,
 from __future__ import annotations
 
 import os
+import json
 import datetime as dt
 
 import requests
@@ -95,18 +96,25 @@ def create_portal(customer_id: str, origin: str) -> str:
 
 
 # --- Webhook ----------------------------------------------------------------
+def _retrieve_sub(stripe, sub_id) -> dict:
+    """Retrieve a subscription as a plain dict (stripe>=15 objects aren't dicts)."""
+    return json.loads(str(stripe.Subscription.retrieve(sub_id)))
+
+
 def handle_webhook(payload: bytes, sig: str) -> None:
     stripe = _stripe()
-    event = stripe.Webhook.construct_event(payload, sig, WEBHOOK_SECRET)
-    etype = event["type"]
-    obj = event["data"]["object"]
+    stripe.Webhook.construct_event(payload, sig, WEBHOOK_SECRET)  # verify signature only
+    # stripe-python >=15 objects are NOT dicts (.get() raises AttributeError);
+    # use the raw verified JSON as plain dicts instead.
+    event = json.loads(payload)
+    etype = event.get("type")
+    obj = (event.get("data") or {}).get("object") or {}
 
     if etype == "checkout.session.completed":
         uid = obj.get("client_reference_id")
         customer = obj.get("customer")
         if obj.get("mode") == "subscription":
-            sub = stripe.Subscription.retrieve(obj.get("subscription"))
-            _set_pro(uid, customer, sub)
+            _set_pro(uid, customer, _retrieve_sub(stripe, obj.get("subscription")))
         else:  # one-time 20-pack
             _add_credits(uid, customer, PACK20_CREDITS)
 
@@ -118,7 +126,7 @@ def handle_webhook(payload: bytes, sig: str) -> None:
         if not sub_id:  # newer API versions nest it under parent
             sub_id = ((obj.get("parent") or {}).get("subscription_details") or {}).get("subscription")
         if sub_id:
-            _sync_subscription(stripe.Subscription.retrieve(sub_id))
+            _sync_subscription(_retrieve_sub(stripe, sub_id))
 
 
 def _set_pro(uid: str, customer: str, sub) -> None:
