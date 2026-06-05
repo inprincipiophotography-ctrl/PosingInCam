@@ -30,6 +30,16 @@ PRICE_FOR = {
 PACK20_CREDITS = 20
 _TIMEOUT = 10
 
+# Stripe redirect targets are locked to our own origins (anti open-redirect).
+ALLOWED_ORIGINS = {
+    "https://posing-in-cam.vercel.app",
+    "https://posing-in-cam-in-principios-projects.vercel.app",
+}
+
+
+def safe_origin(origin: str | None) -> str:
+    return origin if origin in ALLOWED_ORIGINS else "https://posing-in-cam.vercel.app"
+
 
 def enabled() -> bool:
     return bool(STRIPE_SECRET and any(PRICE_FOR.values()))
@@ -209,8 +219,11 @@ def _set_pro(uid: str, customer: str, sub) -> None:
 def _add_credits(uid: str, customer: str, n: int) -> None:
     if not uid:
         return
-    current = int(auth.get_profile(uid).get("credits") or 0)
-    _patch("id", uid, {"credits": current + n, "stripe_customer_id": customer})
+    if customer:
+        _patch("id", uid, {"stripe_customer_id": customer})   # idempotent; do first
+    if not auth._rpc("add_credits", {"p_uid": uid, "p_n": n}):  # atomic; fallback below
+        current = int(auth.get_profile(uid).get("credits") or 0)
+        _patch("id", uid, {"credits": current + n})
 
 
 def _sync_subscription(sub) -> None:

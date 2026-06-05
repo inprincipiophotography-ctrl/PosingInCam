@@ -72,3 +72,26 @@ create table if not exists public.stripe_events (
   created_at  timestamptz not null default now()
 );
 alter table public.stripe_events enable row level security;
+
+-- Atomic entitlement counters (no lost updates under concurrency). These are
+-- SECURITY INVOKER (default): a user calling them directly runs as their own role
+-- and the profiles RLS (no client write policy) blocks the write, so nothing
+-- happens. Only the service role can actually update. Execute is also revoked
+-- from client roles for good measure.
+create or replace function public.add_free_used(p_uid uuid, p_n int)
+returns void language sql as $$
+  update public.profiles set free_used = free_used + p_n, updated_at = now() where id = p_uid;
+$$;
+
+create or replace function public.spend_credits(p_uid uuid, p_n int)
+returns void language sql as $$
+  update public.profiles set credits = greatest(0, credits - p_n), updated_at = now() where id = p_uid;
+$$;
+
+create or replace function public.add_credits(p_uid uuid, p_n int)
+returns void language sql as $$
+  update public.profiles set credits = credits + p_n, updated_at = now() where id = p_uid;
+$$;
+
+revoke execute on function public.add_free_used(uuid,int), public.spend_credits(uuid,int), public.add_credits(uuid,int) from public, anon, authenticated;
+grant  execute on function public.add_free_used(uuid,int), public.spend_credits(uuid,int), public.add_credits(uuid,int) to service_role;

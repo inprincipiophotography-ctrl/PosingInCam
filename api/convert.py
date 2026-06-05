@@ -12,6 +12,7 @@ The original scripts/cardify.sh CLI is not involved.
 
 import os
 import sys
+import traceback
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -90,6 +91,7 @@ def convert(path):
     except (FileNotFoundError, ValueError) as e:
         return jsonify(error=str(e)), 400
     except Exception:  # pragma: no cover
+        traceback.print_exc(file=sys.stderr)  # surfaces in Vercel runtime logs
         return jsonify(error="conversion failed"), 500
 
     if auth.paywall_enabled() and uid:

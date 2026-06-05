@@ -148,19 +148,34 @@ def decide(profile: dict, n: int, email: str = "") -> dict:
                         f"for {n} card(s). Buy a 20-pack or go Pro for unlimited.")}
 
 
+def _rpc(name: str, payload: dict) -> bool:
+    """Call a Supabase RPC as the service role. Returns True on HTTP 2xx."""
+    try:
+        r = requests.post(f"{SUPABASE_URL}/rest/v1/rpc/{name}",
+                          headers=_headers(), json=payload, timeout=_TIMEOUT)
+        return r.ok
+    except Exception:
+        return False
+
+
+def _patch_profile(uid: str, patch: dict) -> None:
+    requests.patch(f"{SUPABASE_URL}/rest/v1/profiles", params={"id": f"eq.{uid}"},
+                   headers=_headers({"Prefer": "return=minimal"}),
+                   json={**patch, "updated_at": _now()}, timeout=_TIMEOUT)
+
+
 def consume(uid: str, profile: dict, n: int, tier: str, vendor: str) -> None:
-    """Decrement credits / increment free usage and log the conversion.
-    Never raises — a logging/decrement hiccup must not fail the user's download."""
+    """Atomically decrement credits / increment free usage and log the conversion.
+    Never raises — a metering hiccup must not fail the user's download. Prefers
+    Postgres RPCs for atomic counters (no lost updates under concurrency), falling
+    back to a read-then-write PATCH if those functions aren't installed yet."""
     try:
         if tier == "credits":
-            patch = {"credits": max(0, int(profile.get("credits") or 0) - n), "updated_at": _now()}
+            if not _rpc("spend_credits", {"p_uid": uid, "p_n": n}):
+                _patch_profile(uid, {"credits": max(0, int(profile.get("credits") or 0) - n)})
         elif tier == "free":
-            patch = {"free_used": int(profile.get("free_used") or 0) + n, "updated_at": _now()}
-        else:
-            patch = None
-        if patch is not None:
-            requests.patch(f"{SUPABASE_URL}/rest/v1/profiles", params={"id": f"eq.{uid}"},
-                           headers=_headers({"Prefer": "return=minimal"}), json=patch, timeout=_TIMEOUT)
+            if not _rpc("add_free_used", {"p_uid": uid, "p_n": n}):
+                _patch_profile(uid, {"free_used": int(profile.get("free_used") or 0) + n})
         requests.post(f"{SUPABASE_URL}/rest/v1/conversions",
                       headers=_headers({"Prefer": "return=minimal"}),
                       json={"user_id": uid, "cards": n, "vendor": vendor, "tier": tier}, timeout=_TIMEOUT)

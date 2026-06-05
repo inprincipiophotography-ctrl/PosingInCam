@@ -2,6 +2,7 @@
 
 import os
 import sys
+import traceback
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -33,9 +34,10 @@ def portal(path):
     customer = auth.get_profile(uid).get("stripe_customer_id")
     if not customer:
         return jsonify(error="No billing account yet — subscribe first."), 400
-    origin = request.headers.get("Origin") or "https://posing-in-cam.vercel.app"
+    origin = billing.safe_origin(request.headers.get("Origin"))
     try:
         url = billing.create_portal(customer, origin)
     except Exception:  # pragma: no cover
+        traceback.print_exc(file=sys.stderr)
         return jsonify(error="Could not open billing. Please try again."), 400
     return jsonify(url=url)
