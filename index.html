@@ -150,15 +150,15 @@
     <section class="tool" id="tool">
       <p class="eyebrow center">Try it</p>
       <h2 class="section-h center">Convert any image.</h2>
-      <p class="tool-sub">Upload your own images and we'll make them camera-ready. Free includes 3 conversions with a small watermark. Sign in with an email link, no password and no credit card.</p>
+      <p class="tool-sub">Upload your own images and we'll make them camera-ready. Free includes 3 images with a small watermark. Sign in with an email link, no password and no credit card.</p>
       <div class="tool-card">
         <!-- Step 1 -->
         <div class="field">
           <label class="field-label"><span class="step-dot">1</span> Choose your camera</label>
           <div class="cameras" id="cameras">
-            <button class="cam" data-vendor="sony">Sony <small>Alpha · A7 III/IV/V</small></button>
-            <button class="cam" data-vendor="canon">Canon <small>EOS R · R6 / R6 III</small></button>
-            <button class="cam" data-vendor="nikon">Nikon <small>Z · Z6/Z8/Z9</small></button>
+            <button class="cam" type="button" aria-pressed="false" data-vendor="sony">Sony <small>Alpha · A7 III/IV/V</small></button>
+            <button class="cam" type="button" aria-pressed="false" data-vendor="canon">Canon <small>EOS R · R6 / R6 III</small></button>
+            <button class="cam" type="button" aria-pressed="false" data-vendor="nikon">Nikon <small>Z · Z6/Z8/Z9</small></button>
           </div>
         </div>
 
@@ -166,7 +166,7 @@
         <div class="field">
           <label class="field-label"><span class="step-dot">2</span> Add your images</label>
           <label class="drop" id="drop">
-            <input type="file" id="file" accept="image/*" multiple hidden />
+            <input type="file" id="file" accept="image/*" multiple class="sr-only" aria-label="Add images" />
             <span class="drop-title">Drag any image here or click to choose</span>
             <span class="drop-sub">Canva exports, screenshots, photos · JPG, PNG, WEBP</span>
           </label>
@@ -189,9 +189,9 @@
         <!-- Step 3 -->
         <div class="field">
           <label class="field-label"><span class="step-dot">3</span> Convert &amp; download</label>
-          <button class="go" id="go" disabled>Convert &amp; download</button>
+          <button class="go" id="go" type="button" disabled>Convert &amp; download</button>
           <p class="go-hint">You get a ZIP with a ready-to-copy SD-card folder and instructions.</p>
-          <p class="status" id="status"></p>
+          <p class="status" id="status" role="status" aria-live="polite"></p>
           <div class="upsell" id="upsell" hidden></div>
         </div>
 
@@ -256,7 +256,7 @@
         <details class="faq-item"><summary>Will it work on my camera?</summary><p>Tested on Sony A7 III/IV/V, Canon R6/R6 II/R6 III and Nikon Z6/Z8/Z9, and it works on most recent Sony Alpha, Canon EOS R and Nikon Z bodies. Pick your brand in the tool above. If something isn't working on your camera, <a href="https://www.inprincipioweddings.com/consultation" target="_blank" rel="noopener">let us know</a> and we'll help.</p></details>
         <details class="faq-item"><summary>Is it safe for my camera and SD card?</summary><p>Yes. You only copy ordinary JPEG files to the card, the same kind your camera already makes. Nothing is installed and your existing photos are untouched.</p></details>
         <details class="faq-item"><summary>Why won't a normal image show on my camera?</summary><p>Cameras only display files saved in their own format: the right size, the right metadata and the right folder. We convert any image to match, so it appears in playback like a photo you shot.</p></details>
-        <details class="faq-item"><summary>Do I need an account?</summary><p>Yes, you sign in with a one-time email link, no password. The free plan includes 3 conversions with a small watermark; paid plans remove it.</p></details>
+        <details class="faq-item"><summary>Do I need an account?</summary><p>Yes, you sign in with a one-time email link, no password. The free plan includes 3 images with a small watermark; paid plans remove it.</p></details>
         <details class="faq-item"><summary>What's the difference between the tool and the pose packs?</summary><p>The tool converts your own images (designs, shot lists, anything). The pose packs are 50 ready-made wedding poses we shot and designed, sold separately in our store.</p></details>
         <details class="faq-item"><summary>Anything special per camera?</summary><p>Sony needs one extra step (Recover Image Database), which is in the included instructions. Canon and Nikon are essentially plug and play.</p></details>
         <details class="faq-item"><summary>Who made this?</summary><p>We're Kim &amp; Ivan, the wedding photographers behind In Principio. We built this for our own shoots and opened it up to other photographers.</p></details>
@@ -271,13 +271,15 @@
 
   <!-- Login modal (only used when the paywall is active) -->
   <div class="modal" id="login-modal" hidden>
-    <div class="modal-card">
-      <h3>Sign in</h3>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="login-title">
+      <h3 id="login-title">Sign in</h3>
       <p class="muted">We'll email you a magic link. No password.</p>
-      <input type="email" id="login-email" placeholder="you@email.com" autocomplete="email" />
-      <button class="go" id="login-send">Send magic link</button>
-      <p class="status" id="login-status"></p>
-      <button class="link-btn" id="login-close">Close</button>
+      <form id="login-form">
+        <input type="email" id="login-email" placeholder="you@email.com" autocomplete="email" required />
+        <button class="go" id="login-send" type="submit">Send magic link</button>
+      </form>
+      <p class="status" id="login-status" role="status" aria-live="polite"></p>
+      <button class="link-btn" id="login-close" type="button">Close</button>
     </div>
   </div>
 

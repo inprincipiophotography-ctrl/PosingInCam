@@ -55,7 +55,7 @@ camButtons.forEach((btn) => {
 
 /* ---------- file input + drag/drop ---------- */
 const drop = $("drop");
-$("file").addEventListener("change", (e) => addFiles(e.target.files));
+$("file").addEventListener("change", (e) => { addFiles(e.target.files); e.target.value = ""; });
 ["dragenter", "dragover"].forEach((ev) =>
   drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
 ["dragleave", "drop"].forEach((ev) =>
@@ -65,8 +65,9 @@ drop.addEventListener("drop", (e) => addFiles(e.dataTransfer.files));
 function addFiles(fileList) {
   let skipped = 0;
   for (const file of fileList) {
-    if (!file.type.startsWith("image/")) continue;
+    // check HEIC first — some browsers report an empty MIME type for it
     if (/heic|heif/i.test(file.type) || /\.(heic|heif)$/i.test(file.name)) { skipped++; continue; }
+    if (!file.type.startsWith("image/")) continue;
     state.items.push({ file, url: URL.createObjectURL(file) });
   }
   if (skipped) {
@@ -132,7 +133,10 @@ async function downscale(file) {
   const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
   const canvas = document.createElement("canvas");
   canvas.width = w; canvas.height = h;
-  canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#fff";          // flatten any transparency to white (JPEG has no alpha)
+  ctx.fillRect(0, 0, w, h);
+  ctx.drawImage(img, 0, 0, w, h);
   return await new Promise((res) => canvas.toBlob(res, "image/jpeg", JPEG_Q));
 }
 
@@ -153,10 +157,16 @@ $("go").addEventListener("click", async () => {
     const fd = new FormData();
     fd.append("vendor", state.vendor);
     fd.append("orientation", orientValue());
-    let i = 0;
+    let i = 0, total = 0;
     for (const it of state.items) {
       const blob = await downscale(it.file);
+      total += blob.size;
       fd.append("files", blob, `design-${++i}.jpg`);
+    }
+    if (total > 4_000_000) {  // Vercel request-body limit is ~4.5MB
+      status.className = "status err";
+      status.textContent = `✗ That's ${(total / 1e6).toFixed(1)} MB of images — a bit much for one go. Convert fewer at a time (upload limit is ~4 MB).`;
+      return;  // the finally block re-enables the button
     }
     status.textContent = "Converting and packaging…";
 
@@ -212,7 +222,7 @@ function showUpsell() {
   el.hidden = false;
   if (window.__stripe) {
     el.innerHTML =
-      '<p class="muted" style="margin:0 0 12px">You\'ve used your free conversions. Go unlimited or buy a credit pack:</p>' +
+      '<p class="muted" style="margin:0 0 12px">You\'ve used your free images. Go unlimited or buy a credit pack:</p>' +
       '<div class="buy-row">' +
         '<button class="go" data-kind="monthly">Go Pro (monthly)</button>' +
         '<button class="go ghost" data-kind="yearly">Pro (yearly)</button>' +
@@ -221,7 +231,7 @@ function showUpsell() {
     el.querySelectorAll("[data-kind]").forEach((b) =>
       b.addEventListener("click", () => startCheckout(b.dataset.kind, b)));
   } else {
-    el.innerHTML = '<p class="muted">You\'ve used your free conversions. Paid plans are launching soon. Thanks for trying it!</p>';
+    el.innerHTML = '<p class="muted">You\'ve used your free images. Paid plans are launching soon. Thanks for trying it!</p>';
   }
 }
 
@@ -308,7 +318,7 @@ async function renderPricing() {
         amount: "€0",
         per: "",
         note: "No credit card",
-        feats: ["Sony · Canon · Nikon", freeN + " conversions", "Watermarked"],
+        feats: ["Sony · Canon · Nikon", freeN + " images", "Watermarked"],
         cta: '<button class="btn btn-ghost" data-go="tool">Start free</button>',
       }) +
       card({
@@ -318,7 +328,7 @@ async function renderPricing() {
         amount: proAmt || "",
         per: proAmt ? (cycle === "yearly" ? "/yr" : "/mo") : "",
         note: proNote,
-        feats: ["Unlimited conversions", "No watermark", "All three brands", "Cancel anytime"],
+        feats: ["Unlimited images", "No watermark", "All three brands", "Cancel anytime"],
         cta: (hasM || hasY)
           ? '<button class="btn btn-primary" data-buy="' + cycle + '">Go Pro</button>'
           : '<button class="btn btn-primary" disabled>Coming soon</button>',
@@ -328,7 +338,7 @@ async function renderPricing() {
         amount: hasPack ? fmtMoney(P.pack20) : "",
         per: hasPack ? " once" : "",
         note: "One-time, no subscription",
-        feats: [packN + " conversions", "No watermark", "Never expires"],
+        feats: [packN + " images", "No watermark", "Never expires"],
         cta: hasPack
           ? '<button class="btn btn-ghost" data-buy="pack20">Buy ' + packN + " credits</button>"
           : '<button class="btn btn-ghost" disabled>Coming soon</button>',
@@ -382,9 +392,31 @@ async function renderAccount() {
 }
 
 /* ---------- login modal ---------- */
-function openLogin() { $("login-modal").hidden = false; $("login-email").focus(); }
-$("login-close").onclick = () => { $("login-modal").hidden = true; };
-$("login-send").onclick = async () => {
+let _loginReturnFocus = null;
+function openLogin() {
+  _loginReturnFocus = document.activeElement;
+  $("login-modal").hidden = false;
+  $("login-email").focus();
+}
+function closeLogin() {
+  $("login-modal").hidden = true;
+  try { if (_loginReturnFocus && _loginReturnFocus.focus) _loginReturnFocus.focus(); } catch (_) {}
+}
+$("login-close").onclick = closeLogin;
+$("login-modal").addEventListener("click", (e) => { if (e.target === $("login-modal")) closeLogin(); });
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !$("login-modal").hidden) closeLogin();
+});
+$("login-modal").addEventListener("keydown", (e) => {   // keep Tab inside the dialog
+  if (e.key !== "Tab") return;
+  const f = [$("login-email"), $("login-send"), $("login-close")].filter((el) => el && !el.disabled);
+  if (!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
+$("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
   const email = $("login-email").value.trim();
   const st = $("login-status");
   if (!email) { st.className = "status err"; st.textContent = "Enter your email."; return; }
@@ -393,11 +425,11 @@ $("login-send").onclick = async () => {
     await PoseAuth.signIn(email);
     st.className = "status ok";
     st.textContent = "Check your email for the magic link.";
-  } catch (e) {
+  } catch (err) {
     st.className = "status err";
-    st.textContent = e.message || "Could not send link.";
+    st.textContent = err.message || "Could not send link.";
   }
-};
+});
 
 /* ---------- boot ---------- */
 (async function boot() {
