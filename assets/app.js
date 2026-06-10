@@ -10,6 +10,8 @@ const MAX_FILES = 30;         // matches the server-side cap (api/convert.py)
 const state = { vendor: null, items: [], selected: 0 };
 const $ = (id) => document.getElementById(id);
 const camButtons = Array.from(document.querySelectorAll(".cam"));
+const stepDots = Array.from(document.querySelectorAll(".step-dot"));
+const GO_HINT_READY = "You get a ZIP with a ready-to-copy SD-card folder and instructions.";
 
 // Signed-in users get the converter first. We remember sign-in in localStorage so
 // the inline <head> script can reorder before paint (no flash) on return visits.
@@ -129,7 +131,23 @@ $("clear-all").addEventListener("click", () => {
   refresh();
 });
 
-function refresh() { $("go").disabled = !(state.vendor && state.items.length); }
+function refresh() {
+  const hasCam = !!state.vendor, hasImgs = state.items.length > 0;
+  $("go").disabled = !(hasCam && hasImgs);
+  // tick off steps 1–2 as they're completed
+  if (stepDots[0]) { stepDots[0].classList.toggle("done", hasCam); stepDots[0].textContent = hasCam ? "✓" : "1"; }
+  if (stepDots[1]) { stepDots[1].classList.toggle("done", hasImgs); stepDots[1].textContent = hasImgs ? "✓" : "2"; }
+  // say exactly what's missing instead of a silently disabled button
+  const hint = document.querySelector(".go-hint");
+  if (hint) {
+    hint.textContent =
+      !hasCam && !hasImgs ? "First choose your camera, then add your images."
+      : hasCam && !hasImgs ? "Now add at least one image."
+      : !hasCam ? "Choose your camera above (step 1)."
+      : GO_HINT_READY;
+  }
+}
+refresh();
 
 /* ---------- downscale ---------- */
 function loadImage(file) {
