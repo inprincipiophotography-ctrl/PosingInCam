@@ -4,6 +4,7 @@ const API = "/api/convert";
 const ME = "/api/me";
 const MAX_EDGE = 2400;        // downscale before upload (Vercel ~4.5MB body limit)
 const JPEG_Q = 0.9;
+const MAX_FILES = 30;         // matches the server-side cap (api/convert.py)
 // Stripe availability comes from the API health flag (window.__stripe).
 
 const state = { vendor: null, items: [], selected: 0 };
@@ -63,17 +64,20 @@ $("file").addEventListener("change", (e) => { addFiles(e.target.files); e.target
 drop.addEventListener("drop", (e) => addFiles(e.dataTransfer.files));
 
 function addFiles(fileList) {
-  let skipped = 0;
+  let skipped = 0, overflow = 0;
   for (const file of fileList) {
     // check HEIC first — some browsers report an empty MIME type for it
     if (/heic|heif/i.test(file.type) || /\.(heic|heif)$/i.test(file.name)) { skipped++; continue; }
     if (!file.type.startsWith("image/")) continue;
+    if (state.items.length >= MAX_FILES) { overflow++; continue; }
     state.items.push({ file, url: URL.createObjectURL(file) });
   }
-  if (skipped) {
+  if (skipped || overflow) {
     const st = $("status");
     st.className = "status err";
-    st.textContent = "✗ HEIC photos aren't supported in browsers yet. On iPhone: Settings → Camera → Formats → Most Compatible, or export the image as JPG/PNG.";
+    st.textContent = skipped
+      ? "✗ HEIC photos aren't supported in browsers yet. On iPhone: Settings → Camera → Formats → Most Compatible, or export the image as JPG/PNG."
+      : `✗ Max ${MAX_FILES} images per batch — kept the first ${MAX_FILES}, skipped ${overflow}.`;
   }
   state.selected = 0;
   renderPreview();
@@ -86,6 +90,7 @@ function renderPreview() {
   if (!state.items.length) { wrap.hidden = true; return; }
   wrap.hidden = false;
   $("screen-img").src = state.items[state.selected].url;
+  $("screen-img").alt = "Preview: " + (state.items[state.selected].file.name || "image " + (state.selected + 1));
   $("screen-count").textContent = state.items.length + (state.items.length === 1 ? " card" : " cards");
   const strip = $("filmstrip");
   strip.innerHTML = "";
@@ -115,6 +120,14 @@ function removeItem(i) {
   renderPreview();
   refresh();
 }
+
+$("clear-all").addEventListener("click", () => {
+  state.items.forEach((it) => { try { URL.revokeObjectURL(it.url); } catch (_) {} });
+  state.items = [];
+  state.selected = 0;
+  renderPreview();
+  refresh();
+});
 
 function refresh() { $("go").disabled = !(state.vendor && state.items.length); }
 
@@ -441,7 +454,12 @@ $("login-form").addEventListener("submit", async (e) => {
     window.__paywall = false;
     window.__stripe = false;
   }
-  if (window.__paywall && window.PoseAuth) {
+  if (window.__paywall && !window.supabase) {
+    // vendor auth script failed to load — say so instead of a dead Sign in button
+    const el = $("account");
+    el.hidden = false;
+    el.innerHTML = '<span class="acct-info">Sign-in temporarily unavailable — refresh and try again.</span>';
+  } else if (window.__paywall && window.PoseAuth) {
     await PoseAuth.init(() => { renderAccount(); $("login-modal").hidden = true; syncSignedInLayout(); });
   } else {
     $("account").hidden = true;
@@ -458,6 +476,7 @@ function handleCheckoutReturn() {
     const status = $("status");
     status.className = "status ok";
     status.textContent = "✓ Payment received. Your account is updating. Thank you!";
+    status.scrollIntoView({ behavior: "smooth", block: "center" });
     let n = 0;
     const t = setInterval(() => { renderAccount(); if (++n >= 4) clearInterval(t); }, 2000);
   }
@@ -472,6 +491,11 @@ function handleCheckoutReturn() {
   const apply = () => { try { v.playbackRate = RATE; } catch (_) {} };
   ["loadedmetadata", "canplay", "play"].forEach((e) => v.addEventListener(e, apply));
   apply();
+  // The demo loop is a 12MB download — start it only when it won't hurt: users
+  // with reduced-motion or data-saver enabled keep the lightweight poster image.
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const saveData = !!(navigator.connection && navigator.connection.saveData);
+  if (!reduced && !saveData) v.play().catch(() => {});
 })();
 
 /* ---------- scroll polish: reveal on scroll + nav shadow ---------- */

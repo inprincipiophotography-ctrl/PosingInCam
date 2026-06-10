@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
   <!-- Nav -->
   <header class="nav">
     <a class="brand" href="/">
@@ -33,7 +35,7 @@
     </nav>
   </header>
 
-  <main>
+  <main id="main">
     <!-- Hero -->
     <section class="hero">
       <div class="hero-text">
@@ -51,7 +53,7 @@
         </div>
       </div>
       <div class="hero-visual">
-        <video class="hero-media" autoplay muted loop playsinline preload="auto"
+        <video class="hero-media" muted loop playsinline preload="none"
                poster="/assets/showcase/01.jpg"
                aria-label="Pose reference cards scrolling on a camera's back screen">
           <source src="/assets/showcase/timeline.mp4" type="video/mp4" />
@@ -82,7 +84,7 @@
         </div>
         <figure class="flow-item">
           <div class="flow-box flow-out">
-            <img src="/assets/showcase/cam-shot.jpg" alt="A pose card displayed on a camera's back screen, held in one hand" loading="lazy" />
+            <img src="/assets/showcase/cam-shot.jpg" alt="A pose card displayed on a camera's back screen, held in one hand" width="560" height="678" loading="lazy" />
           </div>
           <figcaption class="flow-cap">On your camera</figcaption>
         </figure>
@@ -183,6 +185,7 @@
               <span class="screen-count" id="screen-count"></span>
             </div>
             <div class="filmstrip" id="filmstrip"></div>
+            <button class="link-btn clear-all" id="clear-all" type="button">Clear all images</button>
           </div>
         </div>
 
@@ -228,10 +231,10 @@
         settings, a posing hack and the exact words to say to your couple. New poses added regularly.</p>
 
       <div class="packs-track">
-        <figure class="pack-card"><img src="/assets/showcase/pack-01.jpg" alt="In-Camera Posing card: Dance and Spin" loading="lazy" /></figure>
-        <figure class="pack-card"><img src="/assets/showcase/pack-04.jpg" alt="In-Camera Posing card: Vogue" loading="lazy" /></figure>
-        <figure class="pack-card"><img src="/assets/showcase/pack-02.jpg" alt="In-Camera Posing pose card" loading="lazy" /></figure>
-        <figure class="pack-card"><img src="/assets/showcase/pack-03.jpg" alt="In-Camera Posing pose card" loading="lazy" /></figure>
+        <figure class="pack-card"><img src="/assets/showcase/pack-01.jpg" alt="In-Camera Posing card: Dance and Spin" width="760" height="1140" loading="lazy" /></figure>
+        <figure class="pack-card"><img src="/assets/showcase/pack-04.jpg" alt="In-Camera Posing card: Vogue" width="760" height="1140" loading="lazy" /></figure>
+        <figure class="pack-card"><img src="/assets/showcase/pack-02.jpg" alt="In-Camera Posing pose card" width="760" height="1140" loading="lazy" /></figure>
+        <figure class="pack-card"><img src="/assets/showcase/pack-03.jpg" alt="In-Camera Posing pose card" width="760" height="1140" loading="lazy" /></figure>
       </div>
 
       <ul class="pack-includes">
