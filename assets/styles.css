@@ -293,7 +293,7 @@ img{max-width:100%}
 
 /* ---------- clarifier subs + trust ---------- */
 .tool-sub,.pricing-sub{max-width:60ch;margin:8px auto 0;text-align:center;color:var(--ink-2);font-size:16px;font-weight:300}
-.orient-hint,.go-hint{color:var(--muted);font-size:12.5px;margin:8px 0 0}
+.orient-hint,.go-hint,.cameras-hint{color:var(--muted);font-size:12.5px;margin:8px 0 0}
 .flow-trust{max-width:62ch;margin:24px auto 0;text-align:center;color:var(--muted);font-size:13.5px;line-height:1.6}
 .flow-safe{max-width:46ch;margin:14px auto 0;text-align:center;color:var(--ink);font-size:14px;font-weight:600;background:var(--accent-soft);border:1px solid rgba(164,0,0,.2);border-radius:14px;padding:10px 18px}
 
