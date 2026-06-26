@@ -104,9 +104,11 @@ img{max-width:100%}
 
 .hero-visual{position:relative}
 .hero-visual img,.hero-visual video{
-  width:100%;height:auto;border-radius:20px;
+  width:100%;height:auto;border-radius:20px;object-fit:cover;background:#0c0c0d;
   border:1px solid var(--border-soft);box-shadow:var(--shadow-lg);display:block;
 }
+/* the demo clip is a tall 9:16 — show it as a tidy portrait window, not a giant block */
+.hero-media{aspect-ratio:4/5}
 .hero-caption{margin:10px 0 0;text-align:center;font-size:13px;color:var(--muted)}
 /* gentle entrance + a slow float so the hero loop feels alive, not looped */
 .hero-media{animation:heroFade 1.1s ease both}
