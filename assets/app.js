@@ -509,11 +509,13 @@ function handleCheckoutReturn() {
   const apply = () => { try { v.playbackRate = RATE; } catch (_) {} };
   ["loadedmetadata", "canplay", "play"].forEach((e) => v.addEventListener(e, apply));
   apply();
-  // The demo loop is a 12MB download — start it only when it won't hurt: users
-  // with reduced-motion or data-saver enabled keep the lightweight poster image.
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const saveData = !!(navigator.connection && navigator.connection.saveData);
-  if (!reduced && !saveData) v.play().catch(() => {});
+  // The video autoplays (muted) via the HTML attribute — most reliable on mobile.
+  // A belt-and-suspenders play() in case a browser ignored autoplay-on-load.
+  v.play && v.play().catch(() => {});
+  // Honour reduced-motion: stop the loop and leave the still poster frame.
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    try { v.autoplay = false; v.pause(); } catch (_) {}
+  }
 })();
 
 /* ---------- scroll polish: reveal on scroll + nav shadow ---------- */
