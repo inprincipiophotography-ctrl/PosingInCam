@@ -359,7 +359,7 @@ async function renderPricing() {
         amount: proAmt || "",
         per: proAmt ? (cycle === "yearly" ? "/yr" : "/mo") : "",
         note: proNote,
-        feats: ["Unlimited images", "No watermark", "All three brands", "Cancel anytime"],
+        feats: ["Unlimited images", "No watermark", "Ready for every shoot", "Cancel anytime"],
         cta: (hasM || hasY)
           ? '<button class="btn btn-primary" data-buy="' + cycle + '">Go Pro</button>'
           : '<button class="btn btn-primary" disabled>Coming soon</button>',
