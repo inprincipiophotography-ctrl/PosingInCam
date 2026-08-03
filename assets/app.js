@@ -79,7 +79,7 @@ function addFiles(fileList) {
     st.className = "status err";
     st.textContent = skipped
       ? "✗ HEIC photos aren't supported in browsers yet. On iPhone: Settings → Camera → Formats → Most Compatible, or export the image as JPG/PNG."
-      : `✗ Max ${MAX_FILES} images per batch — kept the first ${MAX_FILES}, skipped ${overflow}.`;
+      : `✗ Max ${MAX_FILES} images per batch. Kept the first ${MAX_FILES}, skipped ${overflow}.`;
   }
   state.selected = 0;
   renderPreview();
@@ -196,7 +196,7 @@ $("go").addEventListener("click", async () => {
     }
     if (total > 4_000_000) {  // Vercel request-body limit is ~4.5MB
       status.className = "status err";
-      status.textContent = `✗ That's ${(total / 1e6).toFixed(1)} MB of images — a bit much for one go. Convert fewer at a time (upload limit is ~4 MB).`;
+      status.textContent = `✗ That's ${(total / 1e6).toFixed(1)} MB of images, a bit much for one go. Convert fewer at a time (upload limit is ~4 MB).`;
       return;  // the finally block re-enables the button
     }
     status.textContent = "Converting and packaging…";
@@ -476,7 +476,7 @@ $("login-form").addEventListener("submit", async (e) => {
     // vendor auth script failed to load — say so instead of a dead Sign in button
     const el = $("account");
     el.hidden = false;
-    el.innerHTML = '<span class="acct-info">Sign-in temporarily unavailable — refresh and try again.</span>';
+    el.innerHTML = '<span class="acct-info">Sign-in temporarily unavailable. Refresh and try again.</span>';
   } else if (window.__paywall && window.PoseAuth) {
     await PoseAuth.init(() => { renderAccount(); $("login-modal").hidden = true; syncSignedInLayout(); });
   } else {
