@@ -6,13 +6,14 @@
     "api/checkout.py": { "includeFiles": "webauth/**" },
     "api/portal.py": { "includeFiles": "webauth/**" },
     "api/webhook.py": { "includeFiles": "webauth/**" },
-    "api/prices.py": { "includeFiles": "webauth/**" }
+    "api/prices.py": { "includeFiles": "webauth/**" },
+    "api/history.py": { "includeFiles": "{converter,webauth}/**", "maxDuration": 60 }
   },
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; frame-src 'none'; form-action 'self'; img-src 'self' data: blob:; media-src 'self'; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'sha256-9yKKDWaOkqIEd6PqyiK8F1J48/8k43Q/lsxIWMli36Q='; connect-src 'self' https://zpowmnhdsybaicvlkkwx.supabase.co wss://zpowmnhdsybaicvlkkwx.supabase.co; upgrade-insecure-requests" },
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; frame-src 'none'; form-action 'self'; img-src 'self' data: blob: https://zpowmnhdsybaicvlkkwx.supabase.co; media-src 'self'; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'sha256-9yKKDWaOkqIEd6PqyiK8F1J48/8k43Q/lsxIWMli36Q='; connect-src 'self' https://zpowmnhdsybaicvlkkwx.supabase.co wss://zpowmnhdsybaicvlkkwx.supabase.co; upgrade-insecure-requests" },
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },

@@ -164,11 +164,29 @@ def _patch_profile(uid: str, patch: dict) -> None:
                    json={**patch, "updated_at": _now()}, timeout=_TIMEOUT)
 
 
-def consume(uid: str, profile: dict, n: int, tier: str, vendor: str) -> None:
+def cards_so_far(uid: str, vendor: str) -> int:
+    """Total cards this user has already converted for a vendor. Numbering of the
+    next batch continues after this, so batches never collide on the SD card.
+    Returns 0 on any error (worst case: numbering restarts, the old behaviour)."""
+    try:
+        r = requests.get(f"{SUPABASE_URL}/rest/v1/conversions",
+                         params={"user_id": f"eq.{uid}", "vendor": f"eq.{vendor}",
+                                 "select": "cards", "limit": "10000"},
+                         headers=_headers(), timeout=_TIMEOUT)
+        r.raise_for_status()
+        return sum(int(row.get("cards") or 0) for row in r.json())
+    except Exception:
+        return 0
+
+
+def consume(uid: str, profile: dict, n: int, tier: str, vendor: str,
+            extra: dict | None = None) -> None:
     """Atomically decrement credits / increment free usage and log the conversion.
     Never raises — a metering hiccup must not fail the user's download. Prefers
     Postgres RPCs for atomic counters (no lost updates under concurrency), falling
-    back to a read-then-write PATCH if those functions aren't installed yet."""
+    back to a read-then-write PATCH if those functions aren't installed yet.
+    ``extra`` adds history columns (storage_prefix, files, ...); if the columns
+    aren't installed yet the insert is retried without them."""
     try:
         if tier == "credits":
             if not _rpc("spend_credits", {"p_uid": uid, "p_n": n}):
@@ -176,11 +194,38 @@ def consume(uid: str, profile: dict, n: int, tier: str, vendor: str) -> None:
         elif tier == "free":
             if not _rpc("add_free_used", {"p_uid": uid, "p_n": n}):
                 _patch_profile(uid, {"free_used": int(profile.get("free_used") or 0) + n})
-        requests.post(f"{SUPABASE_URL}/rest/v1/conversions",
-                      headers=_headers({"Prefer": "return=minimal"}),
-                      json={"user_id": uid, "cards": n, "vendor": vendor, "tier": tier}, timeout=_TIMEOUT)
+        base = {"user_id": uid, "cards": n, "vendor": vendor, "tier": tier}
+        r = requests.post(f"{SUPABASE_URL}/rest/v1/conversions",
+                          headers=_headers({"Prefer": "return=minimal"}),
+                          json={**base, **(extra or {})}, timeout=_TIMEOUT)
+        if not r.ok and extra:
+            requests.post(f"{SUPABASE_URL}/rest/v1/conversions",
+                          headers=_headers({"Prefer": "return=minimal"}),
+                          json=base, timeout=_TIMEOUT)
     except Exception:
         pass
+
+
+def list_history(uid: str, limit: int = 30) -> list[dict]:
+    """Most recent stored batches for a user (only ones with files in storage)."""
+    r = requests.get(f"{SUPABASE_URL}/rest/v1/conversions",
+                     params={"user_id": f"eq.{uid}", "storage_prefix": "not.is.null",
+                             "select": "id,created_at,vendor,cards,storage_prefix,files,watermarked",
+                             "order": "created_at.desc", "limit": str(limit)},
+                     headers=_headers(), timeout=_TIMEOUT)
+    r.raise_for_status()
+    return r.json()
+
+
+def get_batch(uid: str, batch_id: int) -> dict | None:
+    """One stored batch, only if it belongs to this user."""
+    r = requests.get(f"{SUPABASE_URL}/rest/v1/conversions",
+                     params={"id": f"eq.{batch_id}", "user_id": f"eq.{uid}",
+                             "select": "id,created_at,vendor,cards,storage_prefix,files"},
+                     headers=_headers(), timeout=_TIMEOUT)
+    r.raise_for_status()
+    rows = r.json()
+    return rows[0] if rows else None
 
 
 def account_state(profile: dict, email: str = "") -> dict:

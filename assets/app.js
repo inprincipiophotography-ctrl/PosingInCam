@@ -188,6 +188,13 @@ $("go").addEventListener("click", async () => {
     const fd = new FormData();
     fd.append("vendor", state.vendor);
     fd.append("orientation", orientValue());
+    if (!window.__paywall) {
+      // Signed-in numbering continues server-side; the open/dev flow keeps its
+      // own counter locally so batches don't clash either.
+      let prev = 0;
+      try { prev = parseInt(localStorage.getItem("pic_start_" + state.vendor) || "0", 10) || 0; } catch (_) {}
+      fd.append("start", String(prev));
+    }
     let i = 0, total = 0;
     for (const it of state.items) {
       const blob = await downscale(it.file);
@@ -229,11 +236,21 @@ $("go").addEventListener("click", async () => {
     document.body.appendChild(a); a.click(); a.remove();
 
     const wm = resp.headers.get("X-Watermarked") === "1";
+    const first = resp.headers.get("X-First-File"), last = resp.headers.get("X-Last-File");
+    const range = first && last
+      ? (first === last ? ` Your card is ${first}.` : ` Your cards are ${first} to ${last}.`)
+      : "";
     status.className = "status ok";
-    status.textContent = "✓ Done! Your camera-cards.zip is downloading." +
+    status.textContent = "✓ Done! Your camera-cards.zip is downloading." + range +
       (wm ? "  (free, watermarked)" : "");
+    if (!window.__paywall && last) {
+      // Anonymous flow: remember where this batch ended so the next one continues.
+      const m = last.match(/(\d{4})\.JPG$/i);
+      if (m) try { localStorage.setItem("pic_start_" + state.vendor, m[1]); } catch (_) {}
+    }
     showInstructions();
     renderAccount();
+    loadHistory();
   } catch (err) {
     status.className = "status err";
     status.textContent = "✗ " + err.message;
@@ -422,6 +439,111 @@ async function renderAccount() {
   }
 }
 
+/* ---------- history: your previous batches ---------- */
+const VENDOR_LABEL = { sony: "Sony", canon: "Canon", nikon: "Nikon" };
+const MAX_HISTORY_THUMBS = 8;
+
+async function loadHistory() {
+  const section = $("history");
+  if (!section) return;
+  const tok = window.__paywall && window.PoseAuth ? PoseAuth.token() : null;
+  if (!tok) { section.hidden = true; return; }
+  try {
+    const r = await fetch("/api/history", { headers: { Authorization: "Bearer " + tok } });
+    if (!r.ok) { section.hidden = true; return; }
+    const j = await r.json();
+    renderHistory(j.batches || []);
+  } catch (_) {
+    section.hidden = true;
+  }
+}
+
+function renderHistory(batches) {
+  const section = $("history"), list = $("history-list");
+  if (!batches.length) { section.hidden = true; return; }
+  list.innerHTML = "";
+  batches.forEach((b) => {
+    const item = document.createElement("div");
+    item.className = "history-item";
+
+    const head = document.createElement("div");
+    head.className = "history-head";
+    const when = b.created_at ? new Date(b.created_at) : null;
+    const date = when ? when.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "";
+    const title = document.createElement("span");
+    title.className = "history-title";
+    title.textContent = (VENDOR_LABEL[b.vendor] || b.vendor || "") + " · " +
+      b.cards + (b.cards === 1 ? " card" : " cards") + (b.watermarked ? " · watermarked" : "");
+    const dateEl = document.createElement("span");
+    dateEl.className = "history-date";
+    dateEl.textContent = date;
+    head.appendChild(title);
+    head.appendChild(dateEl);
+
+    const strip = document.createElement("div");
+    strip.className = "history-thumbs";
+    const files = b.files || [];
+    files.slice(0, MAX_HISTORY_THUMBS).forEach((f) => {
+      if (!f.url) return;
+      const img = document.createElement("img");
+      img.src = f.url;
+      img.alt = f.name || "card";
+      img.loading = "lazy";
+      strip.appendChild(img);
+    });
+    if (files.length > MAX_HISTORY_THUMBS) {
+      const more = document.createElement("span");
+      more.className = "history-more";
+      more.textContent = "+" + (files.length - MAX_HISTORY_THUMBS);
+      strip.appendChild(more);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "history-actions";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn btn-ghost history-dl";
+    btn.textContent = "Download ZIP again";
+    btn.addEventListener("click", () => downloadBatch(b.id, btn));
+    actions.appendChild(btn);
+
+    item.appendChild(head);
+    item.appendChild(strip);
+    item.appendChild(actions);
+    list.appendChild(item);
+  });
+  section.hidden = false;
+}
+
+async function downloadBatch(id, btn) {
+  const tok = PoseAuth.token();
+  if (!tok) { openLogin(); return; }
+  const label = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "Preparing…";
+  try {
+    const r = await fetch("/api/history?download=" + encodeURIComponent(id),
+                          { headers: { Authorization: "Bearer " + tok } });
+    if (!r.ok) {
+      let msg = "Could not rebuild this batch.";
+      try { msg = (await r.json()).error || msg; } catch (_) {}
+      throw new Error(msg);
+    }
+    const blob = await r.blob();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "camera-cards.zip";
+    document.body.appendChild(a); a.click(); a.remove();
+  } catch (e) {
+    btn.textContent = "✗ " + e.message;
+    setTimeout(() => { btn.textContent = label; }, 4000);
+    btn.disabled = false;
+    return;
+  }
+  btn.textContent = label;
+  btn.disabled = false;
+}
+
 /* ---------- login modal ---------- */
 let _loginReturnFocus = null;
 function openLogin() {
@@ -478,7 +600,7 @@ $("login-form").addEventListener("submit", async (e) => {
     el.hidden = false;
     el.innerHTML = '<span class="acct-info">Sign-in temporarily unavailable. Refresh and try again.</span>';
   } else if (window.__paywall && window.PoseAuth) {
-    await PoseAuth.init(() => { renderAccount(); $("login-modal").hidden = true; syncSignedInLayout(); });
+    await PoseAuth.init(() => { renderAccount(); $("login-modal").hidden = true; syncSignedInLayout(); loadHistory(); });
   } else {
     $("account").hidden = true;
   }

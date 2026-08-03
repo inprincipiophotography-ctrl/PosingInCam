@@ -88,36 +88,55 @@ def instructions(vendor: str) -> tuple[str, str]:
     return info["hr"], info["en"]
 
 
-def build_zip(designs: list[tuple[str, bytes]], vendor: str, orientation: str = "auto",
-              watermark: bool = False, template_dir: str = TEMPLATES_DIR) -> bytes:
-    """Convert every design and return a ZIP laid out like an SD card.
+def convert_cards(designs: list[tuple[str, bytes]], vendor: str, orientation: str = "auto",
+                  watermark: bool = False, start: int = 0,
+                  template_dir: str = TEMPLATES_DIR) -> list[tuple[str, bytes]]:
+    """Convert every design and return [(card_filename, jpeg_bytes), ...].
 
     Args:
-        designs: list of (original_filename, image_bytes). Order is preserved;
-                 cards are numbered <prefix>0001, <prefix>0002, ... in that order.
+        designs: list of (original_filename, image_bytes). Order is preserved.
         vendor:  "sony" | "canon" | "nikon".
         orientation: "auto" | "landscape" | "portrait" (applied to every design).
+        start: how many cards this user already has; numbering continues after it
+               (start=0 -> <prefix>0001, start=12 -> <prefix>0013). Batches keep
+               unique filenames on the card, so nothing needs renaming by hand.
         template_dir: where the bundled vendor templates live.
-
-    Returns:
-        ZIP file bytes.
     """
     if vendor not in encoder.VENDORS:
         raise ValueError(f"unknown vendor {vendor!r}")
     if not designs:
         raise ValueError("no designs provided")
+    # DCF numbers are 0001..9999; restart rather than overflow into 5 digits.
+    if start < 0 or start + len(designs) > 9999:
+        start = 0
 
     v = encoder.VENDORS[vendor]
     template_path = encoder.template_path_for(vendor, template_dir)
     prefix = encoder.dcf_prefix(template_path, v.default_prefix)  # build-pack.sh:83-98
     qtables, exif_base = encoder.template_meta(template_path)
 
+    cards = []
+    for i, (_orig_name, image_bytes) in enumerate(designs):
+        jpeg = encoder.convert_with(image_bytes, qtables, exif_base, orientation, watermark)
+        cards.append((encoder.filename_for(vendor, start + i, prefix), jpeg))
+    return cards
+
+
+def zip_from_cards(cards: list[tuple[str, bytes]], vendor: str) -> bytes:
+    """Lay already-converted cards out as a ready-to-copy SD-card ZIP."""
+    v = encoder.VENDORS[vendor]
     _hr, en = instructions(vendor)
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
-        for i, (_orig_name, image_bytes) in enumerate(designs):
-            card = encoder.convert_with(image_bytes, qtables, exif_base, orientation, watermark)
-            arcname = f"DCIM/{v.folder}/{encoder.filename_for(vendor, i, prefix)}"
-            zf.writestr(arcname, card)
+        for filename, jpeg in cards:
+            zf.writestr(f"DCIM/{v.folder}/{filename}", jpeg)
         zf.writestr("README.txt", en + "\n")
     return buf.getvalue()
+
+
+def build_zip(designs: list[tuple[str, bytes]], vendor: str, orientation: str = "auto",
+              watermark: bool = False, start: int = 0,
+              template_dir: str = TEMPLATES_DIR) -> bytes:
+    """Convert every design and return a ZIP laid out like an SD card."""
+    return zip_from_cards(
+        convert_cards(designs, vendor, orientation, watermark, start, template_dir), vendor)

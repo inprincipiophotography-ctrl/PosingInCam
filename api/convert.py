@@ -10,7 +10,9 @@ Uses the repo's converter/ + webauth/ packages (bundled via vercel.json).
 The original scripts/cardify.sh CLI is not involved.
 """
 
+import datetime as dt
 import os
+import secrets
 import sys
 import threading
 import time
@@ -20,7 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from flask import Flask, request, Response, jsonify  # noqa: E402
 from converter import pack, encoder  # noqa: E402
-from webauth import auth, billing  # noqa: E402
+from webauth import auth, billing, storage  # noqa: E402
 
 app = Flask(__name__)
 
@@ -71,7 +73,7 @@ def _cors(resp):
     resp.headers["Vary"] = "Origin"
     resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
     resp.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type"
-    resp.headers["Access-Control-Expose-Headers"] = "X-Tier, X-Watermarked"
+    resp.headers["Access-Control-Expose-Headers"] = "X-Tier, X-Watermarked, X-First-File, X-Last-File"
     return resp
 
 
@@ -131,8 +133,23 @@ def convert(path):
         watermark = decision["watermark"]
         tier = decision["tier"]
 
+    # --- numbering: continue after everything this user converted before, so a
+    # second (third, ...) batch drops next to the first one on the card with no
+    # renaming. Signed-in users continue from their server-side history; the
+    # anonymous/dev flow can pass an explicit form value instead.
+    if uid:
+        start = auth.cards_so_far(uid, vendor)
+    else:
+        try:
+            start = max(0, int(request.form.get("start") or 0))
+        except ValueError:
+            start = 0
+    if start + len(designs) > 9999:  # DCF numbers end at 9999
+        start = 0
+
     try:
-        zip_bytes = pack.build_zip(designs, vendor, orientation, watermark=watermark)
+        cards = pack.convert_cards(designs, vendor, orientation, watermark=watermark, start=start)
+        zip_bytes = pack.zip_from_cards(cards, vendor)
     except (FileNotFoundError, ValueError) as e:
         return jsonify(error=str(e)), 400
     except Exception:  # pragma: no cover
@@ -140,7 +157,17 @@ def convert(path):
         return jsonify(error="conversion failed"), 500
 
     if auth.paywall_enabled() and uid:
-        auth.consume(uid, profile, len(designs), tier, vendor)
+        # Keep a copy of the batch so it shows up under "Your previous cards".
+        # Strictly best-effort: any storage/schema failure only skips history.
+        extra = None
+        batch_key = (dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d-%H%M%S")
+                     + "-" + secrets.token_hex(3))
+        if storage.enabled() and storage.upload_cards(uid, batch_key, cards):
+            extra = {"storage_prefix": f"{uid}/{batch_key}",
+                     "files": [name for name, _ in cards],
+                     "start_number": start + 1,
+                     "watermarked": watermark}
+        auth.consume(uid, profile, len(designs), tier, vendor, extra)
 
     return Response(
         zip_bytes,
@@ -149,5 +176,7 @@ def convert(path):
             "Content-Disposition": 'attachment; filename="camera-cards.zip"',
             "X-Tier": tier,
             "X-Watermarked": "1" if watermark else "0",
+            "X-First-File": cards[0][0],
+            "X-Last-File": cards[-1][0],
         },
     )
