@@ -45,12 +45,19 @@ def history(path):
     batch_id = request.args.get("download")
     if batch_id:
         return _download(uid, batch_id)
+    project_id = request.args.get("download_project")
+    if project_id:
+        return _download_project(uid, project_id)
 
     try:
         rows = auth.list_history(uid)
     except Exception:
         # History columns not installed yet (or REST hiccup): empty, not an error.
-        return jsonify(batches=[])
+        rows = []
+    try:
+        projects = auth.list_projects(uid)
+    except Exception:
+        projects = []
 
     # One signing round-trip for every thumbnail of every batch.
     all_paths = []
@@ -70,8 +77,9 @@ def history(path):
                         "vendor": row.get("vendor"),
                         "cards": row.get("cards"),
                         "watermarked": row.get("watermarked"),
+                        "project_id": row.get("project_id"),
                         "files": files})
-    return jsonify(batches=batches)
+    return jsonify(batches=batches, projects=projects)
 
 
 def _download(uid: str, batch_id: str):
@@ -95,6 +103,39 @@ def _download(uid: str, batch_id: str):
             return jsonify(error="Some files of this batch are no longer stored."), 410
         cards.append((name, data))
 
+    zip_bytes = pack.zip_from_cards(cards, vendor)
+    return Response(
+        zip_bytes,
+        mimetype="application/zip",
+        headers={"Content-Disposition": 'attachment; filename="camera-cards.zip"'},
+    )
+
+
+def _download_project(uid: str, project_id: str):
+    """Merge every stored batch of a project into one SD-card ZIP. Numbering
+    already continues across batches, so the files simply line up."""
+    try:
+        project = auth.get_project(uid, project_id)
+        rows = auth.list_project_batches(uid, project_id) if project else []
+    except Exception:
+        project, rows = None, []
+    if not project or not rows:
+        return jsonify(error="Project not found or has no stored batches."), 404
+
+    vendor = rows[0].get("vendor") or "sony"
+    cards, seen = [], set()
+    for row in rows:
+        prefix = row.get("storage_prefix") or ""
+        for name in (row.get("files") or []):
+            if name in seen:  # same number converted twice: keep the newest
+                cards = [(n, d) for n, d in cards if n != name]
+            data = storage.download(f"{prefix}/{name}")
+            if data is None:
+                return jsonify(error="Some files of this project are no longer stored."), 410
+            cards.append((name, data))
+            seen.add(name)
+
+    cards.sort(key=lambda c: c[0])
     zip_bytes = pack.zip_from_cards(cards, vendor)
     return Response(
         zip_bytes,

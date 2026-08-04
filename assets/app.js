@@ -7,7 +7,8 @@ const JPEG_Q = 0.9;
 const MAX_FILES = 30;         // matches the server-side cap (api/convert.py)
 // Stripe availability comes from the API health flag (window.__stripe).
 
-const state = { vendor: null, items: [], selected: 0 };
+const state = { vendor: null, items: [], selected: 0, projects: [] };
+const NEW_PROJECT = "__new__";
 const $ = (id) => document.getElementById(id);
 const camButtons = Array.from(document.querySelectorAll(".cam"));
 const stepDots = Array.from(document.querySelectorAll(".step-dot"));
@@ -188,9 +189,25 @@ $("go").addEventListener("click", async () => {
     const fd = new FormData();
     fd.append("vendor", state.vendor);
     fd.append("orientation", orientValue());
-    if (!window.__paywall) {
-      // Signed-in numbering continues server-side; the open/dev flow keeps its
-      // own counter locally so batches don't clash either.
+    if (window.__paywall) {
+      // Numbering continues within the chosen project (server-side).
+      const sel = $("project-select"), fresh = $("project-new");
+      if (sel && !$("project-field").hidden) {
+        if (sel.value === NEW_PROJECT) {
+          const name = (fresh.value || "").trim();
+          if (!name) {
+            status.className = "status err";
+            status.textContent = "✗ Name your new project first (or pick an existing one).";
+            fresh.focus();
+            return;
+          }
+          fd.append("project_name", name);
+        } else if (sel.value) {
+          fd.append("project_id", sel.value);
+        }
+      }
+    } else {
+      // The open/dev flow keeps its own counter locally so batches don't clash.
       let prev = 0;
       try { prev = parseInt(localStorage.getItem("pic_start_" + state.vendor) || "0", 10) || 0; } catch (_) {}
       fd.append("start", String(prev));
@@ -248,6 +265,9 @@ $("go").addEventListener("click", async () => {
       const m = last.match(/(\d{4})\.JPG$/i);
       if (m) try { localStorage.setItem("pic_start_" + state.vendor, m[1]); } catch (_) {}
     }
+    // Keep working in the project we just converted into (it may be brand new).
+    const pid = resp.headers.get("X-Project-Id");
+    if (pid) state.activeProject = pid;
     showInstructions();
     renderAccount();
     loadHistory();
@@ -439,93 +459,192 @@ async function renderAccount() {
   }
 }
 
-/* ---------- history: your previous batches ---------- */
+/* ---------- projects + history ---------- */
 const VENDOR_LABEL = { sony: "Sony", canon: "Canon", nikon: "Nikon" };
 const MAX_HISTORY_THUMBS = 8;
 
+function renderProjectPicker() {
+  const field = $("project-field"), sel = $("project-select"), fresh = $("project-new");
+  if (!field) return;
+  const signedIn = !!(window.__paywall && window.PoseAuth && PoseAuth.token());
+  if (!signedIn) { field.hidden = true; return; }
+  field.hidden = false;
+
+  const keep = state.activeProject || sel.value;
+  sel.innerHTML = "";
+  state.projects.forEach((p) => {
+    const o = document.createElement("option");
+    o.value = p.id;
+    o.textContent = p.name;
+    sel.appendChild(o);
+  });
+  const o = document.createElement("option");
+  o.value = NEW_PROJECT;
+  o.textContent = state.projects.length ? "+ New project…" : "+ Name your first project…";
+  sel.appendChild(o);
+
+  sel.value = state.projects.some((p) => p.id === keep) ? keep
+    : (state.projects.length ? state.projects[0].id : NEW_PROJECT);
+  state.activeProject = sel.value === NEW_PROJECT ? null : sel.value;
+  syncProjectRow();
+}
+
+function syncProjectRow() {
+  const sel = $("project-select"), fresh = $("project-new"), hint = $("project-hint");
+  if (!sel) return;
+  const creating = sel.value === NEW_PROJECT;
+  fresh.hidden = !creating;
+  if (!creating) fresh.value = "";
+  hint.textContent = creating
+    ? "A new project starts its card numbers at 0001."
+    : "Cards in one project keep counting up, so you can upload a job in several goes.";
+}
+
 async function loadHistory() {
   const section = $("history");
-  if (!section) return;
   const tok = window.__paywall && window.PoseAuth ? PoseAuth.token() : null;
-  if (!tok) { section.hidden = true; return; }
+  if (!tok) {
+    state.projects = [];
+    renderProjectPicker();
+    if (section) section.hidden = true;
+    return;
+  }
   try {
     const r = await fetch("/api/history", { headers: { Authorization: "Bearer " + tok } });
-    if (!r.ok) { section.hidden = true; return; }
+    if (!r.ok) throw new Error("history unavailable");
     const j = await r.json();
-    renderHistory(j.batches || []);
+    state.projects = j.projects || [];
+    renderProjectPicker();
+    renderHistory(j.batches || [], state.projects);
   } catch (_) {
-    section.hidden = true;
+    renderProjectPicker();
+    if (section) section.hidden = true;
   }
 }
 
-function renderHistory(batches) {
+function renderHistory(batches, projects) {
   const section = $("history"), list = $("history-list");
   if (!batches.length) { section.hidden = true; return; }
-  list.innerHTML = "";
+
+  // Group batches under their project, newest project first. Batches from
+  // before projects existed (or whose project was deleted) go in their own group.
+  const names = {};
+  (projects || []).forEach((p) => { names[p.id] = p.name; });
+  const groups = [];
+  const byId = new Map();
   batches.forEach((b) => {
-    const item = document.createElement("div");
-    item.className = "history-item";
-
-    const head = document.createElement("div");
-    head.className = "history-head";
-    const when = b.created_at ? new Date(b.created_at) : null;
-    const date = when ? when.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "";
-    const title = document.createElement("span");
-    title.className = "history-title";
-    title.textContent = (VENDOR_LABEL[b.vendor] || b.vendor || "") + " · " +
-      b.cards + (b.cards === 1 ? " card" : " cards") + (b.watermarked ? " · watermarked" : "");
-    const dateEl = document.createElement("span");
-    dateEl.className = "history-date";
-    dateEl.textContent = date;
-    head.appendChild(title);
-    head.appendChild(dateEl);
-
-    const strip = document.createElement("div");
-    strip.className = "history-thumbs";
-    const files = b.files || [];
-    files.slice(0, MAX_HISTORY_THUMBS).forEach((f) => {
-      if (!f.url) return;
-      const img = document.createElement("img");
-      img.src = f.url;
-      img.alt = f.name || "card";
-      img.loading = "lazy";
-      strip.appendChild(img);
-    });
-    if (files.length > MAX_HISTORY_THUMBS) {
-      const more = document.createElement("span");
-      more.className = "history-more";
-      more.textContent = "+" + (files.length - MAX_HISTORY_THUMBS);
-      strip.appendChild(more);
+    const key = b.project_id || "_none";
+    let g = byId.get(key);
+    if (!g) {
+      g = { id: b.project_id || null, name: names[b.project_id] || "Earlier cards", batches: [], cards: 0 };
+      byId.set(key, g);
+      groups.push(g);
     }
-
-    const actions = document.createElement("div");
-    actions.className = "history-actions";
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "btn btn-ghost history-dl";
-    btn.textContent = "Download ZIP again";
-    btn.addEventListener("click", () => downloadBatch(b.id, btn));
-    actions.appendChild(btn);
-
-    item.appendChild(head);
-    item.appendChild(strip);
-    item.appendChild(actions);
-    list.appendChild(item);
+    g.batches.push(b);
+    g.cards += b.cards || 0;
   });
+
+  list.innerHTML = "";
+  groups.forEach((g) => list.appendChild(projectBlock(g)));
   section.hidden = false;
 }
 
-async function downloadBatch(id, btn) {
+function projectBlock(group) {
+  const block = document.createElement("div");
+  block.className = "project-block";
+
+  const head = document.createElement("div");
+  head.className = "project-block-head";
+  const title = document.createElement("h3");
+  title.className = "project-name";
+  title.textContent = group.name;
+  const meta = document.createElement("span");
+  meta.className = "project-meta";
+  meta.textContent = group.cards + (group.cards === 1 ? " card" : " cards") + " · " +
+    group.batches.length + (group.batches.length === 1 ? " batch" : " batches");
+  head.appendChild(title);
+  head.appendChild(meta);
+  block.appendChild(head);
+
+  if (group.id) {
+    const all = document.createElement("button");
+    all.type = "button";
+    all.className = "btn btn-primary project-dl";
+    all.textContent = "Download whole project";
+    all.addEventListener("click", () =>
+      downloadZip("/api/history?download_project=" + encodeURIComponent(group.id), all));
+    block.appendChild(all);
+  }
+
+  group.batches.forEach((b) => block.appendChild(batchRow(b)));
+  return block;
+}
+
+function batchRow(b) {
+  const item = document.createElement("div");
+  item.className = "history-item";
+
+  const head = document.createElement("div");
+  head.className = "history-head";
+  const when = b.created_at ? new Date(b.created_at) : null;
+  const files = b.files || [];
+  const range = files.length
+    ? files[0].name.replace(/\.JPG$/i, "") + (files.length > 1 ? "–" + files[files.length - 1].name.replace(/\.JPG$/i, "") : "")
+    : "";
+  const title = document.createElement("span");
+  title.className = "history-title";
+  title.textContent = (VENDOR_LABEL[b.vendor] || b.vendor || "") + " · " +
+    b.cards + (b.cards === 1 ? " card" : " cards") + (range ? " · " + range : "") +
+    (b.watermarked ? " · watermarked" : "");
+  const dateEl = document.createElement("span");
+  dateEl.className = "history-date";
+  dateEl.textContent = when ? when.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "";
+  head.appendChild(title);
+  head.appendChild(dateEl);
+
+  const strip = document.createElement("div");
+  strip.className = "history-thumbs";
+  files.slice(0, MAX_HISTORY_THUMBS).forEach((f) => {
+    if (!f.url) return;
+    const img = document.createElement("img");
+    img.src = f.url;
+    img.alt = f.name || "card";
+    img.loading = "lazy";
+    strip.appendChild(img);
+  });
+  if (files.length > MAX_HISTORY_THUMBS) {
+    const more = document.createElement("span");
+    more.className = "history-more";
+    more.textContent = "+" + (files.length - MAX_HISTORY_THUMBS);
+    strip.appendChild(more);
+  }
+
+  const actions = document.createElement("div");
+  actions.className = "history-actions";
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "btn btn-ghost history-dl";
+  btn.textContent = "Download this batch";
+  btn.addEventListener("click", () =>
+    downloadZip("/api/history?download=" + encodeURIComponent(b.id), btn));
+  actions.appendChild(btn);
+
+  item.appendChild(head);
+  item.appendChild(strip);
+  item.appendChild(actions);
+  return item;
+}
+
+async function downloadZip(url, btn) {
   const tok = PoseAuth.token();
   if (!tok) { openLogin(); return; }
   const label = btn.textContent;
   btn.disabled = true;
   btn.textContent = "Preparing…";
   try {
-    const r = await fetch("/api/history?download=" + encodeURIComponent(id),
-                          { headers: { Authorization: "Bearer " + tok } });
+    const r = await fetch(url, { headers: { Authorization: "Bearer " + tok } });
     if (!r.ok) {
-      let msg = "Could not rebuild this batch.";
+      let msg = "Could not rebuild this download.";
       try { msg = (await r.json()).error || msg; } catch (_) {}
       throw new Error(msg);
     }
@@ -542,6 +661,15 @@ async function downloadBatch(id, btn) {
   }
   btn.textContent = label;
   btn.disabled = false;
+}
+
+const _projectSelect = document.getElementById("project-select");
+if (_projectSelect) {
+  _projectSelect.addEventListener("change", () => {
+    state.activeProject = _projectSelect.value === NEW_PROJECT ? null : _projectSelect.value;
+    syncProjectRow();
+    if (_projectSelect.value === NEW_PROJECT) $("project-new").focus();
+  });
 }
 
 /* ---------- login modal ---------- */

@@ -132,6 +132,17 @@
       <p class="tool-sub">Upload a Canva design, a screenshot or any photo and we'll make it camera-ready.
         Your first 3 cards are free (small watermark). No password, no credit card, just an email link.</p>
       <div class="tool-card">
+        <!-- Project picker (signed-in users only; filled in by app.js) -->
+        <div class="field project-field" id="project-field" hidden>
+          <label class="field-label" for="project-select">Project</label>
+          <div class="project-row">
+            <select id="project-select"></select>
+            <input type="text" id="project-new" placeholder="Name it, e.g. Ana &amp; Marko" hidden />
+          </div>
+          <p class="project-hint" id="project-hint">Cards in one project keep counting up, so you can upload a
+            job in several goes. A new project starts again at 0001.</p>
+        </div>
+
         <!-- Step 1 -->
         <div class="field">
           <label class="field-label"><span class="step-dot">1</span> Choose your camera</label>
@@ -190,8 +201,8 @@
     <section class="history" id="history" hidden>
       <p class="eyebrow center">Your cards</p>
       <h2 class="section-h center">Your previous batches.</h2>
-      <p class="history-sub">Everything you've converted, saved to your account. Download any batch again
-        without re-uploading. New batches continue the numbering, so the files never clash on your card.</p>
+      <p class="history-sub">Every project you've made, saved to your account. Download a whole project or a
+        single batch again without re-uploading anything.</p>
       <div class="history-list" id="history-list"></div>
     </section>
 

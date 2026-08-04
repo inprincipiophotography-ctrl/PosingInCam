@@ -410,3 +410,19 @@ img{max-width:100%}
 .history-more{color:var(--muted);font-size:13px;font-weight:600;flex:0 0 auto;padding:0 4px}
 .history-actions{margin-top:10px}
 .history-dl{font-size:14px;padding:9px 16px}
+
+/* ---------- project picker (inside the tool card) ---------- */
+.project-row{display:flex;gap:10px;flex-wrap:wrap}
+.project-row select,.project-row input{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 13px;min-width:0}
+.project-row select{flex:1 1 220px}
+.project-row input{flex:1 1 220px}
+.project-row select:focus,.project-row input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.project-hint{margin:8px 0 0;color:var(--muted);font-size:13px}
+
+/* ---------- history: grouped by project ---------- */
+.project-block{border:1px solid var(--border-soft);border-radius:18px;background:var(--surface-2);padding:18px;display:flex;flex-direction:column;gap:12px}
+.project-block-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.project-name{font-family:var(--serif);font-size:24px;font-weight:400;margin:0}
+.project-meta{color:var(--muted);font-size:13px}
+.project-dl{align-self:flex-start;font-size:14px;padding:10px 18px}
+.project-block .history-item{background:var(--surface)}

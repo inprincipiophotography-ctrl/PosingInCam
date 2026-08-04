@@ -73,7 +73,7 @@ def _cors(resp):
     resp.headers["Vary"] = "Origin"
     resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
     resp.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type"
-    resp.headers["Access-Control-Expose-Headers"] = "X-Tier, X-Watermarked, X-First-File, X-Last-File"
+    resp.headers["Access-Control-Expose-Headers"] = "X-Tier, X-Watermarked, X-First-File, X-Last-File, X-Project-Id"
     return resp
 
 
@@ -133,12 +133,27 @@ def convert(path):
         watermark = decision["watermark"]
         tier = decision["tier"]
 
-    # --- numbering: continue after everything this user converted before, so a
-    # second (third, ...) batch drops next to the first one on the card with no
-    # renaming. Signed-in users continue from their server-side history; the
-    # anonymous/dev flow can pass an explicit form value instead.
+    # --- projects + numbering. A project is one job (e.g. one wedding): batches
+    # inside a project continue numbering (0001..0015, then 0016..0030) so a
+    # multi-upload project never collides on the card, while a NEW project
+    # starts from 0001 again. Clients send project_id (existing) or
+    # project_name (create new); with neither, a default project is used.
+    project = None
     if uid:
-        start = auth.cards_so_far(uid, vendor)
+        project_id = (request.form.get("project_id") or "").strip()
+        project_name = " ".join((request.form.get("project_name") or "").split())[:80]
+        try:
+            if project_id:
+                project = auth.get_project(uid, project_id)
+            if project is None and project_name:
+                project = auth.create_project(uid, project_name)
+            if project is None:
+                project = auth.get_or_create_default_project(uid)
+        except Exception:
+            project = None
+        # Fallback (projects table not installed yet): the old all-time counter.
+        start = (auth.cards_in_project(uid, project["id"]) if project
+                 else auth.cards_so_far(uid, vendor))
     else:
         try:
             start = max(0, int(request.form.get("start") or 0))
@@ -167,6 +182,8 @@ def convert(path):
                      "files": [name for name, _ in cards],
                      "start_number": start + 1,
                      "watermarked": watermark}
+        if project:
+            extra = {**(extra or {}), "project_id": project["id"]}
         auth.consume(uid, profile, len(designs), tier, vendor, extra)
 
     return Response(
@@ -178,5 +195,6 @@ def convert(path):
             "X-Watermarked": "1" if watermark else "0",
             "X-First-File": cards[0][0],
             "X-Last-File": cards[-1][0],
+            **({"X-Project-Id": str(project["id"])} if project else {}),
         },
     )

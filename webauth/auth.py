@@ -164,10 +164,66 @@ def _patch_profile(uid: str, patch: dict) -> None:
                    json={**patch, "updated_at": _now()}, timeout=_TIMEOUT)
 
 
+DEFAULT_PROJECT = "My cards"
+
+
+def list_projects(uid: str, limit: int = 100) -> list[dict]:
+    r = requests.get(f"{SUPABASE_URL}/rest/v1/projects",
+                     params={"user_id": f"eq.{uid}", "select": "id,name,created_at",
+                             "order": "created_at.desc", "limit": str(limit)},
+                     headers=_headers(), timeout=_TIMEOUT)
+    r.raise_for_status()
+    return r.json()
+
+
+def get_project(uid: str, project_id: str) -> dict | None:
+    r = requests.get(f"{SUPABASE_URL}/rest/v1/projects",
+                     params={"id": f"eq.{project_id}", "user_id": f"eq.{uid}",
+                             "select": "id,name"},
+                     headers=_headers(), timeout=_TIMEOUT)
+    r.raise_for_status()
+    rows = r.json()
+    return rows[0] if rows else None
+
+
+def create_project(uid: str, name: str) -> dict | None:
+    r = requests.post(f"{SUPABASE_URL}/rest/v1/projects",
+                      headers=_headers({"Prefer": "return=representation"}),
+                      json={"user_id": uid, "name": name}, timeout=_TIMEOUT)
+    if not r.ok:
+        return None
+    rows = r.json()
+    return rows[0] if rows else None
+
+
+def get_or_create_default_project(uid: str) -> dict | None:
+    r = requests.get(f"{SUPABASE_URL}/rest/v1/projects",
+                     params={"user_id": f"eq.{uid}", "name": f"eq.{DEFAULT_PROJECT}",
+                             "select": "id,name", "limit": "1"},
+                     headers=_headers(), timeout=_TIMEOUT)
+    if r.ok and r.json():
+        return r.json()[0]
+    return create_project(uid, DEFAULT_PROJECT)
+
+
+def cards_in_project(uid: str, project_id: str) -> int:
+    """Cards already converted inside a project. The next batch continues after
+    this, so a wedding prepared in several uploads never collides on the card;
+    a fresh project starts numbering from 0001 again."""
+    try:
+        r = requests.get(f"{SUPABASE_URL}/rest/v1/conversions",
+                         params={"user_id": f"eq.{uid}", "project_id": f"eq.{project_id}",
+                                 "select": "cards", "limit": "10000"},
+                         headers=_headers(), timeout=_TIMEOUT)
+        r.raise_for_status()
+        return sum(int(row.get("cards") or 0) for row in r.json())
+    except Exception:
+        return 0
+
+
 def cards_so_far(uid: str, vendor: str) -> int:
-    """Total cards this user has already converted for a vendor. Numbering of the
-    next batch continues after this, so batches never collide on the SD card.
-    Returns 0 on any error (worst case: numbering restarts, the old behaviour)."""
+    """Fallback counter (all-time per vendor) used only while the projects table
+    isn't installed yet. Returns 0 on any error."""
     try:
         r = requests.get(f"{SUPABASE_URL}/rest/v1/conversions",
                          params={"user_id": f"eq.{uid}", "vendor": f"eq.{vendor}",
@@ -210,8 +266,27 @@ def list_history(uid: str, limit: int = 30) -> list[dict]:
     """Most recent stored batches for a user (only ones with files in storage)."""
     r = requests.get(f"{SUPABASE_URL}/rest/v1/conversions",
                      params={"user_id": f"eq.{uid}", "storage_prefix": "not.is.null",
-                             "select": "id,created_at,vendor,cards,storage_prefix,files,watermarked",
+                             "select": "id,created_at,vendor,cards,storage_prefix,files,watermarked,project_id",
                              "order": "created_at.desc", "limit": str(limit)},
+                     headers=_headers(), timeout=_TIMEOUT)
+    if r.status_code == 400:
+        # project_id column not installed yet: fall back to the older shape.
+        r = requests.get(f"{SUPABASE_URL}/rest/v1/conversions",
+                         params={"user_id": f"eq.{uid}", "storage_prefix": "not.is.null",
+                                 "select": "id,created_at,vendor,cards,storage_prefix,files,watermarked",
+                                 "order": "created_at.desc", "limit": str(limit)},
+                         headers=_headers(), timeout=_TIMEOUT)
+    r.raise_for_status()
+    return r.json()
+
+
+def list_project_batches(uid: str, project_id: str) -> list[dict]:
+    """All stored batches of one project, oldest first (for the merged ZIP)."""
+    r = requests.get(f"{SUPABASE_URL}/rest/v1/conversions",
+                     params={"user_id": f"eq.{uid}", "project_id": f"eq.{project_id}",
+                             "storage_prefix": "not.is.null",
+                             "select": "id,created_at,vendor,cards,storage_prefix,files",
+                             "order": "created_at.asc", "limit": "200"},
                      headers=_headers(), timeout=_TIMEOUT)
     r.raise_for_status()
     return r.json()
