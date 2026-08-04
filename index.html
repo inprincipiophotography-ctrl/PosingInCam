@@ -133,14 +133,11 @@
         Your first 3 cards are free (small watermark). No password, no credit card, just an email link.</p>
       <div class="tool-card">
         <!-- Project picker (signed-in users only; filled in by app.js) -->
-        <div class="field project-field" id="project-field" hidden>
-          <label class="field-label" for="project-select">Project</label>
-          <div class="project-row">
-            <select id="project-select"></select>
-            <input type="text" id="project-new" placeholder="Name it, e.g. Ana &amp; Marko" hidden />
-          </div>
-          <p class="project-hint" id="project-hint">Cards in one project keep counting up, so you can upload a
-            job in several goes. A new project starts again at 0001.</p>
+        <div class="project-field" id="project-field" hidden>
+          <label class="project-label" for="project-select" id="project-label">Project</label>
+          <select id="project-select" hidden></select>
+          <input type="text" id="project-new" placeholder="e.g. Ana &amp; Marko" hidden />
+          <p class="project-hint" id="project-hint"></p>
         </div>
 
         <!-- Step 1 -->

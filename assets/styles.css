@@ -411,13 +411,14 @@ img{max-width:100%}
 .history-actions{margin-top:10px}
 .history-dl{font-size:14px;padding:9px 16px}
 
-/* ---------- project picker (inside the tool card) ---------- */
-.project-row{display:flex;gap:10px;flex-wrap:wrap}
-.project-row select,.project-row input{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 13px;min-width:0}
-.project-row select{flex:1 1 220px}
-.project-row input{flex:1 1 220px}
-.project-row select:focus,.project-row input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
-.project-hint{margin:8px 0 0;color:var(--muted);font-size:13px}
+/* ---------- project picker (context strip at the top of the tool card) ---------- */
+.project-field{margin:-4px 0 22px;padding:14px 16px 13px;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:12px}
+.project-label{display:block;font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--ink-2);margin-bottom:8px}
+#project-select,#project-new{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:9px 12px;max-width:100%}
+#project-select{min-width:min(260px,100%)}
+#project-new{display:block;width:100%;margin-top:8px}
+#project-select:focus,#project-new:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.project-hint{margin:9px 0 0;color:var(--muted);font-size:13px;line-height:1.45}
 
 /* ---------- history: grouped by project ---------- */
 .project-block{border:1px solid var(--border-soft);border-radius:18px;background:var(--surface-2);padding:18px;display:flex;flex-direction:column;gap:12px}

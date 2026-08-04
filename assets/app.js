@@ -464,13 +464,23 @@ const VENDOR_LABEL = { sony: "Sony", canon: "Canon", nikon: "Nikon" };
 const MAX_HISTORY_THUMBS = 8;
 
 function renderProjectPicker() {
-  const field = $("project-field"), sel = $("project-select"), fresh = $("project-new");
+  const field = $("project-field"), sel = $("project-select");
   if (!field) return;
   const signedIn = !!(window.__paywall && window.PoseAuth && PoseAuth.token());
   if (!signedIn) { field.hidden = true; return; }
   field.hidden = false;
 
+  // No projects yet: nothing to pick from, so it's just a name field.
+  if (!state.projects.length) {
+    sel.hidden = true;
+    sel.value = NEW_PROJECT;
+    state.activeProject = null;
+    syncProjectRow();
+    return;
+  }
+
   const keep = state.activeProject || sel.value;
+  sel.hidden = false;
   sel.innerHTML = "";
   state.projects.forEach((p) => {
     const o = document.createElement("option");
@@ -480,24 +490,28 @@ function renderProjectPicker() {
   });
   const o = document.createElement("option");
   o.value = NEW_PROJECT;
-  o.textContent = state.projects.length ? "+ New project…" : "+ Name your first project…";
+  o.textContent = "+ New project…";
   sel.appendChild(o);
 
-  sel.value = state.projects.some((p) => p.id === keep) ? keep
-    : (state.projects.length ? state.projects[0].id : NEW_PROJECT);
-  state.activeProject = sel.value === NEW_PROJECT ? null : sel.value;
+  sel.value = state.projects.some((p) => p.id === keep) ? keep : state.projects[0].id;
+  state.activeProject = sel.value;
   syncProjectRow();
 }
 
 function syncProjectRow() {
-  const sel = $("project-select"), fresh = $("project-new"), hint = $("project-hint");
+  const sel = $("project-select"), fresh = $("project-new");
+  const hint = $("project-hint"), label = $("project-label");
   if (!sel) return;
-  const creating = sel.value === NEW_PROJECT;
+  const first = !state.projects.length;
+  const creating = first || sel.value === NEW_PROJECT;
   fresh.hidden = !creating;
   if (!creating) fresh.value = "";
-  hint.textContent = creating
-    ? "A new project starts its card numbers at 0001."
-    : "Cards in one project keep counting up, so you can upload a job in several goes.";
+  label.textContent = first ? "Name this job" : "Project";
+  hint.textContent = first
+    ? "Group a job under one name, so you can upload it in several goes and the cards keep counting up."
+    : creating
+      ? "A new project starts its card numbers at 0001."
+      : "Cards in this project keep counting up, so you can upload a job in several goes.";
 }
 
 async function loadHistory() {
