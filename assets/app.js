@@ -839,6 +839,60 @@ function handleCheckoutReturn() {
   }
 })();
 
+/* ---------- example cards: flip through them like on the camera ---------- */
+(function ideaSwitcher() {
+  const chips = Array.from(document.querySelectorAll(".idea-chip"));
+  const cards = Array.from(document.querySelectorAll(".idea-card"));
+  const caption = $("idea-caption");
+  if (!chips.length || !cards.length) return;
+
+  const CAPTIONS = {
+    poses: "Pose references, ready the second you need one.",
+    shotlist: "A shot list you can tick off, so no must-have frame is missed.",
+    groups: "Named groupings, so the family formals fly by.",
+    timeline: "The day's timeline, so you always know what's coming next.",
+    settings: "Your settings for tricky light, one button away.",
+    found: "Your contact details, in case the camera ever goes missing.",
+  };
+
+  let timer = null;
+
+  function show(key) {
+    chips.forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.idea === key)));
+    cards.forEach((c) => {
+      const on = c.dataset.idea === key;
+      // These are SVG elements: `hidden` is an HTMLElement property and does not
+      // reflect here, so the attribute has to be set directly.
+      if (on) c.removeAttribute("hidden");
+      else c.setAttribute("hidden", "");
+      if (on) {  // restart the fade so switching always feels like a page turn
+        c.style.animation = "none";
+        void c.getBoundingClientRect().width;
+        c.style.animation = "";
+      }
+    });
+    if (caption) caption.textContent = CAPTIONS[key] || "";
+  }
+
+  chips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      if (timer) { clearInterval(timer); timer = null; }  // hands off once they choose
+      show(chip.dataset.idea);
+    });
+  });
+
+  show(chips[0].dataset.idea);
+
+  // Visitors who never click still get to see the range — until they interact.
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    let i = 0;
+    timer = setInterval(() => {
+      i = (i + 1) % chips.length;
+      show(chips[i].dataset.idea);
+    }, 4000);
+  }
+})();
+
 /* ---------- scroll polish: reveal on scroll + nav shadow ---------- */
 (function scrollPolish() {
   const nav = document.querySelector(".nav");
@@ -852,8 +906,7 @@ function handleCheckoutReturn() {
 
   const groups = [
     ".flow .eyebrow, .flow .section-h, .flow-sub, .flow-stage, .flow-trust, .flow-safe",
-    ".ideas .eyebrow, .ideas .section-h",
-    "stagger:.ideas .idea",
+    ".ideas .eyebrow, .ideas .section-h, .ideas-lede, .idea-chips, .idea-stage",
     ".how .eyebrow, .how .section-h",
     "stagger:.how .how-step",
     ".tool .eyebrow, .tool .section-h, .tool-sub, .tool-card",
