@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Flash-free signed-in layout. If you edit this script, recompute its CSP hash (script-src 'sha256-…' in vercel.json). -->
-  <script>try{if(localStorage.getItem('pic_signed_in'))document.documentElement.classList.add('signed-in')}catch(e){}</script>
+  <script>try{var d=document.documentElement;if(localStorage.getItem('pic_signed_in'))d.classList.add('signed-in');var p=localStorage.getItem('pic_plan');if(p)d.classList.add(p==='pro'?'is-pro':'is-free')}catch(e){}</script>
   <title>Camera Cards · Your posing guide, inside your camera</title>
   <meta name="description" content="Turn poses, shot lists and timelines into images your camera shows in playback. Flip through them between shots. Sony, Canon and Nikon. 3 free, no credit card." />
   <meta property="og:type" content="website" />
@@ -139,6 +139,12 @@
         <span class="if-in">Pick a project, add your images, and we'll make them camera-ready.</span>
       </p>
       <div class="tool-card">
+        <!-- Upgrade path for signed-in free/credit users (filled in by app.js) -->
+        <div class="upgrade-nudge" id="upgrade-nudge" hidden>
+          <span class="nudge-text" id="nudge-text"></span>
+          <button class="btn btn-primary nudge-cta" id="nudge-cta" type="button">Go Pro</button>
+        </div>
+
         <!-- Project picker (signed-in users only; filled in by app.js) -->
         <div class="project-field" id="project-field" hidden>
           <label class="project-label" for="project-select" id="project-label">Project</label>

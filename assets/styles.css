@@ -378,17 +378,19 @@ img{max-width:100%}
    keep the pitch on top. The class is set pre-paint from localStorage (inline
    <head> script) = no flash. */
 .signed-in main{display:flex;flex-direction:column}
-.signed-in #tool{order:1}
-.signed-in #history{order:2}
-.signed-in #ideas{order:3}
-.signed-in #packs{order:4}
-.signed-in #pricing{order:5}
-.signed-in #how{order:6}
-.signed-in #faq{order:7}
+.signed-in #tool{order:10}
+.signed-in #history{order:30}
+.signed-in #ideas{order:40}
+.signed-in #packs{order:50}
+.signed-in #pricing{order:60}
+.signed-in #how{order:70}
+.signed-in #faq{order:80}
+/* Still on free/credits: the way to upgrade sits right under the tool. */
+.signed-in.is-free #pricing{order:20}
 /* The cold-visitor pitch (and the pricing/packs divider) is noise once you're in. */
 .signed-in .hero,.signed-in #flow,.signed-in .or-split{display:none}
 /* Nothing left to sell a subscriber. */
-.is-pro #pricing,.is-pro .nav-pricing{display:none}
+.is-pro #pricing,.is-pro .nav-pricing,.is-pro #upgrade-nudge{display:none}
 
 /* Copy that differs signed-out vs signed-in (CSS, not JS, so it can't flash). */
 .if-in{display:none}
@@ -443,3 +445,16 @@ img{max-width:100%}
 .project-meta{color:var(--muted);font-size:13px}
 .project-dl{align-self:flex-start;font-size:14px;padding:10px 18px}
 .project-block .history-item{background:var(--surface)}
+
+/* ---------- upgrade nudge (signed-in free/credit users) ---------- */
+.upgrade-nudge{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  margin:-4px 0 18px;padding:12px 14px;background:var(--accent-soft);
+  border:1px solid rgba(164,0,0,.18);border-radius:12px}
+.nudge-text{font-size:14px;color:var(--ink-2)}
+.nudge-text strong{color:var(--accent-2);font-weight:600}
+.upgrade-nudge.spent{background:rgba(164,0,0,.13);border-color:rgba(164,0,0,.32)}
+.nudge-cta{font-size:14px;padding:9px 18px;white-space:nowrap}
+@media(max-width:560px){
+  .upgrade-nudge{flex-direction:column;align-items:stretch;text-align:center}
+  .nudge-cta{width:100%}
+}

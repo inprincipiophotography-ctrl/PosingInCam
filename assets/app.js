@@ -23,6 +23,22 @@ function syncSignedInLayout() {
     if (signedIn) localStorage.setItem("pic_signed_in", "1");
     else localStorage.removeItem("pic_signed_in");
   } catch (_) {}
+  if (!signedIn) {
+    // Signing out drops the plan too, so the next visitor gets the plain pitch.
+    document.documentElement.classList.remove("is-pro", "is-free");
+    try { localStorage.removeItem("pic_plan"); } catch (_) {}
+    const nudge = $("upgrade-nudge");
+    if (nudge) nudge.hidden = true;
+  }
+}
+
+// Remembered pre-paint (inline <head> script) so the pricing section doesn't
+// jump position once /api/me answers.
+function setPlanClasses(plan) {
+  const pro = plan === "pro";
+  document.documentElement.classList.toggle("is-pro", pro);
+  document.documentElement.classList.toggle("is-free", !pro);
+  try { localStorage.setItem("pic_plan", pro ? "pro" : "free"); } catch (_) {}
 }
 
 const INSTRUCTIONS = {
@@ -431,13 +447,14 @@ async function renderPricing() {
 
 /* ---------- auth / account ---------- */
 async function renderAccount() {
-  const el = $("account");
-  if (!window.__paywall) { el.hidden = true; return; }
+  const el = $("account"), nudge = $("upgrade-nudge");
+  if (!window.__paywall) { el.hidden = true; if (nudge) nudge.hidden = true; return; }
   el.hidden = false;
   const tok = PoseAuth.token();
   if (!tok) {
     el.innerHTML = '<button class="link-btn" id="signin-btn">Sign in</button>';
     $("signin-btn").onclick = openLogin;
+    if (nudge) nudge.hidden = true;
     return;
   }
   el.innerHTML = '<span class="acct-info" id="acct-info">…</span>' +
@@ -450,8 +467,9 @@ async function renderAccount() {
     const j = await r.json();
     const who = j.email || (PoseAuth.user() && PoseAuth.user().email) || "signed in";
     let badge;
-    // Subscribers have nothing left to buy: .is-pro hides the pricing section.
-    document.documentElement.classList.toggle("is-pro", j.plan === "pro");
+    // Subscribers have nothing left to buy: .is-pro hides pricing and the nudge.
+    setPlanClasses(j.plan);
+    renderUpgradeNudge(j);
     if (j.plan === "pro") { badge = "Pro"; if (window.__stripe) $("manage-btn").hidden = false; }
     else if ((j.credits || 0) > 0) badge = j.credits + " credits";
     else badge = (j.free_left ?? 0) + " free left";
@@ -459,6 +477,39 @@ async function renderAccount() {
   } catch (_) {
     $("acct-info").textContent = (PoseAuth.user() && PoseAuth.user().email) || "signed in";
   }
+}
+
+/* ---------- upgrade nudge ---------- */
+/* Free and credit users see where to upgrade before they hit the wall; the
+   old upsell only appeared after a 402. */
+function renderUpgradeNudge(j) {
+  const box = $("upgrade-nudge"), text = $("nudge-text"), cta = $("nudge-cta");
+  if (!box) return;
+  if (!j || j.plan === "pro") { box.hidden = true; return; }
+
+  const credits = j.credits || 0;
+  const left = j.free_left ?? 0;
+  const limit = j.free_limit ?? 3;
+  const spent = !credits && left <= 0;
+
+  if (credits > 0) {
+    text.innerHTML = "<strong>" + credits + "</strong> credit" + (credits === 1 ? "" : "s") +
+      " left. Go Pro for unlimited cards, no watermark.";
+  } else if (spent) {
+    text.innerHTML = "You've used all <strong>" + limit + "</strong> free cards. " +
+      "Go Pro for unlimited cards, no watermark.";
+  } else {
+    text.innerHTML = "<strong>" + left + "</strong> of " + limit + " free card" +
+      (limit === 1 ? "" : "s") + " left, watermarked. Go Pro to remove both limits.";
+  }
+  box.classList.toggle("spent", spent);
+
+  // Without Stripe there is no checkout to start, so point at the plans instead.
+  cta.textContent = window.__stripe ? "Go Pro" : "See plans";
+  cta.onclick = window.__stripe
+    ? () => startCheckout("monthly", cta)
+    : () => document.getElementById("pricing").scrollIntoView({ behavior: "smooth" });
+  box.hidden = false;
 }
 
 /* ---------- projects + history ---------- */
