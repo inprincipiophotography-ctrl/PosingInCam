@@ -852,6 +852,7 @@ function handleCheckoutReturn() {
     groups: "Named groupings, so the family formals fly by.",
     timeline: "The day's timeline, so you always know what's coming next.",
     settings: "Your settings for tricky light, one button away.",
+    gear: "A gear check you run before you leave, so nothing stays at home.",
     found: "Your contact details, in case the camera ever goes missing.",
   };
 
