@@ -33,8 +33,9 @@
       <span class="brand-by">by In Principio</span>
     </a>
     <nav class="nav-links">
+      <a href="#history" class="nav-projects" id="nav-projects" hidden>My projects</a>
       <a href="#how">How it works</a>
-      <a href="#pricing">Pricing</a>
+      <a href="#pricing" class="nav-pricing">Pricing</a>
       <a href="#packs">Pose packs</a>
       <a href="#faq">FAQ</a>
       <div class="account" id="account" hidden></div>
@@ -42,6 +43,9 @@
   </header>
 
   <main id="main">
+    <!-- Signed-in layout hides the hero, so keep a heading for assistive tech. -->
+    <h1 class="sr-only if-in">Camera Cards</h1>
+
     <!-- Hero -->
     <section class="hero">
       <div class="hero-text">
@@ -127,10 +131,13 @@
 
     <!-- The tool -->
     <section class="tool" id="tool">
-      <p class="eyebrow center">Free to try</p>
-      <h2 class="section-h center">Make your first camera cards.</h2>
-      <p class="tool-sub">Upload a Canva design, a screenshot or any photo and we'll make it camera-ready.
-        Your first 3 cards are free (small watermark). No password, no credit card, just an email link.</p>
+      <p class="eyebrow center if-out">Free to try</p>
+      <h2 class="section-h center">Make your <span class="if-out">first </span>camera cards.</h2>
+      <p class="tool-sub">
+        <span class="if-out">Upload a Canva design, a screenshot or any photo and we'll make it camera-ready.
+          Your first 3 cards are free (small watermark). No password, no credit card, just an email link.</span>
+        <span class="if-in">Pick a project, add your images, and we'll make them camera-ready.</span>
+      </p>
       <div class="tool-card">
         <!-- Project picker (signed-in users only; filled in by app.js) -->
         <div class="project-field" id="project-field" hidden>
@@ -197,7 +204,7 @@
     <!-- Your previous cards (signed-in users; rendered by app.js) -->
     <section class="history" id="history" hidden>
       <p class="eyebrow center">Your cards</p>
-      <h2 class="section-h center">Your previous batches.</h2>
+      <h2 class="section-h center">Your projects.</h2>
       <p class="history-sub">Every project you've made, saved to your account. Download a whole project or a
         single batch again without re-uploading anything.</p>
       <div class="history-list" id="history-list"></div>

@@ -450,6 +450,8 @@ async function renderAccount() {
     const j = await r.json();
     const who = j.email || (PoseAuth.user() && PoseAuth.user().email) || "signed in";
     let badge;
+    // Subscribers have nothing left to buy: .is-pro hides the pricing section.
+    document.documentElement.classList.toggle("is-pro", j.plan === "pro");
     if (j.plan === "pro") { badge = "Pro"; if (window.__stripe) $("manage-btn").hidden = false; }
     else if ((j.credits || 0) > 0) badge = j.credits + " credits";
     else badge = (j.free_left ?? 0) + " free left";
@@ -521,6 +523,7 @@ async function loadHistory() {
     state.projects = [];
     renderProjectPicker();
     if (section) section.hidden = true;
+    if ($("nav-projects")) $("nav-projects").hidden = true;
     return;
   }
   try {
@@ -533,11 +536,14 @@ async function loadHistory() {
   } catch (_) {
     renderProjectPicker();
     if (section) section.hidden = true;
+    if ($("nav-projects")) $("nav-projects").hidden = true;
   }
 }
 
 function renderHistory(batches, projects) {
   const section = $("history"), list = $("history-list");
+  // The nav link only makes sense once there is a section to jump to.
+  if ($("nav-projects")) $("nav-projects").hidden = !batches.length;
   if (!batches.length) { section.hidden = true; return; }
 
   // Group batches under their project, newest project first. Batches from
