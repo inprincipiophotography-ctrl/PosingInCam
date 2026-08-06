@@ -29,6 +29,13 @@ app = Flask(__name__)
 MAX_FILES = 30
 MAX_BYTES_PER_FILE = 15 * 1024 * 1024
 
+# One watermarked card without an account, so a visitor reaches the "it really
+# is on my camera" moment before being asked for an email. Abuse is bounded by
+# the per-IP rate limit below rather than a stored quota: keeping a durable
+# per-IP counter would mean storing IP addresses, and the worst case here is a
+# few extra watermarked cards.
+ANON_MAX_CARDS = 1
+
 # --- best-effort per-IP rate limit ------------------------------------------
 # Serverless instances don't share memory, so this caps abuse per warm instance
 # rather than globally — a cheap first layer on top of the per-account metering
@@ -119,7 +126,16 @@ def convert(path):
     watermark = False
     uid = profile = None
     tier = "open"
-    if auth.paywall_enabled():
+    if auth.paywall_enabled() and not request.headers.get("Authorization"):
+        # Signed-out preview: one watermarked card, no account, no history.
+        if len(designs) > ANON_MAX_CARDS:
+            return jsonify(
+                error=("Sign in to convert more than one image at a time. "
+                       "It's a one-time email link, no password."),
+                need_signin=True), 401
+        watermark = True
+        tier = "anon"
+    elif auth.paywall_enabled():
         try:
             uid, email = auth.verify_user(request.headers.get("Authorization"))
         except auth.AuthError as e:

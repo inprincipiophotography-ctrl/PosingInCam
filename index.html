@@ -6,10 +6,10 @@
   <!-- Flash-free signed-in layout. If you edit this script, recompute its CSP hash (script-src 'sha256-…' in vercel.json). -->
   <script>try{var d=document.documentElement;if(localStorage.getItem('pic_signed_in'))d.classList.add('signed-in');var p=localStorage.getItem('pic_plan');if(p)d.classList.add(p==='pro'?'is-pro':'is-free')}catch(e){}</script>
   <title>Camera Cards · Your posing guide, inside your camera</title>
-  <meta name="description" content="Turn poses, shot lists and timelines into images your camera shows in playback. Flip through them between shots. Sony, Canon and Nikon. 3 free, no credit card." />
+  <meta name="description" content="Turn poses, shot lists and timelines into images your camera shows in playback. Flip through them between shots. Sony, Canon and Nikon. Try it free, no account needed." />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Camera Cards · Your posing guide, inside your camera" />
-  <meta property="og:description" content="Turn poses, shot lists and timelines into images your camera shows in playback. Flip through them between shots. Sony, Canon and Nikon. 3 free, no credit card." />
+  <meta property="og:description" content="Turn poses, shot lists and timelines into images your camera shows in playback. Flip through them between shots. Sony, Canon and Nikon. Try it free, no account needed." />
   <meta property="og:url" content="https://posing-in-cam.vercel.app/" />
   <meta property="og:image" content="https://posing-in-cam.vercel.app/assets/showcase/01.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -38,8 +38,10 @@
       <a href="#pricing" class="nav-pricing">Pricing</a>
       <a href="#packs">Pose packs</a>
       <a href="#faq">FAQ</a>
-      <div class="account" id="account" hidden></div>
     </nav>
+    <!-- Outside .nav-links: that list scrolls sideways on phones, and sign-in
+         must not scroll out of reach. -->
+    <div class="account" id="account" hidden></div>
   </header>
 
   <main id="main">
@@ -60,7 +62,7 @@
         </div>
         <div class="trust">
           <span class="trust-item">✓ Sony · Canon · Nikon</span>
-          <span class="trust-item">✓ 3 free, no credit card</span>
+          <span class="trust-item">✓ First card free, no account</span>
         </div>
       </div>
       <div class="hero-visual">
@@ -135,7 +137,7 @@
       <h2 class="section-h center">Make your <span class="if-out">first </span>camera cards.</h2>
       <p class="tool-sub">
         <span class="if-out">Upload a Canva design, a screenshot or any photo and we'll make it camera-ready.
-          Your first 3 cards are free (small watermark). No password, no credit card, just an email link.</span>
+          Your first card is free and needs no account. Sign in later for 3 more, bigger batches and saved projects.</span>
         <span class="if-in">Pick a project, add your images, and we'll make them camera-ready.</span>
       </p>
       <div class="tool-card">
@@ -168,9 +170,9 @@
         <div class="field">
           <label class="field-label"><span class="step-dot">2</span> Add your images</label>
           <label class="drop" id="drop">
-            <input type="file" id="file" accept="image/*" multiple class="sr-only" aria-label="Add images" />
+            <input type="file" id="file" accept="image/*,.heic,.heif" multiple class="sr-only" aria-label="Add images" />
             <span class="drop-title">Drag any image here or click to choose</span>
-            <span class="drop-sub">Canva exports, screenshots, photos · JPG, PNG, WEBP</span>
+            <span class="drop-sub">Canva exports, screenshots, photos · JPG, PNG, WEBP, HEIC</span>
           </label>
           <div class="orient" id="orient">
             <span>Orientation:</span>

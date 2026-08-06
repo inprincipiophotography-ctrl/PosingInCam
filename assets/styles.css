@@ -66,7 +66,7 @@ img{max-width:100%}
 .brand-mark{width:20px;height:20px;border-radius:7px;background:linear-gradient(135deg,#c01818,#7e0000);box-shadow:0 2px 8px rgba(164,0,0,.35);flex:0 0 auto}
 .brand-name{font-weight:600;font-size:16px;letter-spacing:-.01em}
 .brand-by{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--muted)}
-.nav-links{display:flex;align-items:center;gap:22px}
+.nav-links{display:flex;align-items:center;gap:22px;min-width:0}
 .nav-links>a{color:var(--ink-2);font-size:14px;font-weight:500}
 .nav-links>a:hover{color:var(--ink)}
 .nav-links>a:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
@@ -318,7 +318,7 @@ img{max-width:100%}
 .site-foot a{color:var(--accent-2)}
 
 /* ---------- account bar (in nav) ---------- */
-.account{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--muted)}
+.account{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--muted);flex:0 0 auto}
 .acct-info{color:var(--ink-2)}
 .link-btn{background:none;border:none;color:var(--accent-2);font-family:var(--sans);font-size:14px;cursor:pointer;padding:6px 4px}
 .link-btn:hover{text-decoration:underline}
@@ -405,7 +405,9 @@ img{max-width:100%}
 @media(max-width:560px){
   .cameras{grid-template-columns:1fr}
   .site-foot{flex-direction:column}
-  .nav-links{gap:12px;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .nav-links{gap:12px;min-width:0;flex:1 1 auto;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none}
+  .nav-links::-webkit-scrollbar{display:none}
   .nav-links>a{font-size:13px;white-space:nowrap}
   .brand-by{display:none}
 }

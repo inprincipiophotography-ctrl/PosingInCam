@@ -226,9 +226,25 @@ def _add_credits(uid: str, customer: str, n: int) -> None:
         _patch("id", uid, {"credits": current + n})
 
 
+def _is_ours(sub) -> bool:
+    """Does this subscription bill one of our prices?
+
+    This Stripe account is shared with the wedding site, so subscriptions that
+    have nothing to do with Camera Cards can produce events here. We match
+    profiles by customer id, and one customer could hold both, so check the
+    price before rewriting anyone's plan. Skipped when no price is configured,
+    otherwise a missing env var would silently ignore every real event.
+    """
+    ours = {p for p in PRICE_FOR.values() if p}
+    if not ours:
+        return True
+    items = ((sub.get("items") or {}).get("data")) or []
+    return bool({(it.get("price") or {}).get("id") for it in items} & ours)
+
+
 def _sync_subscription(sub) -> None:
     customer = sub.get("customer")
-    if not customer:
+    if not customer or not _is_ours(sub):
         return
     active = sub.get("status") in ("active", "trialing")
     _patch("stripe_customer_id", customer, {

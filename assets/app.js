@@ -75,27 +75,46 @@ camButtons.forEach((btn) => {
 
 /* ---------- file input + drag/drop ---------- */
 const drop = $("drop");
-$("file").addEventListener("change", (e) => { addFiles(e.target.files); e.target.value = ""; });
+// Snapshot the list first: addFiles is async now, and clearing the input can
+// empty the FileList out from under it.
+$("file").addEventListener("change", (e) => {
+  const files = Array.from(e.target.files);
+  e.target.value = "";
+  addFiles(files);
+});
 ["dragenter", "dragover"].forEach((ev) =>
   drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
 ["dragleave", "drop"].forEach((ev) =>
   drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
 drop.addEventListener("drop", (e) => addFiles(e.dataTransfer.files));
 
-function addFiles(fileList) {
+// Can this browser actually paint the file? Safari on iOS/macOS decodes HEIC
+// natively, so we ask instead of rejecting by file extension and shutting out
+// the very phones our customers shoot on.
+function canDecode(file) {
+  return new Promise((res) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); res(true); };
+    img.onerror = () => { URL.revokeObjectURL(url); res(false); };
+    img.src = url;
+  });
+}
+
+async function addFiles(fileList) {
   let skipped = 0, overflow = 0;
   for (const file of fileList) {
-    // check HEIC first — some browsers report an empty MIME type for it
-    if (/heic|heif/i.test(file.type) || /\.(heic|heif)$/i.test(file.name)) { skipped++; continue; }
-    if (!file.type.startsWith("image/")) continue;
+    if (!file.type.startsWith("image/") &&
+        !/\.(heic|heif)$/i.test(file.name)) continue;   // some browsers report no MIME for HEIC
     if (state.items.length >= MAX_FILES) { overflow++; continue; }
+    if (!(await canDecode(file))) { skipped++; continue; }
     state.items.push({ file, url: URL.createObjectURL(file) });
   }
   if (skipped || overflow) {
     const st = $("status");
     st.className = "status err";
     st.textContent = skipped
-      ? "✗ HEIC photos aren't supported in browsers yet. On iPhone: Settings → Camera → Formats → Most Compatible, or export the image as JPG/PNG."
+      ? `✗ This browser can't open ${skipped === 1 ? "that file" : "those files"}. HEIC photos work in Safari on iPhone and Mac; elsewhere set Settings → Camera → Formats → Most Compatible, or export as JPG/PNG.`
       : `✗ Max ${MAX_FILES} images per batch. Kept the first ${MAX_FILES}, skipped ${overflow}.`;
   }
   state.selected = 0;
@@ -193,7 +212,8 @@ const orientValue = () => document.querySelector('input[name="orient"]:checked')
 /* ---------- generate ---------- */
 $("go").addEventListener("click", async () => {
   if (!state.vendor || !state.items.length) return;
-  if (window.__paywall && !PoseAuth.token()) { openLogin(); return; }
+  // No login gate up front: signed-out visitors get one watermarked card first,
+  // and the server asks for an account only when they want more.
 
   const go = $("go"), status = $("status");
   $("upsell").hidden = true;
@@ -256,6 +276,13 @@ $("go").addEventListener("click", async () => {
       renderAccount();
       return;
     }
+    if (resp.status === 401) {
+      let j = {}; try { j = await resp.json(); } catch (_) {}
+      status.className = "status err";
+      status.textContent = "✗ " + (j.error || "Sign in to continue.");
+      if (j.need_signin) openLogin();
+      return;
+    }
     if (!resp.ok) {
       let msg = "Error " + resp.status;
       try { msg = (await resp.json()).error || msg; } catch (_) {}
@@ -273,9 +300,11 @@ $("go").addEventListener("click", async () => {
     const range = first && last
       ? (first === last ? ` Your card is ${first}.` : ` Your cards are ${first} to ${last}.`)
       : "";
+    const anon = resp.headers.get("X-Tier") === "anon";
     status.className = "status ok";
     status.textContent = "✓ Done! Your camera-cards.zip is downloading." + range +
       (wm ? "  (free, watermarked)" : "");
+    if (anon) showSignupNudge();
     if (!window.__paywall && last) {
       // Anonymous flow: remember where this batch ended so the next one continues.
       const m = last.match(/(\d{4})\.JPG$/i);
@@ -299,6 +328,20 @@ function showInstructions() {
   $("instr-text").textContent = INSTRUCTIONS[state.vendor] || "";
   $("instructions").hidden = false;
   $("instructions").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+// Shown after a signed-out visitor's free card: they have seen it work, so this
+// is the moment an account is worth something.
+function showSignupNudge() {
+  const el = $("upsell");
+  el.hidden = false;
+  el.innerHTML =
+    '<p class="muted" style="margin:0 0 12px">That one was on us, watermarked. ' +
+    'Sign in to get 3 free cards, convert up to 30 at once, and keep your projects ' +
+    'so you never re-upload the same designs.</p>' +
+    '<div class="buy-row"><button class="go" id="nudge-signin">Sign in with an email link</button></div>';
+  const btn = $("nudge-signin");
+  if (btn) btn.addEventListener("click", openLogin);
 }
 
 function showUpsell() {
