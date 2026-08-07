@@ -445,7 +445,8 @@ async function renderPricing() {
         amount: "€0",
         per: "",
         note: "No credit card",
-        feats: ["Sony · Canon · Nikon", freeN + " images", "Watermarked"],
+        feats: ["Sony · Canon · Nikon", freeN + " images", "Watermarked",
+                "Saved projects, no re-uploading"],
         cta: '<button class="btn btn-ghost" data-go="tool">Start free</button>',
       }) +
       card({
@@ -455,7 +456,9 @@ async function renderPricing() {
         amount: proAmt || "",
         per: proAmt ? (cycle === "yearly" ? "/yr" : "/mo") : "",
         note: proNote,
-        feats: ["Unlimited images", "No watermark", "Ready for every shoot", "Cancel anytime"],
+        feats: ["Unlimited images", "No watermark",
+                "Saved projects, no re-uploading",
+                "Card numbers continue across batches", "Cancel anytime"],
         cta: (hasM || hasY)
           ? '<button class="btn btn-primary" data-buy="' + cycle + '">Go Pro</button>'
           : '<button class="btn btn-primary" disabled>Coming soon</button>',
@@ -465,7 +468,8 @@ async function renderPricing() {
         amount: hasPack ? fmtMoney(P.pack20) : "",
         per: hasPack ? " once" : "",
         note: "One-time, no subscription",
-        feats: [packN + " images", "No watermark", "Never expires"],
+        feats: [packN + " images", "No watermark", "Never expires",
+                "Saved projects, no re-uploading"],
         cta: hasPack
           ? '<button class="btn btn-ghost" data-buy="pack20">Buy ' + packN + " credits</button>"
           : '<button class="btn btn-ghost" disabled>Coming soon</button>',
