@@ -445,8 +445,7 @@ async function renderPricing() {
         amount: "€0",
         per: "",
         note: "No credit card",
-        feats: ["Sony · Canon · Nikon", freeN + " images", "Watermarked",
-                "Saved projects, no re-uploading"],
+        feats: ["Sony · Canon · Nikon", freeN + " images", "Watermarked"],
         cta: '<button class="btn btn-ghost" data-go="tool">Start free</button>',
       }) +
       card({
@@ -457,8 +456,7 @@ async function renderPricing() {
         per: proAmt ? (cycle === "yearly" ? "/yr" : "/mo") : "",
         note: proNote,
         feats: ["Unlimited images", "No watermark",
-                "Saved projects, no re-uploading",
-                "Card numbers continue across batches", "Cancel anytime"],
+                "Saved projects, no re-uploading", "Cancel anytime"],
         cta: (hasM || hasY)
           ? '<button class="btn btn-primary" data-buy="' + cycle + '">Go Pro</button>'
           : '<button class="btn btn-primary" disabled>Coming soon</button>',
