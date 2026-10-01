@@ -452,7 +452,7 @@ $("file").addEventListener("change", (e) => {
   drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
 ["dragleave", "drop"].forEach((ev) =>
   drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
-drop.addEventListener("drop", (e) => addFiles(e.dataTransfer.files));
+drop.addEventListener("drop", (e) => addFiles(Array.from(e.dataTransfer.files || [])));
 
 // Can this browser actually paint the file? Safari on iOS/macOS decodes HEIC
 // natively, so we ask instead of rejecting by file extension and shutting out

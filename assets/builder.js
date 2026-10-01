@@ -111,8 +111,9 @@ window.CardRenderer = (function () {
       if (measure(next) <= maxWidth) { line = next; return; }
       push(line);
       line = word;
-      // A single word wider than the line is broken by characters.
-      while (measure(line) > maxWidth) {
+      // A single word wider than the line is broken by characters (each pass
+      // keeps at least one, so even one impossibly wide glyph can't loop).
+      while (measure(line) > maxWidth && Array.from(line).length > 1) {
         const chars = Array.from(line);
         let cut = chars.length - 1;
         while (cut > 1 && measure(chars.slice(0, cut).join("")) > maxWidth) cut--;
