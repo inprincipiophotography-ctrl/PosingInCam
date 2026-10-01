@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Flash-free signed-in layout. If you edit this script, recompute its CSP hash (script-src 'sha256-…' in vercel.json). -->
   <script>try{var d=document.documentElement;if(localStorage.getItem('pic_signed_in'))d.classList.add('signed-in');var p=localStorage.getItem('pic_plan');if(p)d.classList.add(p==='pro'?'is-pro':'is-free')}catch(e){}</script>
-  <title>Camera Cards · Your posing guide, inside your camera</title>
-  <meta name="description" content="Turn poses, shot lists and timelines into images your camera shows in playback. Flip through them between shots. Sony, Canon and Nikon. Try it free, no account needed." />
+  <title>Camera Cards · Never go blank on a shoot again</title>
+  <meta name="description" content="Pose cards with the words to say to your couple, plus your timeline, family groups and shot list, right in your camera's playback. Sony, Canon and Nikon. Make your first card free, no account needed." />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Camera Cards · Your posing guide, inside your camera" />
-  <meta property="og:description" content="Turn poses, shot lists and timelines into images your camera shows in playback. Flip through them between shots. Sony, Canon and Nikon. Try it free, no account needed." />
+  <meta property="og:title" content="Camera Cards · Never go blank on a shoot again" />
+  <meta property="og:description" content="Pose cards with the words to say to your couple, plus your timeline, family groups and shot list, right in your camera's playback. Sony, Canon and Nikon. Make your first card free, no account needed." />
   <meta property="og:url" content="https://posing-in-cam.vercel.app/" />
   <meta property="og:image" content="https://posing-in-cam.vercel.app/assets/showcase/01.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -26,188 +26,209 @@
   <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- Nav -->
-  <header class="nav">
+  <header class="nav" id="nav">
     <a class="brand" href="/">
       <span class="brand-mark"></span>
       <span class="brand-name">Camera Cards</span>
       <span class="brand-by">by In Principio</span>
     </a>
-    <nav class="nav-links">
+    <nav class="nav-links" id="nav-links" aria-label="Main">
       <a href="#history" class="nav-projects" id="nav-projects" hidden>My projects</a>
-      <a href="#how">How it works</a>
+      <a href="#packs">Poses</a>
+      <a href="#more">More cards</a>
       <a href="#pricing" class="nav-pricing">Pricing</a>
-      <a href="#packs">Pose packs</a>
       <a href="#faq">FAQ</a>
     </nav>
-    <!-- Outside .nav-links: that list scrolls sideways on phones, and sign-in
-         must not scroll out of reach. -->
-    <div class="account" id="account" hidden></div>
+    <div class="nav-right">
+      <!-- Outside .nav-links so sign-in never hides behind the phone menu. -->
+      <div class="account" id="account" hidden></div>
+      <a class="btn btn-primary btn-sm nav-cta" href="#studio"><span class="lg">Make a free card</span><span class="sm">Free card</span></a>
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Menu"><span></span><span></span></button>
+    </div>
   </header>
 
   <main id="main">
-    <!-- Signed-in layout hides the hero, so keep a heading for assistive tech. -->
+    <!-- Signed-in layout hides the pitch, so keep a heading for assistive tech. -->
     <h1 class="sr-only if-in">Camera Cards</h1>
 
-    <!-- Hero -->
-    <section class="hero">
-      <div class="hero-text">
-        <p class="eyebrow">For wedding &amp; portrait photographers</p>
-        <h1>Your posing guide, inside your camera.</h1>
-        <p class="lede">Never blank at a shoot again. Camera Cards turns your poses, shot lists and
-          timelines into images your camera shows in playback, so you flip through them between
-          shots. No phone, no Pinterest, no awkward pauses.</p>
-        <div class="cta-row">
-          <a class="btn btn-primary" href="#tool">Try it free →</a>
-          <a class="btn btn-ghost" href="#packs">See the pose packs</a>
+    <!-- Hero: the pitch, the card studio and the proof video -->
+    <section class="hero" id="tool">
+      <div class="hero-grid">
+        <div class="pitch">
+          <p class="eyebrow-pill">For wedding &amp; portrait photographers</p>
+          <h1>Never go <em>blank</em> on a shoot again.</h1>
+          <p class="lede">Pose cards in your camera's playback, with the exact words to say to your couple.
+            Plus your timeline, family groups and shot list. No phone, no paper, no Canva.</p>
         </div>
-        <div class="trust">
-          <span class="trust-item">✓ Sony · Canon · Nikon</span>
-          <span class="trust-item">✓ First card free, no account</span>
-        </div>
-      </div>
-      <div class="hero-visual">
-        <video class="hero-media" autoplay muted loop playsinline preload="auto"
-               width="1080" height="1920"
-               poster="/assets/showcase/01.jpg"
-               aria-label="Pose reference cards scrolling on a camera's back screen">
-          <source src="/assets/showcase/timeline.mp4" type="video/mp4" />
-        </video>
-        <p class="hero-caption">Pose cards in playback on a Sony, straight from the SD card.</p>
-      </div>
-    </section>
 
-    <!-- What it does: any image -> your camera (before / after) -->
-    <section class="flow" id="flow">
-      <p class="eyebrow center">Why it works</p>
-      <h2 class="section-h center">Your camera only shows its own files.</h2>
-      <p class="flow-sub">A Canva export or a screenshot won't show up on its own. We convert any image
-        into the exact format your camera expects, and it lands in playback like a photo you shot.</p>
-      <div class="flow-stage">
-        <div class="flow-item">
-          <div class="flow-box flow-in">
-            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="6" y="9" width="36" height="30" rx="4"/>
-              <circle cx="17" cy="19" r="3.4"/>
-              <path d="M7 34l10-9 7 6 8-8 9 8"/>
-            </svg>
+        <div class="studio" id="studio">
+          <!-- Upgrade path for signed-in free/credit users (filled in by app.js) -->
+          <div class="upgrade-nudge" id="upgrade-nudge" hidden>
+            <span class="nudge-text" id="nudge-text"></span>
+            <button class="btn btn-primary nudge-cta" id="nudge-cta" type="button">Go Pro</button>
           </div>
-          <span class="flow-cap">Any image</span>
-        </div>
-        <div class="flow-link" aria-hidden="true">
-          <span class="flow-badge">→</span>
-          <span class="flow-link-label">we convert</span>
-        </div>
-        <figure class="flow-item">
-          <div class="flow-box flow-out">
-            <img src="/assets/showcase/cam-shot.jpg" alt="A pose card displayed on a camera's back screen, held in one hand" width="560" height="678" loading="lazy" />
+
+          <!-- Project picker (signed-in users only; filled in by app.js) -->
+          <div class="project-field" id="project-field" hidden>
+            <label class="project-label" for="project-select" id="project-label">Project</label>
+            <select id="project-select" hidden></select>
+            <input type="text" id="project-new" placeholder="e.g. Ana &amp; Marko" maxlength="80" hidden />
+            <p class="project-hint" id="project-hint"></p>
           </div>
-          <figcaption class="flow-cap">On your camera</figcaption>
-        </figure>
-      </div>
-      <p class="flow-trust">Tested on Sony A7 III/IV/V, Canon R6/R6 II/R6 III and Nikon Z6/Z8/Z9.</p>
-      <p class="flow-safe">✓ These are ordinary JPEGs, so nothing can harm your camera or card.</p>
-    </section>
 
-    <!-- How it works -->
-    <section class="how" id="how">
-      <p class="eyebrow center">How it works</p>
-      <h2 class="section-h center">Three steps, two minutes.</h2>
-      <div class="how-grid">
-        <div class="how-step">
-          <span class="how-num">1</span>
-          <h3>Upload your images</h3>
-          <p>Drop in Canva designs, screenshots or photos, then pick your camera brand.</p>
-        </div>
-        <div class="how-step">
-          <span class="how-num">2</span>
-          <h3>Download your files</h3>
-          <p>We make them camera-ready and zip them into an SD-card folder.</p>
-        </div>
-        <div class="how-step">
-          <span class="how-num">3</span>
-          <h3>Scroll on your camera</h3>
-          <p>Copy to the card, hit playback, flip through them between shots.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- The tool -->
-    <section class="tool" id="tool">
-      <p class="eyebrow center if-out">Free to try</p>
-      <h2 class="section-h center">Make your <span class="if-out">first </span>camera cards.</h2>
-      <p class="tool-sub">
-        <span class="if-out">Upload a Canva design, a screenshot or any photo and we'll make it camera-ready.
-          Your first card is free and needs no account. Sign in later for 3 more, bigger batches and saved projects.</span>
-        <span class="if-in">Pick a project, add your images, and we'll make them camera-ready.</span>
-      </p>
-      <div class="tool-card">
-        <!-- Upgrade path for signed-in free/credit users (filled in by app.js) -->
-        <div class="upgrade-nudge" id="upgrade-nudge" hidden>
-          <span class="nudge-text" id="nudge-text"></span>
-          <button class="btn btn-primary nudge-cta" id="nudge-cta" type="button">Go Pro</button>
-        </div>
-
-        <!-- Project picker (signed-in users only; filled in by app.js) -->
-        <div class="project-field" id="project-field" hidden>
-          <label class="project-label" for="project-select" id="project-label">Project</label>
-          <select id="project-select" hidden></select>
-          <input type="text" id="project-new" placeholder="e.g. Ana &amp; Marko" hidden />
-          <p class="project-hint" id="project-hint"></p>
-        </div>
-
-        <!-- Step 1 -->
-        <div class="field">
-          <label class="field-label"><span class="step-dot">1</span> Choose your camera</label>
-          <div class="cameras" id="cameras">
-            <button class="cam" type="button" aria-pressed="false" data-vendor="sony">Sony</button>
-            <button class="cam" type="button" aria-pressed="false" data-vendor="canon">Canon</button>
-            <button class="cam" type="button" aria-pressed="false" data-vendor="nikon">Nikon</button>
+          <div class="studio-head">
+            <h2 class="studio-title"><span class="if-out">Make your first card free</span><span class="if-in">Make your cards</span></h2>
+            <span class="studio-sub">Pick a type</span>
           </div>
-          <p class="cameras-hint">Fujifilm &amp; Panasonic support is coming soon.</p>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="field">
-          <label class="field-label"><span class="step-dot">2</span> Add your images</label>
-          <label class="drop" id="drop">
-            <input type="file" id="file" accept="image/*,.heic,.heif" multiple class="sr-only" aria-label="Add images" />
-            <span class="drop-title">Drag any image here or click to choose</span>
-            <span class="drop-sub">Canva exports, screenshots, photos · JPG, PNG, WEBP, HEIC</span>
-          </label>
-          <div class="orient" id="orient">
-            <span>Orientation:</span>
-            <label><input type="radio" name="orient" value="auto" checked /> Auto</label>
-            <label><input type="radio" name="orient" value="landscape" /> Landscape</label>
-            <label><input type="radio" name="orient" value="portrait" /> Portrait</label>
+          <div class="types" id="types" role="group" aria-label="Card type">
+            <button class="type" type="button" data-type="pose" aria-pressed="true">Pose</button>
+            <button class="type" type="button" data-type="timeline" aria-pressed="false">Timeline</button>
+            <button class="type" type="button" data-type="groups" aria-pressed="false">Family groups</button>
+            <button class="type" type="button" data-type="shotlist" aria-pressed="false">Shot list</button>
+            <button class="type" type="button" data-type="settings" aria-pressed="false">Settings</button>
+            <button class="type" type="button" data-type="found" aria-pressed="false">If found</button>
+            <button class="type" type="button" data-type="upload" aria-pressed="false">Your own design</button>
           </div>
-          <p class="orient-hint">Auto fits it for you. Pick Portrait or Landscape to force it.</p>
-          <div class="screen-wrap" id="preview" hidden>
-            <div class="screen">
-              <img id="screen-img" alt="" />
-              <span class="screen-count" id="screen-count"></span>
+
+          <!-- Pose: one of ours, or your own photo with your notes -->
+          <div class="panel" data-panel="pose">
+            <div id="pose-pick">
+              <p class="panel-label"><span><b>Pick a pose</b> from our wedding pack</span><span class="panel-aside">50 in the full pack</span></p>
+              <div class="poses" id="pose-samples">
+                <button class="pz" type="button" data-sample="pack-03" aria-pressed="true" aria-label="Under the veil"><img src="/assets/showcase/pack-03.jpg" alt="" width="760" height="1140" /></button>
+                <button class="pz" type="button" data-sample="pack-01" aria-pressed="false" aria-label="Dance and spin"><img src="/assets/showcase/pack-01.jpg" alt="" width="760" height="1140" /></button>
+                <button class="pz" type="button" data-sample="pack-04" aria-pressed="false" aria-label="Vogue"><img src="/assets/showcase/pack-04.jpg" alt="" width="760" height="1140" /></button>
+                <button class="pz" type="button" data-sample="pack-02" aria-pressed="false" aria-label="The first look"><img src="/assets/showcase/pack-02.jpg" alt="" width="760" height="1140" /></button>
+                <button class="pz pz-own" type="button" id="pose-own-btn">+ Use your own photo</button>
+              </div>
             </div>
-            <div class="filmstrip" id="filmstrip"></div>
-            <button class="link-btn clear-all" id="clear-all" type="button">Clear all images</button>
+            <div id="pose-own" hidden>
+              <label class="photo-drop" id="photo-drop">
+                <input type="file" id="pose-photo" accept="image/*,.heic,.heif" class="sr-only" />
+                <span class="photo-drop-title" id="photo-drop-title">Add your reference photo</span>
+                <span class="photo-drop-sub">A pose you love: yours, or one you found</span>
+              </label>
+              <div class="fields">
+                <label class="fld full"><span>Pose name</span><input type="text" data-pose="title" maxlength="40" placeholder="e.g. The first look" /></label>
+                <label class="fld"><span>Energy</span><input type="text" data-pose="energy" maxlength="60" placeholder="e.g. Tender, unhurried" /></label>
+                <label class="fld"><span>Camera</span><input type="text" data-pose="camera" maxlength="60" placeholder="e.g. Eye level, burst" /></label>
+                <label class="fld full"><span>Posing hack</span><input type="text" data-pose="hack" maxlength="60" placeholder="e.g. Let him turn first" /></label>
+                <label class="fld full"><span>Say to the couple</span><textarea data-pose="say" rows="2" maxlength="160" placeholder="e.g. Foreheads together, breathe out, don't rush it."></textarea></label>
+              </div>
+              <button class="link-btn back-btn" id="pose-back" type="button">&larr; Pick one of our poses instead</button>
+            </div>
           </div>
-        </div>
 
-        <!-- Step 3 -->
-        <div class="field">
-          <label class="field-label"><span class="step-dot">3</span> Convert &amp; download</label>
-          <button class="go" id="go" type="button" disabled>Convert &amp; download</button>
-          <p class="go-hint">First choose your camera, then add your images.</p>
+          <!-- Timeline, family groups, shot list and settings share one list editor (app.js) -->
+          <div class="panel" data-panel="list" hidden>
+            <label class="fld full">
+              <span id="list-label-name">Heading</span>
+              <input type="text" id="list-label" maxlength="40" />
+            </label>
+            <div class="rows" id="rows"></div>
+            <p class="rows-note" id="rows-note"></p>
+            <div class="row-actions">
+              <button class="link-btn" id="row-add" type="button">+ Add a line</button>
+              <button class="link-btn" id="paste-toggle" type="button" aria-expanded="false" aria-controls="paste">Paste a list</button>
+            </div>
+            <div class="paste" id="paste" hidden>
+              <label class="fld full"><span id="paste-help">One per line</span><textarea id="paste-text" rows="5"></textarea></label>
+              <div class="paste-actions">
+                <button class="btn btn-ghost btn-sm" id="paste-apply" type="button">Use these lines</button>
+                <button class="link-btn" id="paste-cancel" type="button">Cancel</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- If found -->
+          <div class="panel" data-panel="found" hidden>
+            <div class="fields">
+              <label class="fld full"><span>Your name &amp; studio</span><input type="text" data-found="name" maxlength="60" autocomplete="name" /></label>
+              <label class="fld"><span>Phone</span><input type="tel" data-found="phone" maxlength="30" autocomplete="tel" /></label>
+              <label class="fld"><span>Email</span><input type="email" data-found="email" maxlength="60" autocomplete="email" /></label>
+              <label class="fld full"><span>Note</span><input type="text" data-found="note" maxlength="60" /></label>
+            </div>
+          </div>
+
+          <!-- Your own design: the original converter -->
+          <div class="panel" data-panel="upload" hidden>
+            <label class="drop" id="drop">
+              <input type="file" id="file" accept="image/*,.heic,.heif" multiple class="sr-only" aria-label="Add images" />
+              <span class="drop-title">Drag images here or click to choose</span>
+              <span class="drop-sub">Canva exports, screenshots, photos · JPG, PNG, WEBP, HEIC</span>
+            </label>
+            <div class="orient" id="orient">
+              <span>Orientation:</span>
+              <label><input type="radio" name="orient" value="auto" checked /> Auto</label>
+              <label><input type="radio" name="orient" value="landscape" /> Landscape</label>
+              <label><input type="radio" name="orient" value="portrait" /> Portrait</label>
+            </div>
+            <div class="filmstrip-wrap" id="preview" hidden>
+              <div class="filmstrip" id="filmstrip"></div>
+              <button class="link-btn clear-all" id="clear-all" type="button">Clear all images</button>
+            </div>
+          </div>
+
+          <!-- Phones: the preview sits here, next to the form (the camera column is above) -->
+          <div class="mini" id="mini" hidden>
+            <canvas id="mini-canvas" width="480" height="320" aria-hidden="true"></canvas>
+            <span class="mini-pages" id="mini-pages"></span>
+          </div>
+
+          <div class="studio-foot">
+            <div class="cameras" id="cameras" role="group" aria-label="Your camera">
+              <button class="cam" type="button" aria-pressed="false" data-vendor="sony">Sony</button>
+              <button class="cam" type="button" aria-pressed="false" data-vendor="canon">Canon</button>
+              <button class="cam" type="button" aria-pressed="false" data-vendor="nikon">Nikon</button>
+            </div>
+            <button class="go" id="go" type="button">Make my free card &rarr;</button>
+          </div>
+          <p class="go-hint" id="go-hint"></p>
           <p class="status" id="status" role="status" aria-live="polite"></p>
           <div class="upsell" id="upsell" hidden></div>
+
+          <!-- Instructions (after generate) -->
+          <div class="instructions" id="instructions" hidden>
+            <p class="instructions-title">Put it on your SD card</p>
+            <pre id="instr-text"></pre>
+            <p class="muted">The same instructions are included in the downloaded ZIP.</p>
+          </div>
         </div>
 
-        <!-- Instructions (after generate) -->
-        <div class="instructions" id="instructions" hidden>
-          <label class="field-label">Put it on your SD card</label>
-          <pre id="instr-text"></pre>
-          <p class="muted">The same instructions are included in the downloaded ZIP.</p>
+        <div class="visual" id="visual">
+          <div class="vid" id="vid">
+            <video class="hero-media" autoplay muted loop playsinline preload="auto"
+                   width="864" height="1080"
+                   poster="/assets/showcase/hero-4x5-poster.jpg"
+                   aria-label="A thumb turns the wheel of a Sony camera and pose cards change on its screen">
+              <source src="/assets/showcase/hero-4x5.mp4" type="video/mp4" />
+            </video>
+            <span class="vid-chip"><b></b>Real Sony · scrolling pose cards</span>
+          </div>
+          <div class="cam-preview" id="cam-preview" hidden>
+            <div class="cam-body" id="cam-body">
+              <div class="cam-screen"><canvas id="preview-canvas" width="1920" height="1280" role="img" aria-label="Preview of your card"></canvas></div>
+              <div class="cam-buttons" aria-hidden="true"><i></i><i class="play"></i><i class="dial"></i><i></i><i></i></div>
+            </div>
+            <div class="pager" id="pager" hidden>
+              <button class="pager-btn" id="pg-prev" type="button" aria-label="Previous card">&lsaquo;</button>
+              <span id="pg-label" aria-live="polite"></span>
+              <button class="pager-btn" id="pg-next" type="button" aria-label="Next card">&rsaquo;</button>
+            </div>
+          </div>
+          <p class="cam-cap" id="cam-cap">Turn the wheel, the next pose appears. Straight from the SD card.</p>
         </div>
       </div>
     </section>
+
+    <!-- How it works, in one line -->
+    <div class="strip" id="how">
+      <div class="strip-inner">
+        <div class="st"><b>1</b><span><strong>Pick or make your cards</strong> in minutes.</span></div>
+        <div class="st"><b>2</b><span><strong>Copy one folder</strong> to your SD card.</span></div>
+        <div class="st"><b>3</b><span><strong>Press &#9654; between shots.</strong> It's all there.</span></div>
+      </div>
+    </div>
 
     <!-- Your previous cards (signed-in users; rendered by app.js) -->
     <section class="history" id="history" hidden>
@@ -218,151 +239,107 @@
       <div class="history-list" id="history-list"></div>
     </section>
 
-    <!-- What you can put on your camera -->
-    <section class="ideas" id="ideas">
-      <p class="eyebrow center">Not just poses</p>
-      <h2 class="section-h center">If it helps on the day, it goes on your camera.</h2>
-      <p class="ideas-lede">Anything you can design, we can put in playback. Flip through a few real examples.</p>
-
-      <div class="idea-chips" id="idea-chips" role="group" aria-label="Card types">
-        <button class="cam idea-chip" type="button" aria-pressed="true"  data-idea="poses">Poses</button>
-        <button class="cam idea-chip" type="button" aria-pressed="false" data-idea="shotlist">Shot list</button>
-        <button class="cam idea-chip" type="button" aria-pressed="false" data-idea="groups">Groups</button>
-        <button class="cam idea-chip" type="button" aria-pressed="false" data-idea="timeline">Timeline</button>
-        <button class="cam idea-chip" type="button" aria-pressed="false" data-idea="settings">Settings</button>
-        <button class="cam idea-chip" type="button" aria-pressed="false" data-idea="gear">Gear</button>
-        <button class="cam idea-chip" type="button" aria-pressed="false" data-idea="found">If found</button>
-      </div>
-
-      <div class="idea-stage">
-        <div class="screen idea-screen">
-          <svg class="idea-card" data-idea="poses" viewBox="0 0 1920 1280" role="img" aria-label="Pose reference card on a camera screen">
-  <rect width="1920" height="1280" fill="#ffffff"/>
-  <rect x="1790" width="130" height="1280" fill="#a40000"/>
-  
-  <text x="120" y="250" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">The first look</text>
-  <rect x="120" y="310" width="1540" height="3" fill="#d8d8dc"/>
-  
-  <text x="120" y="470" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="36" font-weight="700" letter-spacing="4" fill="#a40000">ENERGY</text><text x="120" y="536" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="54" fill="#1d1d1f">Tender, unhurried</text><text x="120" y="680" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="36" font-weight="700" letter-spacing="4" fill="#a40000">CAMERA</text><text x="120" y="746" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="54" fill="#1d1d1f">Eye level &#183; burst</text><text x="120" y="890" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="36" font-weight="700" letter-spacing="4" fill="#a40000">HACK</text><text x="120" y="956" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="54" fill="#1d1d1f">Let him turn first</text>
-  <rect x="900" y="400" width="760" height="530" rx="24" fill="#f2f2f4" stroke="#d8d8dc" stroke-width="4"/>
-  <circle cx="1210" cy="600" r="70" fill="#d5d5da"/>
-  <path d="M1090 830c0-90 54-150 120-150s120 60 120 150z" fill="#d5d5da"/>
-  <circle cx="1400" cy="620" r="58" fill="#c9c9cf"/>
-  <path d="M1300 830c0-78 45-128 100-128s100 50 100 128z" fill="#c9c9cf"/>
-  <text x="1280" y="890" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="32" fill="#6e6e73" text-anchor="middle">your reference photo</text>
-  <rect x="120" y="990" width="1540" height="150" rx="16" fill="#faf5f5" stroke="#e6cfcf" stroke-width="3"/>
-  <text x="160" y="1050" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="32" font-weight="700" letter-spacing="4" fill="#a40000">SAY TO THE COUPLE</text>
-  <text x="160" y="1110" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="46" fill="#1d1d1f">&#8220;Foreheads together, breathe out, don&#8217;t rush it.&#8221;</text>
-  <text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">CAMERA CARDS</text>
-</svg>
-          <svg class="idea-card" data-idea="shotlist" viewBox="0 0 1920 1280" role="img" aria-label="Shot list card on a camera screen" hidden>
-  <rect width="1920" height="1280" fill="#ffffff"/>
-  <rect x="1790" width="130" height="1280" fill="#a40000"/>
-  <text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">MORNING</text>
-  <text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">Shot list</text>
-  <rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/>
-  <rect x="126" y="394" width="58" height="58" rx="12" fill="#a40000"/><path d="M142 424l13 13 21 -24" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><text x="230" y="440" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#6e6e73" text-decoration="line-through">Dress, rings &amp; invite</text><rect x="126" y="512" width="58" height="58" rx="12" fill="#a40000"/><path d="M142 542l13 13 21 -24" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><text x="230" y="558" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#6e6e73" text-decoration="line-through">Bride getting ready</text><rect x="126" y="630" width="58" height="58" rx="12" fill="#a40000"/><path d="M142 660l13 13 21 -24" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><text x="230" y="676" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#6e6e73" text-decoration="line-through">Mum&#8217;s reaction</text><rect x="126" y="748" width="58" height="58" rx="12" fill="none" stroke="#d8d8dc" stroke-width="5"/><text x="230" y="794" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#1d1d1f">First look</text><rect x="126" y="866" width="58" height="58" rx="12" fill="none" stroke="#d8d8dc" stroke-width="5"/><text x="230" y="912" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#1d1d1f">Confetti exit</text><rect x="126" y="984" width="58" height="58" rx="12" fill="none" stroke="#d8d8dc" stroke-width="5"/><text x="230" y="1030" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#1d1d1f">Sunset couple portraits</text><text x="1660" y="300" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="46" font-weight="700" fill="#a40000" text-anchor="end">3 / 6</text>
-  <text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">CAMERA CARDS</text>
-</svg>
-          <svg class="idea-card" data-idea="groups" viewBox="0 0 1920 1280" role="img" aria-label="Family and group combinations card on a camera screen" hidden>
-  <rect width="1920" height="1280" fill="#ffffff"/>
-  <rect x="1790" width="130" height="1280" fill="#a40000"/>
-  <text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">FORMALS</text>
-  <text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">Group shots</text>
-  <rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/>
-  <text x="126" y="430" font-family="'Instrument Serif',Georgia,serif" font-size="72" fill="#a40000">1</text><text x="230" y="430" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Bride + her parents</text><text x="126" y="548" font-family="'Instrument Serif',Georgia,serif" font-size="72" fill="#a40000">2</text><text x="230" y="548" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Groom + his parents</text><text x="126" y="666" font-family="'Instrument Serif',Georgia,serif" font-size="72" fill="#a40000">3</text><text x="230" y="666" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Both families together</text><text x="126" y="784" font-family="'Instrument Serif',Georgia,serif" font-size="72" fill="#a40000">4</text><text x="230" y="784" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Bridesmaids</text><text x="126" y="902" font-family="'Instrument Serif',Georgia,serif" font-size="72" fill="#a40000">5</text><text x="230" y="902" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Groomsmen</text><text x="126" y="1020" font-family="'Instrument Serif',Georgia,serif" font-size="72" fill="#a40000">6</text><text x="230" y="1020" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Everyone</text><text x="1660" y="430" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="42" fill="#6e6e73" text-anchor="end">call them out by name</text>
-  <text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">CAMERA CARDS</text>
-</svg>
-          <svg class="idea-card" data-idea="timeline" viewBox="0 0 1920 1280" role="img" aria-label="Wedding day timeline card on a camera screen" hidden>
-  <rect width="1920" height="1280" fill="#ffffff"/>
-  <rect x="1790" width="130" height="1280" fill="#a40000"/>
-  <text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">SATURDAY</text>
-  <text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">Timeline</text>
-  <rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/>
-  <text x="126" y="460" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" font-weight="700" fill="#a40000">14:00</text><rect x="400" y="438" width="14" height="14" rx="7" fill="#d8d8dc"/><text x="470" y="460" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Getting ready</text><text x="126" y="592" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" font-weight="700" fill="#a40000">15:30</text><rect x="400" y="570" width="14" height="14" rx="7" fill="#d8d8dc"/><text x="470" y="592" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">First look</text><text x="126" y="724" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" font-weight="700" fill="#a40000">16:30</text><rect x="400" y="702" width="14" height="14" rx="7" fill="#d8d8dc"/><text x="470" y="724" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Ceremony</text><text x="126" y="856" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" font-weight="700" fill="#a40000">18:00</text><rect x="400" y="834" width="14" height="14" rx="7" fill="#d8d8dc"/><text x="470" y="856" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Golden hour</text><text x="126" y="988" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" font-weight="700" fill="#a40000">20:00</text><rect x="400" y="966" width="14" height="14" rx="7" fill="#d8d8dc"/><text x="470" y="988" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">First dance</text>
-  <text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">CAMERA CARDS</text>
-</svg>
-          <svg class="idea-card" data-idea="settings" viewBox="0 0 1920 1280" role="img" aria-label="Camera settings cheat sheet on a camera screen" hidden>
-  <rect width="1920" height="1280" fill="#ffffff"/>
-  <rect x="1790" width="130" height="1280" fill="#a40000"/>
-  <text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">SETTINGS</text>
-  <text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">Tricky light</text>
-  <rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/>
-  <text x="126" y="470" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="52" font-weight="600" fill="#1d1d1f">Church, dim</text><text x="126" y="546" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#a40000">f/1.8 &#183; 1/125 &#183; ISO 3200</text><rect x="126" y="592" width="1534" height="3" fill="#d8d8dc"/><text x="126" y="700" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="52" font-weight="600" fill="#1d1d1f">Golden hour</text><text x="126" y="776" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#a40000">f/2.0 &#183; 1/1000 &#183; ISO 100</text><rect x="126" y="822" width="1534" height="3" fill="#d8d8dc"/><text x="126" y="930" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="52" font-weight="600" fill="#1d1d1f">Reception + flash</text><text x="126" y="1006" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#a40000">f/4.0 &#183; 1/60 &#183; ISO 1600</text><rect x="126" y="1052" width="1534" height="3" fill="#d8d8dc"/>
-  <text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">CAMERA CARDS</text>
-</svg>
-          <svg class="idea-card" data-idea="gear" viewBox="0 0 1920 1280" role="img" aria-label="Gear checklist card on a camera screen" hidden>
-  <rect width="1920" height="1280" fill="#ffffff"/>
-  <rect x="1790" width="130" height="1280" fill="#a40000"/>
-  <text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">BEFORE YOU LEAVE</text>
-  <text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">Gear check</text>
-  <rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/>
-  <text x="126" y="440" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="36" font-weight="700" letter-spacing="4" fill="#a40000">CAMERA</text><rect x="126" y="516" width="58" height="58" rx="12" fill="#a40000"/><path d="M142 546l13 13 21 -24" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><text x="222" y="560" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="54" fill="#6e6e73">Two bodies</text><rect x="126" y="634" width="58" height="58" rx="12" fill="#a40000"/><path d="M142 664l13 13 21 -24" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><text x="222" y="678" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="54" fill="#6e6e73">35mm + 85mm</text><rect x="126" y="752" width="58" height="58" rx="12" fill="#a40000"/><path d="M142 782l13 13 21 -24" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><text x="222" y="796" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="54" fill="#6e6e73">70-200mm</text><rect x="126" y="870" width="58" height="58" rx="12" fill="#a40000"/><path d="M142 900l13 13 21 -24" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><text x="222" y="914" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="54" fill="#6e6e73">Macro for rings</text><rect x="126" y="988" width="58" height="58" rx="12" fill="none" stroke="#d8d8dc" stroke-width="5"/><text x="222" y="1032" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="54" fill="#1d1d1f">Tripod</text><text x="980" y="440" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="36" font-weight="700" letter-spacing="4" fill="#a40000">SUPPORT</text><rect x="980" y="516" width="58" height="58" rx="12" fill="#a40000"/><path d="M996 546l13 13 21 -24" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><text x="1076" y="560" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="54" fill="#6e6e73">6 cards, formatted</text><rect x="980" y="634" width="58" height="58" rx="12" fill="#a40000"/><path d="M996 664l13 13 21 -24" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><text x="1076" y="678" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="54" fill="#6e6e73">Spare batteries &#215;4</text><rect x="980" y="752" width="58" height="58" rx="12" fill="#a40000"/><path d="M996 782l13 13 21 -24" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><text x="1076" y="796" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="54" fill="#6e6e73">Power bank</text><rect x="980" y="870" width="58" height="58" rx="12" fill="none" stroke="#d8d8dc" stroke-width="5"/><text x="1076" y="914" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="54" fill="#1d1d1f">Flash + trigger</text><rect x="980" y="988" width="58" height="58" rx="12" fill="none" stroke="#d8d8dc" stroke-width="5"/><text x="1076" y="1032" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="54" fill="#1d1d1f">Cleaning cloth</text><text x="1660" y="300" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="46" font-weight="700" fill="#a40000" text-anchor="end">7 / 10</text>
-  <text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">CAMERA CARDS</text>
-</svg>
-          <svg class="idea-card" data-idea="found" viewBox="0 0 1920 1280" role="img" aria-label="If found contact card on a camera screen" hidden>
-  <rect width="1920" height="1280" fill="#ffffff"/>
-  <rect x="1790" width="130" height="1280" fill="#a40000"/>
-  <text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">THIS CAMERA BELONGS TO</text>
-  <text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">If found</text>
-  <rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/>
-  
-  <text x="120" y="520" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="64" fill="#1d1d1f">Kim &amp; Ivan &#183; In Principio</text>
-  <text x="120" y="650" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="76" font-weight="700" fill="#a40000">+385 91 234 5678</text>
-  <text x="120" y="770" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="58" fill="#424245">hello@inprincipioweddings.com</text>
-  <rect x="120" y="860" width="1540" height="150" rx="16" fill="#faf5f5" stroke="#e6cfcf" stroke-width="3"/>
-  <text x="160" y="955" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="52" fill="#1d1d1f">Reward offered. No questions asked.</text>
-  <text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">CAMERA CARDS</text>
-</svg>
+    <!-- The pose pack -->
+    <section class="packs" id="packs">
+      <div class="packs-grid">
+        <div class="pack-stack" aria-hidden="true">
+          <img src="/assets/showcase/pack-01.jpg" alt="" width="760" height="1140" loading="lazy" />
+          <img src="/assets/showcase/pack-04.jpg" alt="" width="760" height="1140" loading="lazy" />
+          <img src="/assets/showcase/pack-03.jpg" alt="" width="760" height="1140" loading="lazy" />
         </div>
-        <p class="idea-caption" id="idea-caption" aria-live="polite"></p>
+        <div class="packs-copy">
+          <p class="eyebrow">The wedding pose pack</p>
+          <h2 class="section-h">50 poses we shot at real weddings.</h2>
+          <p class="packs-lede">Couples, bridal and group poses, ready for your camera. Each one is built to be read
+            in two seconds on a 3-inch screen.</p>
+          <ul class="parts">
+            <li><span class="n">1</span><div><strong>The reference photo</strong><span>See the shot you're going for, instantly.</span></div></li>
+            <li><span class="n">2</span><div><strong>What to say to the couple</strong><span>The exact words that get a real reaction, not a stiff smile.</span></div></li>
+            <li><span class="n">3</span><div><strong>Camera settings</strong><span>Angle, shutter and framing, so you nail it first time.</span></div></li>
+            <li><span class="n">4</span><div><strong>The posing hack and the energy</strong><span>The small trick that makes it work, and the mood to aim for.</span></div></li>
+          </ul>
+          <div class="packs-cta">
+            <a class="btn btn-primary" href="https://www.inprincipioweddings.com/store/in-camera-posing" target="_blank" rel="noopener">See the pose pack &rarr;</a>
+            <button class="link-btn" type="button" data-make="pose">or try one free</button>
+          </div>
+          <p class="packs-note">One-time purchase in our In Principio store, for Sony, Canon and Nikon.</p>
+        </div>
       </div>
+    </section>
+
+    <!-- Not just poses -->
+    <section class="more" id="more">
+      <p class="eyebrow center">Not just poses</p>
+      <h2 class="section-h center">Plan the whole day, right in your camera.</h2>
+      <p class="more-lede">Timeline, family groups by name, shot list, your settings and your contact card.
+        Long lists split across cards automatically, so every card reads at a glance.</p>
+      <div class="tiles">
+        <figure class="tile">
+          <div class="tile-screen"><svg viewBox="0 0 1920 1280" role="img" aria-label="Wedding day timeline card"><rect width="1920" height="1280" fill="#ffffff"/><rect x="1790" width="130" height="1280" fill="#a40000"/><text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">SATURDAY</text><text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">Timeline</text><rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/><text x="126" y="460" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" font-weight="700" fill="#a40000">14:00</text><rect x="400" y="438" width="14" height="14" rx="7" fill="#d8d8dc"/><text x="470" y="460" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Getting ready</text><text x="126" y="592" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" font-weight="700" fill="#a40000">15:30</text><rect x="400" y="570" width="14" height="14" rx="7" fill="#d8d8dc"/><text x="470" y="592" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">First look</text><text x="126" y="724" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" font-weight="700" fill="#a40000">16:30</text><rect x="400" y="702" width="14" height="14" rx="7" fill="#d8d8dc"/><text x="470" y="724" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Ceremony</text><text x="126" y="856" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" font-weight="700" fill="#a40000">18:00</text><rect x="400" y="834" width="14" height="14" rx="7" fill="#d8d8dc"/><text x="470" y="856" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Golden hour</text><text x="126" y="988" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" font-weight="700" fill="#a40000">20:00</text><rect x="400" y="966" width="14" height="14" rx="7" fill="#d8d8dc"/><text x="470" y="988" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">First dance</text><text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">CAMERA CARDS</text></svg></div>
+          <figcaption><strong>Timeline</strong><span>Always know what's next, to the minute.</span>
+            <button class="link-btn" type="button" data-make="timeline">Make a timeline card &rarr;</button></figcaption>
+        </figure>
+        <figure class="tile">
+          <div class="tile-screen"><svg viewBox="0 0 1920 1280" role="img" aria-label="Family groups card with names"><rect width="1920" height="1280" fill="#ffffff"/><rect x="1790" width="130" height="1280" fill="#a40000"/><text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">AFTER THE CEREMONY</text><text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">Family groups</text><rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/><text x="126" y="460" font-family="'Instrument Serif',Georgia,serif" font-size="72" fill="#a40000">1</text><text x="230" y="460" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Ana &amp; Luka + Grandma Mara</text><text x="1660" y="460" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="42" fill="#6e6e73" text-anchor="end">her grandma, seated</text><text x="126" y="578" font-family="'Instrument Serif',Georgia,serif" font-size="72" fill="#a40000">2</text><text x="230" y="578" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">+ Vesna &amp; Ivo</text><text x="1660" y="578" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="42" fill="#6e6e73" text-anchor="end">her parents</text><text x="126" y="696" font-family="'Instrument Serif',Georgia,serif" font-size="72" fill="#a40000">3</text><text x="230" y="696" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">+ Petra &amp; Josip</text><text x="1660" y="696" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="42" fill="#6e6e73" text-anchor="end">her siblings</text><text x="126" y="814" font-family="'Instrument Serif',Georgia,serif" font-size="72" fill="#a40000">4</text><text x="230" y="814" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Ana &amp; Luka + Sanja &amp; Goran</text><text x="1660" y="814" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="42" fill="#6e6e73" text-anchor="end">his parents</text><text x="126" y="932" font-family="'Instrument Serif',Georgia,serif" font-size="72" fill="#a40000">5</text><text x="230" y="932" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">+ Marko</text><text x="1660" y="932" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="42" fill="#6e6e73" text-anchor="end">his brother</text><text x="126" y="1050" font-family="'Instrument Serif',Georgia,serif" font-size="72" fill="#a40000">6</text><text x="230" y="1050" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="60" fill="#1d1d1f">Everyone, both families</text><text x="1660" y="1050" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="42" fill="#6e6e73" text-anchor="end">big group last</text><text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">CAMERA CARDS</text></svg></div>
+          <figcaption><strong>Family groups</strong><span>Call everyone by name, in the right order.</span>
+            <button class="link-btn" type="button" data-make="groups">Make a groups card &rarr;</button></figcaption>
+        </figure>
+        <figure class="tile">
+          <div class="tile-screen"><svg viewBox="0 0 1920 1280" role="img" aria-label="Shot list card"><rect width="1920" height="1280" fill="#ffffff"/><rect x="1790" width="130" height="1280" fill="#a40000"/><text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">MUST-HAVE SHOTS</text><text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">Shot list</text><rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/><rect x="126" y="394" width="58" height="58" rx="12" fill="none" stroke="#d8d8dc" stroke-width="5"/><text x="230" y="440" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#1d1d1f">Rings &amp; invitation</text><rect x="126" y="512" width="58" height="58" rx="12" fill="none" stroke="#d8d8dc" stroke-width="5"/><text x="230" y="558" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#1d1d1f">Dress details</text><rect x="126" y="630" width="58" height="58" rx="12" fill="none" stroke="#d8d8dc" stroke-width="5"/><text x="230" y="676" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#1d1d1f">Mum&#8217;s reaction</text><rect x="126" y="748" width="58" height="58" rx="12" fill="none" stroke="#d8d8dc" stroke-width="5"/><text x="230" y="794" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#1d1d1f">Walk down the aisle</text><rect x="126" y="866" width="58" height="58" rx="12" fill="none" stroke="#d8d8dc" stroke-width="5"/><text x="230" y="912" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#1d1d1f">Ring exchange, close</text><rect x="126" y="984" width="58" height="58" rx="12" fill="none" stroke="#d8d8dc" stroke-width="5"/><text x="230" y="1030" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#1d1d1f">Confetti exit</text><text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">CAMERA CARDS</text></svg></div>
+          <figcaption><strong>Shot list</strong><span>Every must-have frame, nothing missed.</span>
+            <button class="link-btn" type="button" data-make="shotlist">Make a shot list &rarr;</button></figcaption>
+        </figure>
+        <figure class="tile">
+          <div class="tile-screen"><svg viewBox="0 0 1920 1280" role="img" aria-label="Camera settings cheat sheet card"><rect width="1920" height="1280" fill="#ffffff"/><rect x="1790" width="130" height="1280" fill="#a40000"/><text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">SETTINGS</text><text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">Tricky light</text><rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/><text x="126" y="470" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="52" font-weight="600" fill="#1d1d1f">Church, dim</text><text x="126" y="546" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#a40000">f/1.8 &#183; 1/125 &#183; ISO 3200</text><rect x="126" y="592" width="1534" height="3" fill="#d8d8dc"/><text x="126" y="700" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="52" font-weight="600" fill="#1d1d1f">Golden hour</text><text x="126" y="776" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#a40000">f/2.0 &#183; 1/1000 &#183; ISO 100</text><rect x="126" y="822" width="1534" height="3" fill="#d8d8dc"/><text x="126" y="930" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="52" font-weight="600" fill="#1d1d1f">Reception + flash</text><text x="126" y="1006" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="62" fill="#a40000">f/4.0 &#183; 1/60 &#183; ISO 1600</text><rect x="126" y="1052" width="1534" height="3" fill="#d8d8dc"/><text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">CAMERA CARDS</text></svg></div>
+          <figcaption><strong>Settings</strong><span>Your recipes for tricky light, one press away.</span>
+            <button class="link-btn" type="button" data-make="settings">Make a settings card &rarr;</button></figcaption>
+        </figure>
+        <figure class="tile">
+          <div class="tile-screen"><svg viewBox="0 0 1920 1280" role="img" aria-label="If found contact card"><rect width="1920" height="1280" fill="#ffffff"/><rect x="1790" width="130" height="1280" fill="#a40000"/><text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">THIS CAMERA BELONGS TO</text><text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">If found</text><rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/><text x="120" y="520" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="64" fill="#1d1d1f">Kim &amp; Ivan &#183; In Principio</text><text x="120" y="650" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="76" font-weight="700" fill="#a40000">+385 91 234 5678</text><text x="120" y="770" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="58" fill="#424245">hello@inprincipioweddings.com</text><rect x="120" y="860" width="1540" height="150" rx="16" fill="#faf5f5" stroke="#e6cfcf" stroke-width="3"/><text x="160" y="955" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="52" fill="#1d1d1f">Reward offered. No questions asked.</text><text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">CAMERA CARDS</text></svg></div>
+          <figcaption><strong>If found</strong><span>Your contact details, in case the camera goes missing.</span>
+            <button class="link-btn" type="button" data-make="found">Make an if-found card &rarr;</button></figcaption>
+        </figure>
+        <figure class="tile">
+          <div class="tile-screen"><svg viewBox="0 0 1920 1280" role="img" aria-label="Your own design, converted for the camera"><rect width="1920" height="1280" fill="#ffffff"/><rect x="1790" width="130" height="1280" fill="#a40000"/><text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">YOUR DESIGN</text><text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">Made in Canva</text><rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/><rect x="120" y="430" width="1540" height="640" rx="28" fill="#faf5f5" stroke="#e6cfcf" stroke-width="5" stroke-dasharray="26 18"/><g fill="none" stroke="#a40000" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"><rect x="800" y="560" width="320" height="250" rx="30"/><circle cx="890" cy="645" r="30"/><path d="M820 780l90-80 60 50 70-70 80 70"/></g><text x="960" y="930" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="56" fill="#1d1d1f" text-anchor="middle">Canva · Photoshop · any image</text><text x="960" y="1010" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" fill="#6e6e73" text-anchor="middle">converted to your camera&#8217;s own format</text><text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">CAMERA CARDS</text></svg></div>
+          <figcaption><strong>Your own designs</strong><span>Made something in Canva? It works on your camera too.</span>
+            <button class="link-btn" type="button" data-make="upload">Upload a design &rarr;</button></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Why in the camera -->
+    <section class="why" id="why">
+      <p class="eyebrow center">Why in the camera</p>
+      <h2 class="section-h center">The plan is already in your hand.</h2>
+      <div class="why-table">
+        <table>
+          <thead>
+            <tr><th scope="col"><span class="sr-only">What matters</span></th><th scope="col">Phone</th><th scope="col">Printed list</th><th scope="col" class="us">Camera Cards</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">There when you need it</th><td><span class="no" aria-label="No">&#10005;</span> <span class="m">in a pocket</span></td><td><span class="no" aria-label="No">&#10005;</span> <span class="m">in a pocket</span></td><td class="us"><span class="yes" aria-label="Yes">&#10003;</span> already in your hand</td></tr>
+            <tr><th scope="row">Looks professional to guests</th><td><span class="no" aria-label="No">&#10005;</span> <span class="m">looks like scrolling</span></td><td><span class="m">so-so</span></td><td class="us"><span class="yes" aria-label="Yes">&#10003;</span> looks like reviewing</td></tr>
+            <tr><th scope="row">Readable in bright sun</th><td><span class="no" aria-label="No">&#10005;</span> <span class="m">glare</span></td><td><span class="yes" aria-label="Yes">&#10003;</span></td><td class="us"><span class="yes" aria-label="Yes">&#10003;</span> through the viewfinder</td></tr>
+            <tr><th scope="row">A new plan for every wedding</th><td><span class="yes" aria-label="Yes">&#10003;</span></td><td><span class="no" aria-label="No">&#10005;</span> <span class="m">reprint</span></td><td class="us"><span class="yes" aria-label="Yes">&#10003;</span> in two minutes</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="why-safe">&#10003; Ordinary JPEGs, so nothing can harm your camera or card. Tested on Sony&nbsp;A7&nbsp;III/IV/V,
+        Canon&nbsp;R6/R6&nbsp;II/R6&nbsp;III and Nikon&nbsp;Z6/Z8/Z9.</p>
     </section>
 
     <!-- Pricing -->
     <section class="pricing" id="pricing">
       <p class="eyebrow center">Pricing</p>
-      <h2 class="section-h center">Simple, fair, cancel anytime.</h2>
-      <p class="pricing-sub">These plans cover the converter: bring your own designs, we put them on your camera.
-        Prefer ready-made poses? The packs below are a one-time purchase, no plan needed.</p>
+      <h2 class="section-h center">Start free. Go Pro when it saves your day.</h2>
       <div class="price-toggle" id="price-toggle" hidden>
-        <button class="active" data-cycle="monthly">Monthly</button>
-        <button data-cycle="yearly">Yearly</button>
+        <button class="active" type="button" data-cycle="monthly">Monthly</button>
+        <button type="button" data-cycle="yearly">Yearly</button>
       </div>
       <div class="price-grid" id="price-grid"><!-- rendered by app.js --></div>
-    </section>
-
-    <!-- divider: convert your own (above)  ·OR·  buy ready-made packs (below) -->
-    <div class="or-split"><span>or</span></div>
-
-    <!-- Ready-made pose packs (links out to the In Principio store) -->
-    <section class="packs" id="packs">
-      <p class="eyebrow center">Wedding pose packs</p>
-      <h2 class="section-h center">Don't want to design your own? Get 50 poses ready to go.</h2>
-      <p class="packs-lede">Our pose packs are 50 ready-made wedding poses for couples, bridal and
-        group shots. They come camera-ready, you just drop them onto your card. Each one gives you a reference
-        photo, the camera settings, a posing hack and the exact words to say to your couple. We shot every
-        one of them at real weddings, and new poses are added regularly.</p>
-
-      <div class="packs-track">
-        <figure class="pack-card"><img src="/assets/showcase/pack-01.jpg" alt="In-Camera Posing card: Dance and Spin" width="760" height="1140" loading="lazy" /></figure>
-        <figure class="pack-card"><img src="/assets/showcase/pack-04.jpg" alt="In-Camera Posing card: Vogue" width="760" height="1140" loading="lazy" /></figure>
-        <figure class="pack-card"><img src="/assets/showcase/pack-02.jpg" alt="In-Camera Posing pose card" width="760" height="1140" loading="lazy" /></figure>
-        <figure class="pack-card"><img src="/assets/showcase/pack-03.jpg" alt="In-Camera Posing pose card" width="760" height="1140" loading="lazy" /></figure>
-      </div>
-
-      <ul class="pack-includes">
-        <li>Reference photo</li>
-        <li>What to say to the couple</li>
-        <li>Camera settings</li>
-        <li>A posing hack</li>
-        <li>The energy to aim for</li>
-      </ul>
-
-      <div class="packs-cta">
-        <a class="btn btn-primary" href="https://www.inprincipioweddings.com/store/in-camera-posing" target="_blank" rel="noopener">Browse the pose packs →</a>
-        <p class="packs-note">50 wedding poses for Sony, Canon and Nikon. One-time purchase in our In Principio store, no subscription needed.</p>
-      </div>
+      <p class="price-extra" id="price-extra" hidden></p>
+      <p class="guarantee"><strong>14-day money-back guarantee.</strong> If the cards don't show up on your camera,
+        <a href="https://www.inprincipioweddings.com/consultation" target="_blank" rel="noopener">tell us</a> and you get a full refund.</p>
     </section>
 
     <!-- FAQ -->
@@ -370,13 +347,25 @@
       <p class="eyebrow center">FAQ</p>
       <h2 class="section-h center">Good to know.</h2>
       <div class="faq-list">
-        <details class="faq-item"><summary>Will it work on my camera?</summary><p>It should work on virtually any recent Sony, Canon or Nikon body. Pick your brand in the tool above. We've tested it on the Sony A7 III/IV/V, Canon R6/R6 II/R6 III and Nikon Z6/Z8/Z9, and it works across most current Alpha, EOS R and Nikon Z cameras. Fujifilm and Panasonic support is coming soon. If something isn't working on your camera, <a href="https://www.inprincipioweddings.com/consultation" target="_blank" rel="noopener">let us know</a> and we'll help.</p></details>
+        <details class="faq-item"><summary>Will it work on my camera?</summary><p>It should work on virtually any recent Sony, Canon or Nikon body. We've tested it on the Sony A7 III/IV/V, Canon R6/R6 II/R6 III and Nikon Z6/Z8/Z9, and it works across most current Alpha, EOS R and Nikon Z cameras. Fujifilm and Panasonic support is coming soon. If something isn't working on your camera, <a href="https://www.inprincipioweddings.com/consultation" target="_blank" rel="noopener">let us know</a> and we'll help.</p></details>
+        <details class="faq-item"><summary>Do I need Canva or design skills?</summary><p>No. Pick a card type, fill in a few lines or choose one of our poses, and we make a camera-ready card for you. If you already design your own cards in Canva or Photoshop, upload those under "Your own design".</p></details>
+        <details class="faq-item"><summary>Is the first card really free?</summary><p>Yes, and it needs no account. Free cards carry a light "preview" watermark, so you can try them on your camera first. Sign in with your email for 3 more free cards and saved projects. Pro removes the watermark and every limit.</p></details>
+        <details class="faq-item"><summary>Why won't a normal image show on my camera?</summary><p>Cameras only display files saved in their own format: the right size, the right metadata and the right folder. We convert every card to match, so it appears in playback like a photo you shot.</p></details>
+        <details class="faq-item"><summary>Where do the cards show up on the day?</summary><p>In playback, next to your photos. They're dated 1 January 2024, so in date view they sit in their own group, away from today's shoot.</p></details>
         <details class="faq-item"><summary>Is it safe for my camera and SD card?</summary><p>Yes. You only copy ordinary JPEG files to the card, the same kind your camera already makes. Nothing is installed and your existing photos are untouched.</p></details>
-        <details class="faq-item"><summary>Why won't a normal image show on my camera?</summary><p>Cameras only display files saved in their own format: the right size, the right metadata and the right folder. We convert any image to match, so it appears in playback like a photo you shot.</p></details>
-        <details class="faq-item"><summary>Do I need an account?</summary><p>Yes, you sign in with a one-time email link, no password. The free plan includes 3 images with a small watermark; paid plans remove it.</p></details>
-        <details class="faq-item"><summary>What's the difference between the tool and the pose packs?</summary><p>The tool converts your own images (designs, shot lists, anything) and is billed as a plan. The pose packs are 50 ready-made wedding poses we shot and designed. They come camera-ready and are a one-time purchase in our store, no plan needed.</p></details>
+        <details class="faq-item"><summary>What's the difference between Pro and the pose pack?</summary><p>Pro is for the cards you make: unlimited timelines, family groups, shot lists, poses with your own photos and your own designs, with no watermark. The pose pack is 50 ready-made wedding poses we shot ourselves, bought once in our store.</p></details>
         <details class="faq-item"><summary>Anything special per camera?</summary><p>Sony needs one extra step (Recover Image Database), which is in the included instructions. Canon and Nikon are essentially plug and play.</p></details>
+        <details class="faq-item"><summary>Can I cancel or get a refund?</summary><p>Cancel Pro anytime under Billing once you're signed in. And if the cards don't show up on your camera within 14 days of buying, <a href="https://www.inprincipioweddings.com/consultation" target="_blank" rel="noopener">tell us</a> and we refund you in full.</p></details>
         <details class="faq-item"><summary>Who made this?</summary><p>We're Kim &amp; Ivan, the wedding photographers behind <a href="https://inprincipioweddings.com" target="_blank" rel="noopener">In Principio</a>. Camera Cards is what we actually run on our own cameras every weekend. We built it for our shoots first, then opened it up to other photographers.</p></details>
+      </div>
+    </section>
+
+    <!-- Closing call to action (signed-out visitors) -->
+    <section class="final" id="final">
+      <div class="final-card">
+        <h2>Never go blank on a shoot again.</h2>
+        <p>Make your first card free. It takes about a minute.</p>
+        <button class="btn final-btn" type="button" data-make="pose">Make my free card &rarr;</button>
       </div>
     </section>
   </main>
@@ -404,6 +393,7 @@
   <!-- supabase-js v2.107.0, self-hosted (no CDN single-point-of-failure) -->
   <script src="/assets/vendor/supabase.js"></script>
   <script src="/assets/auth.js"></script>
+  <script src="/assets/builder.js"></script>
   <script src="/assets/app.js"></script>
 </body>
 </html>
