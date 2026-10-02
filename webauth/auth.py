@@ -336,7 +336,12 @@ def get_batch(uid: str, batch_id: int) -> dict | None:
 
 def account_state(profile: dict, email: str = "") -> dict:
     """Compact entitlement summary for the account bar."""
-    return {"plan": "pro" if (is_pro(profile) or is_comp(email)) else "free",
-            "credits": int(profile.get("credits") or 0),
-            "free_left": max(0, FREE_LIMIT - int(profile.get("free_used") or 0)),
-            "free_limit": FREE_LIMIT}
+    state = {"plan": "pro" if (is_pro(profile) or is_comp(email)) else "free",
+             "credits": int(profile.get("credits") or 0),
+             "free_left": max(0, FREE_LIMIT - int(profile.get("free_used") or 0)),
+             "free_limit": FREE_LIMIT}
+    # A cancelled subscription stays Pro until it ends: say until when.
+    ends = profile.get("cancel_at")
+    if state["plan"] == "pro" and not is_comp(email) and _future(ends):
+        state["pro_ends"] = ends
+    return state

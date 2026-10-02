@@ -1097,15 +1097,39 @@ async function renderPricing() {
 }
 
 /* ---------- auth / account ---------- */
+// The phone menu's copies of Billing / Sign out (CSS shows them on phones only).
+function setMenuAccount(signedIn, billing) {
+  const nb = $("nav-billing"), ns = $("nav-signout");
+  if (ns) { ns.hidden = !signedIn; ns.onclick = async () => { await PoseAuth.signOut(); }; }
+  if (nb) { nb.hidden = !(signedIn && billing); nb.onclick = startPortal; }
+}
+
+// "email · plan": the email shrinks first so the plan always shows.
+function setAcctInfo(who, plan) {
+  const info = $("acct-info");
+  info.textContent = "";
+  info.className = "acct-info split" + (plan ? " has-plan" : "");
+  const add = (cls, text) => {
+    const s = document.createElement("span");
+    s.className = cls;
+    s.textContent = text;
+    info.appendChild(s);
+  };
+  add("acct-email", who);
+  if (plan) { add("acct-sep", " · "); add("acct-plan", plan); }
+  info.title = plan ? who + " · " + plan : who;
+}
+
 async function renderAccount() {
   const el = $("account"), nudge = $("upgrade-nudge");
-  if (!window.__paywall) { el.hidden = true; if (nudge) nudge.hidden = true; return; }
+  if (!window.__paywall) { el.hidden = true; if (nudge) nudge.hidden = true; setMenuAccount(false); return; }
   el.hidden = false;
   const tok = PoseAuth.token();
   if (!tok) {
     el.innerHTML = '<button class="link-btn" type="button" id="signin-btn">Sign in</button>';
     $("signin-btn").onclick = openLogin;
     if (nudge) nudge.hidden = true;
+    setMenuAccount(false);
     return;
   }
   el.innerHTML = '<span class="acct-info" id="acct-info">…</span>' +
@@ -1113,6 +1137,7 @@ async function renderAccount() {
     '<button class="link-btn" type="button" id="signout-btn">Sign out</button>';
   $("signout-btn").onclick = async () => { await PoseAuth.signOut(); };
   $("manage-btn").onclick = startPortal;
+  setMenuAccount(true, false);
   try {
     const r = await fetch(ME, { headers: { Authorization: "Bearer " + tok } });
     const j = await r.json();
@@ -1122,15 +1147,28 @@ async function renderAccount() {
     // Subscribers have nothing left to buy: .is-pro hides pricing and the nudge.
     setPlanClasses(j.plan);
     renderUpgradeNudge(j);
-    if (j.plan === "pro") { badge = "Pro"; if (window.__stripe) $("manage-btn").hidden = false; }
+    if (j.plan === "pro") {
+      // Cancelled but paid up: still Pro, and say until when.
+      const ends = j.pro_ends ? shortDate(j.pro_ends) : "";
+      badge = ends ? "Pro · ends " + ends : "Pro";
+      if (window.__stripe) { $("manage-btn").hidden = false; setMenuAccount(true, true); }
+    }
     else if ((j.credits || 0) > 0) badge = j.credits + " credits";
     else badge = (j.free_left ?? 0) + " free left";
-    $("acct-info").textContent = who + " · " + badge;
-    $("acct-info").title = who + " · " + badge;
+    setAcctInfo(who, badge);
   } catch (_) {
-    $("acct-info").textContent = (PoseAuth.user() && PoseAuth.user().email) || "signed in";
+    setAcctInfo((PoseAuth.user() && PoseAuth.user().email) || "signed in", "");
   }
   updateCaption();
+}
+
+// "2 Nov" (with the year when it isn't this year), in the page's language.
+function shortDate(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return "";
+  const opts = { day: "numeric", month: "short" };
+  if (d.getFullYear() !== new Date().getFullYear()) opts.year = "numeric";
+  return d.toLocaleDateString("en-GB", opts);
 }
 
 /* ---------- upgrade nudge ---------- */
@@ -1476,7 +1514,7 @@ document.addEventListener("click", (e) => {
     nav.classList.toggle("open", open);
     btn.setAttribute("aria-expanded", String(open));
   });
-  links.addEventListener("click", (e) => { if (e.target.closest("a")) close(); });
+  links.addEventListener("click", (e) => { if (e.target.closest("a, button")) close(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
   document.addEventListener("click", (e) => { if (!nav.contains(e.target)) close(); });
 })();

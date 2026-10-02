@@ -34,7 +34,8 @@ from webauth import auth, billing  # noqa: E402
 
 _UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 DEFAULT_ROW = {"email": None, "free_used": 0, "credits": 0, "plan": "free",
-               "subscription_status": None, "current_period_end": None, "stripe_customer_id": None}
+               "subscription_status": None, "current_period_end": None, "stripe_customer_id": None,
+               "cancel_at": None}
 
 
 class FakeResponse:
@@ -57,6 +58,7 @@ class FakeSupabase:
         self.profiles = {}       # id -> row
         self.events = set()      # stripe_events ids
         self.outage = None       # (method, path): answer the next such call with 503
+        self.cancel_at_column = True   # False: supabase/cancel_at.sql not run yet
 
     def add_user(self, with_profile=True):
         uid = str(uuid.uuid4())
@@ -96,6 +98,9 @@ class FakeSupabase:
                 self.profiles[uid] = {"id": uid, **DEFAULT_ROW, **json}
                 return FakeResponse(201)
             if method == "PATCH":
+                if "cancel_at" in json and not self.cancel_at_column:
+                    return FakeResponse(400, {"code": "PGRST204",
+                                              "message": "Could not find the 'cancel_at' column"})
                 rows = self._rows(params)
                 for r in rows:
                     r.update(json)
@@ -266,6 +271,45 @@ def test_renewal_and_cancellation():
     deliver(event("customer.subscription.deleted", cancelled))
     p = fake.profiles[uid]
     assert p["plan"] == "free" and not auth.is_pro(p), p
+
+
+def test_cancelled_pro_says_until_when():
+    fake = setup()
+    uid = fake.add_user()
+    sub = subscription("sub_c", "cus_c", days=31)
+    deliver(checkout_done(uid, "subscription", customer="cus_c", sub_id="sub_c"))
+    assert auth.account_state(fake.profiles[uid]).get("pro_ends") is None
+    # Cancelled in the customer portal: paid up, so still Pro until the period ends.
+    deliver(event("customer.subscription.updated", dict(sub, cancel_at_period_end=True)))
+    p = fake.profiles[uid]
+    state = auth.account_state(p)
+    assert state["plan"] == "pro" and state["pro_ends"] == billing._period_end(sub), state
+    # Renewed again in the portal: the end date goes away.
+    deliver(event("customer.subscription.updated", dict(sub, cancel_at_period_end=False)))
+    assert fake.profiles[uid]["cancel_at"] is None
+    assert "pro_ends" not in auth.account_state(fake.profiles[uid])
+
+
+def test_cancel_at_from_newer_api_versions():
+    fake = setup()
+    uid = fake.add_user()
+    sub = subscription("sub_n", "cus_n", days=31)
+    deliver(checkout_done(uid, "subscription", customer="cus_n", sub_id="sub_n"))
+    ends = int(time.time()) + 10 * 86400
+    deliver(event("customer.subscription.updated", dict(sub, cancel_at=ends)))
+    assert auth.account_state(fake.profiles[uid])["pro_ends"] == billing._iso(ends)
+
+
+def test_payments_work_before_the_cancel_at_column_exists():
+    fake = setup()
+    fake.cancel_at_column = False
+    uid = fake.add_user()
+    sub = subscription("sub_o", "cus_o")
+    deliver(checkout_done(uid, "subscription", customer="cus_o", sub_id="sub_o"))
+    assert auth.is_pro(fake.profiles[uid]), fake.profiles[uid]
+    deliver(event("customer.subscription.updated", dict(sub, cancel_at_period_end=True)))
+    deliver(event("customer.subscription.deleted", dict(sub, status="canceled")))
+    assert fake.profiles[uid]["plan"] == "free", fake.profiles[uid]
 
 
 # --- events that are not ours -----------------------------------------------

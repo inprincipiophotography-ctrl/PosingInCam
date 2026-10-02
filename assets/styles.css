@@ -395,6 +395,12 @@ button{font-family:var(--sans)}
 /* ---------- account bar (in nav) ---------- */
 .account{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);min-width:0}
 .acct-info{color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+/* Email · plan: a long email gives way, the plan (Pro · ends 2 Nov) always shows. */
+.acct-info.split{display:inline-flex}
+.acct-email{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.acct-sep,.acct-plan{flex:none}
+.acct-sep{white-space:pre}
+.nav-acct{display:none}
 
 /* ---------- login modal ---------- */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;padding:20px;z-index:60}
@@ -530,7 +536,7 @@ button{font-family:var(--sans)}
   }
   .nav.open .nav-links{display:flex}
   .nav-links>a{padding:13px 2px;font-size:16px;border-bottom:1px solid var(--border-soft)}
-  .nav-links>a:last-child{border-bottom:none}
+  .nav-links>a:last-of-type{border-bottom:none}
 }
 @media(max-width:640px){
   .nav{gap:10px}
@@ -541,6 +547,12 @@ button{font-family:var(--sans)}
   .nav-cta{padding:8px 12px;font-size:13.5px}
   .acct-info{max-width:30vw}
   .account .link-btn{font-size:13px;padding:6px 2px}
+  /* Signed in on a phone: the bar shows just the plan; Billing and Sign out
+     move into the menu so the menu button never gets pushed off-screen. */
+  .acct-info.has-plan{max-width:44vw}
+  .acct-info.has-plan .acct-email,.acct-info.has-plan .acct-sep{display:none}
+  #manage-btn,#signout-btn{display:none}
+  .nav-acct:not([hidden]){display:block;width:100%;text-align:left;padding:13px 2px;background:none;border:none;border-top:1px solid var(--border-soft);font:500 16px var(--sans);color:var(--accent-2);cursor:pointer}
   .pitch h1{font-size:clamp(36px,10.5vw,44px)}
   .vid{width:min(300px,100%);border-radius:22px}
   .poses{gap:6px}

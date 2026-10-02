@@ -80,14 +80,24 @@ def _stripe():
 
 
 # --- Supabase writes (service role, bypasses RLS) ---------------------------
+# Columns added after launch (supabase/cancel_at.sql). Until one is installed
+# the write goes ahead without it, so a missing column never loses a payment.
+OPTIONAL_COLUMNS = ("cancel_at",)
+
+
 def _patch(match_field: str, match_val: str, patch: dict, require_row: bool = False) -> None:
-    r = requests.patch(
-        f"{auth.SUPABASE_URL}/rest/v1/profiles",
-        params={match_field: f"eq.{match_val}"},
-        headers=auth._headers({"Prefer": "return=representation" if require_row else "return=minimal"}),
-        json={**patch, "updated_at": auth._now()},
-        timeout=_TIMEOUT,
-    )
+    def send(body):
+        return requests.patch(
+            f"{auth.SUPABASE_URL}/rest/v1/profiles",
+            params={match_field: f"eq.{match_val}"},
+            headers=auth._headers({"Prefer": "return=representation" if require_row else "return=minimal"}),
+            json={**body, "updated_at": auth._now()},
+            timeout=_TIMEOUT,
+        )
+
+    r = send(patch)
+    if r.status_code == 400 and any(c in patch for c in OPTIONAL_COLUMNS):
+        r = send({k: v for k, v in patch.items() if k not in OPTIONAL_COLUMNS})
     r.raise_for_status()  # raise on failure so the webhook 4xx's and Stripe retries
     # A PATCH that matches nothing still succeeds; for a buyer that would mean a
     # payment recorded nowhere, so fail loudly (and let Stripe retry) instead.
@@ -111,6 +121,17 @@ def _period_end(sub) -> str | None:
         except (KeyError, IndexError, TypeError):
             cpe = None
     return _iso(cpe)
+
+
+def _cancel_at(sub) -> str | None:
+    """When a cancelled subscription stops, or None while it renews. Newer API
+    versions set cancel_at for every scheduled cancellation; older ones only
+    flag cancel_at_period_end."""
+    if sub.get("cancel_at"):
+        return _iso(sub["cancel_at"])
+    if sub.get("cancel_at_period_end"):
+        return _period_end(sub)
+    return None
 
 
 # --- Checkout / portal ------------------------------------------------------
@@ -222,6 +243,7 @@ def _set_pro(uid: str, customer: str, sub) -> None:
         "plan": "pro",
         "subscription_status": sub.get("status"),
         "current_period_end": _period_end(sub),
+        "cancel_at": _cancel_at(sub),
         "stripe_customer_id": customer,
     }, require_row=True)
 
@@ -261,4 +283,5 @@ def _sync_subscription(sub) -> None:
         "plan": "pro" if active else "free",
         "subscription_status": sub.get("status"),
         "current_period_end": _period_end(sub),
+        "cancel_at": _cancel_at(sub),
     })
