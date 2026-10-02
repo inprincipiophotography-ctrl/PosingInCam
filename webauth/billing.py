@@ -80,15 +80,19 @@ def _stripe():
 
 
 # --- Supabase writes (service role, bypasses RLS) ---------------------------
-def _patch(match_field: str, match_val: str, patch: dict) -> None:
+def _patch(match_field: str, match_val: str, patch: dict, require_row: bool = False) -> None:
     r = requests.patch(
         f"{auth.SUPABASE_URL}/rest/v1/profiles",
         params={match_field: f"eq.{match_val}"},
-        headers=auth._headers({"Prefer": "return=minimal"}),
+        headers=auth._headers({"Prefer": "return=representation" if require_row else "return=minimal"}),
         json={**patch, "updated_at": auth._now()},
         timeout=_TIMEOUT,
     )
     r.raise_for_status()  # raise on failure so the webhook 4xx's and Stripe retries
+    # A PATCH that matches nothing still succeeds; for a buyer that would mean a
+    # payment recorded nowhere, so fail loudly (and let Stripe retry) instead.
+    if require_row and not r.json():
+        raise RuntimeError(f"no profile row matched {match_field}={match_val}")
 
 
 def _iso(unix_ts) -> str | None:
@@ -188,6 +192,12 @@ def _process_event(stripe, event: dict) -> None:
 
     if etype == "checkout.session.completed":
         uid = obj.get("client_reference_id")
+        email = obj.get("customer_email") or (obj.get("customer_details") or {}).get("email") or ""
+        # Only our checkouts carry a Camera Cards user id. The Stripe account is
+        # shared with the wedding site, whose checkouts arrive here too: skip
+        # those quietly (a failure would make Stripe retry them for days).
+        if not auth.ensure_profile(uid, email):
+            return
         customer = obj.get("customer")
         if obj.get("mode") == "subscription":
             _set_pro(uid, customer, _retrieve_sub(stripe, obj.get("subscription")))
@@ -213,17 +223,17 @@ def _set_pro(uid: str, customer: str, sub) -> None:
         "subscription_status": sub.get("status"),
         "current_period_end": _period_end(sub),
         "stripe_customer_id": customer,
-    })
+    }, require_row=True)
 
 
 def _add_credits(uid: str, customer: str, n: int) -> None:
     if not uid:
         return
     if customer:
-        _patch("id", uid, {"stripe_customer_id": customer})   # idempotent; do first
+        _patch("id", uid, {"stripe_customer_id": customer}, require_row=True)  # idempotent; do first
     if not auth._rpc("add_credits", {"p_uid": uid, "p_n": n}):  # atomic; fallback below
         current = int(auth.get_profile(uid).get("credits") or 0)
-        _patch("id", uid, {"credits": current + n})
+        _patch("id", uid, {"credits": current + n}, require_row=True)
 
 
 def _is_ours(sub) -> bool:

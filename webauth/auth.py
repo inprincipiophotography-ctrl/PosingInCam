@@ -14,6 +14,7 @@ Unit = one converted card (image):
 from __future__ import annotations
 
 import os
+import re
 import datetime as dt
 
 import requests
@@ -102,7 +103,32 @@ def verify_user(authorization: str | None) -> tuple[str, str]:
     return uid, claims.get("email", "")
 
 
-def get_profile(uid: str) -> dict:
+_UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.I)
+
+
+def ensure_profile(uid: str | None, email: str = "") -> bool:
+    """Make sure this user has a profiles row. True once it exists; False when
+    there is no such user (not a Camera Cards account). Other failures raise.
+
+    The signup trigger normally creates the row, but an account made before the
+    trigger existed has none, and every entitlement write is an UPDATE that
+    would silently match nothing: free usage and payments would go unrecorded.
+    """
+    if not uid or not _UUID.match(str(uid)):
+        return False
+    row = {"id": uid}
+    if email:
+        row["email"] = email
+    r = requests.post(f"{SUPABASE_URL}/rest/v1/profiles",
+                      headers=_headers({"Prefer": "resolution=ignore-duplicates,return=minimal"}),
+                      json=row, timeout=_TIMEOUT)
+    if r.status_code == 409:  # foreign key: no auth user with this id
+        return False
+    r.raise_for_status()
+    return True
+
+
+def get_profile(uid: str, email: str = "") -> dict:
     r = requests.get(f"{SUPABASE_URL}/rest/v1/profiles",
                      params={"id": f"eq.{uid}", "select": "*"},
                      headers=_headers(), timeout=_TIMEOUT)
@@ -110,7 +136,12 @@ def get_profile(uid: str) -> dict:
     rows = r.json()
     if rows:
         return rows[0]
-    # Trigger creates the row on signup; default to a fresh free profile if absent.
+    # The signup trigger normally creates the row; create it now if it's missing
+    # (best effort), so usage and purchases have a row to land on.
+    try:
+        ensure_profile(uid, email)
+    except Exception:
+        pass
     return {"id": uid, "free_used": 0, "credits": 0, "plan": "free",
             "subscription_status": None, "current_period_end": None}
 

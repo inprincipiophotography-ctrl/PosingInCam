@@ -938,9 +938,18 @@ function showUpsell() {
   }
 }
 
+// Picked a plan while signed out: remember it, so after the email link the
+// checkout opens by itself instead of leaving them to find the button again.
+const PENDING_BUY = "pic_pending_checkout";
+const PLAN_KINDS = ["monthly", "yearly", "pack20"];
+
 async function startCheckout(kind, btn) {
   const tok = PoseAuth.token();
-  if (!tok) { openLogin(); return; }
+  if (!tok) {
+    try { localStorage.setItem(PENDING_BUY, JSON.stringify({ kind, at: Date.now() })); } catch (_) {}
+    openLogin("checkout");
+    return;
+  }
   if (btn) btn.disabled = true;
   try {
     const r = await fetch("/api/checkout", {
@@ -955,6 +964,18 @@ async function startCheckout(kind, btn) {
     setStatus("err", "✗ " + e.message);
     if (btn) btn.disabled = false;
   }
+}
+
+// Back from the email link with a plan still pending: carry on to checkout.
+function resumePendingCheckout() {
+  if (!isSignedIn() || !window.__stripe) return;   // keep it until they're signed in
+  let p = null;
+  try { p = JSON.parse(localStorage.getItem(PENDING_BUY) || "null"); } catch (_) {}
+  try { localStorage.removeItem(PENDING_BUY); } catch (_) {}
+  if (!p || !PLAN_KINDS.includes(p.kind) || !(Date.now() - p.at < 3600e3)) return;
+  if (state.account && state.account.plan === "pro") return;   // nothing left to buy
+  setStatus("", "Taking you to checkout…");
+  startCheckout(p.kind);
 }
 
 async function startPortal() {
@@ -1382,8 +1403,18 @@ if (_projectSelect) {
 
 /* ---------- login modal ---------- */
 let _loginReturnFocus = null;
-function openLogin() {
+function openLogin(reason) {
   _loginReturnFocus = document.activeElement;
+  const buying = reason === "checkout";   // event handlers pass an Event here
+  // A plain sign-in drops a plan picked earlier: no surprise trip to checkout.
+  if (!buying) { try { localStorage.removeItem(PENDING_BUY); } catch (_) {} }
+  $("login-title").textContent = buying ? "Sign in to continue" : "Sign in";
+  const sub = $("login-sub");
+  if (sub) {
+    sub.textContent = buying
+      ? "We'll email you a magic link. Open it and you go straight on to checkout. No password."
+      : "We'll email you a magic link. No password.";
+  }
   $("login-modal").hidden = false;
   $("login-email").focus();
 }
@@ -1468,7 +1499,13 @@ selectType("pose", true);
     el.hidden = false;
     el.innerHTML = '<span class="acct-info">Sign-in temporarily unavailable. Refresh and try again.</span>';
   } else if (window.__paywall && window.PoseAuth) {
-    await PoseAuth.init(() => { renderAccount(); $("login-modal").hidden = true; syncSignedInLayout(); loadHistory(); });
+    await PoseAuth.init(async () => {
+      $("login-modal").hidden = true;
+      syncSignedInLayout();
+      loadHistory();
+      await renderAccount();
+      resumePendingCheckout();
+    });
   } else {
     $("account").hidden = true;
   }
@@ -1483,8 +1520,23 @@ function handleCheckoutReturn() {
   if (c === "success") {
     setStatus("ok", "✓ Payment received. Your account is updating. Thank you!");
     $("status").scrollIntoView({ behavior: "smooth", block: "center" });
+    // Stripe tells our server a moment later (webhook): keep checking for up to
+    // half a minute and say so once the plan or the credits show up.
     let n = 0;
-    const t = setInterval(() => { renderAccount(); if (++n >= 4) clearInterval(t); }, 2000);
+    const check = async () => {
+      await renderAccount();
+      const a = state.account;
+      if (a && (a.plan === "pro" || (a.credits || 0) > 0)) {
+        setStatus("ok", a.plan === "pro"
+          ? "✓ You're on Pro: every card is clean and unlimited. Thank you!"
+          : "✓ " + a.credits + " credits are on your account. Thank you!");
+      } else if (++n < 15) {
+        setTimeout(check, 2000);
+      } else {
+        setStatus("ok", "✓ Payment received. It can take a minute to show here: refresh the page shortly.");
+      }
+    };
+    setTimeout(check, 1500);
   }
   history.replaceState({}, "", location.pathname);
 }

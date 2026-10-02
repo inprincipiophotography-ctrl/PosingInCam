@@ -34,5 +34,5 @@ def me(path):
         uid, email = auth.verify_user(request.headers.get("Authorization"))
     except auth.AuthError as e:
         return jsonify(error=e.message), e.status
-    profile = auth.get_profile(uid)
+    profile = auth.get_profile(uid, email)
     return jsonify(paywall=True, email=email, **auth.account_state(profile, email))
