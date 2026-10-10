@@ -593,7 +593,8 @@ function drawUpload(canvas) {
 
 function drawPreview() {
   const n = pagesNow();
-  studio.page = Math.min(studio.page, Math.max(0, n - 1));
+  // For your own designs the card shown is the image picked in the filmstrip.
+  studio.page = Math.min(studio.type === "upload" ? state.selected : studio.page, Math.max(0, n - 1));
   let portrait;
   if (studio.type === "upload") {
     portrait = drawUpload(previewCanvas);
@@ -626,7 +627,13 @@ function drawPreview() {
 function flipPage(step) {
   const n = pagesNow();
   if (n <= 1) return;
-  studio.page = (studio.page + step + n) % n;
+  if (studio.type === "upload") {
+    // Your own designs: the pager walks through the uploaded images.
+    state.selected = (state.selected + step + n) % n;
+    renderFilmstrip();
+  } else {
+    studio.page = (studio.page + step + n) % n;
+  }
   schedulePreview();
 }
 $("pg-prev").addEventListener("click", () => flipPage(-1));
