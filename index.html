@@ -237,9 +237,14 @@
     <section class="history" id="history" hidden>
       <p class="eyebrow center">Your cards</p>
       <h2 class="section-h center">Your projects.</h2>
-      <p class="history-sub">Every project you've made, saved to your account. Download a whole project or a
-        single batch again without re-uploading anything.</p>
+      <p class="history-sub">Every wedding you've made cards for, saved to your account. Open one to see its
+        batches, add more cards, or download it again.</p>
+      <div class="proj-tools" id="proj-tools" hidden>
+        <input type="search" id="proj-search" placeholder="Find a project" aria-label="Find a project" autocomplete="off" />
+        <span class="proj-count" id="proj-count"></span>
+      </div>
       <div class="history-list" id="history-list"></div>
+      <button class="link-btn proj-more" id="proj-more" type="button" hidden></button>
     </section>
 
     <!-- The pose pack -->

@@ -1212,7 +1212,7 @@ function renderUpgradeNudge(j) {
 }
 
 /* ---------- projects + history ---------- */
-const MAX_HISTORY_THUMBS = 8;
+const MAX_HISTORY_THUMBS = 6;
 
 function renderProjectPicker() {
   const field = $("project-field"), sel = $("project-select");
@@ -1294,90 +1294,166 @@ async function loadHistory() {
   }
 }
 
+// Your projects: one compact row per project, newest activity first. A row's
+// batches open on demand; five rows show, the rest behind "Show all", and a
+// search box appears once there are more than five.
+const PROJECTS_SHOWN = 5;
+const hist = { groups: [], open: new Set(), all: false, query: "" };
+
+const plural = (n, one, many) => n + " " + (n === 1 ? one : (many || one + "s"));
+// "kreso" finds "Krešo": case and accents don't matter when searching.
+const fold = (s) => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
 function renderHistory(batches, projects) {
-  const section = $("history"), list = $("history-list");
+  const section = $("history");
   // The nav link only makes sense once there is a section to jump to.
   if ($("nav-projects")) $("nav-projects").hidden = !batches.length;
   if (!batches.length) { section.hidden = true; return; }
 
-  // Group batches under their project, newest project first. Batches from
-  // before projects existed (or whose project was deleted) go in their own group.
+  // Group batches under their project. They arrive newest first, so groups come
+  // out ordered by latest activity. Batches from before projects existed (or
+  // whose project was deleted) share an "Earlier cards" group.
   const names = {};
   (projects || []).forEach((p) => { names[p.id] = p.name; });
-  const groups = [];
   const byId = new Map();
+  hist.groups = [];
   batches.forEach((b) => {
     const key = b.project_id || "_none";
     let g = byId.get(key);
     if (!g) {
-      g = { id: b.project_id || null, name: names[b.project_id] || "Earlier cards", batches: [], cards: 0 };
+      g = { key, id: b.project_id || null, name: names[b.project_id] || "Earlier cards", batches: [], cards: 0 };
       byId.set(key, g);
-      groups.push(g);
+      hist.groups.push(g);
     }
     g.batches.push(b);
     g.cards += b.cards || 0;
   });
-
-  list.innerHTML = "";
-  groups.forEach((g) => list.appendChild(projectBlock(g)));
   section.hidden = false;
+  paintHistory();
 }
 
-function projectBlock(group) {
-  const block = document.createElement("div");
-  block.className = "project-block";
+function paintHistory() {
+  const list = $("history-list"), more = $("proj-more");
+  const total = hist.groups.length;
+  $("proj-tools").hidden = total <= PROJECTS_SHOWN;
+  $("proj-count").textContent = plural(total, "project");
+  const q = fold(hist.query.trim());
+  const matches = q ? hist.groups.filter((g) => fold(g.name).includes(q)) : hist.groups;
+  const shown = q || hist.all ? matches : matches.slice(0, PROJECTS_SHOWN);
+  list.innerHTML = "";
+  shown.forEach((g) => list.appendChild(projectRow(g)));
+  if (!shown.length) {
+    const none = document.createElement("p");
+    none.className = "proj-none";
+    none.textContent = "No project matches “" + hist.query.trim() + "”.";
+    list.appendChild(none);
+  }
+  more.hidden = !!q || total <= PROJECTS_SHOWN;
+  more.textContent = hist.all ? "Show fewer" : "Show all " + plural(total, "project");
+  more.setAttribute("aria-expanded", String(hist.all));
+}
+
+function projectRow(g) {
+  const row = document.createElement("div");
+  row.className = "proj";
+  const isOpen = hist.open.has(g.key);
+  const latest = g.batches[0];
 
   const head = document.createElement("div");
-  head.className = "project-block-head";
-  const title = document.createElement("h3");
-  title.className = "project-name";
-  title.textContent = group.name;
-  const meta = document.createElement("span");
-  meta.className = "project-meta";
-  meta.textContent = group.cards + (group.cards === 1 ? " card" : " cards") + " · " +
-    group.batches.length + (group.batches.length === 1 ? " batch" : " batches");
-  head.appendChild(title);
-  head.appendChild(meta);
-  block.appendChild(head);
+  head.className = "proj-head";
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "proj-toggle";
+  const panelId = "proj-b-" + String(g.key).replace(/[^\w-]/g, "");
+  toggle.setAttribute("aria-controls", panelId);
+  toggle.setAttribute("aria-expanded", String(isOpen));
 
-  if (group.id) {
-    const all = document.createElement("button");
-    all.type = "button";
-    all.className = "btn btn-primary project-dl";
-    all.textContent = "Download whole project";
-    all.addEventListener("click", () =>
-      downloadZip("/api/history?download_project=" + encodeURIComponent(group.id), all));
-    block.appendChild(all);
+  const thumb = document.createElement("span");
+  thumb.className = "proj-thumb";
+  const first = (latest.files || []).find((f) => f.url);
+  if (first) {
+    const img = document.createElement("img");
+    img.src = first.url;
+    img.alt = "";
+    img.loading = "lazy";
+    thumb.appendChild(img);
+  }
+  const text = document.createElement("span");
+  text.className = "proj-text";
+  const name = document.createElement("span");
+  name.className = "proj-name";
+  name.textContent = g.name;
+  const meta = document.createElement("span");
+  meta.className = "proj-meta";
+  meta.textContent = [plural(g.cards, "card"), plural(g.batches.length, "batch", "batches"),
+    latest.created_at ? shortDate(latest.created_at) : ""].filter(Boolean).join(" · ");
+  text.append(name, meta);
+  const chev = document.createElement("span");
+  chev.className = "proj-chev";
+  chev.setAttribute("aria-hidden", "true");
+  toggle.append(thumb, text, chev);
+  head.appendChild(toggle);
+
+  if (g.id) {
+    const actions = document.createElement("div");
+    actions.className = "proj-actions";
+    const add = document.createElement("button");
+    add.type = "button";
+    add.className = "btn btn-ghost btn-sm";
+    add.textContent = "Add cards";
+    add.title = "Make more cards in this project";
+    add.addEventListener("click", () => useProject(g.id));
+    const dl = document.createElement("button");
+    dl.type = "button";
+    dl.className = "btn btn-primary btn-sm";
+    dl.textContent = "Download";
+    dl.title = "All " + plural(g.cards, "card") + " in one ZIP";
+    dl.addEventListener("click", () =>
+      downloadZip("/api/history?download_project=" + encodeURIComponent(g.id), dl));
+    actions.append(add, dl);
+    head.appendChild(actions);
   }
 
-  group.batches.forEach((b) => block.appendChild(batchRow(b)));
-  return block;
+  // Batches (and their thumbnails) are only built when the row is opened.
+  const panel = document.createElement("div");
+  panel.className = "proj-batches";
+  panel.id = panelId;
+  panel.hidden = !isOpen;
+  const fill = () => { if (!panel.childElementCount) g.batches.forEach((b) => panel.appendChild(batchRow(b))); };
+  if (isOpen) fill();
+  row.classList.toggle("open", isOpen);
+  toggle.addEventListener("click", () => {
+    const open = panel.hidden;
+    if (open) fill();
+    panel.hidden = !open;
+    toggle.setAttribute("aria-expanded", String(open));
+    row.classList.toggle("open", open);
+    if (open) hist.open.add(g.key); else hist.open.delete(g.key);
+  });
+  row.append(head, panel);
+  return row;
 }
 
 function batchRow(b) {
   const item = document.createElement("div");
-  item.className = "history-item";
-
-  const head = document.createElement("div");
-  head.className = "history-head";
-  const when = b.created_at ? new Date(b.created_at) : null;
+  item.className = "batch";
   const files = b.files || [];
   const range = files.length
     ? files[0].name.replace(/\.JPG$/i, "") + (files.length > 1 ? "–" + files[files.length - 1].name.replace(/\.JPG$/i, "") : "")
     : "";
+  const info = document.createElement("div");
+  info.className = "batch-info";
   const title = document.createElement("span");
-  title.className = "history-title";
-  title.textContent = (VENDOR_LABEL[b.vendor] || b.vendor || "") + " · " +
-    b.cards + (b.cards === 1 ? " card" : " cards") + (range ? " · " + range : "") +
+  title.className = "batch-title";
+  title.textContent = [VENDOR_LABEL[b.vendor] || b.vendor || "", plural(b.cards || 0, "card")].filter(Boolean).join(" · ") +
     (b.watermarked ? " · watermarked" : "");
-  const dateEl = document.createElement("span");
-  dateEl.className = "history-date";
-  dateEl.textContent = when ? when.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "";
-  head.appendChild(title);
-  head.appendChild(dateEl);
+  const sub = document.createElement("span");
+  sub.className = "batch-sub";
+  sub.textContent = [range, b.created_at ? shortDate(b.created_at) : ""].filter(Boolean).join(" · ");
+  info.append(title, sub);
 
   const strip = document.createElement("div");
-  strip.className = "history-thumbs";
+  strip.className = "batch-thumbs";
   files.slice(0, MAX_HISTORY_THUMBS).forEach((f) => {
     if (!f.url) return;
     const img = document.createElement("img");
@@ -1388,26 +1464,43 @@ function batchRow(b) {
   });
   if (files.length > MAX_HISTORY_THUMBS) {
     const more = document.createElement("span");
-    more.className = "history-more";
+    more.className = "batch-more";
     more.textContent = "+" + (files.length - MAX_HISTORY_THUMBS);
     strip.appendChild(more);
   }
 
-  const actions = document.createElement("div");
-  actions.className = "history-actions";
   const btn = document.createElement("button");
   btn.type = "button";
-  btn.className = "btn btn-ghost history-dl";
-  btn.textContent = "Download this batch";
+  btn.className = "link-btn batch-dl";
+  btn.textContent = "Download";
+  btn.title = "This batch as a ZIP";
   btn.addEventListener("click", () =>
     downloadZip("/api/history?download=" + encodeURIComponent(b.id), btn));
-  actions.appendChild(btn);
-
-  item.appendChild(head);
-  item.appendChild(strip);
-  item.appendChild(actions);
+  item.append(info, strip, btn);
   return item;
 }
+
+// "Add cards": carry on with that project in the studio.
+function useProject(id) {
+  const sel = $("project-select"), field = $("project-field");
+  if (sel && Array.from(sel.options).some((o) => o.value === id)) {
+    sel.value = id;
+    state.activeProject = id;
+    syncProjectRow();
+  }
+  $("studio").scrollIntoView({ behavior: "smooth", block: "start" });
+  if (field) {
+    field.classList.remove("flash");
+    void field.offsetWidth;          // restart the highlight
+    field.classList.add("flash");
+  }
+}
+
+(function projectsControls() {
+  const search = $("proj-search"), more = $("proj-more");
+  if (search) search.addEventListener("input", () => { hist.query = search.value; paintHistory(); });
+  if (more) more.addEventListener("click", () => { hist.all = !hist.all; paintHistory(); });
+})();
 
 async function downloadZip(url, btn) {
   const tok = PoseAuth.token();
