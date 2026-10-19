@@ -28,6 +28,7 @@ PRICE_FOR = {
     "pack20": os.environ.get("STRIPE_PRICE_PACK20", ""),
 }
 PACK20_CREDITS = 20
+STATEMENT_SUFFIX = "SPECULA"
 _TIMEOUT = 10
 
 # Stripe redirect targets are locked to our own origins (anti open-redirect).
@@ -149,6 +150,11 @@ def create_checkout(uid: str, email: str, kind: str, origin: str) -> str:
         client_reference_id=uid,
         customer_email=email or None,
         customer_creation="always" if mode == "payment" else None,
+        # The Stripe account is shared with the wedding site, so its descriptor
+        # stays the studio's; card statements read "<prefix>* SPECULA". Checkout
+        # only takes a suffix in payment mode: subscriptions get theirs from the
+        # Pro product's own statement descriptor, set in the Stripe Dashboard.
+        payment_intent_data={"statement_descriptor_suffix": STATEMENT_SUFFIX} if mode == "payment" else None,
         allow_promotion_codes=True,
         success_url=f"{origin}/?checkout=success",
         cancel_url=f"{origin}/?checkout=cancel",
