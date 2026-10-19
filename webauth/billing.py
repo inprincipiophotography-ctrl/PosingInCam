@@ -216,7 +216,7 @@ def _process_event(stripe, event: dict) -> None:
     if etype == "checkout.session.completed":
         uid = obj.get("client_reference_id")
         email = obj.get("customer_email") or (obj.get("customer_details") or {}).get("email") or ""
-        # Only our checkouts carry a Camera Cards user id. The Stripe account is
+        # Only our checkouts carry a Specula user id. The Stripe account is
         # shared with the wedding site, whose checkouts arrive here too: skip
         # those quietly (a failure would make Stripe retry them for days).
         if not auth.ensure_profile(uid, email):
@@ -264,7 +264,7 @@ def _is_ours(sub) -> bool:
     """Does this subscription bill one of our prices?
 
     This Stripe account is shared with the wedding site, so subscriptions that
-    have nothing to do with Camera Cards can produce events here. We match
+    have nothing to do with Specula can produce events here. We match
     profiles by customer id, and one customer could hold both, so check the
     price before rewriting anyone's plan. Skipped when no price is configured,
     otherwise a missing env var would silently ignore every real event.

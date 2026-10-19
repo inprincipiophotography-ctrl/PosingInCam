@@ -16,7 +16,7 @@ Tracked so nothing gets lost between sessions. (Excluded from the public deploy.
 - [ ] Supabase: Site URL + Redirect URLs as above; paste the updated `supabase/email-template.html`
 - [ ] Deploy. `posing-in-cam.vercel.app` now redirects to `cards.notalucis.com`, except `/api/*` (Stripe does not follow redirects)
 - [ ] Stripe → Webhooks: edit the existing endpoint's URL to `https://cards.notalucis.com/api/webhook` (same `whsec_`, no env change)
-- [ ] Stripe → Settings → Public details: business name + statement descriptor `CAMERA CARDS`
+- [ ] Stripe → Settings → Public details: business name + statement descriptor `SPECULA`
 - [ ] Once settled: make the old-URL redirect in `vercel.json` permanent
 
 ## ⚠️ After everything works

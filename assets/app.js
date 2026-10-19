@@ -864,7 +864,7 @@ async function convert() {
     const blob = await resp.blob();
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "camera-cards.zip";
+    a.download = "specula-cards.zip";
     document.body.appendChild(a); a.click(); a.remove();
 
     const wm = resp.headers.get("X-Watermarked") === "1";
@@ -873,7 +873,7 @@ async function convert() {
       ? (first === last ? ` Your card is ${first}.` : ` Your cards are ${first} to ${last}.`)
       : "";
     const anon = resp.headers.get("X-Tier") === "anon";
-    setStatus("ok", "✓ Done! Your camera-cards.zip is downloading." + range +
+    setStatus("ok", "✓ Done! Your specula-cards.zip is downloading." + range +
       (wm ? "  (free, watermarked)" : ""));
     if (anon) showSignupNudge();
     if (!window.__paywall && last) {
@@ -1518,7 +1518,7 @@ async function downloadZip(url, btn) {
     const blob = await r.blob();
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "camera-cards.zip";
+    a.download = "specula-cards.zip";
     document.body.appendChild(a); a.click(); a.remove();
   } catch (e) {
     btn.textContent = "✗ " + e.message;

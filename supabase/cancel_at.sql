@@ -1,4 +1,4 @@
--- Camera Cards — remember when a cancelled Pro subscription ends, so the
+-- Specula — remember when a cancelled Pro subscription ends, so the
 -- account bar can say "Pro · ends 2 Nov" instead of just "Pro".
 -- Paste this whole file into the Supabase SQL Editor and run it once.
 -- Idempotent, so running it again is harmless.
