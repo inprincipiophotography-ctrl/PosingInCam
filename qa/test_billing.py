@@ -367,7 +367,7 @@ def test_checkout_session_parameters():
     stripe.checkout.Session.create = lambda **kw: seen.append(kw) or _Session()
     try:
         uid = str(uuid.uuid4())
-        origin = "https://posing-in-cam.vercel.app"
+        origin = "https://cards.notalucis.com"
         assert billing.create_checkout(uid, "kim@example.com", "pack20", origin) == _Session.url
         assert billing.create_checkout(uid, "kim@example.com", "monthly", origin) == _Session.url
         assert billing.create_checkout(uid, "kim@example.com", "yearly", origin) == _Session.url
@@ -384,6 +384,8 @@ def test_checkout_session_parameters():
         assert s["success_url"] == origin + "/?checkout=success", s
         assert s["cancel_url"] == origin + "/?checkout=cancel", s
     assert billing.safe_origin("https://evil.example") == origin
+    # The old Vercel URL stays allowed while it redirects to the new domain.
+    assert billing.safe_origin("https://posing-in-cam.vercel.app") == "https://posing-in-cam.vercel.app"
 
 
 if __name__ == "__main__":

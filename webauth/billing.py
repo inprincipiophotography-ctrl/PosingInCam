@@ -31,14 +31,16 @@ PACK20_CREDITS = 20
 _TIMEOUT = 10
 
 # Stripe redirect targets are locked to our own origins (anti open-redirect).
+CANONICAL_ORIGIN = "https://cards.notalucis.com"
 ALLOWED_ORIGINS = {
+    CANONICAL_ORIGIN,
     "https://posing-in-cam.vercel.app",
     "https://posing-in-cam-in-principios-projects.vercel.app",
 }
 
 
 def safe_origin(origin: str | None) -> str:
-    return origin if origin in ALLOWED_ORIGINS else "https://posing-in-cam.vercel.app"
+    return origin if origin in ALLOWED_ORIGINS else CANONICAL_ORIGIN
 
 
 def enabled() -> bool:

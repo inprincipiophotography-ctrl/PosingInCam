@@ -25,10 +25,16 @@ vercel.json           includeFiles: converter/** so the function can import it
    `pose-cards.zip` downloads. Then test on the camera (see in-app instructions; Sony
    needs **Recover Image Database**).
 
+## Domain
+Production lives at **https://cards.notalucis.com** (a subdomain of the NotaLucis
+domain, added to this Vercel project). `posing-in-cam.vercel.app` redirects there,
+except `/api/*`, so Stripe webhooks keep working on either URL. The NotaLucis app
+links here from its `#/tools/camera-cards` page.
+
 ## Notes / limits
 - **Request body ~4.5 MB** on Vercel. The page already downscales each image to
   ≤2400 px before upload, so a handful of cards fits. For big batches use the
-  CLI (`python -m converter.cli`) or the future Wedding-manager- integration.
+  CLI (`python -m converter.cli`).
 - **Python**: Vercel uses 3.12 by default — compatible (no `cgi` dependency).
 - **Canon / Nikon**: add real SOOC templates `converter/templates/canon.JPG` and
   `nikon.JPG`, then redeploy. Sony works out of the box (bootstrapped template).

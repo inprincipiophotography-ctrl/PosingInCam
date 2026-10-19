@@ -1063,7 +1063,7 @@ async function renderPricing() {
         per: " poses",
         note: "Ready-made, bought once",
         feats: ["Couples, bridal and group poses", "What to say to the couple",
-                "Sony, Canon &amp; Nikon", "From our In Principio store"],
+                "Sony, Canon &amp; Nikon", "From our wedding studio, In Principio"],
         cta: '<a class="btn btn-ghost" href="' + STORE_URL + '" target="_blank" rel="noopener">See the pose pack</a>',
       }) +
       card({

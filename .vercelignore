@@ -5,7 +5,6 @@
 scripts/
 docs/
 samples/
-web-next/
 supabase/
 .github/
 qa/
