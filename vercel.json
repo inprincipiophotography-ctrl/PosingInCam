@@ -27,7 +27,7 @@
       "source": "/((?!api/).*)",
       "has": [{ "type": "host", "value": "posing-in-cam.vercel.app" }],
       "destination": "https://cards.notalucis.com/$1",
-      "permanent": false
+      "permanent": true
     },
     { "source": "/webauth/:p*", "destination": "/", "permanent": false },
     { "source": "/converter/:p*", "destination": "/", "permanent": false }

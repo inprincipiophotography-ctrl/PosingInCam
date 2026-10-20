@@ -21,7 +21,7 @@ Tracked so nothing gets lost between sessions. (Excluded from the public deploy.
       suffix in code (`<prefix>* SPECULA`)
 - [ ] Stripe → Product catalog → Pro product → statement descriptor `IN PRINCIPIO SPECULA` (subscriptions
       can't take a suffix from Checkout; the product's descriptor wins over the account's)
-- [ ] Once settled: make the old-URL redirect in `vercel.json` permanent
+- [x] Old-URL redirect in `vercel.json` is permanent (308), still sparing `/api/*`
 
 ## ⚠️ After everything works
 - [ ] **ROTATE Supabase `secret` key + `JWT secret`** (Dashboard → Settings → API).
