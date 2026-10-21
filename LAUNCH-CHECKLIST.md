@@ -22,6 +22,8 @@ Tracked so nothing gets lost between sessions. (Excluded from the public deploy.
 - [ ] Stripe → Product catalog → Pro product → statement descriptor `NOTALUCIS SHOOT CARDS` (subscriptions
       can't take a suffix from Checkout; the product's descriptor wins over the account's)
 - [x] Old-URL redirect in `vercel.json` is permanent (308), still sparing `/api/*`
+- [ ] Vercel → `posing-in-cam` → Analytics → enable Web Analytics (no cookies; `assets/visits.js`
+      queues page views and funnel events until it is on; custom events show on the Pro plan)
 
 ## ⚠️ After everything works
 - [ ] **ROTATE Supabase `secret` key + `JWT secret`** (Dashboard → Settings → API).

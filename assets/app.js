@@ -1,6 +1,12 @@
 "use strict";
 
 const API = "/api/convert";
+
+// A funnel step for the visitor stats (assets/visits.js). Ad blockers may
+// keep that file away, so the app never depends on it.
+function track(name, data) {
+  if (window.trackEvent) window.trackEvent(name, data);
+}
 const ME = "/api/me";
 const MAX_EDGE = 2400;        // downscale uploads before sending (Vercel ~4.5MB body limit)
 const JPEG_Q = 0.9;
@@ -844,6 +850,7 @@ async function convert() {
 
     if (resp.status === 402) {
       let j = {}; try { j = await resp.json(); } catch (_) {}
+      track("Hit free limit", { type: studio.type });
       setStatus("err", "✗ " + (j.error || "Upgrade required."));
       showUpsell();
       renderAccount();
@@ -873,6 +880,7 @@ async function convert() {
       ? (first === last ? ` Your card is ${first}.` : ` Your cards are ${first} to ${last}.`)
       : "";
     const anon = resp.headers.get("X-Tier") === "anon";
+    track("Card made", { type: studio.type, camera: state.vendor, tier: resp.headers.get("X-Tier") || "unknown" });
     setStatus("ok", "✓ Done! Your shoot-cards.zip is downloading." + range +
       (wm ? "  (free, watermarked)" : ""));
     if (anon) showSignupNudge();
@@ -958,6 +966,7 @@ async function startCheckout(kind, btn) {
     return;
   }
   if (btn) btn.disabled = true;
+  track("Checkout started", { plan: kind });
   try {
     const r = await fetch("/api/checkout", {
       method: "POST",
@@ -1581,6 +1590,7 @@ $("login-form").addEventListener("submit", async (e) => {
   st.className = "status"; st.textContent = "Sending…";
   try {
     await PoseAuth.signIn(email);
+    track("Sign-in link sent");
     st.className = "status ok";
     st.textContent = "Check your email for the magic link.";
   } catch (err) {
@@ -1656,6 +1666,7 @@ function handleCheckoutReturn() {
   const c = new URLSearchParams(location.search).get("checkout");
   if (!c) return;
   if (c === "success") {
+    track("Checkout completed");
     setStatus("ok", "✓ Payment received. Your account is updating. Thank you!");
     $("status").scrollIntoView({ behavior: "smooth", block: "center" });
     // Stripe tells our server a moment later (webhook): keep checking for up to
