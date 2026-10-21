@@ -108,7 +108,7 @@ _UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{1
 
 def ensure_profile(uid: str | None, email: str = "") -> bool:
     """Make sure this user has a profiles row. True once it exists; False when
-    there is no such user (not a Specula account). Other failures raise.
+    there is no such user (not a Shoot Cards account). Other failures raise.
 
     The signup trigger normally creates the row, but an account made before the
     trigger existed has none, and every entitlement write is an UPDATE that

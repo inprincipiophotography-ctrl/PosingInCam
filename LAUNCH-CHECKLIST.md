@@ -18,8 +18,8 @@ Tracked so nothing gets lost between sessions. (Excluded from the public deploy.
 - [ ] Stripe → Webhooks: edit the existing endpoint's URL to `https://cards.notalucis.com/api/webhook` (same `whsec_`, no env change)
 - [ ] Stripe → Settings → Public details: the account is shared with the wedding site, so keep the
       studio's statement descriptor there (shortened descriptor ≤ 10 chars). Pack purchases add the
-      suffix in code (`<prefix>* SPECULA`)
-- [ ] Stripe → Product catalog → Pro product → statement descriptor `IN PRINCIPIO SPECULA` (subscriptions
+      suffix in code (`<prefix>* SHOOTCARDS`)
+- [ ] Stripe → Product catalog → Pro product → statement descriptor `NOTALUCIS SHOOT CARDS` (subscriptions
       can't take a suffix from Checkout; the product's descriptor wins over the account's)
 - [x] Old-URL redirect in `vercel.json` is permanent (308), still sparing `/api/*`
 

@@ -107,7 +107,7 @@ def _download(uid: str, batch_id: str):
     return Response(
         zip_bytes,
         mimetype="application/zip",
-        headers={"Content-Disposition": 'attachment; filename="specula-cards.zip"'},
+        headers={"Content-Disposition": 'attachment; filename="shoot-cards.zip"'},
     )
 
 
@@ -140,5 +140,5 @@ def _download_project(uid: str, project_id: str):
     return Response(
         zip_bytes,
         mimetype="application/zip",
-        headers={"Content-Disposition": 'attachment; filename="specula-cards.zip"'},
+        headers={"Content-Disposition": 'attachment; filename="shoot-cards.zip"'},
     )

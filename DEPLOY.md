@@ -29,7 +29,7 @@ vercel.json           includeFiles: converter/** so the function can import it
 Production lives at **https://cards.notalucis.com** (a subdomain of the NotaLucis
 domain, added to this Vercel project). `posing-in-cam.vercel.app` redirects there,
 except `/api/*`, so Stripe webhooks keep working on either URL. The NotaLucis app
-links here from its `#/tools/specula` page.
+links here from its `#/tools/shoot-cards` page (the product was called Specula until October 2026).
 
 ## Notes / limits
 - **Request body ~4.5 MB** on Vercel. The page already downscales each image to

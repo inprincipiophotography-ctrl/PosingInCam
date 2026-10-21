@@ -1,6 +1,6 @@
 "use strict";
 
-/* Card renderer for the studio: draws a Specula card on a <canvas>.
+/* Card renderer for the studio: draws a Shoot Cards card on a <canvas>.
    Landscape cards are drawn at 1920x1280 and portrait pose cards at 1280x1920,
    the exact frames the converter fills, so the server never resizes them.
    Layouts follow the example cards on the page. */
@@ -13,7 +13,7 @@ window.CardRenderer = (function () {
   };
   const SANS = "Inter, -apple-system, 'Segoe UI', Roboto, sans-serif";
   const SERIF = "'Instrument Serif', Georgia, serif";
-  const FOOTER = "SPECULA";
+  const FOOTER = "SHOOT CARDS";
 
   // Rows that fit on one card; a longer list continues on the next (1 / 2).
   const PER_PAGE = { timeline: 6, groups: 6, shotlist: 6, settings: 3 };

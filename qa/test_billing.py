@@ -376,9 +376,9 @@ def test_checkout_session_parameters():
     pack, monthly, yearly = seen
     assert pack["mode"] == "payment" and pack["customer_creation"] == "always", pack
     assert pack["line_items"] == [{"price": "price_pack20", "quantity": 1}], pack
-    # Card statements read "<prefix>* SPECULA"; Stripe rejects payment_intent_data
+    # Card statements read "<prefix>* SHOOTCARDS"; Stripe rejects payment_intent_data
     # outside payment mode, so subscriptions must not send it.
-    assert pack["payment_intent_data"] == {"statement_descriptor_suffix": "SPECULA"}, pack
+    assert pack["payment_intent_data"] == {"statement_descriptor_suffix": "SHOOTCARDS"}, pack
     assert monthly["payment_intent_data"] is None and yearly["payment_intent_data"] is None, monthly
     assert monthly["mode"] == "subscription" and monthly["customer_creation"] is None, monthly
     assert monthly["line_items"] == [{"price": "price_monthly", "quantity": 1}], monthly

@@ -206,7 +206,7 @@ def convert(path):
         zip_bytes,
         mimetype="application/zip",
         headers={
-            "Content-Disposition": 'attachment; filename="specula-cards.zip"',
+            "Content-Disposition": 'attachment; filename="shoot-cards.zip"',
             "X-Tier": tier,
             "X-Watermarked": "1" if watermark else "0",
             "X-First-File": cards[0][0],
