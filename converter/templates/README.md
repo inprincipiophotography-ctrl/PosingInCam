@@ -6,7 +6,7 @@ brand**, in its own folder:
 ```
 templates/sony/    e.g.  DSC00099.JPG
 templates/canon/   e.g.  0A0A3799.JPG
-templates/nikon/   e.g.  DSC_1234.JPG
+templates/nikon/   e.g.  NIKON-SOOC.JPG
 ```
 
 From each template it reads:
@@ -39,8 +39,8 @@ Use the **oldest** body you own (strictest validator → works on newer ones too
 | Folder | Camera | Status |
 |--------|--------|--------|
 | `sony/`  | Sony Alpha — ideally **A7 III** | bootstrapped (`DSC00099.JPG`); replace with a real A7 III SOOC for guaranteed A7 III support |
-| `canon/` | Canon EOS R — ideally **R6** | **missing — upload needed** |
-| `nikon/` | Nikon Z — ideally **Z6 / Z6 III** | **missing — upload needed** |
+| `canon/` | Canon EOS R — ideally **R6** | `0A0A3799.JPG`, an R6 Mark II SOOC (Model `Canon EOS R6m2`); hardware-verified on R6 Mark II + R6 Mark III |
+| `nikon/` | Nikon Z — ideally **Z6 / Z6 III** | `NIKON-SOOC.JPG`, a Z6 III SOOC (Model `NIKON Z6_3`); hardware-verified on Z8 + Z9. Not a DCF filename, so cards use the default `DSC_` prefix |
 
 Files must be **unedited** (not re-exported from Lightroom/Photoshop/Canva — those
 re-encode and lose the camera fingerprint).
