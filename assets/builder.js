@@ -15,6 +15,18 @@ window.CardRenderer = (function () {
   const SERIF = "'Instrument Serif', Georgia, serif";
   const FOOTER = "SHOOT CARDS";
 
+  // Pose cards from your own photo copy the pose pack's look: a framed photo
+  // running into a maroon strip, the notes down the left, the words to say
+  // in a box laid over the photo, all in capitals.
+  const POSE = {
+    strip: "#7d0303", star: "#e3403d", ink: "#000000", say: "#716e63",
+    stripX: 986,
+    frame: { x: 391, y: 195, w: 864, h: 1362, line: 5 },
+    box: { x: 30, y: 1394, w: 724, h: 476 },
+  };
+  const POSE_SERIF = "'Noto Serif', Georgia, serif";
+  const NOTE_LINE = 49;
+
   // Rows that fit on one card; a longer list continues on the next (1 / 2).
   const PER_PAGE = { timeline: 6, groups: 6, shotlist: 6, settings: 3 };
   const ROW_KEYS = { timeline: ["time", "text"], groups: ["names", "rel"], shotlist: ["text"], settings: ["label", "value"] };
@@ -305,8 +317,17 @@ window.CardRenderer = (function () {
     ctx.font = font(400, 38, SANS);
     ctx.fillStyle = COL.muted;
     ctx.textAlign = "center";
-    ctx.fillText("your reference photo", cx, y + h - 70);
+    ctx.fillText("your reference photo", cx, cy + 300);
     ctx.textAlign = "left";
+  }
+
+  /** A line whose first character (the hack's "*", the quote's opening mark)
+      is picked out in red, the rest in the line's own colour. */
+  function markedLine(ctx, line, x, y, color) {
+    ctx.fillStyle = POSE.star;
+    ctx.fillText(line[0], x, y);
+    ctx.fillStyle = color;
+    ctx.fillText(line.slice(1), x + ctx.measureText(line[0]).width, y);
   }
 
   function drawPose(ctx, d) {
@@ -317,51 +338,92 @@ window.CardRenderer = (function () {
       if (loaded(d.sampleImg)) drawCover(ctx, d.sampleImg, 0, 0, PORT.w, PORT.h);
       return;
     }
-    ctx.fillStyle = COL.accent;
-    ctx.fillRect(1190, 0, 90, PORT.h);
+    const upper = (s) => clean(s).toUpperCase();
+    ctx.fillStyle = POSE.strip;
+    ctx.fillRect(POSE.stripX, 0, PORT.w - POSE.stripX, PORT.h);
 
-    ctx.fillStyle = COL.ink;
-    ctx.fillText(fitText(ctx, clean(d.title) || "Your pose", 1030, 400, 110, 64, SERIF), 80, 196);
-    ctx.fillStyle = COL.rule;
-    ctx.fillRect(80, 236, 1030, 3);
+    const title = upper(d.title) || "YOUR POSE", titleW = POSE.stripX - 60;
+    ctx.fillStyle = POSE.ink;
+    if (fitText(ctx, title, titleW, 600, 94, 64, POSE_SERIF) === title) ctx.fillText(title, 30, 142);
+    else {
+      // Too long for one line: two lines rather than shrinking out of sight.
+      let size = 64;
+      while (size > 48 && wrap(ctx, title, titleW, 99).length > 2) {
+        size -= 2;
+        ctx.font = font(600, size, POSE_SERIF);
+      }
+      const lines = wrap(ctx, title, titleW, 2), lh = Math.round(size * 1.08);
+      lines.forEach((line, j) => ctx.fillText(line, 30, 154 - (lines.length - 1 - j) * lh));
+    }
 
-    const px = 80, py = 280, pw = 1030, ph = 940;
-    ctx.save();
-    roundRect(ctx, px, py, pw, ph, 18);
-    ctx.clip();
+    // The photo in a thin black frame, its right edge over the strip.
+    const f = POSE.frame;
+    ctx.fillRect(f.x, f.y, f.w, f.h);
+    const px = f.x + f.line, py = f.y + f.line, pw = f.w - 2 * f.line, ph = f.h - 2 * f.line;
     if (loaded(d.photo)) drawCover(ctx, d.photo, px, py, pw, ph);
     else drawPhotoPlaceholder(ctx, px, py, pw, ph);
-    ctx.restore();
 
-    // Only the notes you filled in, left to right, so an empty one leaves no orphan label.
-    [["ENERGY", d.energy], ["CAMERA", d.camera], ["HACK", d.hack]]
+    const say = upper(d.say);
+    const b = POSE.box;
+    const notesEnd = say ? b.y - 40 : PORT.h - 60;
+
+    // Only the notes you filled in, top to bottom, so an empty one leaves no orphan label.
+    let y = 483;
+    [["ENERGY:", d.energy], ["CAMERA:", d.camera], ["HACK:", d.hack, "*"]]
       .filter(([, value]) => clean(value))
-      .forEach(([label, value], i) => {
-        const x = 80 + i * 355;
-        ctx.font = font(700, 28, SANS);
-        ctx.fillStyle = COL.accent;
-        spaced(ctx, label, x, 1296, 4);
-        ctx.font = font(400, 38, SANS);
-        ctx.fillStyle = COL.ink;
-        wrap(ctx, clean(value), 320, 2).forEach((line, j) => ctx.fillText(line, x, 1350 + j * 48));
+      .forEach(([label, value, mark]) => {
+        const room = Math.min(5, Math.floor((notesEnd - y) / NOTE_LINE));
+        if (room < 1) return;
+        ctx.font = font(700, 32, SANS);
+        ctx.fillStyle = POSE.ink;
+        ctx.fillText(label, 30, y);
+        ctx.font = font(400, 32, SANS);
+        const lines = wrap(ctx, (mark || "") + upper(value), f.x - 40, room);
+        lines.forEach((line, j) => {
+          const ly = y + NOTE_LINE * (j + 1);
+          if (mark && j === 0) markedLine(ctx, line, 30, ly, POSE.ink);
+          else ctx.fillText(line, 30, ly);
+        });
+        y += NOTE_LINE * (lines.length + 2);
       });
 
-    const say = clean(d.say);
     if (say) {
-      ctx.fillStyle = COL.soft;
-      ctx.strokeStyle = COL.softLine;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(b.x, b.y, b.w, b.h);
+      ctx.strokeStyle = POSE.ink;
       ctx.lineWidth = 3;
-      roundRect(ctx, 80, 1470, 1030, 340, 16);
-      ctx.fill();
-      ctx.stroke();
-      ctx.font = font(700, 30, SANS);
-      ctx.fillStyle = COL.accent;
-      spaced(ctx, "SAY TO THE COUPLE", 120, 1532, 4);
-      ctx.font = font(400, 46, SANS);
-      ctx.fillStyle = COL.ink;
-      wrap(ctx, "“" + say + "”", 950, 4).forEach((line, j) => ctx.fillText(line, 120, 1604 + j * 60));
+      ctx.strokeRect(b.x, b.y, b.w, b.h);
+      ctx.font = font(700, 37, SANS);
+      ctx.fillStyle = POSE.ink;
+      ctx.fillText("SAY TO THE COUPLE", b.x + 21, b.y + 53);
+
+      // 40px fits the longest the form allows; smaller only as a safety net.
+      const text = "\"" + say, top = b.y + 132, bottom = b.y + b.h - 28, width = b.w - 34;
+      let size = 40;
+      const lineH = () => Math.round(size * 1.54);
+      const room = () => Math.floor((bottom - top) / lineH()) + 1;
+      ctx.font = font(400, size, SANS);
+      while (size > 32 && wrap(ctx, text, width, 99).length > room()) {
+        size -= 2;
+        ctx.font = font(400, size, SANS);
+      }
+      ctx.fillStyle = POSE.say;
+      wrap(ctx, text, width, room()).forEach((line, j) => {
+        const ly = top + j * lineH();
+        if (j === 0) markedLine(ctx, line, b.x + 21, ly, POSE.say);
+        else ctx.fillText(line, b.x + 21, ly);
+      });
     }
-    footer(ctx, 80, 1876, 28);
+
+    // The credit sits at the foot of the strip: your source, or ours.
+    const source = upper(d.source);
+    ctx.font = font("italic 400", 24, POSE_SERIF);
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
+    const credit = source ? wrap(ctx, "SOURCE: " + source, PORT.w - POSE.stripX - 40, 3) : [FOOTER];
+    const cx = (POSE.stripX + PORT.w) / 2;
+    credit.forEach((line, j) => ctx.fillText(line, cx, 1864 - (credit.length - 1 - j) * 32));
+    ctx.textAlign = "left";
   }
 
   const DRAW = {
@@ -384,7 +446,8 @@ window.CardRenderer = (function () {
 
   /* ---------- fonts ---------- */
   const FACES = [font(400, 60, "Inter"), font(600, 40, "Inter"), font(700, 46, "Inter"),
-                 font(400, 132, "'Instrument Serif'")];
+                 font(400, 132, "'Instrument Serif'"),
+                 font(600, 94, "'Noto Serif'"), font("italic 400", 24, "'Noto Serif'")];
 
   function textOf(data) {
     const parts = [];

@@ -145,7 +145,7 @@ const clone = (o) => JSON.parse(JSON.stringify(o));
 const studio = {
   type: "pose",
   pose: { mode: "sample", sample: "pack-03", photo: null, photoUrl: null,
-          title: "", energy: "", camera: "", hack: "", say: "" },
+          title: "", energy: "", camera: "", hack: "", say: "", source: "" },
   lists: { timeline: clone(DEFAULTS.timeline), groups: clone(DEFAULTS.groups),
            shotlist: clone(DEFAULTS.shotlist), settings: clone(DEFAULTS.settings) },
   found: clone(DEFAULTS.found),
@@ -169,7 +169,7 @@ function cardData(type = studio.type) {
   if (type === "pose") {
     const p = studio.pose;
     return { mode: p.mode, sampleImg: sampleImage(p.sample), photo: p.photo,
-             title: p.title, energy: p.energy, camera: p.camera, hack: p.hack, say: p.say };
+             title: p.title, energy: p.energy, camera: p.camera, hack: p.hack, say: p.say, source: p.source };
   }
   if (type === "found") return studio.found;
   return studio.lists[type];
