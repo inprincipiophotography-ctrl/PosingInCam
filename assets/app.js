@@ -665,13 +665,14 @@ function updateCaption() {
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedulePreview);
 
 /* ---------- camera picker ---------- */
+function setVendor(vendor) {
+  state.vendor = vendor;
+  camButtons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.vendor === vendor)));
+  $("cameras").classList.remove("attention");
+  refresh();
+}
 camButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    state.vendor = btn.dataset.vendor;
-    camButtons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
-    $("cameras").classList.remove("attention");
-    refresh();
-  });
+  btn.addEventListener("click", () => setVendor(btn.dataset.vendor));
 });
 
 /* ---------- the button and its hint ---------- */
@@ -880,7 +881,8 @@ async function convert() {
       ? (first === last ? ` Your card is ${first}.` : ` Your cards are ${first} to ${last}.`)
       : "";
     const anon = resp.headers.get("X-Tier") === "anon";
-    track("Card made", { type: studio.type, camera: state.vendor, tier: resp.headers.get("X-Tier") || "unknown" });
+    track("Card made", { type: studio.type, camera: state.vendor, tier: resp.headers.get("X-Tier") || "unknown",
+                         src: state.fromDemo ? "demo" : "studio" });
     setStatus("ok", "✓ Done! Your shoot-cards.zip is downloading." + range +
       (wm ? "  (free, watermarked)" : ""));
     if (anon) showSignupNudge();
@@ -904,6 +906,7 @@ async function convert() {
 
 function showInstructions() {
   $("instr-text").textContent = INSTRUCTIONS[state.vendor] || "";
+  $("instr-demo").href = "/demo?camera=" + state.vendor + "&ref=instructions#copy";
   $("instructions").hidden = false;
   $("instructions").scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
@@ -1629,8 +1632,51 @@ document.addEventListener("click", (e) => {
   document.addEventListener("click", (e) => { if (!nav.contains(e.target)) close(); });
 })();
 
+/* ---------- arriving from the demo (/demo) ---------- */
+// The demo's last step links here as /?from=demo&make=<type>&camera=<vendor>#studio
+// and leaves the card it built in localStorage (never in the URL, which the
+// visitor stats see). Open the studio on that card. It is clamped to one card,
+// so the free card without an account still works (ANON_MAX_CARDS in api/convert.py).
+const DEMO_HANDOFF = "pic_demo_handoff";
+const DEMO_TYPES = ["timeline", "groups", "shotlist"];
+const DEMO_VENDORS = ["sony", "canon", "nikon"];
+
+function demoCard(type) {
+  let p = null;
+  try { p = JSON.parse(localStorage.getItem(DEMO_HANDOFF) || "null"); } catch (_) {}
+  try { localStorage.removeItem(DEMO_HANDOFF); } catch (_) {}
+  if (!DEMO_TYPES.includes(type)) return null;
+  if (!p || p.v !== 1 || p.type !== type || !(Date.now() - p.at < 30 * 60 * 1000)) return null;
+  const text = (v, max) => Array.from(String(v == null ? "" : v).replace(/[\u0000-\u001f\u007f]/g, " ").trim())
+    .slice(0, max).join("");
+  const ui = LIST_UI[type];
+  const rows = (Array.isArray(p.rows) ? p.rows : []).slice(0, R.PER_PAGE[type]).map((r) => {
+    const row = {};
+    ui.fields.forEach((f) => { row[f.key] = text(r && r[f.key], f.max); });
+    return row;
+  }).filter((row) => ui.fields.some((f) => row[f.key]));
+  if (!rows.length) return null;
+  return { [ui.headKey]: text(p.label, 40), rows };
+}
+
+function applyDemoHandoff() {
+  const q = new URLSearchParams(location.search);
+  if (q.get("from") !== "demo") return;
+  const type = q.get("make"), vendor = q.get("camera");
+  history.replaceState(null, "", location.pathname + location.hash);   // a reload shouldn't apply it again
+  const card = demoCard(type);
+  if (!DEMO_TYPES.includes(type)) return;
+  if (card) studio.lists[type] = card;
+  selectType(type);   // not quiet: the preview shows the card straight away
+  if (DEMO_VENDORS.includes(vendor)) setVendor(vendor);
+  setStatus("", "Your card from the demo is ready. Change anything you like, then make it.");
+  state.fromDemo = true;
+  track("Demo handoff", { type, camera: DEMO_VENDORS.includes(vendor) ? vendor : "none", rows: card ? card.rows.length : 0 });
+}
+
 /* ---------- boot ---------- */
 selectType("pose", true);
+applyDemoHandoff();
 
 (async function boot() {
   try {
