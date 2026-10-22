@@ -1,6 +1,6 @@
 # Camera Test Results
 
-Log of hardware tests. Append-only — never edit historical entries.
+Log of hardware tests. Append-only — never edit historical entries, except to redact personal data. Don't record body/lens serial numbers or owners' names; write e.g. "friend-owned; serial / firmware not recorded".
 
 ## Format
 
@@ -80,14 +80,14 @@ The only Nikon-specific wrinkle is the **DCF folder name, which encodes the body
 | --- | --- |
 | Body          | Canon EOS R6 Mark III (friend-owned; serial / firmware not recorded) |
 | Tester        | inprincipiophotography-ctrl + friend |
-| Template used | **Zlatkov R6 Mark II SOOC** (`0A0A3799.JPG`) — same template that successfully played back on Zlatkov's R6 Mark II body the previous day. |
-| File sent     | `0A0A4000.JPG` — the cardify output built from Zlatkov's template (Contact Info Canva design + R6m2 q-tables + R6m2 MakerNotes via `exiftool -tagsFromFile`). Reconstructed from chat history: only two Canon cardify outputs ever lived on the maintainer's Desktop in this session, and `0A0A4000.JPG` is the one matching the maintainer's "Zlatkov file" recollection. |
+| Template used | **R6 Mark II SOOC** (`0A0A3799.JPG`) — same template that successfully played back on the friend-owned R6 Mark II body the previous day. |
+| File sent     | `0A0A4000.JPG` — the cardify output built from that R6 Mark II template (Contact Info Canva design + R6m2 q-tables + R6m2 MakerNotes via `exiftool -tagsFromFile`). Reconstructed from chat history: only two Canon cardify outputs ever lived on the maintainer's Desktop in this session, and `0A0A4000.JPG` is the one the maintainer recalled as the R6 Mark II file. |
 | Output spec   | 1920×1280, baseline, YCbCr 4:2:2, R6 Mark II q-tables, no JFIF, YCbCrPositioning=2 (Co-sited), Make=Canon, Model=Canon EOS R6m2 in EXIF (carried from template). |
 | Hardware result | Played back correctly on the R6 Mark III body; no error reported. |
 
 ### What this confirms
 
-**A single Canon template covers the EOS R6 line across generations.** Zlatkov's R6 Mark II SOOC produces output that plays back on both R6 Mark II (the original body) and R6 Mark III (different friend's body) without any per-body adjustment. Same pattern as the Sony A7 III template covering A7 III / IV / V.
+**A single Canon template covers the EOS R6 line across generations.** The R6 Mark II SOOC produces output that plays back on both R6 Mark II (the original body) and R6 Mark III (different friend's body) without any per-body adjustment. Same pattern as the Sony A7 III template covering A7 III / IV / V.
 
 Combined with the R6 Mark II same-body verification from 2026-05-20, the Canon EOS R6 line collapses to **one Canon template**, sourced from the oldest body in the line (R6 Mark II) — matching the older-is-stricter-validator pattern established on Sony.
 
@@ -101,7 +101,7 @@ Combined with the R6 Mark II same-body verification from 2026-05-20, the Canon E
 
 | Field | Value |
 | --- | --- |
-| Body          | Canon EOS R6 Mark II (serial 052220000100, Zlatko Zalec) |
+| Body          | Canon EOS R6 Mark II (friend-owned; serial / firmware not recorded) |
 | Tester        | inprincipiophotography-ctrl + friend |
 | Template used | Same body's own SOOC (`0A0A3799.JPG`) — real working photographer's camera, fresh shot from this session, no Photo Mechanic touch (only `XMP:Rating=0`) |
 | Lens          | EF 50mm f/1.4 USM via EF→RF adapter (irrelevant to playback, recorded for context) |

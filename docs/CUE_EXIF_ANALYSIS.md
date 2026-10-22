@@ -20,7 +20,7 @@ Every Cue card has identical Sony maker notes that look like a real shoot:
 | `Model` | `ILCE-7SM3` (Sony A7S III) |
 | `Software` | `ILCE-7SM3 v2.00` (Sony firmware string format) |
 | `ShutterCount` | `1410` |
-| `InternalSerialNumber` | `44ff0000c209` |
+| `InternalSerialNumber` | *(identical on every card; value not recorded here)* |
 | `ISO` | `12800` |
 | `ExposureTime` | `1/50` |
 | `BatteryLevel` | `90%` |

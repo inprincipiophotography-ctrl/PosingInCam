@@ -17,7 +17,7 @@ Plus na Desktopu trebaš imati:
 |---|---|---|
 | `cardify.sh` | sama skripta, `chmod +x` | pull s GitHuba (vidi dolje) |
 | `TEMPLATE-A7III.JPG` | Sony template (real SOOC iz tvog A7 III, ili A7 V/A7 IV iz DPReview-a) | tvoj A7 III SOOC (najpouzdanije), ili DPReview sample |
-| `TEMPLATE-R6M2.JPG` | Canon master template (Zlatkov R6 Mark II SOOC) | prijatelj Zlatkov — hardware-verified cross-body na R6 Mark II + R6 Mark III |
+| `TEMPLATE-R6M2.JPG` | Canon master template (R6 Mark II SOOC, prijateljev body) | prijatelj (vlasnik R6 Mark II) — hardware-verified cross-body na R6 Mark II + R6 Mark III |
 | `NIKON-SOOC.JPG` | Nikon master template (Z6 III SOOC, Model `NIKON Z6_3`) | clean out-of-camera Z6 III — hardware-verified cross-body na Z8 + Z9 |
 | `canva-exports/` | folder s Canva poza-eksportima | tvoji exports |
 | `TEMPLATE-CANVA.jpg` | jedan single pose za quick testove | bilo koji Canva pose |
@@ -162,7 +162,7 @@ Cardify + build-pack auto-detektiraju vendor iz template Make tag-a i biraju isp
 ## Sources templejta (kad treba novi)
 
 - **Sony A7 III/IV/V cluster**: jedan template iz najstarijeg dostupnog body-ja pokriva sve (BIONZ X/XR ekosystem). Real SOOC > DPReview ako body je A7 III firmware v4.01+.
-- **Canon EOS R6 cluster**: Zlatkov R6 Mark II SOOC je master template — hardware-verified i na R6 Mark II i na R6 Mark III (cross-body). Jedan fajl pokriva liniju. R5 line untested ali expected da prati isti pattern.
+- **Canon EOS R6 cluster**: prijateljev R6 Mark II SOOC je master template — hardware-verified i na R6 Mark II i na R6 Mark III (cross-body). Jedan fajl pokriva liniju. R5 line untested ali expected da prati isti pattern.
 - **Nikon Z cluster**: `NIKON-SOOC.JPG` (clean Z6 III SOOC, Model `NIKON Z6_3`) je master template — hardware-verified cross-body na Z8 + Z9. Jedan fajl pokriva liniju. DCF folder je body-specific (`100NCZ_8`, `100NCZ_9`, `100NCZ_6`, `100NCZ_7`), pa customer kopira u onaj koji mu je kamera sama kreirala.
 - **Fuji/OM**: još nije code-supported. Treba dodati `case` block u cardify (vidi `docs/SONY_Q_TABLE_DISCOVERY.md` § Sourcing strategy).
 
