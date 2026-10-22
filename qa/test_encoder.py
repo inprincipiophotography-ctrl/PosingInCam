@@ -101,6 +101,28 @@ def test_corrupt_input_raises_valueerror():
         assert "could not read" in str(e)
 
 
+def test_identifying_tags_stripped_for_every_vendor():
+    # Real templates carry the owner's body/lens serials, name and copyright;
+    # none of that may reach a customer's card. Make/Model must survive.
+    src = _jpg(Image.new("RGB", (300, 200), (90, 160, 60)))
+    seen_in_template = False
+    for vendor, v in encoder.VENDORS.items():
+        tpl = encoder.template_path_for(vendor)
+        tex = piexif.load(tpl)
+        seen_in_template |= any(t in tex["0th"] for t in encoder._IDENTIFYING_0TH)
+        seen_in_template |= any(t in tex["Exif"] for t in encoder._IDENTIFYING_EXIF)
+
+        ex = piexif.load(encoder.convert(src, tpl))
+        for t in encoder._IDENTIFYING_0TH:
+            assert t not in ex["0th"], f"{vendor}: 0th tag {t:#06x} leaked into output"
+        for t in encoder._IDENTIFYING_EXIF:
+            assert t not in ex["Exif"], f"{vendor}: Exif tag {t:#06x} leaked into output"
+        assert ex["0th"][piexif.ImageIFD.Make].decode() == v.make, f"{vendor}: Make lost"
+        assert ex["0th"][piexif.ImageIFD.Model].decode().startswith(v.model_prefix), f"{vendor}: Model lost"
+    # guard against a vacuous pass if the bundled templates are ever swapped for clean ones
+    assert seen_in_template, "no template carries an identifying tag; test no longer exercises the strip"
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns:

@@ -22,6 +22,10 @@ What it reproduces (see scripts/cardify.sh for the verified reference):
 MakerNotes are intentionally omitted: the reference validator does not require
 them and the hardware-confirmed sample ships without them. If a strict body ever
 rejects the output, the documented fallback is the Docker+exiftool path.
+
+The template owner's identifying tags (Body/Lens serial, CameraOwnerName,
+ImageUniqueID, Artist, Copyright) are also dropped so they never ship to
+customers. Make/Model and the rest of the standard tag set are kept.
 """
 
 from __future__ import annotations
@@ -48,6 +52,11 @@ MAX_INPUT_PIXELS = 40_000_000
 
 # Interop IFD tag number (piexif's named constants are unreliable across versions)
 _INTEROP_INDEX = 1     # "R98" → DCF basic-file marker
+
+# Owner-identifying tags a real template carries; never copied into a card.
+_IDENTIFYING_0TH = (0x013B, 0x8298)                    # Artist, Copyright
+_IDENTIFYING_EXIF = (0xA420, 0xA430, 0xA431, 0xA435)   # ImageUniqueID, CameraOwnerName,
+                                                       # BodySerialNumber, LensSerialNumber
 
 
 @dataclass(frozen=True)
@@ -272,7 +281,8 @@ def _build_exif(exif_base: dict, exif_orient: int, thumb: bytes) -> bytes:
     surgically overriding the parts that must differ for our card — the same
     philosophy as cardify.sh's ``-tagsFromFile -all:all`` then targeted edits
     (cardify.sh:345-390), but in pure Python. MakerNotes are intentionally left
-    out (see module docstring)."""
+    out (see module docstring), as are the template owner's identifying tags
+    (_IDENTIFYING_0TH / _IDENTIFYING_EXIF)."""
     ex = copy.deepcopy(exif_base)
     ex.setdefault("0th", {})
     ex.setdefault("Exif", {})
@@ -285,6 +295,10 @@ def _build_exif(exif_base: dict, exif_orient: int, thumb: bytes) -> bytes:
     ex["Exif"][piexif.ExifIFD.PixelXDimension] = OUT_W        # ExifImageWidth  (cardify.sh:365-368)
     ex["Exif"][piexif.ExifIFD.PixelYDimension] = OUT_H        # ExifImageHeight
     ex["Exif"].pop(piexif.ExifIFD.MakerNote, None)           # never carry MakerNotes
+    for tag in _IDENTIFYING_0TH:                              # nor the template owner's
+        ex["0th"].pop(tag, None)                              # serials / name / copyright
+    for tag in _IDENTIFYING_EXIF:
+        ex["Exif"].pop(tag, None)
 
     ex["Interop"] = {_INTEROP_INDEX: b"R98"}                  # DCF marker (cardify.sh:386)
     ex["GPS"] = {}

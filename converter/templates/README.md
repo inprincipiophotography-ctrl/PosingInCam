@@ -51,6 +51,29 @@ Nikon `100NCZ_X`). Nikon's real folder is body-specific (`100NCZ_8`, …) — co
 `DSC_*` files into the folder **your** camera created.
 
 ## Privacy note
-A SOOC JPEG's EXIF can include your camera's serial number. The output cards
-**drop MakerNotes**, but the template files themselves still carry that metadata —
-keep this repo private, or strip the serial first.
+A SOOC JPEG's EXIF can include your camera's serial numbers and your name. The
+converter (`converter/encoder.py` `_build_exif()`) strips these from **every
+output card**:
+
+| Stripped tag | Where |
+|--------------|-------|
+| `MakerNote` (0x927C) | Exif IFD |
+| `BodySerialNumber` (0xA431) | Exif IFD |
+| `LensSerialNumber` (0xA435) | Exif IFD |
+| `CameraOwnerName` (0xA430) | Exif IFD |
+| `ImageUniqueID` (0xA420) | Exif IFD |
+| `Artist` (0x013B) | 0th IFD |
+| `Copyright` (0x8298) | 0th IFD |
+| GPS IFD | whole IFD dropped |
+
+The template's own thumbnail and Interop IFD are also replaced with fresh ones
+(new thumbnail, `InteropIndex=R98`).
+
+Everything else is kept on purpose: Make, Model, Software, lens model,
+exposure fields, and the rest of the standard tag set. Camera playback
+compatibility depends on those, so don't strip more broadly without a hardware
+test. `qa/test_encoder.py` (`test_identifying_tags_stripped_for_every_vendor`)
+fails if any tag in the table above leaks for any vendor.
+
+The **template files themselves** still carry the serials. Keep this repo
+private, or strip the serials from the templates first.
