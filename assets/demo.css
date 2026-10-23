@@ -216,7 +216,7 @@
 .bar-play[data-state="pause"]::before{margin-left:-6px}
 .bar-play[data-state="pause"]::after{margin-left:2px}
 .bar-play[data-state="replay"]::before{content:"\21BA";margin:-11px 0 0 -8px;color:#fff;font:700 19px/22px var(--sans)}
-.bar-chs{flex:1 1 auto;display:grid;grid-template-columns:11.5fr 13fr 6.5fr 11fr 7fr 7fr;gap:8px;list-style:none;margin:0;padding:0;min-width:0}
+.bar-chs{flex:1 1 auto;display:grid;grid-template-columns:11.5fr 13fr 8.5fr 11fr 7fr 7fr;gap:8px;list-style:none;margin:0;padding:0;min-width:0}
 .ch{display:flex;flex-direction:column;gap:7px;width:100%;padding:4px 0;border:0;background:none;text-align:left;cursor:pointer;font:500 12.5px/1.2 var(--sans);color:var(--muted)}
 .ch:hover{color:var(--ink)}
 .ch:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
