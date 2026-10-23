@@ -4,9 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>See how it works · Shoot Cards</title>
-  <meta name="description" content="A 40-second film: your pose cards in your camera's playback, made in a minute, copied to the SD card, there between shots. Sony, Canon and Nikon." />
+  <meta name="description" content="A one-minute film: your pose cards in your camera's playback, why an ordinary picture won't show, and how a card is made, copied to the SD card and there between shots. Sony, Canon and Nikon." />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="See how Shoot Cards works, in 40 seconds" />
+  <meta property="og:title" content="See how Shoot Cards works, in a minute" />
   <meta property="og:description" content="Your pose cards in your camera's playback: made in a minute, copied to the SD card, there between shots. No account needed." />
   <meta property="og:url" content="https://cards.notalucis.com/demo" />
   <meta property="og:image" content="https://cards.notalucis.com/assets/showcase/02.jpg" />
@@ -43,7 +43,7 @@
   <main id="main" class="demo">
     <h1 class="sr-only">See how Shoot Cards works</h1>
 
-    <!-- A 40-second film in five chapters. Everything in it is drawn live,
+    <!-- A one-minute film in six chapters. Everything in it is drawn live,
          and the chapter bar under it seeks. -->
     <div class="film" id="film" data-scene="moment" data-beat="">
       <div class="stage" id="stage">
@@ -52,7 +52,7 @@
         <div class="story" id="story">
           <p class="kicker"><b id="cap-n">1</b><span id="cap-ch">The moment</span></p>
           <div class="cap" id="cap" aria-live="polite">
-            <h2 class="cap-title" id="cap-title">4:12&nbsp;pm. The couple is waiting. <em>What's the next pose?</em></h2>
+            <h2 class="cap-title" id="cap-title">7:12&nbsp;pm. The couple is waiting. <em>What's the next pose?</em></h2>
             <p class="cap-text" id="cap-text">Golden hour is fading, and your mind goes blank.</p>
           </div>
         </div>
@@ -66,7 +66,10 @@
           </div>
         </div>
 
-        <!-- chapter 3: the studio, in miniature -->
+        <!-- chapter 3: an ordinary picture, which the camera can't show -->
+        <div class="pngchip" id="pngchip" aria-hidden="true"><span class="png-thumb"></span><span><b>pose-idea.png</b><small>saved from Pinterest</small></span></div>
+
+        <!-- chapter 4: the studio, in miniature -->
         <div class="studio" id="studio" aria-hidden="true">
           <p class="studio-h"><b>Make your card</b><span class="studio-type">Timeline</span></p>
           <p class="studio-lbl">The couple</p>
@@ -77,8 +80,8 @@
             <span class="schip" id="chip-1"><b>15:30</b>First look</span>
             <span class="schip" id="chip-2"><b>16:30</b>Ceremony</span>
             <span class="schip" id="chip-3"><b>17:15</b>Family groups</span>
-            <span class="schip" id="chip-4"><b>18:00</b>Golden hour portraits</span>
-            <span class="schip" id="chip-5"><b>20:00</b>First dance</span>
+            <span class="schip" id="chip-4"><b>19:30</b>Golden hour portraits</span>
+            <span class="schip" id="chip-5"><b>21:00</b>First dance</span>
           </div>
           <div class="studio-row">
             <span class="studio-cams" id="st-cams"><span data-v="sony">Sony</span><span data-v="canon">Canon</span><span data-v="nikon">Nikon</span></span>
@@ -86,7 +89,7 @@
           </div>
         </div>
 
-        <!-- chapter 4: the ZIP, the SD card, the folder -->
+        <!-- chapter 5: the ZIP, the SD card, the folder -->
         <div class="zipchip" id="zipchip" aria-hidden="true"><canvas id="zip-thumb" width="96" height="64"></canvas><span><b>shoot-cards.zip</b><small id="zip-file">DSC00001.JPG</small></span></div>
         <div class="sdcard" id="sdcard" aria-hidden="true">
           <span class="sd-pins"></span>
@@ -122,7 +125,7 @@
         <div class="end" id="end" hidden>
           <p class="kicker kicker-ok"><b>&#10003;</b><span>Your turn</span></p>
           <h2 class="cap-title" id="h-end" tabindex="-1">Make this card <em>yours</em>, free.</h2>
-          <label class="fld end-fld"><span>The couple</span><input type="text" id="end-name" maxlength="40" value="Ana &amp; Marko" autocomplete="off" /></label>
+          <label class="fld end-fld"><span>The couple</span><input type="text" id="end-name" maxlength="40" value="Emma &amp; James" autocomplete="off" /></label>
           <div class="cameras end-cams" id="end-cams" role="group" aria-label="Your camera">
             <button class="cam" type="button" data-vendor="sony" aria-pressed="true">Sony</button>
             <button class="cam" type="button" data-vendor="canon" aria-pressed="false">Canon</button>
@@ -141,11 +144,12 @@
         <ol class="bar-chs" id="bar-chs">
           <li><button class="ch" type="button" data-ch="0" aria-label="Chapter 1: The moment"><span class="ch-name">The moment</span><span class="ch-track"><i></i></span></button></li>
           <li><button class="ch" type="button" data-ch="1" aria-label="Chapter 2: Playback"><span class="ch-name">Playback</span><span class="ch-track"><i></i></span></button></li>
-          <li><button class="ch" type="button" data-ch="2" aria-label="Chapter 3: Make yours"><span class="ch-name">Make yours</span><span class="ch-track"><i></i></span></button></li>
-          <li><button class="ch" type="button" data-ch="3" aria-label="Chapter 4: SD card"><span class="ch-name">SD card</span><span class="ch-track"><i></i></span></button></li>
-          <li><button class="ch" type="button" data-ch="4" aria-label="Chapter 5: On the day"><span class="ch-name">On the day</span><span class="ch-track"><i></i></span></button></li>
+          <li><button class="ch" type="button" data-ch="2" aria-label="Chapter 3: Any picture?"><span class="ch-name">Any picture?</span><span class="ch-track"><i></i></span></button></li>
+          <li><button class="ch" type="button" data-ch="3" aria-label="Chapter 4: Make yours"><span class="ch-name">Make yours</span><span class="ch-track"><i></i></span></button></li>
+          <li><button class="ch" type="button" data-ch="4" aria-label="Chapter 5: SD card"><span class="ch-name">SD card</span><span class="ch-track"><i></i></span></button></li>
+          <li><button class="ch" type="button" data-ch="5" aria-label="Chapter 6: On the day"><span class="ch-name">On the day</span><span class="ch-track"><i></i></span></button></li>
         </ol>
-        <p class="bar-now" aria-hidden="true"><b id="bar-n">1/5</b><span id="bar-name">The moment</span></p>
+        <p class="bar-now" aria-hidden="true"><b id="bar-n">1/6</b><span id="bar-name">The moment</span></p>
         <button class="link-btn bar-skip" id="bar-skip" type="button">Skip &rsaquo;</button>
       </div>
     </div>

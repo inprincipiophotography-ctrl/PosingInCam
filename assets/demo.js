@@ -1,6 +1,6 @@
 "use strict";
 
-/* Shoot Cards demo (/demo): a 40-second film in five chapters.
+/* Shoot Cards demo (/demo): a one-minute film in six chapters.
    Everything in it is drawn in the browser. The camera screen is a canvas
    painted with the studio's own CardRenderer (builder.js), so the card in the
    film is the card the studio makes. The film is a pure function of time
@@ -35,25 +35,28 @@
   const CHAPTERS = [
     { id: "moment", name: "The moment", at: 0 },
     { id: "playback", name: "Playback", at: 11500 },
-    { id: "make", name: "Make yours", at: 24500 },
-    { id: "sd", name: "SD card", at: 35500 },
-    { id: "day", name: "On the day", at: 42500 },
+    { id: "why", name: "Any picture?", at: 24500 },
+    { id: "make", name: "Make yours", at: 31000 },
+    { id: "sd", name: "SD card", at: 42000 },
+    { id: "day", name: "On the day", at: 49000 },
   ];
-  const END = 49500;
+  const END = 56000;
   // Links into the older, step-by-step demo still land on the right chapter.
-  const FROM_HASH = { moment: 0, start: 0, playback: 1, make: 2, camera: 2, sd: 3, copy: 3, setup: 3, day: 4, shoot: 4, done: 4 };
+  const FROM_HASH = { moment: 0, start: 0, playback: 1, why: 2, make: 3, camera: 3, sd: 4, copy: 4, setup: 4, day: 5, shoot: 5, done: 5 };
 
-  const HOOK = "4:12&nbsp;pm. The couple is waiting. <em>What's the next pose?</em>";
+  const HOOK = "7:12&nbsp;pm. The couple is waiting. <em>What's the next pose?</em>";
   const CAPTIONS = [
     { at: 0, title: HOOK, text: "Golden hour is fading, and your mind goes blank." },
     { at: 3600, title: HOOK, text: "So you reach for your phone. Unlock, find the board, scroll…" },
     { at: 8600, title: "There's a faster way. <em>It's already in your hand.</em>", text: "" },
     { at: 11500, title: "Your poses live in <em>playback</em>.", text: "Right next to your photos: the shot, the settings and the words to say." },
     { at: 20000, title: "Timelines, family groups, <em>shot lists</em> too.", text: "Every part of the day, one press away." },
-    { at: 24500, title: "Make your own <em>in a minute</em>.", text: "Type the names, tap the moments. No Canva, no design." },
-    { at: 35500, title: "Copy one folder to your <em>SD card</em>.", text: null },   // per camera: VENDORS[].where
-    { at: 42500, title: "Between shots, <em>press play</em>.", text: "The couple is waiting again. This time the plan is in your hand." },
-    { at: 45900, title: "Your plan, <em>right there</em>.", text: "No phone, no paper. Nobody sees you scroll." },
+    { at: 24500, title: "Why not just copy any picture? <em>Your camera won't show it.</em>", text: "Cameras only play back files saved their own way: the right size, the right metadata, the right folder." },
+    { at: 28300, title: "So we save every card <em>the way your camera does</em>.", text: "It plays back like a photo you shot. That's the whole trick." },
+    { at: 31000, title: "Make your own <em>in a minute</em>.", text: "Type the names, tap the moments. No Canva, no design." },
+    { at: 42000, title: "Copy one folder to your <em>SD card</em>.", text: null },   // per camera: VENDORS[].where
+    { at: 49000, title: "Between shots, <em>press play</em>.", text: "The couple is waiting again. This time the plan is in your hand." },
+    { at: 52400, title: "Your plan, <em>right there</em>.", text: "No phone, no paper. Nobody sees you scroll." },
   ];
 
   // 1. the moment: the phone comes up, the seconds tick away
@@ -64,19 +67,22 @@
   const ROT_IN = 13600, TALL_AT = 14300;     // the camera turns; near the end the screen turns with it
   const ROT_OUT = 18900, WIDE_AT = 19600;    // and back
   const TURNS = [15900, 17300, 20600, 22100];
-  // 3. make yours: type the names, tick the moments, pick the camera, make it
-  const NAME = "Ana & Marko", TYPE_AT = 25400, TYPE_MS = 95;
-  const TICKS = [[27300, 0], [28200, 1], [29100, 2], [30000, 4]];
-  const CAM_AT = 31100, GO_AT = 32000, MADE_AT = 33200;
-  // 4. SD card: the ZIP goes onto the card, the card goes into the camera
-  const COPY_AT = 36700, COPIED_AT = 37800, INSERT_AT = 39000, INSERTED_AT = 40300;
-  // 5. on the day: press play, and your card is there
-  const PLAY_2 = 43700;
+  // 3. any picture? a saved image goes onto the camera, which can't show it
+  const PNG_DRAG = 25900, ERR_AT = 27000;
+  // 4. make yours: type the names, tick the moments, pick the camera, make it
+  const NAME = "Emma & James", TYPE_AT = 31900, TYPE_MS = 95;
+  const TICKS = [[33800, 0], [34700, 1], [35600, 2], [36500, 4]];
+  const CAM_AT = 37600, GO_AT = 38500, MADE_AT = 39700;
+  // 5. SD card: the ZIP goes onto the card, the card goes into the camera
+  const COPY_AT = 43200, COPIED_AT = 44300, INSERT_AT = 45500, INSERTED_AT = 46800;
+  // 6. on the day: press play, and your card is there
+  const PLAY_2 = 50200;
 
   // Where a finger presses (it glides between taps that follow closely).
   const TAPS = [
     { at: PLAY_1, el: "btn-play" },
     ...TURNS.map((at) => ({ at, el: "btn-dial" })),
+    { at: PNG_DRAG, el: "pngchip", to: "screen-canvas", until: ERR_AT - 100 },
     { at: TYPE_AT - 300, el: "st-name" },
     ...TICKS.map(([at, i]) => ({ at, el: "chip-" + i })),
     { at: CAM_AT, el: "cam-pill" },
@@ -90,12 +96,12 @@
   const SAMPLE = {
     timeline: { label: "Saturday", rows: [
       { time: "14:00", text: "Getting ready" }, { time: "15:30", text: "First look" },
-      { time: "16:30", text: "Ceremony" }, { time: "18:00", text: "Golden hour portraits" },
-      { time: "20:00", text: "First dance" }] },
+      { time: "16:30", text: "Ceremony" }, { time: "19:30", text: "Golden hour portraits" },
+      { time: "21:00", text: "First dance" }] },
     groups: { label: "After the ceremony", rows: [
-      { names: "Ana & Luka + Grandma Mara", rel: "her grandma, seated" }, { names: "+ Vesna & Ivo", rel: "her parents" },
-      { names: "+ Petra & Josip", rel: "her siblings" }, { names: "Ana & Luka + Sanja & Goran", rel: "his parents" },
-      { names: "+ Marko", rel: "his brother" }, { names: "Everyone, both families", rel: "big group last" }] },
+      { names: "Emma & James + Grandma Rose", rel: "her grandma, seated" }, { names: "+ Sarah & David", rel: "her parents" },
+      { names: "+ Lucy & Tom", rel: "her siblings" }, { names: "Emma & James + Helen & Mark", rel: "his parents" },
+      { names: "+ Oliver", rel: "his brother" }, { names: "Everyone, both families", rel: "big group last" }] },
   };
   // Pose cards first (the camera stands upright for them), then the wide cards.
   const ROLL = [
@@ -110,7 +116,7 @@
   const LINES = [
     { time: "14:00", text: "Getting ready" }, { time: "15:30", text: "First look" },
     { time: "16:30", text: "Ceremony" }, { time: "17:15", text: "Family groups" },
-    { time: "18:00", text: "Golden hour portraits" }, { time: "20:00", text: "First dance" }];
+    { time: "19:30", text: "Golden hour portraits" }, { time: "21:00", text: "First dance" }];
   const PICKS = TICKS.map(([, i]) => i).sort((a, b) => a - b);
 
   /* ---------- state ---------- */
@@ -171,6 +177,7 @@
     ctx.fillRect(0, 0, W, H);
     if (f.kind === "live") drawLive();
     else if (f.kind === "off") drawOff();
+    else if (f.kind === "err") drawErr();
     else drawCard(f);
     canvas.setAttribute("aria-label", f.label);
   }
@@ -215,6 +222,29 @@
     ctx.fillText("M", 64, 108);
     ctx.textAlign = "right";
     ctx.fillText("1342", W - 64, 108);
+    ctx.textAlign = "left";
+  }
+
+  // An ordinary picture in playback: the camera can't open it.
+  function drawErr() {
+    ctx.fillStyle = "#0b0b0c";
+    ctx.fillRect(0, 0, W, H);
+    ctx.font = "600 52px " + SANS;
+    pill(PLAY, 30, 16, "left");
+    const cx = W / 2, cy = H / 2 - 90;
+    ctx.strokeStyle = "rgba(255,255,255,.85)";
+    ctx.lineWidth = 12;
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 120); ctx.lineTo(cx + 138, cy + 120); ctx.lineTo(cx - 138, cy + 120);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,.85)";
+    ctx.fillRect(cx - 7, cy - 42, 14, 96);
+    ctx.fillRect(cx - 7, cy + 74, 14, 16);
+    ctx.font = "600 66px " + SANS;
+    ctx.textAlign = "center";
+    ctx.fillText("Cannot display image", cx, cy + 260);
     ctx.textAlign = "left";
   }
 
@@ -292,7 +322,10 @@
     if (ms >= END) return mine(label);
     const c = CHAPTERS[chapterAt(ms)].id;
     if (c === "moment") return LIVE;
-    if (c === "playback") {
+    if (c === "why" && ms >= ERR_AT) {
+      return { key: "err", anim: "flash", f: { kind: "err", label: "Camera playback: Cannot display image" } };
+    }
+    if (c === "playback" || c === "why") {   // "why" keeps the last card up until the picture lands
       if (ms < PLAY_1) return LIVE;
       const i = turnsBy(ms), it = ROLL[i], tall = ms >= TALL_AT && ms < WIDE_AT;
       // the screen just turned with the camera (a soft fade), or the wheel moved on (a slide)
@@ -315,6 +348,7 @@
     const c = CHAPTERS[chapterAt(ms)].id;
     if (c === "moment") return [c, ms >= PHONE_IN && ms < PHONE_OUT ? "phone" : ""];
     if (c === "playback") return [c, ms >= ROT_IN && ms < ROT_OUT ? "tall" : ms >= PLAY_1 ? "on" : ""];
+    if (c === "why") return [c, ms >= ERR_AT ? "err" : ms >= PNG_DRAG ? "drop" : "png"];
     if (c === "make") return [c, ms >= MADE_AT ? "made" : ""];
     if (c === "sd") return [c, ms >= INSERTED_AT ? "inserted" : ms >= INSERT_AT ? "insert" : ms >= COPIED_AT ? "copied" : ms >= COPY_AT ? "copy" : "zip"];
     return [c, ms >= PLAY_2 ? "on" : ""];
@@ -488,7 +522,7 @@
     if (!playing) return;
     t = Math.min(END, t + Math.min(100, now - lastNow));
     lastNow = now;
-    if (t >= PLAY_2) watched = watched || chapterAt(t - 1) === 4;
+    if (t >= PLAY_2) watched = watched || chapterAt(t - 1) === CHAPTERS.length - 1;
     if (t >= END) {
       playing = false;
       render(true);
