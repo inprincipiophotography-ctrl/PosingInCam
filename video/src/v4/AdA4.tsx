@@ -34,6 +34,12 @@ const Top: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <div style={{ position: "absolute", left: safe.left, width: safe.w, top: safe.top + 12 }}>{children}</div>;
 };
 
+/** For a shot whose faces fill the top: the caption at the foot of the safe area instead. */
+const Bottom: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { safe } = useLayout();
+  return <div style={{ position: "absolute", left: safe.left, width: safe.w, top: safe.bottom - 150 }}>{children}</div>;
+};
+
 // ---------- 1 · Hook (0–3 s): POV, the pose card on the camera in her hands ----------
 const Hook: React.FC = () => (
   <AbsoluteFill style={{ background: "#000" }}>
@@ -54,16 +60,16 @@ const Couple: React.FC = () => {
     <Punch>
       <AbsoluteFill style={{ background: "#000" }}>
         {/* Shot at 50 fps, so 0.55× stays smooth; only the sharp end of the take (after the focus pull).
-            Framed tight and high: the photographer's out-of-focus shoulder (lower left of the take) stays out of
-            frame, and both faces sit below the caption. */}
+            A wide frame: the photographer's out-of-focus shoulder (lower left of the take) falls into the dark
+            bottom, under Instagram's own UI; the faces fill the top, so the caption goes low. */}
         <Shot
           kind="video" src={SHOOT.src} media={SHOOT.size} startFrom={c.source} playbackRate={c.rate}
-          views={[{ t: 0, x: 0.5, y: 0.36, zoom: 1.4 }, { t: len, x: 0.5, y: 0.36, zoom: 1.46 }]}
+          views={[{ t: 0, x: 0.5, y: 0.47, zoom: 1.12 }, { t: len, x: 0.5, y: 0.47, zoom: 1.18 }]}
         />
-        <Grade top={0.25} vignette={0.3} grain={0} />
-        <Top>
+        <Grade top={0.2} bottom={0.75} vignette={0.3} grain={0} />
+        <Bottom>
           <BoxCaption lines={["Glance. Pose. [Shoot.]"]} at={0.1} outAt={len - 0.2} size={92} />
-        </Top>
+        </Bottom>
       </AbsoluteFill>
     </Punch>
   );

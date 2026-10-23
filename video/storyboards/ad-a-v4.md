@@ -16,8 +16,8 @@ What changed from v3, and why:
 
 **2 · The couple** — 3.0–5.0 (drop)
 - Match cut to the couple in the pose: only the sharp end of the take, at 0.55× (shot at 50 fps).
-- Framed tight and high (1.4×): the photographer's out-of-focus shoulder in the lower left of the take stays out of frame, and both faces sit below the caption.
-- Caption: "Glance. Pose. [Shoot.]"
+- A wide frame (1.12–1.18×). The photographer's out-of-focus shoulder (lower left of the take, first second only) falls into a dark bottom gradient, inside the zone Instagram covers with its own UI.
+- Caption: "Glance. Pose. [Shoot.]". In this shot only it sits at the foot of the safe area, over their clothes, because the faces fill the top.
 
 **3 · The card** — 5.0–11.0
 - The card is **Editorial 1/1**: the same card that's on her camera in the hook, so the story runs on. Its photo is cut 1:1 from the camera screen in `source/DSC08438.jpg`, where the card measures 1281 × 1922 px; its words are copied off that screen.
