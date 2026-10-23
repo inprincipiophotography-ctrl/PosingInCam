@@ -11,3 +11,5 @@ qa/
 *.md
 LICENSE
 .gitignore
+.claude/
+.impeccable/
