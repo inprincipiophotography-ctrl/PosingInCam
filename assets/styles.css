@@ -108,7 +108,7 @@ button{font-family:var(--sans)}
 .hero{max-width:var(--wide);margin:0 auto;padding:clamp(24px,4.6vw,56px) var(--gutter) clamp(36px,5vw,64px)}
 .hero-grid{
   display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);
-  grid-template-areas:"pitch visual" "studio visual";
+  grid-template-areas:"pitch visual" "studio visual" "why .";
   column-gap:clamp(28px,4.5vw,64px);row-gap:22px;align-items:start;
 }
 .pitch{grid-area:pitch}
@@ -118,9 +118,8 @@ button{font-family:var(--sans)}
 .pitch h1{font-family:var(--serif);font-weight:400;font-size:clamp(40px,5.2vw,66px);line-height:.98;letter-spacing:-.02em;margin:16px 0 14px;color:var(--ink)}
 .pitch h1 em{font-style:italic;color:var(--accent)}
 .pitch .lede{font-size:clamp(16px,1.6vw,18.5px);color:var(--ink-2);margin:0;max-width:34em}
-/* the question most visitors have, answered before they have to ask it */
-/* lined up under "See how it works": the ? sits under the play circle, the words under its words */
-.hero-why{display:flex;align-items:baseline;gap:14px;margin:12px 0 0;font-size:14px;line-height:1.45;color:var(--muted)}
+/* the question most visitors have, answered right under the studio card */
+.hero-why{grid-area:why;display:flex;align-items:baseline;gap:14px;margin:-8px 0 0;font-size:14px;line-height:1.45;color:var(--muted)}
 .hero-why-q{flex:0 0 auto;display:grid;place-items:center;width:18px;height:18px;margin-left:5px;border-radius:50%;border:1px solid var(--border);font-size:11px;font-weight:700;color:var(--muted);transform:translateY(-1px)}
 .hero-why strong{color:var(--ink-2);font-weight:600}
 .hero-why a{margin-left:2px;color:var(--accent-2);font-weight:600;white-space:nowrap}
@@ -518,7 +517,7 @@ button{font-family:var(--sans)}
   .pitch>h1{animation-delay:.08s}
   .pitch>.lede{animation-delay:.16s}
   .pitch>.pitch-demo{animation-delay:.24s}
-  .pitch>.hero-why{animation-delay:.3s}
+  .hero-grid>.hero-why{animation:heroUp .7s .3s both cubic-bezier(.2,.6,.2,1)}
   @keyframes heroUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 }
 
@@ -538,7 +537,7 @@ button{font-family:var(--sans)}
 .signed-in.is-free #pricing{order:20}
 .signed-in .hero-grid{grid-template-areas:"studio visual"}
 /* The cold-visitor pitch, demo video and closing pitch are noise once you're in. */
-.signed-in .pitch,.signed-in .vid,.signed-in .strip,.signed-in #final,.signed-in .nav-cta{display:none}
+.signed-in .pitch,.signed-in .hero-why,.signed-in .vid,.signed-in .strip,.signed-in #final,.signed-in .nav-cta{display:none}
 /* Nothing left to sell a subscriber. */
 .is-pro #pricing,.is-pro .nav-pricing,.is-pro #upgrade-nudge{display:none}
 
@@ -561,7 +560,7 @@ button{font-family:var(--sans)}
   html:not(.previewing):not(.signed-in) .hero{padding-bottom:64px}
 }
 @media(max-width:980px){
-  .hero-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"pitch" "visual" "studio"}
+  .hero-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"pitch" "visual" "studio" "why"}
   .signed-in .hero-grid{grid-template-areas:"studio" "visual"}
   .visual{position:static}
   /* The preview moves into the studio (next to the form) once you start making a card. */
