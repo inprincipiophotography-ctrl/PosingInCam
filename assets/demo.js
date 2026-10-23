@@ -34,49 +34,54 @@
   /* ---------- the film: chapters, words and moves (ms) ---------- */
   const CHAPTERS = [
     { id: "moment", name: "The moment", at: 0 },
-    { id: "playback", name: "Playback", at: 8000 },
-    { id: "make", name: "Make yours", at: 17000 },
-    { id: "sd", name: "SD card", at: 28000 },
-    { id: "day", name: "On the day", at: 35000 },
+    { id: "playback", name: "Playback", at: 11500 },
+    { id: "make", name: "Make yours", at: 24500 },
+    { id: "sd", name: "SD card", at: 35500 },
+    { id: "day", name: "On the day", at: 42500 },
   ];
-  const END = 42000;
+  const END = 49500;
   // Links into the older, step-by-step demo still land on the right chapter.
   const FROM_HASH = { moment: 0, start: 0, playback: 1, make: 2, camera: 2, sd: 3, copy: 3, setup: 3, day: 4, shoot: 4, done: 4 };
 
   const HOOK = "4:12&nbsp;pm. The couple is waiting. <em>What's the next pose?</em>";
   const CAPTIONS = [
     { at: 0, title: HOOK, text: "Golden hour is fading, and your mind goes blank." },
-    { at: 3200, title: HOOK, text: "So you reach for your phone. Unlock, find the board, scroll…" },
-    { at: 5800, title: "There's a faster way. <em>It's already in your hand.</em>", text: "" },
-    { at: 8000, title: "Your poses live in <em>playback</em>.", text: "Right next to your photos: the shot, the settings and the words to say." },
-    { at: 17000, title: "Make your own <em>in a minute</em>.", text: "Type the names, tap the moments. No Canva, no design." },
-    { at: 28000, title: "Copy one folder to your <em>SD card</em>.", text: null },   // per camera: VENDORS[].where
-    { at: 35000, title: "Between shots, <em>press play</em>.", text: "The couple is waiting again. This time the plan is in your hand." },
-    { at: 38400, title: "Your plan, <em>right there</em>.", text: "No phone, no paper. Nobody sees you scroll." },
+    { at: 3600, title: HOOK, text: "So you reach for your phone. Unlock, find the board, scroll…" },
+    { at: 8600, title: "There's a faster way. <em>It's already in your hand.</em>", text: "" },
+    { at: 11500, title: "Your poses live in <em>playback</em>.", text: "Right next to your photos: the shot, the settings and the words to say." },
+    { at: 20000, title: "Timelines, family groups, <em>shot lists</em> too.", text: "Every part of the day, one press away." },
+    { at: 24500, title: "Make your own <em>in a minute</em>.", text: "Type the names, tap the moments. No Canva, no design." },
+    { at: 35500, title: "Copy one folder to your <em>SD card</em>.", text: null },   // per camera: VENDORS[].where
+    { at: 42500, title: "Between shots, <em>press play</em>.", text: "The couple is waiting again. This time the plan is in your hand." },
+    { at: 45900, title: "Your plan, <em>right there</em>.", text: "No phone, no paper. Nobody sees you scroll." },
   ];
 
   // 1. the moment: the phone comes up, the seconds tick away
-  const PHONE_IN = 1600, PHONE_OUT = 5600, TIMER = [1900, 5200];
-  // 2. playback: press play, then turn the wheel through the cards
-  const PLAY_1 = 8800, TURNS = [10400, 11900, 13400, 14900];
+  const PHONE_IN = 2600, PHONE_OUT = 8000, TIMER = [2900, 7400];
+  // 2. playback: press play, turn the camera upright for the pose cards and
+  //    wheel through them, then back on its side for the timeline and groups
+  const PLAY_1 = 12400;
+  const ROT_IN = 13600, TALL_AT = 14300;     // the camera turns; near the end the screen turns with it
+  const ROT_OUT = 18900, WIDE_AT = 19600;    // and back
+  const TURNS = [15900, 17300, 20600, 22100];
   // 3. make yours: type the names, tick the moments, pick the camera, make it
-  const NAME = "Ana & Marko", TYPE_AT = 17900, TYPE_MS = 95;
-  const TICKS = [[19800, 0], [20700, 1], [21600, 2], [22500, 4]];
-  const CAM_AT = 23600, GO_AT = 24500, MADE_AT = 25700;
+  const NAME = "Ana & Marko", TYPE_AT = 25400, TYPE_MS = 95;
+  const TICKS = [[27300, 0], [28200, 1], [29100, 2], [30000, 4]];
+  const CAM_AT = 31100, GO_AT = 32000, MADE_AT = 33200;
   // 4. SD card: the ZIP goes onto the card, the card goes into the camera
-  const COPY_AT = 29200, COPIED_AT = 30300, INSERT_AT = 31500, INSERTED_AT = 32800;
+  const COPY_AT = 36700, COPIED_AT = 37800, INSERT_AT = 39000, INSERTED_AT = 40300;
   // 5. on the day: press play, and your card is there
-  const PLAY_2 = 36200;
+  const PLAY_2 = 43700;
 
   // Where a finger presses (it glides between taps that follow closely).
   const TAPS = [
     { at: PLAY_1, el: "btn-play" },
     ...TURNS.map((at) => ({ at, el: "btn-dial" })),
-    { at: 17600, el: "st-name" },
+    { at: TYPE_AT - 300, el: "st-name" },
     ...TICKS.map(([at, i]) => ({ at, el: "chip-" + i })),
     { at: CAM_AT, el: "cam-pill" },
     { at: GO_AT, el: "st-go" },
-    { at: 28900, el: "zipchip", to: "sdcard", until: COPY_AT + 950 },
+    { at: COPY_AT - 300, el: "zipchip", to: "sdcard", until: COPY_AT + 950 },
     { at: PLAY_2, el: "btn-play" },
   ];
 
@@ -92,12 +97,13 @@
       { names: "+ Petra & Josip", rel: "her siblings" }, { names: "Ana & Luka + Sanja & Goran", rel: "his parents" },
       { names: "+ Marko", rel: "his brother" }, { names: "Everyone, both families", rel: "big group last" }] },
   };
+  // Pose cards first (the camera stands upright for them), then the wide cards.
   const ROLL = [
     { img: "pack-03", name: "pose card, Under the veil" },
-    { card: "timeline", data: SAMPLE.timeline, name: "timeline card" },
     { img: "pack-01", name: "pose card, Dance and spin" },
-    { card: "groups", data: SAMPLE.groups, name: "family groups card" },
     { img: "pack-02", name: "pose card, The first look" },
+    { card: "timeline", data: SAMPLE.timeline, name: "timeline card" },
+    { card: "groups", data: SAMPLE.groups, name: "family groups card" },
   ];
   const ROLL_OF = 8;   // the counter reads like a bigger pack: 1/8, 2/8…
   // The lines in the studio (chip-0…chip-5 in the page), as card rows.
@@ -120,9 +126,9 @@
   /* ---------- the camera screen ---------- */
   const W = 1920, H = 1280;
   const SANS = "Inter, -apple-system, 'Segoe UI', Roboto, sans-serif";
-  // Live view is a real photo: a 3:2 crop of the bride in pack-04.jpg (source px),
-  // with the camera's focus box on her face.
-  const LIVE_SRC = { img: "pack-04", x: 236, y: 250, w: 506, h: 337, face: [462, 300, 70, 84] };
+  // Live view is a real photo: the couple on the beach at sunset (1200×800),
+  // with the camera's focus box on the kiss (source px).
+  const LIVE_SRC = { img: "live-couple", x: 0, y: 0, w: 1200, h: 800, face: [500, 220, 170, 140] };
   const screenBox = $("screen");
   const canvas = $("screen-canvas");
   const ctx = canvas.getContext("2d");
@@ -169,7 +175,7 @@
     canvas.setAttribute("aria-label", f.label);
   }
 
-  // What's in front of the lens: the bride, in warm late light.
+  // What's in front of the lens: the couple, as the sun goes down.
   function drawLive() {
     const L = LIVE_SRC, img = image(L.img);
     let g;
@@ -177,19 +183,15 @@
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
       ctx.drawImage(img, L.x, L.y, L.w, L.h, 0, 0, W, H);
-      g = ctx.createLinearGradient(0, 0, W, H);       // a touch of golden hour
-      g.addColorStop(0, "rgba(255,186,110,.26)");
-      g.addColorStop(0.55, "rgba(255,170,100,.08)");
-      g.addColorStop(1, "rgba(80,40,20,.18)");
     } else {
       g = ctx.createLinearGradient(0, 0, 0, H);       // still loading: a quiet gradient
-      g.addColorStop(0, "#6f7a5a");
-      g.addColorStop(1, "#2f3427");
+      g.addColorStop(0, "#8a8679");
+      g.addColorStop(1, "#2e2d29");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
     }
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
 
-    // the focus box on her face, then the shooting info
+    // the focus box on their faces, then the shooting info
     const sx = W / L.w, sy = H / L.h;
     const fx = (L.face[0] - L.x) * sx, fy = (L.face[1] - L.y) * sy, fw = L.face[2] * sx, fh = L.face[3] * sy;
     ctx.strokeStyle = "rgba(120,255,140,.95)";
@@ -229,8 +231,12 @@
 
   // A card in playback: letterboxed like the camera does it (a portrait pose
   // card stands upright between black bars), with the playback info on top.
+  // With the camera held upright (f.tall) the screen turns with it: draw in a
+  // space turned a quarter right, so the card fills it and reads upright.
   function drawCard(f) {
     const it = f.item;
+    const cw = f.tall ? H : W, ch = f.tall ? W : H;
+    if (f.tall) { ctx.translate(W, 0); ctx.rotate(Math.PI / 2); }
     let src = null;
     if (it.img) {
       const img = image(it.img);
@@ -241,15 +247,16 @@
     }
     if (src) {
       const sw = src.naturalWidth || src.width, sh = src.naturalHeight || src.height;
-      const s = Math.min(W / sw, H / sh), dw = Math.round(sw * s), dh = Math.round(sh * s);
+      const s = Math.min(cw / sw, ch / sh), dw = Math.round(sw * s), dh = Math.round(sh * s);
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(src, Math.round((W - dw) / 2), Math.round((H - dh) / 2), dw, dh);
+      ctx.drawImage(src, Math.round((cw - dw) / 2), Math.round((ch - dh) / 2), dw, dh);
     }
     ctx.font = "600 52px " + SANS;
     if (f.counter || f.file) pill(f.file ? PLAY + "  " + f.file : PLAY, 30, 16, "left");
-    if (f.counter) pill(f.counter, W - 30, 16, "right");
-    if (f.badge) pill(f.badge, W - 30, 16, "right", "rgba(255,255,255,.94)", "#7e0000");
+    if (f.counter) pill(f.counter, cw - 30, 16, "right");
+    if (f.badge) pill(f.badge, cw - 30, 16, "right", "rgba(255,255,255,.94)", "#7e0000");
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   function pill(text, x, y, align, bg, fg) {
@@ -277,7 +284,7 @@
 
   // What the camera shows: a key (repaint only when it changes) and the frame.
   function screenAt(ms) {
-    const LIVE = { key: "live", f: { kind: "live", label: "Camera screen: live view, the bride in the garden at golden hour" } };
+    const LIVE = { key: "live", f: { kind: "live", label: "Camera screen: live view, the couple kissing on the beach at sunset" } };
     const mine = (name) => ({
       key: "mine:" + name + ":" + vendor,
       f: { kind: "card", item: myCard(name, PICKS), file: VENDORS[vendor].file, label: "Camera playback: your timeline card, " + VENDORS[vendor].file },
@@ -287,9 +294,12 @@
     if (c === "moment") return LIVE;
     if (c === "playback") {
       if (ms < PLAY_1) return LIVE;
-      const i = turnsBy(ms), it = ROLL[i];
-      return { key: "roll:" + i, anim: i ? "slide-next" : "pop",
-               f: { kind: "card", item: it, counter: (i + 1) + "/" + ROLL_OF, label: "Camera playback, card " + (i + 1) + ": " + it.name } };
+      const i = turnsBy(ms), it = ROLL[i], tall = ms >= TALL_AT && ms < WIDE_AT;
+      // the screen just turned with the camera (a soft fade), or the wheel moved on (a slide)
+      const moved = Math.max(PLAY_1, ...TURNS.filter((at) => ms >= at));
+      const flipped = ms >= WIDE_AT ? WIDE_AT : ms >= TALL_AT ? TALL_AT : 0;
+      return { key: "roll:" + i + (tall ? ":tall" : ""), anim: flipped > moved ? "fade" : i ? "slide-next" : "pop",
+               f: { kind: "card", item: it, tall, counter: (i + 1) + "/" + ROLL_OF, label: "Camera playback, card " + (i + 1) + ": " + it.name } };
     }
     if (c === "make") {
       const name = typedBy(ms), picks = ticksBy(ms);
@@ -304,7 +314,7 @@
     if (ms >= END) return ["end", ""];
     const c = CHAPTERS[chapterAt(ms)].id;
     if (c === "moment") return [c, ms >= PHONE_IN && ms < PHONE_OUT ? "phone" : ""];
-    if (c === "playback") return [c, ms >= PLAY_1 ? "on" : ""];
+    if (c === "playback") return [c, ms >= ROT_IN && ms < ROT_OUT ? "tall" : ms >= PLAY_1 ? "on" : ""];
     if (c === "make") return [c, ms >= MADE_AT ? "made" : ""];
     if (c === "sd") return [c, ms >= INSERTED_AT ? "inserted" : ms >= INSERT_AT ? "insert" : ms >= COPIED_AT ? "copied" : ms >= COPY_AT ? "copy" : "zip"];
     return [c, ms >= PLAY_2 ? "on" : ""];
@@ -398,7 +408,7 @@
       paint(s.f);
       if (live && !reduced && was !== null && s.anim) {
         if (s.anim === "flash") restart(screenBox, "flash");
-        else restart(canvas, s.anim, ["slide-next", "pop"]);
+        else restart(canvas, s.anim, ["slide-next", "pop", "fade"]);
       }
     }
 
@@ -418,7 +428,7 @@
     // 3. the studio
     const typed = typedBy(t), picks = ticksBy(t);
     put("typed", typed, (v) => { $("st-name").textContent = v; });
-    put("typing", t >= 17400 && t < TYPE_AT + NAME.length * TYPE_MS + 500, (v) => $("studio").classList.toggle("typing", v));
+    put("typing", t >= TYPE_AT - 500 && t < TYPE_AT + NAME.length * TYPE_MS + 500, (v) => $("studio").classList.toggle("typing", v));
     put("picks", picks.join(","), () => {
       LINES.forEach((_, i) => $("chip-" + i).classList.toggle("on", picks.includes(i)));
     });
@@ -552,7 +562,6 @@
     if (!VENDOR_KEYS.includes(v)) return;
     vendor = v;
     const V = VENDORS[v];
-    $("cam-brand").textContent = V.name;
     $("zip-file").textContent = V.file;
     $("sd-folder").textContent = V.folder;
     document.querySelectorAll("#end-cams .cam").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.vendor === v)));
