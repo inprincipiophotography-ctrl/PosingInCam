@@ -116,6 +116,13 @@ button{font-family:var(--sans)}
 .pitch h1{font-family:var(--serif);font-weight:400;font-size:clamp(40px,5.2vw,66px);line-height:.98;letter-spacing:-.02em;margin:16px 0 14px;color:var(--ink)}
 .pitch h1 em{font-style:italic;color:var(--accent)}
 .pitch .lede{font-size:clamp(16px,1.6vw,18.5px);color:var(--ink-2);margin:0;max-width:34em}
+/* the question most visitors have, answered before they have to ask it */
+.hero-why{margin:18px 0 0;max-width:36em;padding:12px 16px;border-radius:12px;border-left:3px solid var(--accent);background:rgba(255,255,255,.75);
+  box-shadow:0 1px 2px rgba(0,0,0,.04);font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+.hero-why strong{color:var(--ink);font-weight:600}
+.hero-why a{color:var(--accent-2);font-weight:600;white-space:nowrap}
+.hero-why a:hover{text-decoration:underline;text-underline-offset:3px}
+.hero-why a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
 
 /* ---------- the studio card ---------- */
 .studio{background:var(--surface);border:1px solid var(--border-soft);border-radius:22px;box-shadow:var(--shadow-lg);padding:clamp(16px,2.2vw,22px)}
@@ -502,7 +509,8 @@ button{font-family:var(--sans)}
   .pitch>*{animation:heroUp .7s both cubic-bezier(.2,.6,.2,1)}
   .pitch>h1{animation-delay:.08s}
   .pitch>.lede{animation-delay:.16s}
-  .pitch>.pitch-demo{animation-delay:.24s}
+  .pitch>.hero-why{animation-delay:.22s}
+  .pitch>.pitch-demo{animation-delay:.28s}
   @keyframes heroUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 }
 
