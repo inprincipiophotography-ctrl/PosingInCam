@@ -46,17 +46,23 @@ const Hook: React.FC = () => (
   </AbsoluteFill>
 );
 
-// ---------- 2 · The couple (3–6 s): match cut to the couple in the pose, sharp, in slow motion ----------
+// ---------- 2 · The couple (3–5 s): match cut to the couple in the pose, sharp, in slow motion ----------
 const Couple: React.FC = () => {
   const c = TL.couple;
+  const len = c.to - c.from;
   return (
     <Punch>
       <AbsoluteFill style={{ background: "#000" }}>
-        {/* Shot at 50 fps, so 0.55× stays smooth; only the sharp end of the take (after the focus pull). */}
-        <Shot kind="video" src={SHOOT.src} media={SHOOT.size} startFrom={c.source} playbackRate={c.rate} views={[{ t: 0, x: 0.51, y: 0.46, zoom: 1.02 }, { t: 3, x: 0.48, y: 0.46, zoom: 1.1 }]} />
+        {/* Shot at 50 fps, so 0.55× stays smooth; only the sharp end of the take (after the focus pull).
+            Framed tight and high: the photographer's out-of-focus shoulder (lower left of the take) stays out of
+            frame, and both faces sit below the caption. */}
+        <Shot
+          kind="video" src={SHOOT.src} media={SHOOT.size} startFrom={c.source} playbackRate={c.rate}
+          views={[{ t: 0, x: 0.5, y: 0.36, zoom: 1.4 }, { t: len, x: 0.5, y: 0.36, zoom: 1.46 }]}
+        />
         <Grade top={0.25} vignette={0.3} grain={0} />
         <Top>
-          <BoxCaption lines={["Glance. Pose. [Shoot.]"]} at={0.1} outAt={2.8} size={92} />
+          <BoxCaption lines={["Glance. Pose. [Shoot.]"]} at={0.1} outAt={len - 0.2} size={92} />
         </Top>
       </AbsoluteFill>
     </Punch>

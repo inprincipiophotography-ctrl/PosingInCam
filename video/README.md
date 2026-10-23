@@ -22,7 +22,7 @@ This folder is not part of the website: `.vercelignore` keeps it out of the depl
 | `AdC-…` "Who’s next?" | 9:16, 4:5 | 30 | 13 s | Meta ads |
 | `AdA2-9x16` "Blank" v2 | 1080 × 1920 | 30 | 16 s | Instagram ad, with music |
 | `AdPOV-9x16` "POV" (Ad A v3) | 1080 × 1920 | 30 | 16 s | Instagram ad, with music |
-| `AdA4-9x16` Ad A v4 | 1080 × 1920 | 30 | 20 s | Instagram ad, with music |
+| `AdA4-9x16` Ad A v4 | 1080 × 1920 | 30 | 19 s | Instagram ad, with music |
 
 `AdA2` is the rebuild on the Relay motion rules (`.claude/skills/launch-motion/references/relay-motion-skill.md`): real images full-bleed, editorial type, bordo wipes, cut to a 120 BPM track. Its code is in `src/v2/`, its storyboard in `storyboards/ad-a-v2.md`, and picture and music share one clock, `src/v2/timeline.json`.
 
