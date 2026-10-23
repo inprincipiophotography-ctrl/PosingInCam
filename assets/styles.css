@@ -523,8 +523,8 @@ button{font-family:var(--sans)}
 .signed-in main{display:flex;flex-direction:column}
 .signed-in #tool{order:10}
 .signed-in #history{order:30}
-.signed-in #packs{order:40}
-.signed-in #more{order:50}
+.signed-in #more{order:40}
+.signed-in #packs{order:50}
 .signed-in #why{order:60}
 .signed-in #pricing{order:70}
 .signed-in #faq{order:80}
