@@ -1,0 +1,37 @@
+import React from "react";
+import { Composition } from "remotion";
+import { AD_SECONDS, AdA, AdB, AdC } from "./Ads";
+import { LAUNCH_SECONDS, Launch } from "./Launch";
+import "./theme";
+
+const FORMATS = {
+  "16x9": { width: 1920, height: 1080 },
+  "9x16": { width: 1080, height: 1920 },
+  "4x5": { width: 1080, height: 1350 },
+};
+
+// Launch master at 60 fps (launch-motion spec); Meta ads at 30 fps.
+const VIDEOS = [
+  { id: "Launch", component: Launch, seconds: LAUNCH_SECONDS, fps: 60, formats: ["16x9", "9x16", "4x5"] },
+  { id: "AdA", component: AdA, seconds: AD_SECONDS, fps: 30, formats: ["9x16", "4x5"] },
+  { id: "AdB", component: AdB, seconds: AD_SECONDS, fps: 30, formats: ["9x16", "4x5"] },
+  { id: "AdC", component: AdC, seconds: AD_SECONDS, fps: 30, formats: ["9x16", "4x5"] },
+] as const;
+
+export const Root: React.FC = () => (
+  <>
+    {VIDEOS.flatMap((v) =>
+      v.formats.map((fmt) => (
+        <Composition
+          key={`${v.id}-${fmt}`}
+          id={`${v.id}-${fmt}`}
+          component={v.component}
+          durationInFrames={v.seconds * v.fps}
+          fps={v.fps}
+          {...FORMATS[fmt]}
+          defaultProps={{ guides: false }}
+        />
+      )),
+    )}
+  </>
+);

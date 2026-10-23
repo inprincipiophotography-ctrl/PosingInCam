@@ -34,3 +34,10 @@ template-a7iv*.JPG
 template-a7iv*.jpg
 real-a7iv*.JPG
 real-a7iv*.jpg
+
+# Video project (video/): dependencies, renders and generated media
+video/node_modules/
+video/out/
+video/public/photos/
+video/public/footage/
+video/public/showcase/
