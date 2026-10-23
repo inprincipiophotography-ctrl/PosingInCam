@@ -17,7 +17,7 @@ const NOTE_LINE = 49;
 export const REGIONS = {
   photo: { x: POSE.frame.x, y: POSE.frame.y, w: POSE.frame.w, h: POSE.box.y - POSE.frame.y - 20 },
   say: { x: POSE.box.x, y: POSE.box.y, w: POSE.box.w, h: POSE.box.h },
-  notes: { x: 22, y: 440, w: 362, h: 520 },
+  notes: { x: 22, y: 590, w: 362, h: 650 }, // camera settings + the hack
 };
 export type Region = keyof typeof REGIONS;
 
@@ -29,6 +29,7 @@ export type PoseCardData = {
   say: string;
   source: string;
   photo: string; // staticFile path
+  noteSize?: number; // px; a long hack needs a smaller size to stay clear of the photo
 };
 
 /** Text placed by its baseline, like the canvas does. */
@@ -58,9 +59,9 @@ export const PoseCard: React.FC<{ data: PoseCardData; children?: React.ReactNode
         y += NOTE_LINE * (lines.length + 2);
         return (
           <React.Fragment key={label}>
-            <At x={30} base={top} size={32} style={{ fontWeight: 700 }}>{label}</At>
+            <At x={30} base={top} size={data.noteSize ?? 32} style={{ fontWeight: 700 }}>{label}</At>
             {lines.map((line, j) => (
-              <At key={j} x={30} base={top + NOTE_LINE * (j + 1)} size={32} style={{ fontWeight: 400 }}>
+              <At key={j} x={30} base={top + NOTE_LINE * (j + 1)} size={data.noteSize ?? 32} style={{ fontWeight: 400 }}>
                 {mark && j === 0 ? <span style={{ color: POSE.star }}>*</span> : null}
                 {line}
               </At>
@@ -83,6 +84,18 @@ export const PoseCard: React.FC<{ data: PoseCardData; children?: React.ReactNode
       {children}
     </div>
   );
+};
+
+// The card on the camera in the wedding take and in DSC08438, word for word.
+export const EDITORIAL: PoseCardData = {
+  title: "Editorial 1/1",
+  energy: "Serious",
+  camera: "Vertical\neye level or lower",
+  hack: "His hand must be\nvisible holding her,\notherwise it looks\nlike they are\ntogether by\naccident.\nHer shoulders\nslightly back.",
+  say: "Stand in front of him, pop\nthe leg, one arm relaxed by\nyour side, other on your hip,\nchin slightly down. He holds\nyour elbow or waist.",
+  source: "Source: In Principio\nweddings",
+  photo: "showcase/editorial-photo.jpg",
+  noteSize: 27,
 };
 
 export const FIRST_LOOK: PoseCardData = {

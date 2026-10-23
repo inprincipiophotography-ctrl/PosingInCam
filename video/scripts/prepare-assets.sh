@@ -33,4 +33,9 @@ cp ../assets/showcase/pack-0*.jpg ../assets/showcase/live-couple.jpg public/show
 # The First Look's photo, cut from its pose-pack card (the photo frame in builder.js's 1280×1920 layout, at 760 px wide),
 # for the vector card in Ad A v4.
 ffmpeg -v error -y -i ../assets/showcase/pack-02.jpg -vf "crop=507:803:235:119" -q:v 2 public/showcase/first-look-photo.jpg
+# Editorial 1/1's photo, cut 1:1 from the camera screen in source/DSC08438.jpg (the card sits at 1632,1527 there,
+# 1281 × 1922 px), cleaned to grey, with the edge of the card's own text box painted out.
+ffmpeg -v error -y -i source/DSC08438.jpg \
+  -vf "crop=854:1352:2028:1727,format=gray,eq=contrast=1.12:brightness=-0.02:gamma=0.95,drawbox=x=0:y=1186:w=372:h=166:color=white:t=fill" \
+  -q:v 2 public/showcase/editorial-photo.jpg
 echo "✓ public/showcase/"

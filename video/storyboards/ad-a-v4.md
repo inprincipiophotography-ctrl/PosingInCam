@@ -19,12 +19,14 @@ What changed from v3, and why:
 - Caption: "Glance. Pose. [Shoot.]"
 
 **3 · The card** — 6.0–12.0
-- 6.0: the real photo of the camera, its screen in the middle of the frame.
+- The card is **Editorial 1/1**: the same card that's on her camera in the hook, so the story runs on. Its photo is cut 1:1 from the camera screen in `source/DSC08438.jpg`, where the card measures 1281 × 1922 px; its words are copied off that screen.
+- 6.0: the real photo of that camera (DSC08438), its screen in the middle of the frame.
 - 6.3: the photographed screen swaps for the vector card, with a shutter click.
 - 6.5–7.4: the card lifts off the screen. A tilt settles, a shadow grows, and the camera behind falls out of focus and darkens. Caption: "On every card:".
+- From 7.6 a spotlight dims the card except for the part being explained. The bright cut-out glides from part to part with the camera.
 - 7.6: push to the photo, and a red outline draws around it: "The [pose] to copy".
 - 9.0: push to the "Say to the couple" box, sharp at 1.18×: "The exact [words] / to say to them".
-- 10.5: push to the notes column: "Settings + a [hack]".
+- 10.5: push to the camera settings and the hack: "Settings + a [hack]".
 
 **4 · Playback** — 12.0–15.0
 - The 4K clip of a thumb scrolling playback, the camera screen centred (Bruno Weddings cards cut out).

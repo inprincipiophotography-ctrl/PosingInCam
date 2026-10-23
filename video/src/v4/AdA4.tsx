@@ -12,7 +12,7 @@ import { Grade } from "../v2/Grade";
 import { CAMERA, STAGGER, enter, move, punch } from "../v2/motion";
 import { MAROON } from "../v2/Wipe";
 import { BoxCaption, HOT } from "./BoxCaption";
-import { CARD, FIRST_LOOK, PoseCard, REGIONS, type Region } from "./PoseCard";
+import { CARD, EDITORIAL, PoseCard, REGIONS, type Region } from "./PoseCard";
 import TL from "./timeline.json";
 
 // Ad A v4, 9:16 Reels. Storyboard: storyboards/ad-a-v4.md.
@@ -98,6 +98,32 @@ const Outline: React.FC<{ region: Region; from: number; to: number; s: number; t
   );
 };
 
+/**
+ * Spotlight: the card dims except for the part being explained. The bright cut-out glides from part to part
+ * with the camera, so the eye always knows where to look.
+ */
+const Spotlight: React.FC<{ t: number; stops: { at: number; region: Region }[]; until: number }> = ({ t, stops, until }) => {
+  const on = interpolate(t, [stops[0].at, stops[0].at + 0.5], [0, 1], { ...clamp, easing: CAMERA });
+  const off = interpolate(t, [until - 0.2, until], [0, 1], clamp);
+  let i = 0;
+  while (i < stops.length - 1 && t >= stops[i + 1].at) i++;
+  const from = REGIONS[stops[Math.max(0, i - 1)].region];
+  const to = REGIONS[stops[i].region];
+  const p = i === 0 ? 1 : interpolate(t, [stops[i].at, stops[i].at + 0.6], [0, 1], { ...clamp, easing: CAMERA });
+  const pad = 14;
+  const r = {
+    x: from.x + (to.x - from.x) * p - pad, y: from.y + (to.y - from.y) * p - pad,
+    w: from.w + (to.w - from.w) * p + pad * 2, h: from.h + (to.h - from.h) * p + pad * 2,
+  };
+  const rr = 18;
+  const hole = `M${r.x + rr},${r.y} h${r.w - 2 * rr} a${rr},${rr} 0 0 1 ${rr},${rr} v${r.h - 2 * rr} a${rr},${rr} 0 0 1 -${rr},${rr} h-${r.w - 2 * rr} a${rr},${rr} 0 0 1 -${rr},-${rr} v-${r.h - 2 * rr} a${rr},${rr} 0 0 1 ${rr},-${rr} z`;
+  return (
+    <svg style={{ position: "absolute", left: 0, top: 0 }} width={CARD.w} height={CARD.h}>
+      <path d={`M0,0 H${CARD.w} V${CARD.h} H0 Z ${hole}`} fillRule="evenodd" fill="rgba(12,10,10,0.62)" opacity={on * (1 - off)} />
+    </svg>
+  );
+};
+
 const CardScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -106,8 +132,8 @@ const CardScene: React.FC = () => {
   const t = frame / fps;
   const rel = (x: number) => x - k.from;
 
-  // The real photo, framed with its camera screen in the middle of the visible area.
-  const photo = PHOTOS.firstLook;
+  // The real photo of the same card that's on her camera in the hook, its screen in the middle of the visible area.
+  const photo = PHOTOS.editorial;
   const fill = 0.36;
   const lcdCy = 840;
   const cover = Math.max(w / PHOTO_SIZE.w, h / PHOTO_SIZE.h);
@@ -126,9 +152,9 @@ const CardScene: React.FC = () => {
     { t: rel(k.say), s: 0.6, fx: 823, fy: 880, sy: 900 },
     { t: rel(k.say) + 0.6, s: 1.18, fx: 392, fy: 1632, sy: 870 },
     { t: rel(k.notes), s: 1.18, fx: 392, fy: 1632, sy: 870 },
-    // High enough that the card's title has left the top of the frame.
-    { t: rel(k.notes) + 0.6, s: 1.42, fx: 205, fy: 700, sy: 790 },
-    { t: 6, s: 1.46, fx: 205, fy: 700, sy: 790 },
+    // Camera settings and the hack (card y 600–1230), with the card's title gone off the top of the frame.
+    { t: rel(k.notes) + 0.6, s: 1.28, fx: 205, fy: 915, sy: 830 },
+    { t: 6, s: 1.31, fx: 205, fy: 915, sy: 830 },
   ];
   const cam = cameraAt(keys, t);
   const tx = w / 2 - cam.fx * cam.s;
@@ -160,7 +186,11 @@ const CardScene: React.FC = () => {
               boxShadow: `0 ${lift * 90}px ${lift * 160}px rgba(0,0,0,${0.15 + lift * 0.45})`,
             }}
           >
-            <PoseCard data={FIRST_LOOK}>
+            <PoseCard data={EDITORIAL}>
+              <Spotlight
+                t={t} until={6}
+                stops={[{ at: rel(k.pose), region: "photo" }, { at: rel(k.say), region: "say" }, { at: rel(k.notes), region: "notes" }]}
+              />
               <Outline region="photo" from={rel(k.pose) + 0.35} to={rel(k.say)} s={cam.s} t={t} />
               <Outline region="say" from={rel(k.say) + 0.35} to={rel(k.notes)} s={cam.s} t={t} />
               <Outline region="notes" from={rel(k.notes) + 0.35} to={6} s={cam.s} t={t} />

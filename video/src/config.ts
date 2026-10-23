@@ -23,7 +23,8 @@ export type CameraPhoto = { src: string; title: string; card: { x: number; y: nu
 // to Bruno Weddings, so it stays out of paid ads until they and the couple say yes.
 export const PHOTOS = {
   firstLook: { src: "photos/DSC08435.jpg", title: "The First Look", card: { x: 0.368, y: 0.256, w: 0.256, h: 0.288 } },
-  editorial: { src: "photos/DSC08438.jpg", title: "Editorial", card: { x: 0.35, y: 0.245, w: 0.29, h: 0.325 } },
+  // Measured from the pixels: the card is 1281 × 1922 at (1632, 1527) in the 4538 × 6051 original.
+  editorial: { src: "photos/DSC08438.jpg", title: "Editorial 1/1", card: { x: 0.3596, y: 0.2524, w: 0.2823, h: 0.3176 } },
   vogue: { src: "photos/DSC08439.jpg", title: "Vogue", card: { x: 0.367, y: 0.262, w: 0.26, h: 0.288 } },
   fitCheck: { src: "photos/DSC08440.jpg", title: "Fit Check", card: { x: 0.377, y: 0.275, w: 0.257, h: 0.288 } },
 } satisfies Record<string, CameraPhoto>;
