@@ -79,3 +79,4 @@ Every launch video follows one path: grab attention → show the problem → sho
 - `references/brief-template.md` — the client brief format.
 - `references/storyboard-template.md` — the scene-by-scene storyboard format, with a filled example.
 - `references/pitch-message.md` — the proposal template for landing launch-video clients.
+- `references/relay-motion-skill.md` — the Relay motion rules. Read them before animating and apply them on top of this skill; where they are stricter, they win (3–4 frame staggers, short overlaps between scenes, restrained overshoot instead of bouncing every object, logo + CTA readable ≥ 2.5 s, abort the render if a brand font is missing).

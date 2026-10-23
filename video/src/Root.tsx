@@ -2,6 +2,7 @@ import React from "react";
 import { Composition } from "remotion";
 import { AD_SECONDS, AdA, AdB, AdC } from "./Ads";
 import { LAUNCH_SECONDS, Launch } from "./Launch";
+import { AD_A2_SECONDS, AdA2 } from "./v2/AdA2";
 import "./theme";
 
 const FORMATS = {
@@ -33,5 +34,7 @@ export const Root: React.FC = () => (
         />
       )),
     )}
+    {/* Ad A v2: rebuilt on the Relay motion rules, with its own music (scripts/music.py). */}
+    <Composition id="AdA2-9x16" component={AdA2} durationInFrames={AD_A2_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
   </>
 );

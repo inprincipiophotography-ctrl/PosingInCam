@@ -1,5 +1,5 @@
 import { loadFont } from "@remotion/fonts";
-import { Easing, interpolate, spring, staticFile } from "remotion";
+import { Easing, cancelRender, continueRender, delayRender, interpolate, spring, staticFile } from "remotion";
 
 // NotaLucis look (assets/styles.css on the site): light, one red accent, Inter + Instrument Serif.
 export const C = {
@@ -26,6 +26,16 @@ export const fontsReady = Promise.all([
   loadFont({ family: SERIF, url: staticFile("fonts/InstrumentSerif-latin.woff2"), weight: "400" }),
   loadFont({ family: SERIF, url: staticFile("fonts/InstrumentSerif-italic-latin.woff2"), weight: "400", style: "italic" }),
 ]);
+
+// No silent fallback: if a brand face did not load, stop the render with a message that says which.
+const fontCheck = delayRender("Checking brand fonts");
+fontsReady
+  .then(() => {
+    const missing = [`400 100px "${SANS}"`, `600 100px "${SANS}"`, `400 100px "${SERIF}"`, `italic 400 100px "${SERIF}"`].filter((f) => !document.fonts.check(f));
+    if (missing.length) throw new Error(`Brand font not available: ${missing.join(", ")}. Check video/public/fonts/.`);
+    continueRender(fontCheck);
+  })
+  .catch((err) => cancelRender(err));
 
 export const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 

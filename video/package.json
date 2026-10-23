@@ -3,7 +3,7 @@
   "private": true,
   "description": "Shoot Cards launch video and Meta ads, animated in code with Remotion.",
   "scripts": {
-    "assets": "./scripts/prepare-assets.sh && node scripts/render-cards.mjs",
+    "assets": "./scripts/prepare-assets.sh && node scripts/render-cards.mjs && python3 scripts/music.py",
     "studio": "remotion studio",
     "render:all": "node scripts/render-all.mjs",
     "typecheck": "tsc --noEmit"

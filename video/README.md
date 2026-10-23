@@ -20,15 +20,18 @@ This folder is not part of the website: `.vercelignore` keeps it out of the depl
 | `AdA-…` "Blank" | 9:16, 4:5 | 30 | 13 s | Meta ads |
 | `AdB-…` "No phone" | 9:16, 4:5 | 30 | 13 s | Meta ads |
 | `AdC-…` "Who’s next?" | 9:16, 4:5 | 30 | 13 s | Meta ads |
+| `AdA2-9x16` "Blank" v2 | 1080 × 1920 | 30 | 16 s | Instagram ad, with music |
+
+`AdA2` is the rebuild on the Relay motion rules (`.claude/skills/launch-motion/references/relay-motion-skill.md`): real images full-bleed, editorial type, bordo wipes, cut to a 120 BPM track. Its code is in `src/v2/`, its storyboard in `storyboards/ad-a-v2.md`, and picture and music share one clock, `src/v2/timeline.json`.
 
 ## Run it
 
-Needs Node 18+ and ffmpeg.
+Needs Node 18+, ffmpeg, and Python 3 with numpy and scipy (for the music).
 
 ```bash
 cd video
 npm install
-npm run assets        # photos + clip from source/ → public/ ; text cards from assets/builder.js
+npm run assets        # photos + clip from source/ → public/ ; text cards from assets/builder.js ; music
 npm run studio        # preview and scrub in the browser
 npm run render:all    # every video → out/*.mp4 (or: node scripts/render-all.mjs AdA-9x16)
 node scripts/stills.mjs Launch-9x16   # key-frame stills + contact sheet → out/stills/
@@ -44,7 +47,7 @@ Remotion is free for individuals and companies of up to 3 people; larger teams n
 - Copy, URL, CTA, photos, clip segments, music: `src/config.ts`.
 - Scene timing: `LAUNCH` in `src/Launch.tsx`, the `seq([...])` calls in `src/Ads.tsx` (update the storyboard too).
 - Brand colours, fonts, easing: `src/theme.ts`.
-- Music: put the licensed track in `public/music/` and set `MUSIC.launch` / `MUSIC.ads` in `config.ts`.
+- Music: `scripts/music.py` composes and synthesises Ad A v2's track (no samples, no licence) into `public/music/ad-a-v2.wav`, on the clock in `src/v2/timeline.json`; change a time there and both picture and music follow. For the other videos, put a licensed track in `public/music/` and set `MUSIC.launch` / `MUSIC.ads` in `config.ts`.
 - New footage: put it in `source/`, run `npm run assets` (it becomes H.264 in `public/footage/`), then point `FOOTAGE` or a scene at it.
 
 ## Rights

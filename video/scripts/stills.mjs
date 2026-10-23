@@ -14,6 +14,7 @@ const browserExecutable = process.env.REMOTION_CHROME || null;
 const TIMES = {
   Launch: [1.0, 3.0, 5.5, 8.5, 11.5, 14.5, 17.5, 20.3, 22.6, 24.2, 26.0, 29.5],
   Ad: [0.8, 2.8, 4.5, 6.5, 8.8, 9.8, 11.0, 12.8],
+  AdA2: [0.9, 2.6, 3.7, 4.6, 5.8, 6.4, 6.8, 7.3, 7.7, 8.7, 10.2, 11.0, 12.1, 12.9, 13.7, 15.5],
 };
 
 const only = process.argv.slice(2);
@@ -22,7 +23,7 @@ const comps = await getCompositions(serveUrl, { browserExecutable });
 
 for (const comp of comps) {
   if (only.length && !only.includes(comp.id)) continue;
-  const times = comp.id.startsWith("Launch") ? TIMES.Launch : TIMES.Ad;
+  const times = comp.id.startsWith("AdA2") ? TIMES.AdA2 : comp.id.startsWith("Launch") ? TIMES.Launch : TIMES.Ad;
   const dir = join(root, "out", "stills", comp.id);
   mkdirSync(dir, { recursive: true });
   const files = [];
