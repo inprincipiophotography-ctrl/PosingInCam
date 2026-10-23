@@ -3,8 +3,8 @@ pack.py — assemble converted cards into a ready-to-copy SD-card ZIP.
 
 The ZIP mirrors the camera's own layout (``DCIM/<vendor folder>/``) so the
 customer extracts it straight onto the card root. It also bundles short,
-vendor-specific instructions (Croatian + English), including the step people
-most often forget: Sony's *Recover Image Database*.
+vendor-specific instructions (Croatian + English), including the fix for the
+rare Sony that doesn't show new files straight away: *Recover Image Database*.
 
 Used by the Vercel Python function (Part B) and the local CLI (cli.py).
 """
@@ -28,17 +28,17 @@ _INSTRUCTIONS = {
             "1. U aparatu: MENU → Setup → Media → Format (formatiraj karticu).\n"
             "2. Snimi jednu običnu fotku da aparat napravi DCIM/100MSDCF/ mapu.\n"
             "3. Kopiraj sve .JPG iz DCIM/100MSDCF/ ovog ZIP-a u istoimenu mapu na kartici.\n"
-            "4. NAJVAŽNIJE: MENU → Setup → Media → Recover Image Database → potvrdi.\n"
-            "   Bez ovog koraka aparat NEĆE prikazati kartice.\n"
-            "5. Pritisni ▶ Playback i listaj, pose kartice su među fotkama."
+            "4. Pritisni ▶ Playback i listaj, kartice su među fotkama.\n"
+            "   Većina Sony aparata ih prikaže odmah. Ako se ne pojave:\n"
+            "   MENU → Setup → Media → Recover Image Database → potvrdi (10–30 s)."
         ),
         "en": (
             "1. In camera: MENU → Setup → Media → Format the card.\n"
             "2. Take one ordinary photo so the camera creates DCIM/100MSDCF/.\n"
             "3. Copy every .JPG from this ZIP's DCIM/100MSDCF/ into that folder on the card.\n"
-            "4. MOST IMPORTANT: MENU → Setup → Media → Recover Image Database → confirm.\n"
-            "   Without this the camera will NOT show the cards.\n"
-            "5. Press ▶ Playback and scroll. The pose cards appear among your shots."
+            "4. Press ▶ Playback and scroll. The cards appear among your shots.\n"
+            "   Most Sony bodies show them straight away. If they don't appear:\n"
+            "   MENU → Setup → Media → Recover Image Database → confirm (10–30 s)."
         ),
     },
     "canon": {
