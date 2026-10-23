@@ -3,6 +3,8 @@ import { Composition } from "remotion";
 import { AD_SECONDS, AdA, AdB, AdC } from "./Ads";
 import { LAUNCH_SECONDS, Launch } from "./Launch";
 import { AD_A2_SECONDS, AdA2 } from "./v2/AdA2";
+import { HOOK_SECONDS, Hook1, Hook2, Hook3 } from "./v2/Hooks";
+import { AD_POV_SECONDS, AdPov } from "./v3/AdPov";
 import "./theme";
 
 const FORMATS = {
@@ -36,5 +38,11 @@ export const Root: React.FC = () => (
     )}
     {/* Ad A v2: rebuilt on the Relay motion rules, with its own music (scripts/music.py). */}
     <Composition id="AdA2-9x16" component={AdA2} durationInFrames={AD_A2_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
+    {/* Ad POV (Ad A v3): built on hook 1, Reels-native captions, its own music. */}
+    <Composition id="AdPOV-9x16" component={AdPov} durationInFrames={AD_POV_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
+    {/* Hook prototypes for Ad A: pick one, then the ad is rebuilt around it. */}
+    {[Hook1, Hook2, Hook3].map((Hook, i) => (
+      <Composition key={i} id={`Hook${i + 1}-9x16`} component={Hook} durationInFrames={HOOK_SECONDS * 30} fps={30} width={1080} height={1920} />
+    ))}
   </>
 );

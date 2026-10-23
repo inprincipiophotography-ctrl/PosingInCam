@@ -3,12 +3,68 @@
   "bpm": 120,
   "fps": 30,
   "seconds": 16,
-  "hook": { "line1": 0.15, "line2": 2.0, "flash": 3.5 },
+  "hook": {
+    "line1": 0.15,
+    "line2": 2.0,
+    "flash": 3.5
+  },
   "drop": 4.0,
-  "shoot": { "from": 4.0, "to": 8.5, "source": [2.0, 7.2], "expand": [5.6, 6.4], "text1": 4.2, "text2": 6.5 },
-  "stopMotion": { "from": 8.5, "cuts": [8.5, 9.0, 9.5, 10.0], "text": 8.6 },
-  "payoff": { "from": 10.0, "push": 10.4, "label": 10.95, "quote": 11.05, "to": 13.0 },
-  "end": { "wipe": 12.75, "from": 13.0, "logo": 13.05, "tagline": 13.25, "cta": 13.45, "url": 13.6, "press": 14.5 },
-  "wipes": [8.25, 12.75],
-  "whooshes": [5.6, 8.25, 10.4, 12.75]
+  "shoot": {
+    "from": 4.0,
+    "to": 8.5,
+    "source": [
+      2.0,
+      7.2
+    ],
+    "expand": [
+      5.6,
+      6.4
+    ],
+    "text1": 4.2,
+    "text2": 6.5
+  },
+  "stopMotion": {
+    "from": 8.5,
+    "cuts": [
+      8.5,
+      9.0,
+      9.5,
+      10.0
+    ],
+    "text": 8.6
+  },
+  "payoff": {
+    "from": 10.0,
+    "push": 10.4,
+    "label": 10.95,
+    "quote": 11.05,
+    "to": 13.0
+  },
+  "end": {
+    "wipe": 12.75,
+    "from": 13.0,
+    "logo": 13.05,
+    "tagline": 13.25,
+    "cta": 13.45,
+    "url": 13.6,
+    "press": 14.5
+  },
+  "wipes": [
+    8.25,
+    12.75
+  ],
+  "whooshes": [
+    5.6,
+    8.25,
+    10.4,
+    12.75
+  ],
+  "gap": [
+    3.5,
+    4.0
+  ],
+  "riser": [
+    2.0,
+    3.5
+  ]
 }

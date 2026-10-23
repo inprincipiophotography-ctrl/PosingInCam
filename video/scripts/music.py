@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
-"""Compose and render the music bed for Ad A v2: 16 s, 120 BPM, A minor, drop at 4.0 s.
+"""Compose and render a music bed for an ad: 120 BPM, A minor, built on the ad's own clock.
 
 Everything is synthesised here (no samples, no licence): drums, bass, supersaw
 pad, pluck arpeggio, riser, impacts, whooshes and shutter clicks, all placed on
-the same clock as the picture (src/v2/timeline.json). Mastered with ffmpeg to
--14 LUFS / -1 dBTP, the usual target for Instagram.
+the same timeline as the picture. Mastered with ffmpeg to -14 LUFS / -1 dBTP,
+the usual target for Instagram.
 
-    python3 scripts/music.py            → public/music/ad-a-v2.wav
+    python3 scripts/music.py                                        → Ad A v2 (src/v2/timeline.json)
+    python3 scripts/music.py src/v3/timeline.json public/music/ad-pov.wav
+
+Timeline keys used: bpm, seconds, drop, end.from, end.press, whooshes, and optionally
+gap [a, b] (silence), riser [a, b], introKick (a pulse before the drop), shutters (else stopMotion.cuts).
 Needs numpy, scipy and ffmpeg.
 """
 import json
@@ -20,16 +24,23 @@ import numpy as np
 from scipy.signal import butter, fftconvolve, sosfilt
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-T = json.load(open(os.path.join(ROOT, "src", "v2", "timeline.json")))
-OUT = os.path.join(ROOT, "public", "music", "ad-a-v2.wav")
+T = json.load(open(sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "src", "v2", "timeline.json")))
+OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, "public", "music", "ad-a-v2.wav")
 
 SR = 44100
 BEAT = 60 / T["bpm"]
 DUR = T["seconds"]
 N = int(DUR * SR)
 DROP = T["drop"]
-FLASH = T["hook"]["flash"]
 END = T["end"]["from"]
+GAP = T.get("gap")  # [a, b]: everything stops (the "blank"), then the drop
+RISER = T.get("riser", [max(0.0, DROP - 1.5), DROP])
+SHUTTERS = T.get("shutters", T.get("stopMotion", {}).get("cuts", []))
+
+
+def in_gap(t):
+    return bool(GAP) and GAP[0] <= t < GAP[1]
+
 rng = np.random.default_rng(7)
 
 # One stereo bus per instrument (dry + reverb send), balanced against each other at the end.
@@ -100,7 +111,7 @@ def hz(note):
     return 440.0 * 2 ** ((names[name] + 12 * (octave - 4)) / 12)
 
 
-# Bars are 2 s (4 beats). A minor: Am F | Am F | C G | Am → (end) Fmaj9.
+# Bars are 2 s (4 beats). A minor: Am F | Am F | C G | Am F …, then Fmaj9 from the end card.
 CHORDS = {
     "Am": ["A3", "C4", "E4", "A4"],
     "F": ["F3", "A3", "C4", "F4"],
@@ -109,17 +120,18 @@ CHORDS = {
     "Fmaj9": ["F3", "A3", "C4", "E4", "G4"],
 }
 ROOTS = {"Am": "A1", "F": "F1", "C": "C2", "G": "G1", "Fmaj9": "F1"}
-BARS = ["Am", "F", "Am", "F", "C", "G", "Am", "Fmaj9"]
+PROG = ["Am", "F", "Am", "F", "C", "G", "Am", "F"]
 
 
 def chord_at(t):
-    return BARS[min(int(t // (4 * BEAT)), len(BARS) - 1)]
+    return "Fmaj9" if t >= END else PROG[int(t // (4 * BEAT)) % len(PROG)]
 
 
 # ---------- sidechain: everything melodic ducks under the kick after the drop ----------
 duck = np.ones(N)
-kick_times = [DROP + i * BEAT for i in range(int((END - DROP) / BEAT))]
-for kt in kick_times:
+kick_times = [DROP + i * BEAT for i in range(int(round((END - DROP) / BEAT)))]
+intro_kicks = [i * BEAT for i in range(int(round(DROP / BEAT)))] if T.get("introKick") else []
+for kt in kick_times + intro_kicks:
     i = s(kt)
     n = s(0.32)
     seg = 1 - 0.65 * np.exp(-tt(n) / 0.09)
@@ -154,6 +166,8 @@ def hat(open_=False):
 
 for kt in kick_times:
     place(kick(), kt, 1.0, to="kick")
+for kt in intro_kicks:
+    place(filt(kick(), "lowpass", 900), kt, 0.6, to="kick")
 for i, kt in enumerate(kick_times):
     if i % 2 == 1:
         place(clap(), kt, 1.0, pan=0.05, send=0.25, to="clap")
@@ -161,7 +175,7 @@ for i, kt in enumerate(kick_times):
 # Hats: offbeat 8ths through the whole track (quiet and dark in the intro), 16th ghosts after the drop.
 for i in range(int(END / (BEAT / 2))):
     t0 = i * BEAT / 2
-    if FLASH <= t0 < DROP:
+    if in_gap(t0):
         continue
     if i % 2 == 1:
         g = 1.0 if t0 >= DROP else 0.7
@@ -180,14 +194,11 @@ for kt in kick_times:
 # ---------- pad / supersaw: one chord per bar, pumping after the drop ----------
 pad_l = np.zeros(N)
 pad_r = np.zeros(N)
-for b, name in enumerate(BARS):
-    t0 = b * 4 * BEAT
-    if t0 >= DUR:
-        break
-    length = (DUR - t0) if name == "Fmaj9" else 4 * BEAT + 0.15
-    if name == "Fmaj9":
-        t0 = END
-        length = DUR - END
+segments = [(b * 4 * BEAT, min((b + 1) * 4 * BEAT, END)) for b in range(int(np.ceil(END / (4 * BEAT))))]
+segments.append((END, DUR))
+for t0, t1 in segments:
+    name = chord_at(t0)
+    length = (t1 - t0) + (0.15 if t1 < DUR else 0)
     n = min(s(length), N - s(t0))
     acc_l = np.zeros(n)
     acc_r = np.zeros(n)
@@ -208,7 +219,7 @@ for b, name in enumerate(BARS):
 dark_l, dark_r = filt(pad_l, "lowpass", 700), filt(pad_r, "lowpass", 700)
 bright_l, bright_r = filt(pad_l, "lowpass", 3800), filt(pad_r, "lowpass", 3800)
 t_all = tt(N)
-open_ = np.clip((t_all - 0.0) / FLASH, 0, 1) ** 2
+open_ = np.clip(t_all / (GAP[0] if GAP else DROP), 0, 1) ** 2
 open_[t_all >= DROP] = 1.0
 close = np.clip((t_all - END) / (DUR - END), 0, 1)
 open_[t_all >= END] = 1 - 0.85 * close[t_all >= END]
@@ -224,7 +235,7 @@ arp_l = np.zeros(N)
 arp_r = np.zeros(N)
 for i in range(int(END / (BEAT / 4))):
     t0 = i * BEAT / 4
-    if FLASH <= t0 < DROP:
+    if in_gap(t0):
         continue
     notes = CHORDS[chord_at(t0)]
     f0 = hz(notes[ARP[i % len(ARP)] % len(notes)]) * 2
@@ -247,18 +258,18 @@ arp = np.stack([arp_l, arp_r]) * duck
 bus("arp")["dry"] += arp
 bus("arp")["send"] += arp * 0.3
 
-# ---------- the "blank": riser, suck, silence with a faint ring, then the drop ----------
-gate = np.ones(N)
-gi, gd = s(FLASH), s(DROP)
-gate[gi:gd] = 0.0
-fade = s(0.02)
-gate[gi - fade : gi] = np.linspace(1, 0, fade)
-for b in BUSES.values():
-    b["dry"] *= gate
-    b["send"] *= gate
+# ---------- the build into the drop: riser, then (optionally) silence with a faint ring ----------
+if GAP:
+    gate = np.ones(N)
+    gi, gd = s(GAP[0]), s(GAP[1])
+    gate[gi:gd] = 0.0
+    fade = s(0.02)
+    gate[gi - fade : gi] = np.linspace(1, 0, fade)
+    for b in BUSES.values():
+        b["dry"] *= gate
+        b["send"] *= gate
 
-# riser 2.0 → 3.5: noise opening up + a rising tone
-rs, re_ = 2.0, FLASH
+rs, re_ = RISER
 n = s(re_ - rs)
 noise = rng.standard_normal(n)
 parts = [filt(noise, "bandpass", [lo, lo * 2.2]) for lo in (300, 900, 2500, 6000)]
@@ -272,9 +283,10 @@ tone = np.sin(2 * np.pi * np.cumsum(np.linspace(220, 880, n)) / SR) * np.linspac
 place(riser * 0.3 + tone * 0.35, rs, 1.0, send=0.4)
 
 # faint ring in the silence (the mind going blank)
-n = s(DROP - FLASH - 0.03)
-ring = np.sin(2 * np.pi * 2350 * tt(n)) * np.exp(-tt(n) / 0.35) * 0.05
-place(ring, FLASH + 0.01, 1.0, send=0.6)
+if GAP:
+    n = s(GAP[1] - GAP[0] - 0.03)
+    ring = np.sin(2 * np.pi * 2350 * tt(n)) * np.exp(-tt(n) / 0.35) * 0.05
+    place(ring, GAP[0] + 0.01, 1.0, send=0.6)
 
 # impact on the drop and at the end card
 def impact(size=1.0):
@@ -312,7 +324,7 @@ def shutter():
 
 for w in T["whooshes"]:
     place(whoosh(), w - 0.2, 0.32, pan=0.0, send=0.3)
-for c in T["stopMotion"]["cuts"]:
+for c in SHUTTERS:
     place(shutter(), c, 0.55, pan=0.1, send=0.15)
 # soft tick on the button press
 n = s(0.05)
