@@ -117,10 +117,12 @@ button{font-family:var(--sans)}
 .pitch h1 em{font-style:italic;color:var(--accent)}
 .pitch .lede{font-size:clamp(16px,1.6vw,18.5px);color:var(--ink-2);margin:0;max-width:34em}
 /* the question most visitors have, answered before they have to ask it */
-.hero-why{margin:18px 0 0;max-width:36em;padding:12px 16px;border-radius:12px;border-left:3px solid var(--accent);background:rgba(255,255,255,.75);
-  box-shadow:0 1px 2px rgba(0,0,0,.04);font-size:14.5px;line-height:1.5;color:var(--ink-2)}
-.hero-why strong{color:var(--ink);font-weight:600}
-.hero-why a{color:var(--accent-2);font-weight:600;white-space:nowrap}
+/* lined up under "See how it works": the ? sits under the play circle, the words under its words */
+.hero-why{display:flex;align-items:baseline;gap:14px;margin:12px 0 0;font-size:14px;line-height:1.45;color:var(--muted)}
+.hero-why-q{flex:0 0 auto;display:grid;place-items:center;width:18px;height:18px;margin-left:5px;border-radius:50%;border:1px solid var(--border);font-size:11px;font-weight:700;color:var(--muted);transform:translateY(-1px)}
+.hero-why strong{color:var(--ink-2);font-weight:600}
+.hero-why a{margin-left:2px;color:var(--accent-2);font-weight:600;white-space:nowrap}
+.hero-why a::after{content:" \2192"}
 .hero-why a:hover{text-decoration:underline;text-underline-offset:3px}
 .hero-why a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
 
@@ -509,8 +511,8 @@ button{font-family:var(--sans)}
   .pitch>*{animation:heroUp .7s both cubic-bezier(.2,.6,.2,1)}
   .pitch>h1{animation-delay:.08s}
   .pitch>.lede{animation-delay:.16s}
-  .pitch>.hero-why{animation-delay:.22s}
-  .pitch>.pitch-demo{animation-delay:.28s}
+  .pitch>.pitch-demo{animation-delay:.24s}
+  .pitch>.hero-why{animation-delay:.3s}
   @keyframes heroUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 }
 

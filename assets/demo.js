@@ -36,11 +36,11 @@
     { id: "moment", name: "The moment", at: 0 },
     { id: "playback", name: "Playback", at: 11500 },
     { id: "why", name: "Any picture?", at: 24500 },
-    { id: "make", name: "Make yours", at: 31000 },
-    { id: "sd", name: "SD card", at: 42000 },
-    { id: "day", name: "On the day", at: 49000 },
+    { id: "make", name: "Make yours", at: 33000 },
+    { id: "sd", name: "SD card", at: 44000 },
+    { id: "day", name: "On the day", at: 51000 },
   ];
-  const END = 56000;
+  const END = 58000;
   // Links into the older, step-by-step demo still land on the right chapter.
   const FROM_HASH = { moment: 0, start: 0, playback: 1, why: 2, make: 3, camera: 3, sd: 4, copy: 4, setup: 4, day: 5, shoot: 5, done: 5 };
 
@@ -52,11 +52,11 @@
     { at: 11500, title: "Your poses live in <em>playback</em>.", text: "Right next to your photos: the shot, the settings and the words to say." },
     { at: 20000, title: "Timelines, family groups, <em>shot lists</em> too.", text: "Every part of the day, one press away." },
     { at: 24500, title: "Why not just copy any picture? <em>Your camera won't show it.</em>", text: "Cameras only play back files saved their own way: the right size, the right metadata, the right folder." },
-    { at: 28300, title: "So we save every card <em>the way your camera does</em>.", text: "It plays back like a photo you shot. That's the whole trick." },
-    { at: 31000, title: "Make your own <em>in a minute</em>.", text: "Type the names, tap the moments. No Canva, no design." },
-    { at: 42000, title: "Copy one folder to your <em>SD card</em>.", text: null },   // per camera: VENDORS[].where
-    { at: 49000, title: "Between shots, <em>press play</em>.", text: "The couple is waiting again. This time the plan is in your hand." },
-    { at: 52400, title: "Your plan, <em>right there</em>.", text: "No phone, no paper. Nobody sees you scroll." },
+    { at: 29600, title: "So we save every card <em>the way your camera does</em>.", text: "It plays back like a photo you shot. That's the whole trick." },
+    { at: 33000, title: "Make your own <em>in a minute</em>.", text: "Type the names, tap the moments. No Canva, no design." },
+    { at: 44000, title: "Copy one folder to your <em>SD card</em>.", text: null },   // per camera: VENDORS[].where
+    { at: 51000, title: "Between shots, <em>press play</em>.", text: "The couple is waiting again. This time the plan is in your hand." },
+    { at: 54400, title: "Your plan, <em>right there</em>.", text: "No phone, no paper. Nobody sees you scroll." },
   ];
 
   // 1. the moment: the phone comes up, the seconds tick away
@@ -68,15 +68,15 @@
   const ROT_OUT = 18900, WIDE_AT = 19600;    // and back
   const TURNS = [15900, 17300, 20600, 22100];
   // 3. any picture? a saved image goes onto the camera, which can't show it
-  const PNG_DRAG = 25900, ERR_AT = 27000;
+  const PNG_DRAG = 26600, ERR_AT = 27700;
   // 4. make yours: type the names, tick the moments, pick the camera, make it
-  const NAME = "Emma & James", TYPE_AT = 31900, TYPE_MS = 95;
-  const TICKS = [[33800, 0], [34700, 1], [35600, 2], [36500, 4]];
-  const CAM_AT = 37600, GO_AT = 38500, MADE_AT = 39700;
+  const NAME = "Emma & James", TYPE_AT = 33900, TYPE_MS = 95;
+  const TICKS = [[35800, 0], [36700, 1], [37600, 2], [38500, 4]];
+  const CAM_AT = 39600, GO_AT = 40500, MADE_AT = 41700;
   // 5. SD card: the ZIP goes onto the card, the card goes into the camera
-  const COPY_AT = 43200, COPIED_AT = 44300, INSERT_AT = 45500, INSERTED_AT = 46800;
+  const COPY_AT = 45200, COPIED_AT = 46300, INSERT_AT = 47500, INSERTED_AT = 48800;
   // 6. on the day: press play, and your card is there
-  const PLAY_2 = 50200;
+  const PLAY_2 = 52200;
 
   // Where a finger presses (it glides between taps that follow closely).
   const TAPS = [
