@@ -5,6 +5,8 @@ import { LAUNCH_SECONDS, Launch } from "./Launch";
 import { AD_A2_SECONDS, AdA2 } from "./v2/AdA2";
 import { HOOK_SECONDS, Hook1, Hook2, Hook3 } from "./v2/Hooks";
 import { AD_POV_SECONDS, AdPov } from "./v3/AdPov";
+import { AD_A4_SECONDS, AdA4 } from "./v4/AdA4";
+import { CardPreview } from "./v4/Preview";
 import "./theme";
 
 const FORMATS = {
@@ -40,6 +42,10 @@ export const Root: React.FC = () => (
     <Composition id="AdA2-9x16" component={AdA2} durationInFrames={AD_A2_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
     {/* Ad POV (Ad A v3): built on hook 1, Reels-native captions, its own music. */}
     <Composition id="AdPOV-9x16" component={AdPov} durationInFrames={AD_POV_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
+    {/* Ad A v4: the card as vector UI, one rhythm, an end card for Meta's own button. */}
+    <Composition id="AdA4-9x16" component={AdA4} durationInFrames={AD_A4_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
+    {/* The vector pose card at its native size, to compare with the real card. */}
+    <Composition id="CardPreview" component={CardPreview} durationInFrames={1} fps={30} width={1280} height={1920} />
     {/* Hook prototypes for Ad A: pick one, then the ad is rebuilt around it. */}
     {[Hook1, Hook2, Hook3].map((Hook, i) => (
       <Composition key={i} id={`Hook${i + 1}-9x16`} component={Hook} durationInFrames={HOOK_SECONDS * 30} fps={30} width={1080} height={1920} />

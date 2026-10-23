@@ -22,10 +22,13 @@ This folder is not part of the website: `.vercelignore` keeps it out of the depl
 | `AdC-…` "Who’s next?" | 9:16, 4:5 | 30 | 13 s | Meta ads |
 | `AdA2-9x16` "Blank" v2 | 1080 × 1920 | 30 | 16 s | Instagram ad, with music |
 | `AdPOV-9x16` "POV" (Ad A v3) | 1080 × 1920 | 30 | 16 s | Instagram ad, with music |
+| `AdA4-9x16` Ad A v4 | 1080 × 1920 | 30 | 20 s | Instagram ad, with music |
 
 `AdA2` is the rebuild on the Relay motion rules (`.claude/skills/launch-motion/references/relay-motion-skill.md`): real images full-bleed, editorial type, bordo wipes, cut to a 120 BPM track. Its code is in `src/v2/`, its storyboard in `storyboards/ad-a-v2.md`, and picture and music share one clock, `src/v2/timeline.json`.
 
 `AdPOV` (Ad A v3) is built on the strongest of three hook prototypes (`Hook1–3-9x16`, `src/v2/Hooks.tsx`): "POV: your camera tells you the next pose" over the wedding take, Reels-native captions, a hard cut with a punch-in on every beat. Code in `src/v3/`, storyboard in `storyboards/ad-pov.md`, clock in `src/v3/timeline.json`.
+
+`AdA4` (Ad A v4) keeps the POV hook and fixes the rest: one 3-second rhythm, one caption style in one place, the pose card rebuilt as vector UI (`src/v4/PoseCard.tsx`, builder.js's exact layout) so its words stay sharp at any zoom, centred framing, and an end card that points at Meta's own button instead of drawing a fake one. Code in `src/v4/`, storyboard in `storyboards/ad-a-v4.md`, clock in `src/v4/timeline.json`. `CardPreview` renders the vector card at 1280 × 1920 to check it against the real card.
 
 ## Run it
 

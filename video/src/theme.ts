@@ -18,6 +18,8 @@ export const C = {
 
 export const SANS = "Inter";
 export const SERIF = "Instrument Serif";
+// The pose cards' own title face (builder.js: Noto Serif, 87.5 % width), for the vector card.
+export const CARD_SERIF = "Noto Serif Condensed";
 
 // Local font files (public/fonts) so a render never falls back to Times New Roman.
 // Remotion holds the first frame until these resolve.
@@ -25,13 +27,15 @@ export const fontsReady = Promise.all([
   loadFont({ family: SANS, url: staticFile("fonts/Inter-latin.woff2"), weight: "100 900" }),
   loadFont({ family: SERIF, url: staticFile("fonts/InstrumentSerif-latin.woff2"), weight: "400" }),
   loadFont({ family: SERIF, url: staticFile("fonts/InstrumentSerif-italic-latin.woff2"), weight: "400", style: "italic" }),
+  loadFont({ family: CARD_SERIF, url: staticFile("fonts/NotoSerifCondensed-600-latin.woff2"), weight: "600" }),
+  loadFont({ family: CARD_SERIF, url: staticFile("fonts/NotoSerifCondensed-italic-latin.woff2"), weight: "400", style: "italic" }),
 ]);
 
 // No silent fallback: if a brand face did not load, stop the render with a message that says which.
 const fontCheck = delayRender("Checking brand fonts");
 fontsReady
   .then(() => {
-    const missing = [`400 100px "${SANS}"`, `600 100px "${SANS}"`, `400 100px "${SERIF}"`, `italic 400 100px "${SERIF}"`].filter((f) => !document.fonts.check(f));
+    const missing = [`400 100px "${SANS}"`, `600 100px "${SANS}"`, `400 100px "${SERIF}"`, `italic 400 100px "${SERIF}"`, `600 100px "${CARD_SERIF}"`, `italic 400 100px "${CARD_SERIF}"`].filter((f) => !document.fonts.check(f));
     if (missing.length) throw new Error(`Brand font not available: ${missing.join(", ")}. Check video/public/fonts/.`);
     continueRender(fontCheck);
   })

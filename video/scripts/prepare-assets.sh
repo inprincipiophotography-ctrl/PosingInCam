@@ -30,4 +30,7 @@ for f in source/*.mp4 source/*.mov; do
 done
 
 cp ../assets/showcase/pack-0*.jpg ../assets/showcase/live-couple.jpg public/showcase/
+# The First Look's photo, cut from its pose-pack card (the photo frame in builder.js's 1280×1920 layout, at 760 px wide),
+# for the vector card in Ad A v4.
+ffmpeg -v error -y -i ../assets/showcase/pack-02.jpg -vf "crop=507:803:235:119" -q:v 2 public/showcase/first-look-photo.jpg
 echo "✓ public/showcase/"
