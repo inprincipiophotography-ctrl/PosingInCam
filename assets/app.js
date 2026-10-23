@@ -60,12 +60,12 @@ function setPlanClasses(plan) {
 
 const INSTRUCTIONS = {
   sony:
-    "SONY: Recover Image Database is REQUIRED.\n" +
+    "SONY: copy into DCIM/100MSDCF.\n" +
     "1. MENU → Setup → Media → Format the card (in camera).\n" +
     "2. Take one ordinary photo so DCIM/100MSDCF/ is created.\n" +
     "3. Copy all .JPG from the ZIP (DCIM/100MSDCF/) into that folder on the card.\n" +
-    "4. MENU → Setup → Media → Recover Image Database → confirm.\n" +
-    "5. ▶ Playback. The cards appear among your photos.",
+    "4. ▶ Playback. The cards appear among your photos.\n" +
+    "Not showing? MENU → Setup → Media → Recover Image Database → confirm.",
   canon:
     "CANON: plug & play, no database rebuild.\n" +
     "1. MENU → (wrench) → Format card.\n" +
