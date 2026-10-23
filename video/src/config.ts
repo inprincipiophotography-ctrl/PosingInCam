@@ -36,6 +36,10 @@ export const FOOTAGE = {
   ],
 };
 
+// At a real wedding: the photographer glances at a pose card on the camera, then the couple in that pose.
+// Landscape HD, 50 fps, 7.25 s, no sound (source/wedding-shoot.mov). The couple needs a signed release for paid ads.
+export const SHOOT = { src: "footage/wedding-shoot.mp4", size: { w: 1920, h: 1080 } };
+
 // Text cards drawn by the site's own renderer (scripts/render-cards.mjs).
 export const CARDS = {
   timeline: "cards/timeline.png",

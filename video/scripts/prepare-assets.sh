@@ -19,8 +19,10 @@ done
 
 [ -s public/photos/full/DSC08435.jpg ] || { cp source/DSC08435.jpg public/photos/full/ && echo "✓ public/photos/full/DSC08435.jpg"; }
 
-for f in source/*.mp4; do
-  out="public/footage/$(basename "$f")"
+shopt -s nullglob
+for f in source/*.mp4 source/*.mov; do
+  name="$(basename "$f")"
+  out="public/footage/${name%.*}.mp4"
   [ -s "$out" ] && continue
   ffmpeg -v error -y -i "$f" -an -c:v libx264 -preset slow -crf 14 -pix_fmt yuv420p \
     -movflags +faststart "$out"

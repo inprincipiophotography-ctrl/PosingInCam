@@ -2,15 +2,15 @@ import React from "react";
 import { AbsoluteFill, Sequence, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { LogoMark } from "../components/Logo";
 import { SafeZoneGuide } from "../components/SafeZoneGuide";
-import { FOOTAGE_SIZE, PHOTO_SIZE, Shot } from "../components/Shot";
+import { PHOTO_SIZE, Shot } from "../components/Shot";
 import { Soundtrack } from "../components/Soundtrack";
-import { COPY, FOOTAGE, MUSIC, PHOTOS, type CameraPhoto } from "../config";
+import { COPY, MUSIC, PHOTOS, SHOOT, type CameraPhoto } from "../config";
 import { useLayout } from "../layout";
-import { SANS, SERIF } from "../theme";
+import { SANS, SERIF, mix } from "../theme";
 import { Grade } from "./Grade";
 import { Label } from "./Label";
 import { MaskLines } from "./MaskLines";
-import { STAGGER, TL, enter, exit, move, punch } from "./motion";
+import { STAGGER, TL, enter, move, punch } from "./motion";
 import { MAROON, Wipe } from "./Wipe";
 
 // Ad A v2 "Blank", 9:16 for Instagram. Storyboard: storyboards/ad-a-v2.md; clock: timeline.json (shared with the music).
@@ -80,27 +80,53 @@ const Flash: React.FC = () => {
   );
 };
 
-// ---------- 2 · Drop: the real camera, scrolling playback ----------
-const Playback: React.FC = () => {
+// ---------- 2 · Drop: at a real wedding, a glance at the card, then the couple in the pose ----------
+const Shoot: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const { safe } = useLayout();
-  const seg = FOOTAGE.segments[0];
-  const len = TL.playback.to - TL.playback.from;
-  const z = 1 + punch(frame, fps, 0, 0.09) + punch(frame, fps, 2.0, 0.05);
+  const { w, h, safe } = useLayout();
+  const t0 = TL.shoot.from;
+  const len = TL.shoot.to - t0;
+  const [s0, s1] = TL.shoot.source;
+  // HD landscape: first a full-width cinema band (no upscaling, the whole action in view),
+  // then, as the couple comes into frame, the band opens up to fill the screen on them.
+  const open = move(frame, fps, TL.shoot.expand[0] - t0, TL.shoot.expand[1] - t0);
+  const bandH = (w * SHOOT.size.h) / SHOOT.size.w;
+  const bandCy = safe.cy + 70;
+  const boxH = mix(bandH, h, open);
+  const boxTop = mix(bandCy - bandH / 2, 0, open);
+  const arrive = enter(frame, fps, 0, 0, 0.6);
+  const z = 1 + punch(frame, fps, 0, 0.05);
+  const out1 = TL.shoot.expand[0] - t0 - 0.35;
   return (
-    <AbsoluteFill style={{ background: "#000" }}>
-      {/* Parent null: the punch-ins move the whole shot, the clip keeps its own slow push. */}
-      <AbsoluteFill style={{ transform: `scale(${z})` }}>
+    <AbsoluteFill style={{ background: "#0b0a0a" }}>
+      <div style={{ position: "absolute", left: 0, top: boxTop, width: w, height: boxH, overflow: "hidden", transform: `scale(${z * (1.06 - 0.06 * arrive)})` }}>
         <Shot
-          kind="video" src={FOOTAGE.src} media={FOOTAGE_SIZE} startFrom={seg.from} playbackRate={(seg.to - seg.from) / len}
-          views={[{ t: 0, x: 0.5, y: 0.53, zoom: 1.12 }, { t: len, x: 0.5, y: 0.55, zoom: 1.24 }]}
+          kind="video" src={SHOOT.src} media={SHOOT.size} width={w} height={boxH} startFrom={s0} playbackRate={(s1 - s0) / len}
+          // Starts close on the camera in her hands (the band shows the clip at 0.56×, so up to 1.78× stays sharp),
+          // follows it as she lowers it, then pulls out to the whole scene before the band opens.
+          views={[
+            { t: 0, x: 0.42, y: 0.5, zoom: 1.4 },
+            { t: 0.45, x: 0.37, y: 0.52, zoom: 1.35 },
+            { t: 1.3, x: 0.45, y: 0.5, zoom: 1.0 },
+            { t: TL.shoot.expand[0] - t0, x: 0.5, zoom: 1.04 },
+            { t: TL.shoot.expand[1] - t0, x: 0.6, zoom: 1.04 },
+            { t: TL.shoot.expand[1] - t0 + 0.9, x: 0.5, zoom: 1.06 },
+            { t: len, x: 0.48, zoom: 1.12 },
+          ]}
         />
+      </div>
+      <AbsoluteFill style={{ opacity: open }}>
+        <Grade top={0.75} vignette={0.4} grain={0} />
       </AbsoluteFill>
-      <Grade top={0.78} vignette={0.4} grain={0} />
-      <div style={{ position: "absolute", left: safe.left + 8, top: safe.top + 24, display: "flex", flexDirection: "column", gap: 28 }}>
-        <Label text="SHOOT CARDS" at={TL.playback.text - TL.playback.from} outAt={2.05} />
-        <MaskLines lines={["Your poses.", "*In playback.*"]} at={TL.playback.text - TL.playback.from + 0.1} outAt={2.05} size={142} align="left" accent={ACCENT} />
+      {/* Above the band: what you do on the day. */}
+      <div style={{ position: "absolute", left: safe.left + 8, top: safe.top + 10, display: "flex", flexDirection: "column", gap: 24 }}>
+        <Label text="ON THE DAY" at={TL.shoot.text1 - t0} outAt={out1} />
+        <MaskLines lines={["Glance at *the card.*"]} at={TL.shoot.text1 - t0 + 0.1} outAt={out1} size={112} align="left" accent={ACCENT} />
+      </div>
+      {/* Full screen, on the couple. */}
+      <div style={{ position: "absolute", left: safe.left + 8, top: safe.top + 24 }}>
+        <MaskLines lines={["Then pose", "*them.*"]} at={TL.shoot.text2 - t0} outAt={len - 0.45} size={150} align="left" accent={ACCENT} />
       </div>
     </AbsoluteFill>
   );
@@ -173,28 +199,7 @@ const Payoff: React.FC = () => {
   );
 };
 
-// ---------- 5 · "No phone. No Pinterest." over the clip ----------
-const NoPhone: React.FC = () => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const { safe } = useLayout();
-  const seg = FOOTAGE.segments[1];
-  const inP = move(frame, fps, 0, 0.3);
-  return (
-    <AbsoluteFill style={{ opacity: inP, transform: `scale(${1.1 - 0.1 * inP})` }}>
-      <AbsoluteFill style={{ background: "#000" }}>
-        <Shot kind="video" src={FOOTAGE.src} media={FOOTAGE_SIZE} startFrom={seg.from} views={[{ t: 0, x: 0.5, y: 0.56, zoom: 1.3 }, { t: 2, x: 0.5, y: 0.56, zoom: 1.38 }]} />
-      </AbsoluteFill>
-      <AbsoluteFill style={{ background: "rgba(10,8,8,0.45)" }} />
-      <Grade top={0.5} vignette={0.5} grain={0} />
-      <div style={{ position: "absolute", left: safe.left, width: safe.w, top: safe.top, height: safe.h, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <MaskLines lines={["No phone.", "No *Pinterest.*"]} at={TL.noPhone.text - TL.noPhone.from} size={150} accent={ACCENT} />
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-// ---------- 6 · Logo + CTA on bordo ----------
+// ---------- 5 · Logo + CTA on bordo ----------
 const End: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -260,8 +265,8 @@ export const AdA2: React.FC<{ guides?: boolean }> = ({ guides }) => {
       <Sequence {...seq(0, TL.drop + 0.2)} name="1 Hook">
         <Hook />
       </Sequence>
-      <Sequence {...seq(TL.playback.from, wipe1 + 0.3)} name="2 Playback">
-        <Playback />
+      <Sequence {...seq(TL.shoot.from, wipe1 + 0.3)} name="2 On the day">
+        <Shoot />
       </Sequence>
       <Sequence {...seq(TL.stopMotion.from, TL.payoff.from)} name="3 Stop motion">
         <StopMotion />
@@ -269,10 +274,7 @@ export const AdA2: React.FC<{ guides?: boolean }> = ({ guides }) => {
       <Sequence {...seq(TL.payoff.from, TL.payoff.to)} name="4 Payoff">
         <Payoff />
       </Sequence>
-      <Sequence {...seq(TL.noPhone.from, wipe2 + 0.3)} name="5 No phone">
-        <NoPhone />
-      </Sequence>
-      <Sequence {...seq(TL.end.from, TL.seconds)} name="6 Logo + CTA">
+      <Sequence {...seq(TL.end.from, TL.seconds)} name="5 Logo + CTA">
         <End />
       </Sequence>
       <Wipe at={wipe1} />
