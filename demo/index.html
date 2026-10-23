@@ -28,6 +28,15 @@
 <body class="demo-page">
   <a class="skip-link" href="#story">Skip to content</a>
 
+  <!-- Small line icons, used by the "do this" rows -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M10 8.5v7l5.5-3.5z" fill="currentColor" stroke="none" /></symbol>
+    <symbol id="i-swipe" viewBox="0 0 24 24"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4" /></symbol>
+    <symbol id="i-tap" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" /><circle cx="12" cy="12" r="7" opacity=".55" /><circle cx="12" cy="12" r="10.5" opacity=".25" /></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4" /><path d="M9 14h6M12 11v6" /></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M7 10h10M7 14h6" /></symbol>
+  </svg>
+
   <header class="nav" id="nav">
     <a class="brand" href="/">
       <span class="brand-mark"></span>
@@ -40,44 +49,58 @@
     </div>
   </header>
 
-  <main id="main" class="demo" data-scene="start">
+  <main id="main" class="demo" data-scene="start" data-step="1">
     <h1 class="sr-only">See how Shoot Cards works</h1>
 
-    <!-- Progress, back and skip -->
-    <div class="demo-bar">
-      <button class="link-btn demo-back" id="d-back" type="button" hidden>&lsaquo; Back</button>
-      <ol class="demo-dots" id="d-dots" aria-hidden="true"><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ol>
+    <!-- Where you are: five named steps (a compact bar on phones) -->
+    <nav class="steps" aria-label="Demo steps">
+      <button class="link-btn steps-back" id="d-back" type="button" hidden>&lsaquo; Back</button>
+      <ol class="steps-list" id="d-steps">
+        <li><button class="step" type="button" data-go="start"><span class="step-n">1</span><span class="step-l">The moment</span></button></li>
+        <li><button class="step" type="button" data-go="playback"><span class="step-n">2</span><span class="step-l">Playback</span></button></li>
+        <li><button class="step" type="button" data-go="make"><span class="step-n">3</span><span class="step-l">Your card</span></button></li>
+        <li><button class="step" type="button" data-go="copy"><span class="step-n">4</span><span class="step-l">SD card</span></button></li>
+        <li><button class="step" type="button" data-go="done"><span class="step-n">5</span><span class="step-l">On the day</span></button></li>
+      </ol>
+      <p class="steps-compact" aria-hidden="true"><span id="d-count">Step 1 of 5</span><b id="d-name">The moment</b></p>
+      <span class="steps-bar" aria-hidden="true"><i></i></span>
       <p class="sr-only" id="d-step" aria-live="polite"></p>
-      <button class="link-btn demo-skip" id="d-skip" type="button">Skip<span class="lg"> to the end</span> &rsaquo;</button>
-    </div>
+      <button class="link-btn steps-skip" id="d-skip" type="button">Skip<span class="lg"> to the end</span> &rsaquo;</button>
+    </nav>
 
     <div class="demo-grid">
       <!-- The stage: a camera back (and, for the SD card step, a computer window) -->
       <div class="stage" id="stage" data-view="camera">
         <div class="cam-wrap" id="cam-wrap">
-          <div class="cam-body demo-cam" id="cam">
-            <button class="cam-shutter" id="btn-shutter" type="button" aria-label="Shutter button"></button>
-            <span class="cam-brand" id="cam-brand" aria-hidden="true"></span>
-            <div class="cam-screen" id="screen">
-              <canvas id="screen-canvas" width="1920" height="1280" role="img" aria-label="Camera screen"></canvas>
-              <!-- The camera's own menu (Sony and Nikon setup step) -->
-              <div class="menu" id="menu" hidden>
-                <p class="menu-crumb" id="menu-crumb"></p>
-                <div class="menu-list" id="menu-list"></div>
-                <div class="menu-confirm" id="menu-confirm" hidden>
-                  <p class="menu-q" id="menu-q"></p>
-                  <div class="menu-bar" id="menu-bar" hidden><i></i></div>
-                  <button class="menu-item is-target" id="menu-ok" type="button">OK</button>
+          <div class="dcam" id="cam">
+            <span class="dcam-evf" aria-hidden="true"><i></i></span>
+            <span class="dcam-dial" aria-hidden="true"></span>
+            <button class="dcam-shutter" id="btn-shutter" type="button" aria-label="Shutter button"></button>
+            <span class="dcam-brand" id="cam-brand" aria-hidden="true"></span>
+            <div class="dcam-face">
+              <div class="dcam-screen" id="screen">
+                <canvas id="screen-canvas" width="1920" height="1280" role="img" aria-label="Camera screen"></canvas>
+                <!-- The camera's own menu (Sony and Nikon, after copying) -->
+                <div class="menu" id="menu" hidden>
+                  <p class="menu-crumb" id="menu-crumb"></p>
+                  <div class="menu-list" id="menu-list"></div>
+                  <div class="menu-confirm" id="menu-confirm" hidden>
+                    <p class="menu-q" id="menu-q"></p>
+                    <div class="menu-bar" id="menu-bar" hidden><i></i></div>
+                    <button class="menu-item is-target" id="menu-ok" type="button">OK</button>
+                  </div>
                 </div>
+                <span class="swipe-hint" aria-hidden="true"></span>
               </div>
-              <span class="swipe-hint" aria-hidden="true"></span>
+              <div class="dcam-keys">
+                <span class="dkey deco" aria-hidden="true">C1</span>
+                <button class="dkey" id="btn-menu" type="button" aria-label="MENU button">MENU</button>
+                <button class="dkey dkey-play" id="btn-play" type="button" aria-label="Playback button"></button>
+                <button class="dwheel" id="btn-dial" type="button" aria-label="Control wheel: next card"><i></i></button>
+                <span class="dkey deco" aria-hidden="true">Fn</span>
+              </div>
             </div>
-            <div class="cam-buttons demo-buttons">
-              <button class="cbtn cbtn-menu" id="btn-menu" type="button" aria-label="MENU button">MENU</button>
-              <button class="cbtn play" id="btn-play" type="button" aria-label="Playback button"></button>
-              <button class="cbtn dial" id="btn-dial" type="button" aria-label="Control wheel: next card"></button>
-              <i></i>
-            </div>
+            <span class="coach" id="coach" aria-hidden="true" hidden></span>
           </div>
           <div class="pager" id="pager" hidden>
             <button class="pager-btn" id="pg-prev" type="button" aria-label="Previous card">&lsaquo;</button>
@@ -101,7 +124,7 @@
           <div class="pc-bar" aria-hidden="true"><i></i><i></i><i></i><span>Copy to your SD card</span></div>
           <div class="pc-panes">
             <div class="pc-pane">
-              <p class="pc-title">Downloads &rsaquo; shoot-cards.zip</p>
+              <p class="pc-title"><span class="pc-zip"></span>shoot-cards.zip</p>
               <ul class="pc-tree">
                 <li class="pc-row"><span class="pc-dir">DCIM</span></li>
                 <li class="pc-row l2"><span class="pc-dir" id="zip-folder">100MSDCF</span></li>
@@ -110,7 +133,7 @@
               </ul>
             </div>
             <div class="pc-pane pc-sd" id="pc-sd">
-              <button class="pc-title pc-drop" type="button" data-drop="root">SD card</button>
+              <button class="pc-title pc-drop" type="button" data-drop="root"><span class="pc-card"></span>SD card</button>
               <ul class="pc-tree">
                 <li class="pc-row"><button class="pc-dir pc-drop" type="button" data-drop="dcim">DCIM</button></li>
                 <li class="pc-row l2"><button class="pc-dir pc-drop" type="button" data-drop="folder" id="sd-folder">100MSDCF</button></li>
@@ -133,113 +156,108 @@
       <!-- The story: one short step at a time -->
       <div class="story" id="story">
         <section class="scene" data-scene="start" aria-labelledby="h-hook">
-          <p class="scene-kicker">Interactive demo &middot; about a minute</p>
-          <h2 id="h-hook" tabindex="-1">4:12&nbsp;pm. The couple is waiting. <em>What's the next pose?</em></h2>
-          <p class="scene-text" id="hook-text">Golden hour is fading and your mind goes blank. What do you reach for?</p>
+          <p class="scene-step">Interactive demo &middot; about a minute</p>
+          <h2 id="h-hook" tabindex="-1">4:12&nbsp;pm. Golden hour is fading. <em>What's the next pose?</em></h2>
+          <p class="scene-text" id="hook-text">The couple is waiting and your mind goes blank. What do you reach for?</p>
           <div class="scene-actions">
-            <button class="btn btn-ghost" id="hook-phone" type="button">Check my phone</button>
             <button class="btn btn-primary pulse" id="hook-play" type="button">&#9654;&#xFE0E;&ensp;Press playback</button>
+            <button class="btn btn-ghost" id="hook-phone" type="button">Check my phone</button>
           </div>
         </section>
 
         <section class="scene" data-scene="playback" aria-labelledby="h-playback" hidden>
-          <p class="scene-kicker">In your camera</p>
+          <p class="scene-step">Step 2 of 5</p>
           <h2 id="h-playback" tabindex="-1">Your poses live in <em>playback</em>.</h2>
           <p class="scene-text">Right next to your photos. Each card shows the shot, the settings and the exact words to say to the couple.</p>
-          <p class="scene-task" id="pb-task"><b class="task-n" id="pb-count">0/3</b><span>Swipe the screen or turn the wheel for the next card.</span></p>
+          <p class="task" id="pb-task"><svg class="task-ic" aria-hidden="true"><use href="#i-swipe" /></svg><span class="task-t">Swipe the screen or turn the wheel.</span><b class="task-n" id="pb-count">0/3</b></p>
           <div class="scene-actions"><button class="btn btn-primary scene-next" type="button" hidden>Make one for your wedding &rarr;</button></div>
         </section>
 
         <section class="scene" data-scene="make" aria-labelledby="h-make" hidden>
-          <p class="scene-kicker">Make a card</p>
+          <p class="scene-step">Step 3 of 5</p>
           <h2 id="h-make" tabindex="-1">Now one for <em>your</em> wedding.</h2>
-          <p class="scene-text">No Canva, no design. Type the names, tap the moments, and the card builds itself.</p>
+          <p class="scene-text">No Canva, no design. Type the names, tap the moments: the card builds itself.</p>
           <div class="types mk-types" id="mk-types" role="group" aria-label="Card type">
             <button class="type" type="button" data-type="timeline" aria-pressed="true">Timeline</button>
             <button class="type" type="button" data-type="groups" aria-pressed="false">Family groups</button>
             <button class="type" type="button" data-type="shotlist" aria-pressed="false">Shot list</button>
           </div>
           <label class="fld mk-label"><span>The couple</span><input type="text" id="mk-label" maxlength="40" value="Ana &amp; Marko" autocomplete="off" /></label>
-          <p class="panel-label mk-head"><span><b id="mk-prompt">Tap the moments of the day</b></span><span class="panel-aside" id="mk-count" aria-live="polite"></span></p>
+          <p class="mk-head"><b id="mk-prompt">Tap the moments of the day</b><span class="mk-count" id="mk-count" aria-live="polite"></span></p>
           <div class="mk-chips" id="mk-chips" role="group" aria-label="Lines on the card"></div>
-          <div class="scene-actions"><button class="btn btn-primary scene-next" type="button" hidden>Next: your camera &rarr;</button></div>
-        </section>
-
-        <section class="scene" data-scene="camera" aria-labelledby="h-camera" hidden>
-          <p class="scene-kicker">Your camera</p>
-          <h2 id="h-camera" tabindex="-1">Which camera is in <em>your</em> hand?</h2>
-          <p class="scene-text">Cameras only show files in their own format. We save your card exactly the way your camera saves a photo.</p>
-          <div class="cameras demo-cameras" id="d-cameras" role="group" aria-label="Your camera">
-            <button class="cam" type="button" data-vendor="sony" aria-pressed="false">Sony</button>
-            <button class="cam" type="button" data-vendor="canon" aria-pressed="false">Canon</button>
-            <button class="cam" type="button" data-vendor="nikon" aria-pressed="false">Nikon</button>
+          <div class="mk-camera">
+            <p class="mk-head"><b>Your camera</b><span class="mk-count">saved the way it saves a photo</span></p>
+            <div class="mk-row">
+              <div class="cameras demo-cameras" id="d-cameras" role="group" aria-label="Your camera">
+                <button class="cam" type="button" data-vendor="sony" aria-pressed="false">Sony</button>
+                <button class="cam" type="button" data-vendor="canon" aria-pressed="false">Canon</button>
+                <button class="cam" type="button" data-vendor="nikon" aria-pressed="false">Nikon</button>
+              </div>
+              <button class="go demo-go" id="d-make" type="button" disabled>Make my card &rarr;</button>
+              <button class="go demo-go scene-next" type="button" hidden>Next: the SD card &rarr;</button>
+            </div>
+            <p class="status" id="d-make-status" role="status" aria-live="polite"></p>
           </div>
-          <button class="go demo-go" id="d-make" type="button" disabled>Make my card &rarr;</button>
-          <p class="status" id="d-make-status" role="status" aria-live="polite"></p>
-          <p class="scene-fine">Tested on Sony A7&nbsp;III/IV/V, Canon R6&nbsp;II/R6&nbsp;III and Nikon Z8/Z9.</p>
-          <div class="scene-actions"><button class="btn btn-primary scene-next" type="button" hidden>Next: the SD card &rarr;</button></div>
         </section>
 
         <section class="scene" data-scene="copy" aria-labelledby="h-copy" hidden>
-          <p class="scene-kicker">SD card</p>
-          <h2 id="h-copy" tabindex="-1">Copy it to your <em>SD card</em>.</h2>
-          <p class="scene-text">You formatted the card in the camera and took one test photo, so the camera made its own folder. Now drop your card in.</p>
+          <p class="scene-step">Step 4 of 5</p>
+          <div class="phase" data-for="files">
+            <h2 id="h-copy" tabindex="-1">Copy it to your <em>SD card</em>.</h2>
+            <p class="scene-text">You formatted the card in the camera and took one test photo, so the camera made its own folder. Now drop your card in.</p>
+          </div>
+          <div class="phase" data-for="camera" hidden>
+            <h2 id="h-setup" tabindex="-1"></h2>
+            <p class="scene-text" id="setup-text"></p>
+          </div>
           <ol class="tasks">
-            <li id="task-copy"><span class="tick" aria-hidden="true"></span><span id="copy-task">Drag <b class="v-file">DSC00001.JPG</b> into <b class="v-folder">100MSDCF</b> on the SD card.</span></li>
+            <li id="task-copy"><span class="tick" aria-hidden="true"></span><span id="copy-task">Drag <b>DSC00001.JPG</b> into <b>100MSDCF</b> on the SD card.</span></li>
             <li id="task-eject"><span class="tick" aria-hidden="true"></span><span>Eject the card before you pull it out.</span></li>
+            <li id="task-setup"><span class="tick" aria-hidden="true"></span><span id="setup-task"></span></li>
           </ol>
           <p class="scene-note" id="copy-note" role="status" aria-live="polite"></p>
-          <p class="scene-fine">Use a card reader, not a USB cable to the camera.</p>
-          <div class="scene-actions"><button class="btn btn-primary scene-next" type="button" hidden>Put it back in the camera &rarr;</button></div>
-        </section>
-
-        <section class="scene" data-scene="setup" aria-labelledby="h-setup" hidden>
-          <p class="scene-kicker">Back in the camera</p>
-          <h2 id="h-setup" tabindex="-1"></h2>
-          <p class="scene-text" id="setup-text"></p>
-          <p class="scene-task" id="setup-task"></p>
           <div class="scene-actions">
-            <button class="btn btn-ghost pulse" id="setup-menu" type="button">Press MENU</button>
-            <button class="btn btn-primary scene-next" type="button" hidden>Next: shoot day &rarr;</button>
+            <button class="btn btn-primary pulse" id="setup-menu" type="button" hidden>Press MENU</button>
+            <button class="btn btn-primary scene-next" type="button" hidden>Next: on the day &rarr;</button>
           </div>
-          <p class="scene-note" id="setup-note" role="status" aria-live="polite"></p>
+          <p class="scene-fine" id="copy-fine">Use a card reader, not a USB cable to the camera.</p>
         </section>
 
-        <section class="scene" data-scene="shoot" aria-labelledby="h-shoot" hidden>
-          <p class="scene-kicker">On the day</p>
-          <h2 id="h-shoot" tabindex="-1">Between shots, press <em>&#9654;&#xFE0E;</em>.</h2>
-          <p class="scene-text" id="shoot-text">The couple is waiting again. This time, press playback.</p>
-          <div class="scene-actions">
-            <button class="btn btn-primary pulse" id="shoot-play" type="button">&#9654;&#xFE0E;&ensp;Press playback</button>
-            <button class="btn btn-ghost pulse" id="shoot-back" type="button" hidden>Half-press the shutter</button>
-            <button class="btn btn-primary scene-next" type="button" hidden>Finish &rarr;</button>
+        <section class="scene" data-scene="done" aria-labelledby="h-shoot" hidden>
+          <div class="phase" data-for="play">
+            <p class="scene-step">Step 5 of 5</p>
+            <h2 id="h-shoot" tabindex="-1">On the day, between shots: <em>press play</em>.</h2>
+            <p class="scene-text">The couple is waiting again. This time your plan is already in the camera.</p>
+            <p class="task"><svg class="task-ic" aria-hidden="true"><use href="#i-play" /></svg><span class="task-t">Press playback, on the camera or here.</span></p>
+            <div class="scene-actions">
+              <button class="btn btn-primary pulse" id="shoot-play" type="button">&#9654;&#xFE0E;&ensp;Press playback</button>
+            </div>
           </div>
-        </section>
-
-        <section class="scene" data-scene="done" aria-labelledby="h-done" hidden>
-          <p class="scene-kicker">Get started</p>
-          <h2 id="h-done" tabindex="-1">That's it. <em>Your plan, in your hand.</em></h2>
-          <p class="recap-title" id="recap-title" hidden></p>
-          <div class="recap" id="recap">
-            <div class="st"><b>1</b><span><strong>Pick or make your cards</strong> in minutes.</span></div>
-            <div class="st"><b>2</b><span><strong>Copy one folder</strong> to your SD card.</span></div>
-            <div class="st"><b>3</b><span><strong>Press &#9654;&#xFE0E; between shots.</strong> It's all there.</span></div>
+          <div class="phase" data-for="end" hidden>
+            <p class="scene-step scene-step-ok">&#10003;&ensp;Done</p>
+            <h2 id="h-done" tabindex="-1">That's it. <em>Your plan, in your hand.</em></h2>
+            <p class="recap-title" id="recap-title" hidden></p>
+            <div class="recap" id="recap">
+              <div class="st"><b>1</b><span><strong>Pick or make your cards</strong> in minutes.</span></div>
+              <div class="st"><b>2</b><span><strong>Copy one folder</strong> to your SD card.</span></div>
+              <div class="st"><b>3</b><span><strong>Press &#9654;&#xFE0E; between shots.</strong> It's all there.</span></div>
+            </div>
+            <a class="btn btn-primary done-cta" id="done-cta" href="/#studio">Make this card for real, free &rarr;</a>
+            <p class="scene-fine">Your first card is free, no account needed (with a light preview watermark). Ordinary JPEGs: nothing is installed on your camera.</p>
+            <div class="done-links">
+              <a class="link-btn" href="/#pricing">See pricing</a>
+              <a class="link-btn" href="https://www.inprincipioweddings.com/store/in-camera-posing" target="_blank" rel="noopener">The 50-pose pack &nearr;</a>
+              <button class="link-btn" id="done-replay" type="button">Replay the demo</button>
+            </div>
+            <figure class="done-proof">
+              <video id="done-video" muted loop playsinline preload="none" width="1080" height="1920"
+                     poster="/assets/showcase/hero-poster.jpg"
+                     aria-label="A thumb turns the wheel of a Sony camera and pose cards change on its screen">
+                <source src="/assets/showcase/timeline.mp4" type="video/mp4" />
+              </video>
+              <figcaption><span class="vid-chip"><b></b>Real Sony</span>The same cards, on a real camera.</figcaption>
+            </figure>
           </div>
-          <a class="btn btn-primary done-cta" id="done-cta" href="/#studio">Make this card for real, free &rarr;</a>
-          <p class="scene-fine">Your first card is free, no account needed (with a light preview watermark). Ordinary JPEGs: nothing is installed on your camera.</p>
-          <div class="done-links">
-            <a class="link-btn" href="/#pricing">See pricing</a>
-            <a class="link-btn" href="https://www.inprincipioweddings.com/store/in-camera-posing" target="_blank" rel="noopener">The 50-pose pack &nearr;</a>
-            <button class="link-btn" id="done-replay" type="button">Replay the demo</button>
-          </div>
-          <figure class="done-proof">
-            <video id="done-video" muted loop playsinline preload="none" width="1080" height="1920"
-                   poster="/assets/showcase/hero-poster.jpg"
-                   aria-label="A thumb turns the wheel of a Sony camera and pose cards change on its screen">
-              <source src="/assets/showcase/timeline.mp4" type="video/mp4" />
-            </video>
-            <figcaption><span class="vid-chip"><b></b>Real Sony</span>The same cards, on a real camera.</figcaption>
-          </figure>
         </section>
 
         <noscript><p class="scene-text">This demo needs JavaScript. <a href="/">Go to Shoot Cards &rarr;</a></p></noscript>
