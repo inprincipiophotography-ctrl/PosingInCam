@@ -100,9 +100,9 @@ const LIST_UI = {
   },
   groups: {
     head: "Heading", headKey: "label", headPh: "e.g. After the ceremony",
-    fields: [{ key: "names", label: "Who, by name", ph: "e.g. Ana & Luka + Vesna & Ivo", max: 70 },
+    fields: [{ key: "names", label: "Who, by name", ph: "e.g. Emma & James + Sarah & David", max: 70 },
              { key: "rel", label: "Who they are", ph: "e.g. her parents", cls: "c-rel", max: 30 }],
-    paste: "One group per line, names | who they are:\nAna & Luka + Vesna & Ivo | her parents\n+ Petra & Josip | her siblings",
+    paste: "One group per line, names | who they are:\nEmma & James + Sarah & David | her parents\n+ Lucy & Tom | her siblings",
   },
   shotlist: {
     head: "Heading", headKey: "label", headPh: "e.g. Must-have shots",
@@ -121,14 +121,14 @@ const LIST_UI = {
 const DEFAULTS = {
   timeline: { label: "Saturday", rows: [
     { time: "14:00", text: "Getting ready" }, { time: "15:30", text: "First look" },
-    { time: "16:30", text: "Ceremony" }, { time: "18:00", text: "Golden hour portraits" },
-    { time: "20:00", text: "First dance" }] },
+    { time: "16:30", text: "Ceremony" }, { time: "19:30", text: "Golden hour portraits" },
+    { time: "21:00", text: "First dance" }] },
   groups: { label: "After the ceremony", rows: [
-    { names: "Ana & Luka + Grandma Mara", rel: "her grandma, seated" },
-    { names: "+ Vesna & Ivo", rel: "her parents" },
-    { names: "+ Petra & Josip", rel: "her siblings" },
-    { names: "Ana & Luka + Sanja & Goran", rel: "his parents" },
-    { names: "+ Marko", rel: "his brother" },
+    { names: "Emma & James + Grandma Rose", rel: "her grandma, seated" },
+    { names: "+ Sarah & David", rel: "her parents" },
+    { names: "+ Lucy & Tom", rel: "her siblings" },
+    { names: "Emma & James + Helen & Mark", rel: "his parents" },
+    { names: "+ Oliver", rel: "his brother" },
     { names: "Everyone, both families", rel: "big group last" }] },
   shotlist: { label: "Must-have shots", rows: [
     { text: "Rings & invitation" }, { text: "Dress details" }, { text: "Mum's reaction" },
