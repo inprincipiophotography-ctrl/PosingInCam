@@ -10,6 +10,8 @@ function track(name, data) {
 const ME = "/api/me";
 const MAX_EDGE = 2400;        // downscale uploads before sending (Vercel ~4.5MB body limit)
 const JPEG_Q = 0.9;
+// How to paste on this computer (the hint under "Any image" and its messages).
+const PASTE_KEY = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent) ? "⌘V" : "Ctrl+V";
 const MAX_FILES = 30;         // matches the server-side cap (api/convert.py)
 const MAX_BODY = 4_000_000;   // Vercel request-body limit is ~4.5MB
 const STORE_URL = "https://www.inprincipioweddings.com/store/in-camera-posing";
@@ -445,7 +447,7 @@ function foundStillExample() {
     (studio.found[k] || "").trim() && studio.found[k].trim() === DEFAULTS.found[k]);
 }
 
-/* ----- your own design: file input + drag/drop ----- */
+/* ----- any image (her pins, a moodboard, your own designs): file input, drag/drop, paste ----- */
 const drop = $("drop");
 // Snapshot the list first: addFiles is async, and clearing the input can
 // empty the FileList out from under it.
@@ -458,7 +460,40 @@ $("file").addEventListener("change", (e) => {
   drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
 ["dragleave", "drop"].forEach((ev) =>
   drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
-drop.addEventListener("drop", (e) => addFiles(Array.from(e.dataTransfer.files || [])));
+drop.addEventListener("drop", (e) => {
+  const files = Array.from(e.dataTransfer.files || []);
+  if (files.length) { addFiles(files); return; }
+  // An image dragged out of another tab can arrive as just its address. We
+  // don't fetch it (the CSP allows no outside hosts, and it isn't ours to
+  // pull), so say how to bring the picture itself.
+  if (Array.from(e.dataTransfer.types || []).some((t) => t === "text/uri-list" || t === "text/html")) {
+    setStatus("err", "✗ That came in as a link, not a picture. Right-click the image, choose Copy image and press " +
+      PASTE_KEY + " here, or save it and add the file.");
+  }
+});
+
+// Copy image on Pinterest (or anywhere), then paste here. Lands in the pose
+// card when that's waiting for a photo, otherwise in Any image.
+document.querySelectorAll(".paste-key").forEach((k) => { k.textContent = PASTE_KEY; });
+document.addEventListener("paste", (e) => {
+  const dt = e.clipboardData;
+  if (!dt) return;
+  // Text pasted into a field stays text, even when the clipboard carries a picture too.
+  if (e.target.closest && e.target.closest("input, textarea") && Array.from(dt.types || []).includes("text/plain")) return;
+  let files = Array.from(dt.files || []);
+  if (!files.length) {
+    files = Array.from(dt.items || []).filter((it) => it.kind === "file").map((it) => it.getAsFile()).filter(Boolean);
+  }
+  files = files.filter((f) => f.type.startsWith("image/") || /\.(heic|heif)$/i.test(f.name));
+  if (!files.length) return;
+  e.preventDefault();
+  track("Pasted image", { type: studio.type, n: files.length });
+  if (studio.type === "pose" && studio.pose.mode === "photo") { setPosePhoto(files[0]); return; }
+  if (studio.type !== "upload") selectType("upload", true);
+  addFiles(files);
+  const st = $("studio");
+  if (st && st.getBoundingClientRect().bottom < 0) st.scrollIntoView({ behavior: "smooth", block: "start" });
+});
 
 // Can this browser actually paint the file? Safari on iOS/macOS decodes HEIC
 // natively, so we ask instead of rejecting by file extension and shutting out
@@ -546,6 +581,15 @@ $("clear-all").addEventListener("click", () => {
 
 document.querySelectorAll('input[name="orient"]').forEach((r) => r.addEventListener("change", touched));
 const orientValue = () => document.querySelector('input[name="orient"]:checked').value;
+// Which way the converter frames an image of this size (encoder._resolve_orientation).
+const portraitFor = (w, h) => orientValue() === "portrait" || (orientValue() === "auto" && h > w);
+
+// The optional label on every image: "Emma's board · 3/12".
+$("board-label").addEventListener("input", touched);
+function tagText(i, n) {
+  const label = ($("board-label").value || "").trim();
+  return label ? label + " · " + (i + 1) + "/" + n : "";
+}
 
 /* ----- live preview ----- */
 const previewCanvas = $("preview-canvas");
@@ -575,8 +619,7 @@ function drawUpload(canvas) {
   const it = state.items[state.selected];
   const img = it && it.img;
   const ready = !!(img && img.complete && img.naturalWidth);
-  const o = orientValue();
-  const portrait = ready && (o === "portrait" || (o === "auto" && img.naturalHeight > img.naturalWidth));
+  const portrait = ready && portraitFor(img.naturalWidth, img.naturalHeight);
   const w = portrait ? 1280 : 1920, h = portrait ? 1920 : 1280;
   if (canvas.width !== w) canvas.width = w;
   if (canvas.height !== h) canvas.height = h;
@@ -586,7 +629,9 @@ function drawUpload(canvas) {
   if (ready) {
     const s = Math.min(w / img.naturalWidth, h / img.naturalHeight);
     const dw = Math.round(img.naturalWidth * s), dh = Math.round(img.naturalHeight * s);
-    ctx.drawImage(img, Math.round((w - dw) / 2), Math.round((h - dh) / 2), dw, dh);
+    const x = Math.round((w - dw) / 2), y = Math.round((h - dh) / 2);
+    ctx.drawImage(img, x, y, dw, dh);
+    R.tag(ctx, tagText(state.selected, state.items.length), { x, y, w: dw, h: dh }, 1);
   } else {
     ctx.fillStyle = "#6e6e73";
     ctx.font = "400 56px Inter, -apple-system, 'Segoe UI', Roboto, sans-serif";
@@ -681,7 +726,7 @@ function emptyHint() {
     return studio.pose.mode === "photo" ? "Add your reference photo to make this card." : "Loading the pose, one moment…";
   }
   if (studio.type === "found") return "Add your name, phone or email.";
-  if (studio.type === "upload") return "Add an image: a Canva export, a screenshot or a photo.";
+  if (studio.type === "upload") return "Add an image: her Pinterest pins, a Canva export, a screenshot or a photo (or paste one with " + PASTE_KEY + ").";
   return "Add at least one line.";
 }
 
@@ -724,7 +769,7 @@ function loadImage(file) {
     img.src = URL.createObjectURL(file);
   });
 }
-async function downscale(file) {
+async function downscale(file, tag) {
   const img = await loadImage(file);
   const scale = Math.min(1, MAX_EDGE / Math.max(img.width, img.height));
   const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
@@ -734,6 +779,12 @@ async function downscale(file) {
   ctx.fillStyle = "#fff";          // flatten any transparency to white (JPEG has no alpha)
   ctx.fillRect(0, 0, w, h);
   ctx.drawImage(img, 0, 0, w, h);
+  if (tag) {
+    // Sized for the card this image becomes, so the label reads the same on
+    // the camera whatever the image's own size.
+    const fw = portraitFor(w, h) ? 1280 : 1920, fh = portraitFor(w, h) ? 1920 : 1280;
+    R.tag(ctx, tag, { x: 0, y: 0, w, h }, Math.max(w / fw, h / fh));
+  }
   try { URL.revokeObjectURL(img.src); } catch (_) {}
   return await new Promise((res) => canvas.toBlob(res, "image/jpeg", JPEG_Q));
 }
@@ -828,7 +879,9 @@ async function convert() {
       fd.append("orientation", orientValue());
       files = [];
       let i = 0;
-      for (const it of state.items) files.push({ blob: await downscale(it.file), name: `design-${++i}.jpg` });
+      for (const it of state.items) {
+        files.push({ blob: await downscale(it.file, tagText(i, state.items.length)), name: `design-${++i}.jpg` });
+      }
     } else {
       fd.append("orientation", "auto");
       files = await R.exportCards(studio.type, cardData());
@@ -1086,7 +1139,7 @@ async function renderPricing() {
         per: proAmt ? (cycle === "yearly" ? "/yr" : "/mo") : "",
         note: proNote,
         feats: ["Unlimited cards, every type", "No watermark",
-                "A project per wedding", "Your own designs, converted", "Cancel anytime"],
+                "A project per wedding", "Her pins &amp; your designs, converted", "Cancel anytime"],
         cta: (hasM || hasY)
           ? '<button class="btn btn-primary" type="button" data-buy="' + cycle + '">Go Pro</button>'
           : '<button class="btn btn-primary" type="button" disabled>Coming soon</button>',

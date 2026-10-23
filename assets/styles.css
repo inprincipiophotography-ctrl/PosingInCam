@@ -190,7 +190,7 @@ button{font-family:var(--sans)}
 .paste textarea{min-height:110px;background:var(--surface)}
 .paste-actions{display:flex;align-items:center;gap:12px;margin-top:10px}
 
-/* your own design */
+/* any image: her pins, a moodboard, your own designs */
 .drop{
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
   border:1.5px dashed rgba(0,0,0,.18);border-radius:14px;background:var(--bg);
@@ -200,6 +200,9 @@ button{font-family:var(--sans)}
 .drop:hover,.drop.over,.drop:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
 .drop-title{font-size:16px;font-weight:600;color:var(--ink)}
 .drop-sub{color:var(--muted);font-size:13px}
+.drop-sub kbd{padding:1px 6px;border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;background:var(--surface);font:600 12px/1.4 var(--sans);color:var(--ink-2)}
+.board-fld{margin-top:14px}
+.board-note{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.45}
 .orient{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:14px;color:var(--muted);font-size:14.5px}
 .orient label{color:var(--ink);cursor:pointer}
 .orient input{accent-color:var(--accent)}

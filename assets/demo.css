@@ -40,7 +40,7 @@
 
 /* ---------- the camera (right), seen from the back ---------- */
 .rig{position:absolute;right:5%;top:50%;width:48%;transform:translateY(-50%);transition:transform .9s var(--ease),top .9s var(--ease)}
-.film[data-scene="playback"] .rig,.film[data-scene="why"] .rig{transform:translateY(-50%) scale(1.04)}
+.film[data-scene="playback"] .rig,.film[data-scene="why"] .rig,.film[data-scene="board"] .rig{transform:translateY(-50%) scale(1.04)}
 /* held upright for the pose cards, grip on top, like a photographer does */
 .film[data-beat="tall"] .rig{transform:translateY(-50%) rotate(-90deg) scale(.96)}
 .film[data-scene="make"] .rig{transform:translateY(-50%) scale(.95)}
@@ -148,6 +148,24 @@
 .film[data-beat="drop"] .pngchip,.film[data-beat="err"] .pngchip{left:68%;top:44%;opacity:0;transform:scale(.35);
   transition:left .9s var(--ease),top .9s var(--ease),transform .9s var(--ease),opacity .3s ease .7s}
 
+/* ---------- 4. her board: the bride's pins, sent over like a message ---------- */
+.herboard{position:absolute;z-index:5;left:6%;top:52%;width:30%;padding:1.1cqw;border-radius:18px 18px 18px 5px;background:#fff;border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 18px 36px -14px rgba(30,40,20,.42);font-size:clamp(10.5px,1.15cqw,14px);color:var(--ink);
+  opacity:0;transform:translateY(16px);transition:opacity .45s var(--ease),transform .9s var(--ease),left .95s var(--ease),top .95s var(--ease)}
+.hb-from{display:flex;align-items:center;gap:.7em;margin:0 0 .8em}
+.hb-from span:last-child{display:flex;flex-direction:column;gap:1px}
+.hb-from small{color:var(--ink-2);font-size:.95em}
+.hb-av{display:grid;place-items:center;flex:0 0 auto;width:2.3em;height:2.3em;border-radius:50%;background:#f3e3e3;color:var(--accent-2);font-weight:700}
+.hb-pins{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.hb-pins img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:8px}
+.hb-more{position:relative;display:block}
+.hb-more b{position:absolute;inset:0;display:grid;place-items:center;border-radius:8px;background:rgba(0,0,0,.5);color:#fff;font-size:1.2em}
+.hb-meta{margin:.7em 0 0;color:var(--muted);font-size:.88em}
+.film[data-beat="msg"] .herboard{opacity:1;transform:none}
+/* dragged onto the camera: it travels first, then melts in */
+.film[data-beat="drop"] .herboard,.film[data-scene="board"][data-beat="on"] .herboard,.film[data-scene="board"][data-beat="tall"] .herboard{left:62%;top:40%;opacity:0;transform:scale(.35);
+  transition:left .9s var(--ease),top .9s var(--ease),transform .9s var(--ease),opacity .3s ease .7s}
+
 /* ---------- 5. the ZIP, the SD card, the folder ---------- */
 .zipchip{position:absolute;z-index:5;left:6%;top:52%;display:flex;align-items:center;gap:1cqw;padding:.7cqw 1.2cqw .7cqw .7cqw;border-radius:14px;background:#fff;border:1px solid rgba(0,0,0,.08);
   box-shadow:0 14px 30px -12px rgba(30,40,20,.4);font-size:clamp(10.5px,1.15cqw,14px);color:var(--ink);
@@ -216,7 +234,7 @@
 .bar-play[data-state="pause"]::before{margin-left:-6px}
 .bar-play[data-state="pause"]::after{margin-left:2px}
 .bar-play[data-state="replay"]::before{content:"\21BA";margin:-11px 0 0 -8px;color:#fff;font:700 19px/22px var(--sans)}
-.bar-chs{flex:1 1 auto;display:grid;grid-template-columns:11.5fr 13fr 8.5fr 11fr 7fr 7fr;gap:8px;list-style:none;margin:0;padding:0;min-width:0}
+.bar-chs{flex:1 1 auto;display:grid;grid-template-columns:11.5fr 13fr 8.5fr 9.5fr 11fr 7fr 7fr;gap:8px;list-style:none;margin:0;padding:0;min-width:0}
 .ch{display:flex;flex-direction:column;gap:7px;width:100%;padding:4px 0;border:0;background:none;text-align:left;cursor:pointer;font:500 12.5px/1.2 var(--sans);color:var(--muted)}
 .ch:hover{color:var(--ink)}
 .ch:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
@@ -246,12 +264,15 @@
   .cap-title{font-size:6.6cqw}
   .cap-text{margin-top:8px;font-size:clamp(13px,3.8cqw,15.5px)}
   .rig{left:6%;right:6%;width:auto;top:60%}
-  .film[data-scene="playback"] .rig,.film[data-scene="day"] .rig{transform:translateY(-50%) scale(1.02)}
+  .film[data-scene="playback"] .rig,.film[data-scene="day"] .rig,.film[data-scene="board"] .rig{transform:translateY(-50%) scale(1.02)}
+  .film[data-scene="board"] .rig{top:68%}
   .film[data-beat="tall"] .rig{top:62%;transform:translateY(-50%) rotate(-90deg) scale(.8)}
   .film[data-scene="make"] .rig{top:36%;transform:translateY(-50%) scale(.74)}
-  .film[data-scene="make"] .cap-text,.film[data-scene="why"] .cap-text{display:none}
+  .film[data-scene="make"] .cap-text,.film[data-scene="why"] .cap-text,.film[data-scene="board"] .cap-text{display:none}
   .film[data-scene="why"] .rig{top:62%;transform:translateY(-50%)}
   .pngchip{left:6%;top:27%;padding:8px 12px 8px 8px}
+  .herboard{left:6%;top:22%;width:62%;padding:10px}
+  .film[data-beat="drop"] .herboard,.film[data-scene="board"][data-beat="on"] .herboard,.film[data-scene="board"][data-beat="tall"] .herboard{left:30%;top:52%}
   .film[data-beat="drop"] .pngchip,.film[data-beat="err"] .pngchip{left:38%;top:58%}
   .film[data-scene="sd"] .rig{top:44%;transform:translateY(-50%) scale(.8)}
   .film[data-scene="end"] .rig{top:27%;transform:translateY(-50%) scale(.76)}
