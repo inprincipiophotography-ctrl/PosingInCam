@@ -19,8 +19,11 @@
   const viaKeys = (e) => !!e && e.detail === 0;   // a click made with Enter / Space
 
   const HANDOFF = "pic_demo_handoff";   // read (and removed) by applyDemoHandoff() in app.js
-  const SCENES = ["start", "playback", "make", "camera", "copy", "setup", "shoot", "done"];
-  const NEEDS_CAMERA = ["copy", "setup", "shoot"];
+  const SCENES = ["start", "playback", "make", "copy", "done"];
+  const STEP_NAMES = ["The moment", "Playback", "Your card", "SD card", "On the day"];
+  // Links made for the longer, 8-step demo still land on the right step.
+  const SCENE_ALIAS = { camera: "make", setup: "copy", shoot: "done" };
+  const NEEDS_CAMERA = ["copy"];
   const PLAY = "▶︎";
 
   /* ---------- per camera (keep in step with INSTRUCTIONS in app.js and converter/pack.py) ---------- */
@@ -36,6 +39,7 @@
       title: "Sony: one more step <em>after copying</em>.",
       text: "Sony only plays back files it has listed. Rebuild that list each time you copy cards, or the camera shows nothing. It's the #1 reason cards don't appear.",
       task: "Press MENU, then <b>Setup › Media › Recover Image Database</b>.",
+      todo: "Back in the camera: <b>Recover Image Database</b>.",
       menu: [
         { title: "Menu", items: ["Shooting", "Exposure/Color", "Playback", "Setup"], target: "Setup" },
         { title: "Setup", items: ["Area/Date", "Media", "Power Setting", "Sound Option"], target: "Media" },
@@ -48,6 +52,7 @@
       title: "Nikon: check the <em>playback folder</em>.",
       text: "A Nikon can play back just one folder. Set it to All, and your cards show up next to your photos.",
       task: "Press MENU, then <b>Playback menu › Playback folder › All</b>.",
+      todo: "Back in the camera: <b>Playback folder › All</b>.",
       menu: [
         { title: "Menu", items: ["Photo shooting", "Playback menu", "Setup menu", "Network"], target: "Playback menu" },
         { title: "Playback menu", items: ["Delete", "Playback folder", "Playback display", "Image review"], target: "Playback folder" },
@@ -56,9 +61,9 @@
       done: "✓ Playback folder: All.",
     },
     canon: {
-      title: "Canon: <em>nothing</em> to do.",
-      text: "Canon is plug & play. Put the card back in and you're ready to shoot.",
-      task: "Two card slots? Play back the slot you copied to.",
+      task: "Back in the camera: <b>nothing to set</b> on a Canon.",
+      todo: "Back in the camera: <b>nothing to set</b> on a Canon.",
+      done: "✓ Safe to remove. Canon is plug & play. Two card slots? Play back the slot you copied to.",
     },
   };
 
@@ -124,26 +129,30 @@
   const PROMPT = { timeline: "Tap the moments of the day", groups: "Tap the family groups, in order", shotlist: "Tap your must-have shots" };
   const KIND = { timeline: "timeline", groups: "family groups", shotlist: "shot list" };
   const HOOK = {
-    before: "Golden hour is fading and your mind goes blank. What do you reach for?",
+    before: "The couple is waiting and your mind goes blank. What do you reach for?",
     after: "37 seconds of scrolling, with the couple watching. There's a faster way, and it's already in your hand.",
   };
 
   /* ---------- state ---------- */
   const fresh = () => ({
     type: "timeline", label: "Ana & Marko", picked: JSON.parse(JSON.stringify(START_PICKS)),
-    phoned: false, roll: 0, seen: 1, built: false, made: false,
+    phoned: false, roll: 0, seen: 1, built: false, made: false, job: 0,
     armed: false, misses: 0, copied: false, ejected: false,
-    fixed: false, played: false, back: false, completed: false,
+    fixed: false, played: false, skipped: false, completed: false,
   });
   let S = fresh();
   let vendor = null;    // survives "Replay": you still shoot the same camera
   let at = 0;           // index into SCENES
-  const visited = new Set();
+  const visited = new Set();   // steps you've been on (the step bar lets you go back to them)
+  const tracked = new Set();   // steps already counted in the visitor stats
 
   /* ---------- the camera screen ---------- */
   const W = 1920, H = 1280;
   const SANS = "Inter, -apple-system, 'Segoe UI', Roboto, sans-serif";
-  const LIVE = { kind: "live", label: "Camera screen: live view, the couple at golden hour" };
+  const LIVE = { kind: "live", label: "Camera screen: live view, the bride in the garden at golden hour" };
+  // Live view is a real photo: a 3:2 crop of the bride in pack-04.jpg (source px),
+  // with the camera's focus box on her face.
+  const LIVE_SRC = { img: "pack-04", x: 236, y: 250, w: 506, h: 337, face: [462, 300, 70, 84] };
   const screenBox = $("screen");
   const canvas = $("screen-canvas");
   const ctx = canvas.getContext("2d");
@@ -200,59 +209,51 @@
     ctx.arcTo(x, y, x + w, y, r);
     ctx.closePath();
   }
-  function dot(x, y, r) {
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fill();
-  }
 
-  // What's in front of the lens: a sketch of the couple against a low sun.
+  // What's in front of the lens: the bride, in warm late light.
   function drawLive() {
-    let g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, "#f2c27e");
-    g.addColorStop(0.62, "#d5825c");
-    g.addColorStop(1, "#4b302c");
+    const L = LIVE_SRC, img = image(L.img);
+    let g;
+    if (loaded(img)) {
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, L.x, L.y, L.w, L.h, 0, 0, W, H);
+      g = ctx.createLinearGradient(0, 0, W, H);       // a touch of golden hour
+      g.addColorStop(0, "rgba(255,186,110,.26)");
+      g.addColorStop(0.55, "rgba(255,170,100,.08)");
+      g.addColorStop(1, "rgba(80,40,20,.18)");
+    } else {
+      g = ctx.createLinearGradient(0, 0, 0, H);       // still loading: a quiet gradient
+      g.addColorStop(0, "#6f7a5a");
+      g.addColorStop(1, "#2f3427");
+    }
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
-    g = ctx.createRadialGradient(1330, 690, 30, 1330, 690, 560);
-    g.addColorStop(0, "rgba(255,245,215,.95)");
-    g.addColorStop(1, "rgba(255,245,215,0)");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = "#3d2825";
-    ctx.fillRect(0, 1000, W, H - 1000);
 
-    ctx.fillStyle = "rgba(36,21,19,.95)";
-    dot(842, 520, 60);                       // her
-    rr(770, 594, 150, 230, 70);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(772, 760); ctx.lineTo(690, 1040); ctx.lineTo(1000, 1040); ctx.lineTo(918, 760);
-    ctx.closePath();
-    ctx.fill();
-    dot(1040, 488, 64);                      // him
-    rr(955, 566, 176, 474, 80);
-    ctx.fill();
-
-    // focus frame on the faces, then the shooting info
-    ctx.strokeStyle = "rgba(255,255,255,.92)";
+    // the focus box on her face, then the shooting info
+    const sx = W / L.w, sy = H / L.h;
+    const fx = (L.face[0] - L.x) * sx, fy = (L.face[1] - L.y) * sy, fw = L.face[2] * sx, fh = L.face[3] * sy;
+    ctx.strokeStyle = "rgba(120,255,140,.95)";
     ctx.lineWidth = 7;
     ctx.beginPath();
-    [[752, 404, 1, 1], [1142, 404, -1, 1], [752, 614, 1, -1], [1142, 614, -1, -1]].forEach(([x, y, sx, sy]) => {
-      ctx.moveTo(x + sx * 54, y); ctx.lineTo(x, y); ctx.lineTo(x, y + sy * 54);
+    [[fx, fy, 1, 1], [fx + fw, fy, -1, 1], [fx, fy + fh, 1, -1], [fx + fw, fy + fh, -1, -1]].forEach(([x, y, dx, dy]) => {
+      ctx.moveTo(x + dx * 54, y); ctx.lineTo(x, y); ctx.lineTo(x, y + dy * 54);
     });
     ctx.stroke();
-    ctx.fillStyle = "rgba(0,0,0,.42)";
-    ctx.fillRect(0, 1146, W, H - 1146);
+    g = ctx.createLinearGradient(0, H - 200, 0, H);
+    g.addColorStop(0, "rgba(0,0,0,0)");
+    g.addColorStop(1, "rgba(0,0,0,.55)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, H - 200, W, 200);
     ctx.fillStyle = "#fff";
-    ctx.font = "600 58px " + SANS;
+    ctx.font = "600 56px " + SANS;
     ctx.textAlign = "center";
-    ctx.fillText("1/500     F2.0     ISO 100     ±0.0", W / 2, 1234);
-    ctx.font = "700 58px " + SANS;
+    ctx.fillText("1/500     F2.0     ISO 100     ±0.0", W / 2, H - 52);
+    ctx.font = "700 56px " + SANS;
     ctx.textAlign = "left";
-    ctx.fillText("M", 64, 112);
+    ctx.fillText("M", 64, 108);
     ctx.textAlign = "right";
-    ctx.fillText("1342", W - 64, 112);
+    ctx.fillText("1342", W - 64, 108);
     ctx.textAlign = "left";
   }
 
@@ -315,25 +316,57 @@
   // Any change to the card (or the camera) means making and copying it again.
   function resetFrom(step) {
     if (step === "card") S.built = true;
-    S.made = S.copied = S.ejected = S.fixed = S.played = S.back = S.armed = false;
+    S.made = S.copied = S.ejected = S.fixed = S.played = S.armed = false;
     S.misses = 0;
+    S.job += 1;   // a "Make my card" still converting is now out of date
   }
 
   /* ---------- scenes ---------- */
   const sceneEls = {};
   document.querySelectorAll(".scene").forEach((el) => { sceneEls[el.dataset.scene] = el; });
-  const dots = Array.from(document.querySelectorAll("#d-dots li"));
+  const steps = Array.from(document.querySelectorAll("#d-steps .step"));
   const stage = $("stage");
   const camWrap = $("cam-wrap"), pc = $("pc"), phone = $("phone");
+  const cam = $("cam"), coach = $("coach");
   const CAM_KEYS = ["btn-play", "btn-dial", "btn-menu", "btn-shutter"];
+  const COACH = { "btn-play": "Press " + PLAY, "btn-dial": "Turn the wheel", "btn-menu": "Press MENU", "btn-shutter": "Half-press" };
   const video = $("done-video");
 
   function view(v) {
     camWrap.hidden = v !== "camera";
     pc.hidden = v !== "pc";
     stage.dataset.view = v;
+    placeCoach();
   }
-  function cue(ids) { CAM_KEYS.forEach((id) => $(id).classList.toggle("cue", ids.includes(id))); }
+  // A step in two parts (SD card, then camera; press play, then the end).
+  function phase(sid, name) {
+    sceneEls[sid].querySelectorAll(".phase").forEach((p) => { p.hidden = p.dataset.for !== name; });
+    main.dataset.phase = name;
+  }
+  function heading(sid) {
+    return Array.from(sceneEls[sid].querySelectorAll("h2")).find((h) => !h.closest("[hidden]"));
+  }
+
+  // The control to press gets a ring and a small label pointing at it.
+  let coachFor = null;
+  function cue(ids) {
+    CAM_KEYS.forEach((id) => $(id).classList.toggle("cue", ids.includes(id)));
+    coachFor = ids[0] || null;
+    coach.hidden = !coachFor;
+    if (coachFor) coach.textContent = COACH[coachFor];
+    placeCoach();
+  }
+  function placeCoach() {
+    if (!coachFor || camWrap.hidden) return;
+    requestAnimationFrame(() => {
+      if (!coachFor) return;
+      const c = cam.getBoundingClientRect(), t = $(coachFor).getBoundingClientRect();
+      coach.style.left = Math.round(t.left - c.left) + "px";
+      coach.style.top = Math.round(t.top + t.height / 2 - c.top) + "px";
+    });
+  }
+  window.addEventListener("resize", placeCoach);
+  if (window.ResizeObserver) new ResizeObserver(placeCoach).observe(cam);
   function pagerOn(on) { $("pager").hidden = !on; }
   function nextBtn() { return sceneEls[SCENES[at]].querySelector(".scene-next"); }
   function unlock(strong) {
@@ -362,8 +395,8 @@
     opts = opts || {};
     let i = SCENES.indexOf(id);
     if (i < 0) i = 0;
-    // The SD card and camera steps depend on the camera: ask for it first.
-    if (NEEDS_CAMERA.includes(SCENES[i]) && !vendor) i = SCENES.indexOf("camera");
+    // The SD card step depends on the camera: ask for it first.
+    if (NEEDS_CAMERA.includes(SCENES[i]) && !vendor) i = SCENES.indexOf("make");
     stopPhone();
     closeMenu();
     if (drag) cancelDrag();
@@ -372,20 +405,30 @@
     const sid = SCENES[i];
     Object.keys(sceneEls).forEach((k) => { sceneEls[k].hidden = k !== sid; });
     main.dataset.scene = sid;
-    dots.forEach((d, k) => { d.classList.toggle("on", k < i); d.classList.toggle("now", k === i); });
-    $("d-step").textContent = "Step " + (i + 1) + " of " + SCENES.length;
+    main.dataset.step = String(i + 1);
+    main.dataset.phase = "";
+    visited.add(sid);
+    steps.forEach((b, k) => {
+      b.classList.toggle("on", k < i);
+      b.classList.toggle("now", k === i);
+      b.disabled = k !== i && !visited.has(SCENES[k]);
+      if (k === i) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current");
+    });
+    $("d-count").textContent = "Step " + (i + 1) + " of " + SCENES.length;
+    $("d-name").textContent = STEP_NAMES[i];
+    $("d-step").textContent = "Step " + (i + 1) + " of " + SCENES.length + ": " + STEP_NAMES[i];
     $("d-back").hidden = i === 0;
     $("d-skip").hidden = i === SCENES.length - 1;
     if (sid !== "done") { try { video.pause(); } catch (_) {} }
     try { history.replaceState(null, "", location.pathname + location.search + "#" + sid); } catch (_) {}
     ENTER[sid]();
     syncCta();
-    if (!visited.has(sid)) {
-      visited.add(sid);
+    if (!tracked.has(sid)) {
+      tracked.add(sid);
       track("Demo step", { step: sid });
     }
     if (!opts.quiet) {
-      const h = sceneEls[sid].querySelector("h2");
+      const h = heading(sid);
       if (h) h.focus({ preventScroll: true });
       // phones: bring the camera back into view
       if (window.scrollY > main.offsetTop) main.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
@@ -414,39 +457,44 @@
       pagerOn(false);
       cue([]);
       buildChips();
+      syncMake();
       showUser({ badge: "Live preview" });
     },
-    camera() {
-      view("camera");
-      pagerOn(false);
-      cue([]);
-      renderCamera();
-      showUser({ badge: "Live preview" });
-    },
+    // Copy and eject on the computer; then, for Sony and Nikon, one setting in the camera.
     copy() {
-      view("pc");
       pagerOn(false);
-      cue([]);
-      note("copy-note", "");
-      renderCopy();
+      if (S.ejected && SETUP[vendor].menu) {
+        phase("copy", "camera");
+        view("camera");
+        renderSetup();
+      } else {
+        phase("copy", "files");
+        view("pc");
+        cue([]);
+        renderCopy();
+        if (!S.ejected) note("copy-note", "");
+      }
     },
-    setup() {
-      view("camera");
-      pagerOn(false);
-      renderSetup();
-    },
-    shoot() {
-      view("camera");
-      pagerOn(false);
-      renderShoot();
-    },
+    // Press play on the day; then the checklist and the way into the studio.
     done() {
       view("camera");
       pagerOn(false);
-      cue([]);
-      renderDone();
+      if (S.played || S.skipped) {
+        phase("done", "end");
+        cue([]);
+        renderDone("pop");
+      } else {
+        phase("done", "play");
+        $("shoot-play").disabled = false;
+        show(LIVE);
+        cue(["btn-play"]);
+      }
     },
   };
+  $("d-steps").addEventListener("click", (e) => {
+    const b = e.target.closest(".step");
+    if (b && !b.disabled && b.dataset.go !== SCENES[at]) go(b.dataset.go);
+  });
 
   /* ----- 1. the hook: phone or playback ----- */
   let phoneTimers = [], phoneRaf = 0;
@@ -597,7 +645,7 @@
       if (hint) hinted = true;
     });
     $("mk-count").textContent = picked.length + " of " + max + " lines · 1 card";
-    if (S.built && picked.length) unlock(true); else lock();
+    syncMake();
   }
   function cardChanged() {
     resetFrom("card");
@@ -629,7 +677,7 @@
     cardChanged();
   });
 
-  /* ----- 4. your camera, and "make my card" ----- */
+  /* ----- 3b. your camera, and "make my card" ----- */
   function pickVendor(v, quiet) {
     if (!VENDOR_KEYS.includes(v)) return;
     if (v !== vendor) {
@@ -640,21 +688,22 @@
     $("cam-brand").textContent = VENDORS[v].name;
     syncCta();
   }
-  function renderCamera() {
+  function syncMake() {
     document.querySelectorAll("#d-cameras .cam").forEach((b) =>
       b.setAttribute("aria-pressed", String(b.dataset.vendor === vendor)));
     $("d-cameras").classList.toggle("hint", !vendor);
     const make = $("d-make"), st = $("d-make-status");
-    make.disabled = !vendor || S.made;
-    make.classList.toggle("pulse", !!vendor && !S.made);
-    make.textContent = S.made ? "✓ Made" : "Make my card →";
+    const lines = S.picked[S.type].length;
+    make.disabled = !vendor || !lines || S.made;
+    make.classList.toggle("pulse", !!vendor && !!lines && !S.made);
+    make.hidden = S.made;   // once made, the button becomes "Next"
     if (S.made) {
       st.className = "status ok";
       st.textContent = "✓ Your shoot-cards.zip is ready. The card is " + VENDORS[vendor].file + ", the way your " + VENDORS[vendor].name + " names a photo.";
       unlock(true);
     } else {
       st.className = "status";
-      st.textContent = "";
+      st.textContent = !lines ? "Tap at least one line for your card." : !vendor ? "Pick your camera, then make your card." : "";
       lock();
     }
   }
@@ -663,7 +712,7 @@
     if (!b) return;
     const changed = b.dataset.vendor !== vendor;
     pickVendor(b.dataset.vendor);
-    renderCamera();
+    syncMake();
     if (changed) { blink(); showUser({ badge: "Live preview" }); }
   });
   $("d-make").addEventListener("click", (e) => {
@@ -673,10 +722,12 @@
     make.classList.remove("pulse");
     st.className = "status";
     st.textContent = "Converting for your " + VENDORS[vendor].name + "…";
+    const job = S.job;
     later(900, () => {
+      if (S.job !== job) return;   // the card or the camera changed meanwhile
       S.made = true;
-      if (SCENES[at] !== "camera") return;
-      renderCamera();
+      if (SCENES[at] !== "make") return;
+      syncMake();
       focusIf(e, nextBtn());
     });
   });
@@ -709,9 +760,18 @@
     ej.classList.toggle("pulse", S.copied && !S.ejected);
     ej.textContent = S.ejected ? "✓ Ejected" : "⏏︎ Eject";
     $("pc-sd").classList.toggle("out", S.ejected);
+    $("copy-fine").hidden = false;
     $("task-copy").classList.toggle("done", S.copied);
     $("task-eject").classList.toggle("done", S.ejected);
-    if (S.ejected) unlock(true); else lock();
+    syncSetupTask(false);
+    if (S.ejected && !SETUP[vendor].menu) unlock(true); else lock();
+  }
+  // The third item on the list: the camera's one-time setting (none on a Canon).
+  function syncSetupTask(inCamera) {
+    const st = SETUP[vendor];
+    $("setup-task").innerHTML = inCamera ? st.task : st.todo;
+    $("task-setup").classList.toggle("done", S.fixed);
+    $("task-setup").classList.toggle("now", inCamera && !S.fixed);
   }
   function setArmed(on) {
     S.armed = on;
@@ -833,24 +893,37 @@
   $("pc-yes").addEventListener("click", () => copied(true));
   $("pc-eject").addEventListener("click", (e) => {
     if (!S.copied || S.ejected) return;
+    const st = SETUP[vendor];
     S.ejected = true;
+    if (!st.menu) {                     // Canon: nothing to set, you're done here
+      S.fixed = true;
+      renderCopy();
+      note("copy-note", st.done, "ok");
+      focusIf(e, nextBtn());
+      return;
+    }
     renderCopy();
-    note("copy-note", "✓ Safe to remove. Back into the camera it goes.", "ok");
-    focusIf(e, nextBtn());
+    note("copy-note", "✓ Safe to remove. Back into the camera it goes…", "ok");
+    later(1300, () => {
+      if (SCENES[at] !== "copy" || S.fixed) return;
+      ENTER.copy();                     // now the camera, for its one setting
+      const a = document.activeElement;
+      if (!a || a === document.body || pc.contains(a)) $("h-setup").focus({ preventScroll: true });
+    });
   });
 
-  /* ----- 6. the camera's one-time setup (Sony: Recover Image Database) ----- */
+  /* ----- 4b. the camera's one-time setup (Sony: Recover Image Database) ----- */
   let menuAt = -1;
   function renderSetup() {
     const st = SETUP[vendor];
     $("h-setup").innerHTML = st.title;
     $("setup-text").textContent = st.text;
-    $("setup-task").innerHTML = "<span>" + st.task + "</span>";
-    $("setup-task").classList.toggle("done", !!st.menu && S.fixed);
-    note("setup-note", st.menu && S.fixed ? st.done : "", "ok");
-    $("setup-menu").hidden = !st.menu || S.fixed;
+    syncSetupTask(true);
+    note("copy-note", S.fixed ? st.done : "", "ok");
+    $("setup-menu").hidden = S.fixed;
+    $("copy-fine").hidden = true;
     show(LIVE);
-    if (!st.menu || S.fixed) { cue([]); unlock(true); }
+    if (S.fixed) { cue([]); unlock(true); }
     else { cue(["btn-menu"]); lock(); }
   }
   function openMenu(level) {
@@ -881,9 +954,9 @@
     $("menu").hidden = true;
     menuAt = -1;
   }
+  const inSetup = () => SCENES[at] === "copy" && main.dataset.phase === "camera";
   function pressMenu(e) {
-    const st = SETUP[vendor];
-    if (SCENES[at] !== "setup" || !st.menu || S.fixed) return;
+    if (!inSetup() || S.fixed) return;
     if (menuAt >= 0) { closeMenu(); renderSetup(); return; }   // MENU again leaves the menu
     const t = openMenu(0);
     focusIf(e, t);
@@ -896,10 +969,10 @@
     const st = SETUP[vendor], lv = st.menu[menuAt];
     if (b.dataset.item !== lv.target) {
       nope(b);
-      note("setup-note", "Not this one: look for “" + lv.target + "”.");
+      note("copy-note", "Not this one: look for “" + lv.target + "”.");
       return;
     }
-    note("setup-note", "");
+    note("copy-note", "");
     if (menuAt + 1 < st.menu.length) focusIf(e, openMenu(menuAt + 1));
     else if (st.confirm) confirmMenu(e);
     else finishSetup();
@@ -927,7 +1000,7 @@
     later(1500, finishSetup);
   });
   function finishSetup() {
-    if (SCENES[at] !== "setup") return;
+    if (!inSetup()) return;
     const st = SETUP[vendor];
     S.fixed = true;
     $("menu-list").hidden = true;
@@ -936,7 +1009,7 @@
     $("menu-confirm").hidden = false;
     $("menu-q").textContent = st.done;
     later(900, () => {
-      if (SCENES[at] !== "setup") return;
+      if (!inSetup()) return;
       closeMenu();
       renderSetup();
       const b = nextBtn();
@@ -944,54 +1017,30 @@
     });
   }
 
-  /* ----- 7. shoot day: press ▶, then half-press the shutter ----- */
-  function renderShoot(anim) {
-    const text = $("shoot-text");
-    $("shoot-play").hidden = S.played;
-    $("shoot-back").hidden = !S.played || S.back;
-    if (!S.played) {
-      text.textContent = "The couple is waiting again. This time, press playback.";
-      show(LIVE);
-      cue(["btn-play"]);
-      lock();
-    } else if (!S.back) {
-      text.textContent = "There it is: your " + KIND[S.type] + ", right next to your photos. Nobody sees a phone.";
-      showUser({ file: VENDORS[vendor].file }, anim);
-      cue(["btn-shutter"]);
-      unlock(false);
-    } else {
-      text.textContent = "Half-press, and you're back to shooting. That's the whole trick.";
-      show(LIVE);
-      cue([]);
-      unlock(true);
-    }
-  }
+  /* ----- 5. on the day: press ▶, and your card is there ----- */
   function pressPlay(e) {
     const sid = SCENES[at];
     if (sid === "start") { go("playback"); return; }
-    if (sid === "shoot" && !S.played) {
-      S.played = true;
-      renderShoot("pop");
-      focusIf(e, $("shoot-back"));
-    }
-  }
-  function pressShutter(e) {
-    blink();
-    if (SCENES[at] === "shoot" && S.played && !S.back) {
-      S.back = true;
-      renderShoot();
-      focusIf(e, nextBtn());
-    }
+    if (sid !== "done" || S.played || S.skipped) return;
+    S.played = true;
+    cue([]);
+    $("shoot-play").disabled = true;
+    showUser(vendor ? { file: VENDORS[vendor].file } : {}, "pop");
+    later(1100, () => {
+      if (SCENES[at] !== "done") return;
+      phase("done", "end");
+      renderDone();
+      if (viaKeys(e) || document.activeElement === document.body) $("h-done").focus({ preventScroll: true });
+    });
   }
   $("btn-play").addEventListener("click", pressPlay);
   $("shoot-play").addEventListener("click", pressPlay);
-  $("btn-shutter").addEventListener("click", pressShutter);
-  $("shoot-back").addEventListener("click", pressShutter);
+  $("btn-shutter").addEventListener("click", blink);
 
-  /* ----- 8. done: your checklist, then the real studio ----- */
-  function renderDone() {
+  /* ----- 5b. the end: your checklist, then the real studio ----- */
+  function renderDone(anim) {
     const v = vendor && VENDORS[vendor];
-    showUser(v ? { file: v.file } : {}, "pop");
+    if (anim) showUser(v ? { file: v.file } : {}, anim);
     if (v) {
       const title = $("recap-title"), box = $("recap");
       title.hidden = false;
@@ -1056,11 +1105,23 @@
   $("d-back").addEventListener("click", () => go(SCENES[Math.max(0, at - 1)]));
   $("d-skip").addEventListener("click", () => {
     track("Demo skipped", { at: SCENES[at] });
+    S.skipped = true;
     go("done");
   });
+  // A step from the URL. "#setup" (an older support link) opens the camera
+  // half of the SD card step, as if the card were already copied.
+  function fromHash() {
+    let id = location.hash.slice(1);
+    if (id === "setup" && vendor) {
+      S.made = S.copied = S.ejected = true;
+      S.fixed = !SETUP[vendor].menu;
+    }
+    id = SCENE_ALIAS[id] || id;
+    return SCENES.includes(id) ? id : null;
+  }
   window.addEventListener("hashchange", () => {
-    const id = location.hash.slice(1);
-    if (SCENES.includes(id) && id !== SCENES[at]) go(id);
+    const raw = location.hash.slice(1), id = fromHash();
+    if (id && (id !== SCENES[at] || raw !== id)) go(id);
   });
 
   // Nothing happening for a few seconds: the next thing to press pulses harder.
@@ -1085,6 +1146,5 @@
   R.ensureFonts({ rows: [CHIPS, SAMPLE] }).then(repaint);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(repaint);
   track("Demo started", { ref: (params.get("ref") || "direct").slice(0, 24), camera: vendor || "none" });
-  const first = location.hash.slice(1);
-  go(SCENES.includes(first) ? first : "start", { quiet: true });
+  go(fromHash() || "start", { quiet: true });
 })();
