@@ -39,8 +39,10 @@
 @keyframes capIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 /* ---------- the camera (right), seen from the back ---------- */
-.rig{position:absolute;right:5%;top:50%;width:48%;transform:translateY(-50%);transition:transform .9s var(--ease)}
+.rig{position:absolute;right:5%;top:50%;width:48%;transform:translateY(-50%);transition:transform .9s var(--ease),top .9s var(--ease)}
 .film[data-scene="playback"] .rig{transform:translateY(-50%) scale(1.04)}
+/* held upright for the pose cards, grip on top, like a photographer does */
+.film[data-beat="tall"] .rig{transform:translateY(-50%) rotate(-90deg) scale(.96)}
 .film[data-scene="make"] .rig{transform:translateY(-50%) scale(.95)}
 .film[data-scene="sd"] .rig{transform:translateY(-48%) scale(.9) translateX(3%)}
 .film[data-scene="day"] .rig{transform:translateY(-50%) scale(1.06)}
@@ -61,7 +63,6 @@
 .dcam-evf i{position:absolute;left:14%;right:14%;top:22%;height:9.6cqw;border-radius:2.6cqw;background:radial-gradient(ellipse at 50% 45%,#1c3a33 0 18%,#0a0b0c 34%,#09090a 60%),#0a0a0b;box-shadow:inset 0 0 0 .7cqw #19191b,inset 0 2px 0 rgba(255,255,255,.06),0 .5cqw 1cqw rgba(0,0,0,.45)}
 .dcam-dial{position:absolute;right:22%;top:-3.6cqw;width:14%;height:4cqw;border-radius:1.2cqw 1.2cqw 0 0;background:repeating-linear-gradient(90deg,#2a2a2d 0 2px,#3c3c41 2px 4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
 .dcam-shutter{position:absolute;right:7%;top:-2.8cqw;width:10%;height:3.2cqw;border-radius:1.6cqw 1.6cqw .4cqw .4cqw;background:linear-gradient(180deg,#68686e,#2c2c30);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
-.dcam-brand{position:absolute;left:5%;top:1.7cqw;font:600 1.6cqw/1 var(--sans);letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.42)}
 .dcam-face{position:relative;display:flex;align-items:center;gap:3.4cqw}
 .dcam-screen{position:relative;flex:1 1 auto;min-width:0;padding:.9cqw;border-radius:1.8cqw;background:#050506;
   box-shadow:0 0 0 .55cqw #0c0c0e,0 0 0 .7cqw rgba(255,255,255,.06),inset 0 0 0 1px rgba(255,255,255,.04);overflow:hidden}
@@ -88,6 +89,8 @@
 @keyframes blink{from{opacity:.85}to{opacity:0}}
 #screen-canvas.slide-next{animation:slideNext .32s var(--ease)}
 #screen-canvas.pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.15)}
+#screen-canvas.fade{animation:fade .4s ease-out}
+@keyframes fade{from{opacity:.15}to{opacity:1}}
 @keyframes slideNext{from{transform:translateX(9%);opacity:.2}to{transform:none;opacity:1}}
 @keyframes pop{from{transform:scale(.9);opacity:.1}to{transform:none;opacity:1}}
 
@@ -199,7 +202,7 @@
 .bar-play[data-state="pause"]::before{margin-left:-6px}
 .bar-play[data-state="pause"]::after{margin-left:2px}
 .bar-play[data-state="replay"]::before{content:"\21BA";margin:-11px 0 0 -8px;color:#fff;font:700 19px/22px var(--sans)}
-.bar-chs{flex:1 1 auto;display:grid;grid-template-columns:8fr 9fr 11fr 7fr 7fr;gap:8px;list-style:none;margin:0;padding:0;min-width:0}
+.bar-chs{flex:1 1 auto;display:grid;grid-template-columns:11.5fr 13fr 11fr 7fr 7fr;gap:8px;list-style:none;margin:0;padding:0;min-width:0}
 .ch{display:flex;flex-direction:column;gap:7px;width:100%;padding:4px 0;border:0;background:none;text-align:left;cursor:pointer;font:500 12.5px/1.2 var(--sans);color:var(--muted)}
 .ch:hover{color:var(--ink)}
 .ch:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
@@ -230,6 +233,7 @@
   .cap-text{margin-top:8px;font-size:clamp(13px,3.8cqw,15.5px)}
   .rig{left:6%;right:6%;width:auto;top:60%}
   .film[data-scene="playback"] .rig,.film[data-scene="day"] .rig{transform:translateY(-50%) scale(1.02)}
+  .film[data-beat="tall"] .rig{top:62%;transform:translateY(-50%) rotate(-90deg) scale(.8)}
   .film[data-scene="make"] .rig{top:36%;transform:translateY(-50%) scale(.74)}
   .film[data-scene="make"] .cap-text{display:none}
   .film[data-scene="sd"] .rig{top:44%;transform:translateY(-50%) scale(.8)}
