@@ -1,0 +1,405 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-24T18:47:17+00:00",
+  "title": "Design System: Shoot Cards",
+  "extensions": {
+    "colorMeta": {
+      "record-red": {
+        "role": "primary",
+        "displayName": "Record Red",
+        "tonalRamp": [
+          "#4c0000",
+          "#800000",
+          "#b20000",
+          "#e60000",
+          "#ff3333",
+          "#ff8080",
+          "#ffc2c2",
+          "#ffebeb"
+        ]
+      },
+      "record-red-deep": {
+        "role": "primary",
+        "displayName": "Record Red Deep",
+        "tonalRamp": [
+          "#4c0000",
+          "#800000",
+          "#b20000",
+          "#e60000",
+          "#ff3333",
+          "#ff8080",
+          "#ffc2c2",
+          "#ffebeb"
+        ]
+      },
+      "record-red-soft": {
+        "role": "primary",
+        "displayName": "Record Red Soft"
+      },
+      "record-red-line": {
+        "role": "primary",
+        "displayName": "Record Red Line"
+      },
+      "record-red-wash": {
+        "role": "primary",
+        "displayName": "Record Red Wash",
+        "tonalRamp": [
+          "#4c0000",
+          "#800000",
+          "#b20000",
+          "#e60000",
+          "#ff3333",
+          "#ff8080",
+          "#ffc2c2",
+          "#ffebeb"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "tonalRamp": [
+          "#191933",
+          "#2a2a55",
+          "#3b3b77",
+          "#4c4c99",
+          "#7777bb",
+          "#aaaad5",
+          "#d6d6eb",
+          "#f1f1f8"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "tonalRamp": [
+          "#262626",
+          "#404040",
+          "#595959",
+          "#737373",
+          "#999999",
+          "#bfbfbf",
+          "#e0e0e0",
+          "#f5f5f5"
+        ]
+      },
+      "surface-sunk": {
+        "role": "neutral",
+        "displayName": "Surface Sunk",
+        "tonalRamp": [
+          "#2b2822",
+          "#474238",
+          "#645d4f",
+          "#817765",
+          "#a59d8d",
+          "#c7c2b8",
+          "#e4e2dd",
+          "#f6f5f4"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "tonalRamp": [
+          "#252528",
+          "#3e3e42",
+          "#56565c",
+          "#6f6f77",
+          "#96969c",
+          "#bdbdc1",
+          "#dfdfe1",
+          "#f4f4f5"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Ink Soft",
+        "tonalRamp": [
+          "#252527",
+          "#3e3e41",
+          "#57575b",
+          "#707075",
+          "#97979b",
+          "#bebec1",
+          "#e0e0e1",
+          "#f5f5f5"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "tonalRamp": [
+          "#252527",
+          "#3e3e41",
+          "#57575b",
+          "#707075",
+          "#97979b",
+          "#bebec1",
+          "#e0e0e1",
+          "#f5f5f5"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Border"
+      },
+      "border-soft": {
+        "role": "neutral",
+        "displayName": "Border Soft"
+      },
+      "camera-black": {
+        "role": "neutral",
+        "displayName": "Camera Black",
+        "tonalRamp": [
+          "#252528",
+          "#3e3e42",
+          "#56565c",
+          "#6f6f77",
+          "#95959d",
+          "#bdbdc1",
+          "#dfdfe1",
+          "#f4f4f5"
+        ]
+      },
+      "ok": {
+        "role": "status",
+        "displayName": "OK",
+        "tonalRamp": [
+          "#024a36",
+          "#047b59",
+          "#06ad7d",
+          "#07dea1",
+          "#3af8c2",
+          "#84fbd9",
+          "#c4fded",
+          "#ebfef9"
+        ]
+      },
+      "error": {
+        "role": "status",
+        "displayName": "Error",
+        "tonalRamp": [
+          "#460716",
+          "#740b25",
+          "#a30f33",
+          "#d21442",
+          "#ed456e",
+          "#f48ba4",
+          "#fac7d3",
+          "#fdecf0"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headline only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card and panel titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Reading copy."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase tier names, table headers, badges."
+      },
+      "accent-italic": {
+        "displayName": "Accent Italic",
+        "purpose": "Serif italic line above headings, serif numerals."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ambient",
+        "value": "0 1px 2px rgba(0,0,0,.04), 0 10px 30px rgba(0,0,0,.05)",
+        "purpose": "Cards at rest."
+      },
+      {
+        "name": "lifted",
+        "value": "0 2px 6px rgba(0,0,0,.05), 0 24px 60px rgba(0,0,0,.10)",
+        "purpose": "Studio panel, video, hovered cards."
+      },
+      {
+        "name": "hover-contact",
+        "value": "0 8px 20px rgba(0,0,0,.08)",
+        "purpose": "Added under lifted as a card rises."
+      },
+      {
+        "name": "accent",
+        "value": "0 6px 20px rgba(164,0,0,.24)",
+        "purpose": "Primary button at rest."
+      },
+      {
+        "name": "accent-lg",
+        "value": "0 10px 26px rgba(164,0,0,.3)",
+        "purpose": "Primary button on hover."
+      },
+      {
+        "name": "camera",
+        "value": "0 36px 70px rgba(0,0,0,.24), 0 4px 10px rgba(0,0,0,.18)",
+        "purpose": "Camera body in the live preview."
+      }
+    ],
+    "motion": [
+      {
+        "name": "hover-lift",
+        "value": "transform .3s ease, box-shadow .3s ease",
+        "purpose": "Cards lift 4px, buttons 2px."
+      },
+      {
+        "name": "press",
+        "value": "50ms",
+        "purpose": "Buttons snap 1px down on active."
+      },
+      {
+        "name": "reveal",
+        "value": ".6s cubic-bezier(.2,.6,.2,1)",
+        "purpose": "Sections fade up 20px on scroll."
+      },
+      {
+        "name": "grid-drift",
+        "value": "22s linear infinite",
+        "purpose": "Background grid moves 40px diagonally."
+      },
+      {
+        "name": "arrow-nudge",
+        "value": "left .25s ease",
+        "purpose": "Trailing arrows move 3px on hover."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "xs",
+        "value": "380px"
+      },
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "nav",
+        "value": "860px"
+      },
+      {
+        "name": "pricing",
+        "value": "880px"
+      },
+      {
+        "name": "md",
+        "value": "980px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one action in a block: make a card, go Pro.",
+      "html": "<button class=\"ds-btn-primary\">Make my free card <span class=\"ds-arr\">&rarr;</span></button>",
+      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-btn-primary{background:var(--accent);color:#fff;border:1px solid transparent;border-radius:12px;font:600 16px/1.25 inherit;font-family:inherit;padding:13px 24px;cursor:pointer;box-shadow:0 6px 20px rgba(164,0,0,.24);transition:transform .3s ease,box-shadow .3s ease,background .15s} .ds-btn-primary:hover{background:var(--accent-2);transform:translateY(-2px);box-shadow:0 10px 26px rgba(164,0,0,.3)} .ds-btn-primary:active{transform:translateY(1px);transition-duration:.05s} .ds-btn-primary:focus-visible{outline:2px solid var(--accent);outline-offset:2px} .ds-arr{position:relative;left:0;transition:left .25s ease} .ds-btn-primary:hover .ds-arr{left:3px}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action beside or below a primary one.",
+      "html": "<button class=\"ds-btn-ghost\">See the pose pack</button>",
+      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--border);border-radius:12px;font-family:inherit;font-weight:600;font-size:16px;padding:13px 24px;cursor:pointer;transition:transform .3s ease,border-color .15s,color .15s} .ds-btn-ghost:hover{border-color:var(--accent);color:var(--accent-2);transform:translateY(-2px)} .ds-btn-ghost:focus-visible{outline:2px solid var(--accent);outline-offset:2px}"
+    },
+    {
+      "name": "Card Type Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Pick one card type in the studio.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\" aria-pressed=\"true\">Pose</button><button class=\"ds-chip\" aria-pressed=\"false\">Timeline</button><button class=\"ds-chip\" aria-pressed=\"false\">Shot list</button></div>",
+      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-chips{display:flex;gap:7px;flex-wrap:wrap} .ds-chip{border:1px solid var(--border);background:#fff;border-radius:999px;padding:7px 13px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:border-color .15s,background .15s,color .15s} .ds-chip:hover{border-color:rgba(164,0,0,.4);color:var(--ink)} .ds-chip[aria-pressed=true]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-2);box-shadow:0 0 0 1px var(--accent) inset;font-weight:600} .ds-chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Studio form fields.",
+      "html": "<label class=\"ds-fld\"><span>Pose name</span><input class=\"ds-input\" placeholder=\"e.g. The first look\"></label>",
+      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-fld{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:var(--ink-2)} .ds-input{font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 11px;transition:border-color .15s,background .15s} .ds-input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);background:#fff}"
+    },
+    {
+      "name": "Pricing Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "A plan; lifts and warms on hover.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-name\">Pose pack</div><div class=\"ds-card-amt\">50 <small>poses</small></div><p>Ready-made, bought once</p></div>",
+      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:20px;padding:30px 26px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;max-width:280px} .ds-card:hover{transform:translateY(-4px);border-color:rgba(164,0,0,.25);box-shadow:0 8px 20px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.05),0 24px 60px rgba(0,0,0,.10)} .ds-card-name{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;transition:color .3s} .ds-card:hover .ds-card-name{color:var(--accent-2)} .ds-card-amt{font-family:'Instrument Serif',Georgia,serif;font-size:46px;line-height:1;margin:12px 0 2px;color:var(--ink)} .ds-card-amt small{font-family:inherit;font-size:15px;color:var(--muted)} .ds-card p{color:var(--muted);font-size:13px;margin:2px 0 0}"
+    },
+    {
+      "name": "Camera Screen",
+      "kind": "custom",
+      "refersTo": "camera-screen",
+      "description": "Every card preview sits in a camera-black bezel.",
+      "html": "<figure class=\"ds-screen\"><div class=\"ds-screen-card\"><span>SATURDAY</span><b>Timeline</b><i>14:00 Getting ready</i></div></figure>",
+      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-screen{margin:0;background:#1c1c1e;border-radius:16px;padding:9px;max-width:300px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05)} .ds-screen-card{background:#fff;border-radius:6px;aspect-ratio:3/2;padding:14px 18px;border-right:14px solid var(--accent);display:flex;flex-direction:column;gap:4px} .ds-screen-card span{font-size:8px;letter-spacing:.2em;font-weight:600;color:var(--accent)} .ds-screen-card b{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:26px;color:var(--ink)} .ds-screen-card i{font-style:normal;font-size:11px;color:var(--ink)}"
+    },
+    {
+      "name": "Sticky Nav",
+      "kind": "nav",
+      "refersTo": null,
+      "description": "Translucent paper bar with the primary CTA.",
+      "html": "<nav class=\"ds-nav\"><span class=\"ds-brand\"><i></i>Shoot Cards</span><span class=\"ds-links\"><a>More cards</a><a>Poses</a><a>Pricing</a></span><a class=\"ds-cta\">Make a free card</a></nav>",
+      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px;background:rgba(251,251,253,.86);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.08)} .ds-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:var(--ink)} .ds-brand i{width:20px;height:20px;border-radius:7px;background:linear-gradient(135deg,#c01818,#7e0000)} .ds-links{display:flex;gap:24px} .ds-links a{font-size:14px;font-weight:500;color:var(--ink-2);cursor:pointer} .ds-links a:hover{color:var(--ink)} .ds-cta{background:var(--accent);color:#fff;font-size:14px;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Camera Back",
+    "overview": "The back of a camera is a calm, dark, exact surface where everything has to read in two seconds: a lit screen, a few firm buttons, one red dot that means something is happening. Shoot Cards borrows that discipline for a light web page. The page itself stays quiet (cool paper, black ink, a faint grid), so the real heroes, the camera body, the cards on its screen and the wedding photographs, carry the colour and the emotion.\n\nDensity is moderate and editorial: generous section spacing, short copy, one clear action per block. Type pairs a condensed, slightly literary serif for headlines with a precise grotesque for everything you read or press. The red is rare on purpose; when it appears it marks the action, the selected state or the word that matters.\n\nControls feel like a camera's own dials and buttons: precise and tactile. They have firm edges, a definite pressed state, and a small lift with a deeper shadow under the finger or cursor.",
+    "keyCharacteristics": [
+      "Light, cool paper with a faint 40px line grid that drifts and brightens around the cursor.",
+      "One red accent (Record Red), used for action, selection and emphasis only.",
+      "Instrument Serif for display and headlines, Inter for body, labels and controls.",
+      "Real camera bodies and real wedding photographs; cards framed as camera screens.",
+      "Precise, tactile controls: lift on hover, press on click, visible focus rings."
+    ],
+    "rules": [
+      {
+        "name": "The Record Dot Rule",
+        "body": "Red marks action, selection or the single emphasised word, never decoration. If a screen has more than one red-filled element competing above the fold, one of them is wrong.",
+        "section": "colors"
+      },
+      {
+        "name": "The Paper Stays Cool Rule",
+        "body": "Backgrounds are cool off-white (`paper`) and pure white (`surface`). No warm creams, beiges or tinted section bands.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Serif for what we say, sans for what you do. Buttons, fields, labels and data are always Inter; headlines and the occasional emphasised italic are always Instrument Serif.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lift On Touch Rule",
+        "body": "Surfaces are calm at rest. Hover lifts a card 4px (a button 2px) and deepens its shadow; pressing snaps a button 1px down in 50ms. With reduced motion, nothing moves; colour and border still change.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** show the real thing: real camera bodies, real cards in a camera bezel, photographs from real weddings.",
+      "**Do** keep Record Red for the action, the selection and the one emphasised word.",
+      "**Do** use Instrument Serif for headlines and Inter for everything you read in detail or press.",
+      "**Do** lift cards 4px and buttons 2px on hover, with the matching shadow step, and keep the 2px Record Red focus ring.",
+      "**Do** give every tappable control a 44px hit area on touch screens."
+    ],
+    "donts": [
+      "**Don't** introduce a second accent colour or warm the paper toward cream.",
+      "**Don't** replace Inter or Instrument Serif; both are part of the shared NotaLucis identity.",
+      "**Don't** use stock imagery or invented testimonials, ratings or counts.",
+      "**Don't** show a card preview without its camera bezel.",
+      "**Don't** add motion that ignores `prefers-reduced-motion`."
+    ]
+  }
+}

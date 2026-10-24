@@ -12,7 +12,11 @@
   --accent:#a40000;         /* red-600 (CTA on white) */
   --accent-2:#7e0000;       /* red-700 (text accents) */
   --accent-strong:#7e0000;
-  --accent-soft:rgba(164,0,0,.08);
+  --accent-soft:rgba(164,0,0,.08);   /* tinted fill: upsell, nudge, focus halo */
+  --accent-line:rgba(164,0,0,.18);   /* hairline on a tinted fill; text selection */
+  --accent-wash:#fff4f4;             /* selected chip, 'us' column, hover on white CTA */
+  --shadow-accent:0 6px 20px rgba(164,0,0,.24);     /* primary CTA at rest */
+  --shadow-accent-lg:0 10px 26px rgba(164,0,0,.3);  /* primary CTA on hover */
   --ok:#047857;
   --err:#be123c;
   --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
@@ -42,7 +46,7 @@ body{
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
-::selection{background:rgba(164,0,0,.18)}
+::selection{background:var(--accent-line)}
 a{color:var(--accent-2);text-decoration:none}
 img{max-width:100%}
 button{font-family:var(--sans)}
@@ -110,7 +114,7 @@ button{font-family:var(--sans)}
   font-family:var(--sans);font-size:16px;font-weight:600;line-height:1.25;padding:13px 24px;cursor:pointer;
   transition:transform .05s,box-shadow .15s,background .15s,border-color .15s,color .15s;
 }
-.btn-primary{background:var(--accent);color:#fff;box-shadow:0 6px 20px rgba(164,0,0,.24)}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:var(--shadow-accent)}
 .btn-primary:hover{background:var(--accent-strong)}
 .btn-primary:active{transform:translateY(1px)}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
@@ -154,7 +158,7 @@ button{font-family:var(--sans)}
 .types{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
 .type{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:13.5px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:border-color .15s,background .15s,color .15s}
 .type:hover{border-color:rgba(164,0,0,.4);color:var(--ink)}
-.type[aria-pressed="true"]{border-color:var(--accent);background:#fff4f4;color:var(--accent-2);box-shadow:0 0 0 1px var(--accent) inset;font-weight:600}
+.type[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-2);box-shadow:0 0 0 1px var(--accent) inset;font-weight:600}
 .type:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 .panel-label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13.5px;color:var(--muted);margin:0 0 9px}
@@ -277,7 +281,7 @@ button{font-family:var(--sans)}
 .muted{color:var(--muted);font-size:13px;margin:10px 0 0}
 
 /* upsell (after a free card, or at the free limit) */
-.upsell{margin-top:14px;padding:14px 16px;background:var(--accent-soft);border:1px solid rgba(164,0,0,.18);border-radius:14px}
+.upsell{margin-top:14px;padding:14px 16px;background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:14px}
 .upsell-text{margin:0 0 12px}
 .buy-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .buy-row .go{flex:0 1 auto}
@@ -295,7 +299,7 @@ button{font-family:var(--sans)}
 /* ---------- the ways into the demo (/demo) ---------- */
 .pitch-demo{display:inline-flex;align-items:center;gap:9px;margin-top:18px;font-size:15px;font-weight:600;color:var(--accent-2)}
 .pitch-demo:hover{text-decoration:underline;text-underline-offset:3px}
-.pitch-demo-play{position:relative;flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);border:1px solid rgba(164,0,0,.18)}
+.pitch-demo-play{position:relative;flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);border:1px solid var(--accent-line)}
 .pitch-demo-play::after{content:"";position:absolute;left:10.5px;top:8px;border-left:8px solid var(--accent);border-top:5.5px solid transparent;border-bottom:5.5px solid transparent}
 .pitch-demo-time{font-weight:400;color:var(--muted)}
 .vid-try{position:absolute;right:14px;top:14px;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--accent-2);box-shadow:var(--shadow)}
@@ -377,7 +381,7 @@ button{font-family:var(--sans)}
 .why-table table{width:100%;border-collapse:collapse;font-size:15px}
 .why-table th,.why-table td{padding:14px 16px;text-align:center;border-bottom:1px solid var(--border-soft)}
 .why-table thead th{font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:700;background:var(--bg)}
-.why-table thead th.us{color:var(--accent-2);background:#fff4f4}
+.why-table thead th.us{color:var(--accent-2);background:var(--accent-wash)}
 .why-table tbody th{text-align:left;font-weight:500;color:var(--ink)}
 .why-table td.us{background:#fffafa;font-weight:600;color:var(--ink)}
 .why-table tr:last-child th,.why-table tr:last-child td{border-bottom:none}
@@ -429,7 +433,7 @@ button{font-family:var(--sans)}
 .final-card h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4.4vw,52px);line-height:1.04;letter-spacing:-.012em;margin:0 0 12px;color:#fff}
 .final-card p{color:rgba(255,255,255,.86);font-size:18px;margin:0 0 26px}
 .final-btn{background:#fff;color:var(--accent-2)}
-.final-btn:hover{background:#fff4f4}
+.final-btn:hover{background:var(--accent-wash)}
 
 /* ---------- footer ---------- */
 .site-foot{
@@ -510,7 +514,7 @@ button{font-family:var(--sans)}
 /* ---------- upgrade nudge (signed-in free/credit users) ---------- */
 .upgrade-nudge{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
   margin:0 0 14px;padding:12px 14px;background:var(--accent-soft);
-  border:1px solid rgba(164,0,0,.18);border-radius:12px}
+  border:1px solid var(--accent-line);border-radius:12px}
 .nudge-text{font-size:14px;color:var(--ink-2)}
 .nudge-text strong{color:var(--accent-2);font-weight:600}
 .upgrade-nudge.spent{background:rgba(164,0,0,.13);border-color:rgba(164,0,0,.32)}
@@ -547,7 +551,7 @@ button{font-family:var(--sans)}
 .btn,.go{transition:transform .3s ease,box-shadow .3s ease,background .15s,border-color .15s,color .15s}
 .btn:not(:disabled):hover,.go:not(:disabled):hover{transform:translateY(-2px)}
 .btn:not(:disabled):active,.go:not(:disabled):active{transform:translateY(1px);transition-duration:.05s}
-.btn-primary:not(:disabled):hover,.go:not(:disabled):not(.ghost):hover{box-shadow:0 10px 26px rgba(164,0,0,.3)}
+.btn-primary:not(:disabled):hover,.go:not(:disabled):not(.ghost):hover{box-shadow:var(--shadow-accent-lg)}
 @media(prefers-reduced-motion:reduce){
   .price-card:hover,.btn:hover,.go:hover,.pz:hover,.tile:hover .tile-screen,.pack-stack:hover img,.hero-why a:hover::after{transform:none!important}
   :hover>.arr,.tile:hover .arr{left:0!important;top:0!important}

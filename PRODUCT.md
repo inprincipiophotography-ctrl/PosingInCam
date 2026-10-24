@@ -25,7 +25,7 @@ The camera itself is the reference screen. A normal image won't show in playback
 - Strict CSP in `vercel.json`: scripts only from `'self'`, fonts only from Google Fonts, no third-party script CDNs.
 - Tested bodies: Sony A7 III/IV/V, Canon R6/R6 II/R6 III, Nikon Z6/Z8/Z9. Fujifilm and Panasonic are "coming soon", not supported.
 - Free cards carry a "preview" watermark; Pro removes it and all limits; 14-day money-back guarantee.
-- Open: the Pro card can render a "Coming soon" button (seen on a local run without Stripe prices); whether Pro is purchasable in production is unconfirmed.
+- Pro is live in production ("Go Pro" button, featured as "Best value"). The "Coming soon" button only appears when no Stripe prices load, e.g. on a local run.
 
 ## Brand Commitments
 - Shoot Cards is a NotaLucis tool and shares the NotaLucis look with notalucis.com: Inter + Instrument Serif, one red accent, light theme. These are binding; do not replace them.

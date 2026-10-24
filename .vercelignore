@@ -13,3 +13,10 @@ LICENSE
 .gitignore
 .claude/
 .impeccable/
+# Raw source files and design inspiration: kept in the repo, never served.
+/DSC*.jpg
+assets/showcase/DSC*.jpg
+assets/showcase/VIDEO1.mp4
+assets/showcase/*.mov
+assets/on screen inspo/
+assets/text inspo/
