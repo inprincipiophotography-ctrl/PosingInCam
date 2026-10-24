@@ -814,7 +814,7 @@ function emptyHint() {
     return studio.pose.mode === "photo" ? "Add your reference photo to make this card." : "Loading the pose, one moment…";
   }
   if (studio.type === "found") return "Add your name, phone or email.";
-  if (studio.type === "upload") return "Add an image: her Pinterest pins, a Canva export, a screenshot or a photo (or paste one with " + PASTE_KEY + ").";
+  if (studio.type === "upload") return "Add an image: the bride's Pinterest pins, a Canva export, a screenshot or a photo (or paste one with " + PASTE_KEY + ").";
   return "Add at least one line.";
 }
 
@@ -1285,7 +1285,7 @@ async function renderPricing() {
         per: proAmt ? (cycle === "yearly" ? "/yr" : "/mo") : "",
         note: proNote,
         feats: ["Unlimited cards, every type", "No watermark",
-                "A project per wedding", "Her pins &amp; your designs, converted", "Cancel anytime"],
+                "A project per wedding", "The bride's pins &amp; your designs, converted", "Cancel anytime"],
         cta: (hasM || hasY)
           ? '<button class="btn btn-primary" type="button" data-buy="' + cycle + '">Go Pro</button>'
           : '<button class="btn btn-primary" type="button" disabled>Coming soon</button>',

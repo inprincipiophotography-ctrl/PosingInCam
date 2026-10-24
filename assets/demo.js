@@ -36,7 +36,7 @@
     { id: "moment", name: "The moment", at: 0 },
     { id: "playback", name: "Playback", at: 11500 },
     { id: "why", name: "Any picture?", at: 24500 },
-    { id: "board", name: "Her board", at: 33000 },
+    { id: "board", name: "Bride's board", at: 33000 },
     { id: "make", name: "Make yours", at: 42500 },
     { id: "sd", name: "SD card", at: 53500 },
     { id: "day", name: "On the day", at: 60500 },
@@ -55,7 +55,7 @@
     { at: 20000, title: "Timelines, family groups, <em>shot lists</em> too.", text: "Every part of the day, one press away." },
     { at: 24500, title: "Why not just copy any picture? <em>Your camera won't show it.</em>", text: "Cameras only play back files saved their own way: the right size, the right metadata, the right folder." },
     { at: 29600, title: "So we save every card <em>the way your camera does</em>.", text: "It plays back like a photo you shot. That's the whole trick." },
-    { at: 33000, title: "She sends her Pinterest board? <em>It goes in too.</em>", text: "Her pins, a moodboard, screenshots: any image, saved the way your camera does." },
+    { at: 33000, title: "The bride sends her Pinterest board? <em>It goes in too.</em>", text: "Her pins, a moodboard, screenshots: any image, saved the way your camera does." },
     { at: 37800, title: "Every photo she wants, <em>one press away</em>.", text: "Tick off her wishes between shots. Nobody sees you scroll." },
     { at: 42500, title: "Make your own <em>in a minute</em>.", text: "Type the names, tap the moments. No Canva, no design." },
     { at: 53500, title: "Copy one folder to your <em>SD card</em>.", text: null },   // per camera: VENDORS[].where
