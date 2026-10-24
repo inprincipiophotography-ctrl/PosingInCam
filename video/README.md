@@ -23,6 +23,7 @@ This folder is not part of the website: `.vercelignore` keeps it out of the depl
 | `AdA2-9x16` "Blank" v2 | 1080 × 1920 | 30 | 16 s | Instagram ad, with music |
 | `AdPOV-9x16` "POV" (Ad A v3) | 1080 × 1920 | 30 | 16 s | Instagram ad, with music |
 | `AdA4-9x16` Ad A v4 | 1080 × 1920 | 30 | 19 s | Instagram ad, with music |
+| `AdA7-H1/H2/H3-9x16` Ad A v7 | 1080 × 1920 | 30 | 15 s | Instagram ad, 3 hooks for A/B, with music |
 | `AdA6-9x16` Ad A v6 | 1080 × 1920 | 30 | 21 s | Instagram ad, with music: v4 + the fan |
 | `AdA5-9x16` Ad A v5 "Dark glass" | 1080 × 1920 | 30 | 18.5 s | Instagram ad, sound design + music bed |
 
@@ -35,6 +36,8 @@ This folder is not part of the website: `.vercelignore` keeps it out of the depl
 `AdA5` (Ad A v5, "Dark glass") is built on the inspiration in `inspo/`: frosted glass UI over the footage and on a near-black stage, white Inter with one italic serif word, all in NotaLucis red. Code in `src/v5/`, storyboard in `storyboards/ad-a-v5.md`, clock in `src/v5/timeline.json`, mastered render in `renders/AdA5-9x16.mp4`.
 
 `AdA6` (Ad A v6) is Ad A v4 unchanged, with the fan of pose cards from v5 added as its own scene before playback (`src/v6/Fan.tsx`). It uses v4's music on the longer clock. Storyboard in `storyboards/ad-a-v6.md`, render in `renders/AdA6-9x16.mp4`.
+
+`AdA7` (Ad A v7) is the rebuild after a marketing review of v6: the pain first, the camera as the answer by 3 s, the real playback by 5 s, one benefit on the card, the fan dealt in, and an end card that says what's free, how it gets into the camera and who made it. 15 s. Three hooks on one body for a Meta A/B test (H1 pain, H2 phone, H3 POV). Code in `src/v7/`, storyboard in `storyboards/ad-a-v7.md`, renders in `renders/`.
 
 ### Sound design (v5)
 

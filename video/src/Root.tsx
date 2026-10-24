@@ -9,6 +9,7 @@ import { AD_A4_SECONDS, AdA4 } from "./v4/AdA4";
 import { CardPreview } from "./v4/Preview";
 import { AD_A5_SECONDS, AdA5 } from "./v5/AdA5";
 import { AD_A6_SECONDS, AdA6 } from "./v6/AdA6";
+import { AD_A7_SECONDS, AdA7 } from "./v7/AdA7";
 import "./theme";
 
 const FORMATS = {
@@ -47,6 +48,9 @@ export const Root: React.FC = () => (
     {/* Ad A v4: the card as vector UI, one rhythm, an end card for Meta's own button. */}
     <Composition id="AdA4-9x16" component={AdA4} durationInFrames={AD_A4_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
     <Composition id="AdA6-9x16" component={AdA6} durationInFrames={AD_A6_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
+    <Composition id="AdA7-H1-9x16" component={AdA7} durationInFrames={AD_A7_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ hook: "H1" as const, guides: false }} />
+    <Composition id="AdA7-H2-9x16" component={AdA7} durationInFrames={AD_A7_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ hook: "H2" as const, guides: false }} />
+    <Composition id="AdA7-H3-9x16" component={AdA7} durationInFrames={AD_A7_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ hook: "H3" as const, guides: false }} />
     <Composition id="AdA5-9x16" component={AdA5} durationInFrames={Math.round(AD_A5_SECONDS * 30)} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
     {/* The vector pose card at its native size, to compare with the real card. */}
     <Composition id="CardPreview" component={CardPreview} durationInFrames={1} fps={30} width={1280} height={1920} />

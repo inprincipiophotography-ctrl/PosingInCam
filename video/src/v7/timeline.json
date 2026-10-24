@@ -1,0 +1,18 @@
+{
+  "_": "Ad A v7, 15 s, three hooks on one body. One clock for picture and music: python3 scripts/music.py src/v7/timeline.json public/music/ad-a-v7.wav. 120 BPM; every scene is a whole number of beats and cuts on the beat.",
+  "bpm": 120,
+  "fps": 30,
+  "seconds": 15,
+  "introKick": true,
+  "riser": [1.5, 3.0],
+  "drop": 3.0,
+  "hook": { "from": 0, "to": 3.0, "blank": 1.45 },
+  "second": { "from": 3.0, "to": 5.0 },
+  "couple": { "source": 5.55, "rate": 0.53 },
+  "playback": { "from": 5.0, "to": 8.0 },
+  "card": { "from": 8.0, "to": 10.0, "push": 8.15 },
+  "fan": { "from": 10.0, "to": 12.0, "deal": 0.1, "stagger": 0.12, "land": 0.45 },
+  "end": { "from": 12.0, "logo": 12.05, "offer": 12.25, "how": 12.55, "madeBy": 12.8, "tap": 13.1, "press": 13.1 },
+  "shutters": [],
+  "whooshes": [8.15, 12.0]
+}
