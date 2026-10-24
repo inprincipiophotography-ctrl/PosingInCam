@@ -38,12 +38,14 @@ Use the **oldest** body you own (strictest validator → works on newer ones too
 
 | Folder | Camera | Status |
 |--------|--------|--------|
-| `sony/`  | Sony Alpha — ideally **A7 III** | bootstrapped (`DSC00099.JPG`); replace with a real A7 III SOOC for guaranteed A7 III support |
+| `sony/`  | Sony Alpha — ideally **A7 III** | must be the A7 III SOOC `DSC09014.JPG` (the hardware-verified A7 III/IV/V template). The old `DSC00099.JPG` was a PosingInCam output with generic libjpeg q-tables, which A7 III rejects. |
 | `canon/` | Canon EOS R — ideally **R6** | `0A0A3799.JPG`, an R6 Mark II SOOC (Model `Canon EOS R6m2`); hardware-verified on R6 Mark II + R6 Mark III |
 | `nikon/` | Nikon Z — ideally **Z6 / Z6 III** | `NIKON-SOOC.JPG`, a Z6 III SOOC (Model `NIKON Z6_3`); hardware-verified on Z8 + Z9. Not a DCF filename, so cards use the default `DSC_` prefix |
 
 Files must be **unedited** (not re-exported from Lightroom/Photoshop/Canva — those
-re-encode and lose the camera fingerprint).
+re-encode and lose the camera fingerprint). `qa/test_encoder.py`
+(`test_bundled_templates_are_straight_out_of_camera`) fails if a template has
+generic libjpeg q-tables, no MakerNote, or is a PosingInCam output.
 
 ## SD-card folder
 Output goes under `DCIM/<vendor folder>/` (Sony `100MSDCF`, Canon `100CANON`,
@@ -52,28 +54,29 @@ Nikon `100NCZ_X`). Nikon's real folder is body-specific (`100NCZ_8`, …) — co
 
 ## Privacy note
 A SOOC JPEG's EXIF can include your camera's serial numbers and your name. The
-converter (`converter/encoder.py` `_build_exif()`) strips these from **every
-output card**:
+converter (`converter/encoder.py` `ExifTemplate.patched()`) blanks these to NULs
+in **every output card** (in place, so nothing in the EXIF block moves):
 
-| Stripped tag | Where |
+| Blanked tag | Where |
 |--------------|-------|
-| `MakerNote` (0x927C) | Exif IFD |
 | `BodySerialNumber` (0xA431) | Exif IFD |
 | `LensSerialNumber` (0xA435) | Exif IFD |
 | `CameraOwnerName` (0xA430) | Exif IFD |
 | `ImageUniqueID` (0xA420) | Exif IFD |
 | `Artist` (0x013B) | 0th IFD |
 | `Copyright` (0x8298) | 0th IFD |
-| GPS IFD | whole IFD dropped |
+| GPS IFD | every value zeroed except GPSVersionID |
 
-The template's own thumbnail and Interop IFD are also replaced with fresh ones
-(new thumbnail, `InteropIndex=R98`).
+The template's own thumbnail is replaced with one of the card.
 
 Everything else is kept on purpose: Make, Model, Software, lens model,
-exposure fields, and the rest of the standard tag set. Camera playback
-compatibility depends on those, so don't strip more broadly without a hardware
-test. `qa/test_encoder.py` (`test_identifying_tags_stripped_for_every_vendor`)
-fails if any tag in the table above leaks for any vendor.
+exposure fields, the rest of the standard tag set, and the binary **MakerNote**
+(kept verbatim, exactly like the hardware-tested cardify.sh output — so the
+template camera's serial number inside the MakerNote does ship in every card).
+Camera playback compatibility depends on these, so don't strip more broadly
+without a hardware test. `qa/test_encoder.py`
+(`test_identifying_tags_stripped_for_every_vendor`) fails if any tag in the
+table above leaks for any vendor.
 
 The **template files themselves** still carry the serials. Keep this repo
 private, or strip the serials from the templates first.

@@ -84,26 +84,27 @@ def validate(out: bytes, vendor: str, expect_orient: int) -> list[tuple[str, boo
 
 def main() -> int:
     os.makedirs(OUT_DIR, exist_ok=True)
-    try:
-        template = encoder.template_path_for("sony")
-    except FileNotFoundError as e:
-        print(e, file=sys.stderr)
-        return 2
-
     cases = [
         ("landscape", _make_design(2400, 1600, "POSE LANDSCAPE"), 1),
         ("portrait",  _make_design(1600, 2400, "POSE PORTRAIT"), 6),
     ]
     all_ok = True
-    for name, design, expect_orient in cases:
-        out = encoder.convert(design, template, orientation="auto")
-        path = os.path.join(OUT_DIR, encoder.filename_for("sony", 0 if name == "landscape" else 1))
-        with open(path, "wb") as fh:
-            fh.write(out)
-        print(f"\n=== sony / {name} → {path}  ({len(out)//1024} KB) ===")
-        for label, ok, detail in validate(out, "sony", expect_orient):
-            print(f"  {'✓' if ok else '✗'} {label}: {detail}")
-            all_ok = all_ok and ok
+    for vendor in sorted(encoder.VENDORS):
+        try:
+            template = encoder.template_path_for(vendor)
+        except FileNotFoundError as e:
+            print(e, file=sys.stderr)
+            return 2
+        prefix = encoder.dcf_prefix(template, encoder.VENDORS[vendor].default_prefix)
+        for name, design, expect_orient in cases:
+            out = encoder.convert(design, template, orientation="auto")
+            path = os.path.join(OUT_DIR, encoder.filename_for(vendor, 0 if name == "landscape" else 1, prefix))
+            with open(path, "wb") as fh:
+                fh.write(out)
+            print(f"\n=== {vendor} / {name} → {path}  ({len(out)//1024} KB) ===")
+            for label, ok, detail in validate(out, vendor, expect_orient):
+                print(f"  {'✓' if ok else '✗'} {label}: {detail}")
+                all_ok = all_ok and ok
 
     # --- packaging: build an SD-card ZIP and verify its layout ---------------
     import zipfile

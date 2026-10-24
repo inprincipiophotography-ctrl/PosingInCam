@@ -16,7 +16,7 @@ This package is fully self-contained. It **does not import, modify, or run**
 | `encoder.py`   | Core: `convert(image_bytes, template_path, orientation)` → camera-spec JPEG bytes (1920×1280, baseline 4:2:2, template q-tables, DCF/EXIF, embedded thumbnail). |
 | `pack.py`      | `build_zip(designs, vendor, ...)` → SD-card ZIP (`DCIM/<folder>/…` + HR/EN instructions). |
 | `cli.py`       | Local end-to-end: images → ZIP. |
-| `selftest.py`  | Verifies output against the spec (mirrors `cardify.sh` validate_card, in pure Python). |
+| `selftest.py`  | Verifies every vendor's output against the spec (mirrors `cardify.sh` validate_card, in pure Python). |
 | `templates/`   | Per-vendor SOOC templates (`templates/<vendor>/`), kept under their real DCF filename so the output prefix is read off the name (build-pack.sh behaviour). See its README. |
 | `requirements.txt` | `Pillow`, `piexif`. |
 
@@ -39,13 +39,19 @@ zip_bytes = pack.build_zip([("a.png", img_bytes)], vendor="sony")   # for the we
 ## How it mirrors the verified CLI
 Behaviour copied (not imported) from `scripts/cardify.sh`: always 1920×1280;
 portrait rotated 90° CCW + EXIF Orientation=6; Pillow `qtables=` from the template
-with `optimize=False`; baseline, 4:2:2; APP0/JFIF stripped; EXIF Make/Model from
-template, InteropIndex=R98, ExifImage W/H 1920/1280, fixed date, YCbCrPositioning=2,
-fresh ~160px thumbnail.
+with `optimize=False`; baseline, 4:2:2; APP0/JFIF stripped; fixed date,
+ExifImage W/H 1920/1280, YCbCrPositioning=2, fresh ~160px thumbnail.
 
-## Known caveat — MakerNotes
-The output omits camera **MakerNotes** (the reference validator doesn't require
-them, and the hardware-confirmed sample ships without them). This should play back
-on Sony/Canon/Nikon, but the **only definitive test is on a real body** — verify on
-the oldest one you own. If a strict body ever rejects it, the documented fallback is
-a small Docker service that runs the original exiftool pipeline.
+## EXIF = the template's own block, patched in place
+cardify.sh copies the template's whole EXIF with `exiftool -tagsFromFile -all:all`
+(MakerNotes included, template byte order) and that is what played back on Sony
+A7 III/IV/V, Canon R6 II/III and Nikon Z8/Z9. The web encoder does the same
+without exiftool: it reuses the template's EXIF block **byte for byte** and only
+overwrites fixed-size values in place (Orientation, dates, ExifImage W/H,
+YCbCrPositioning), blanks the owner tags, zeroes GPS, and writes the new
+thumbnail into the template's thumbnail slot. Nothing moves, so MakerNote offsets
+stay valid. `qa/test_encoder.py` checks byte order, MakerNote and q-tables match
+the template for every vendor.
+
+The ZIP stamps every card with the same 2024-01-01 12:00 time as its EXIF date,
+so the unzipped files carry the same mtime cardify.sh sets with `touch`.

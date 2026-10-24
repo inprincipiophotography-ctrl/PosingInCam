@@ -2,12 +2,12 @@
 encoder.py — pure-Python port of the PosingInCam camera-card conversion.
 
 This is a NEW, self-contained reimplementation of the *behaviour* of
-``scripts/cardify.sh`` using only Pillow + piexif (no exiftool, no Perl), so it
+``scripts/cardify.sh`` using only Pillow (no exiftool, no Perl), so it
 can run inside a Vercel Python serverless function.
 
 ⚠️  It does NOT touch, import, or modify ``scripts/cardify.sh`` — that CLI is the
     author's hand-used Canva workflow and stays exactly as-is. This module only
-    *reads* a real-camera template JPEG for its quantization tables + Make/Model.
+    *reads* a real-camera template JPEG for its quantization tables + EXIF block.
 
 What it reproduces (see scripts/cardify.sh for the verified reference):
   * output is ALWAYS 1920x1280 pixels (landscape on disk)
@@ -19,26 +19,30 @@ What it reproduces (see scripts/cardify.sh for the verified reference):
     Orientation 1/6, ExifImage W/H 1920/1280, fixed safe date, YCbCrPositioning=2,
     a fresh ~160px embedded thumbnail
 
-MakerNotes are intentionally omitted: the reference validator does not require
-them and the hardware-confirmed sample ships without them. If a strict body ever
-rejects the output, the documented fallback is the Docker+exiftool path.
+EXIF is NOT rebuilt: the template's own EXIF block (APP1) is reused byte for
+byte (same byte order, same tag layout, MakerNotes included) and only a handful
+of values are overwritten *in place* — Orientation, dates, ExifImage W/H,
+YCbCrPositioning — plus a fresh thumbnail written into the template's own
+thumbnail slot. Nothing inside the block moves, so the MakerNote's internal
+offsets stay valid. This matches what the hardware-verified cardify.sh does
+(``exiftool -tagsFromFile -all:all`` then targeted edits), which played back on
+Sony A7 III/IV/V, Canon R6 II/III and Nikon Z8/Z9 (docs/CAMERA_TEST_RESULTS.md).
 
-The template owner's identifying tags (Body/Lens serial, CameraOwnerName,
-ImageUniqueID, Artist, Copyright) are also dropped so they never ship to
-customers. Make/Model and the rest of the standard tag set are kept.
+The template owner's identifying tags (Artist, Copyright, ImageUniqueID,
+CameraOwnerName, Body/Lens serial) are blanked to NULs and GPS values zeroed so
+they never ship to customers. The binary MakerNote is kept verbatim, exactly
+as in the tested cards.
 """
 
 from __future__ import annotations
 
 import io
 import os
-import copy
 import struct
 from dataclasses import dataclass
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import PIL.JpegImagePlugin as JpegPlugin
-import piexif
 
 # --- output spec (mirrors cardify.sh:294-308) --------------------------------
 OUT_W = 1920
@@ -50,13 +54,26 @@ FIXED_DATE = b"2024:01:01 12:00:00"  # cardify.sh:375-379
 # the function's memory. 40 MP is generous for any real design or photo.
 MAX_INPUT_PIXELS = 40_000_000
 
-# Interop IFD tag number (piexif's named constants are unreliable across versions)
+# Interop IFD tag number
 _INTEROP_INDEX = 1     # "R98" → DCF basic-file marker
 
-# Owner-identifying tags a real template carries; never copied into a card.
+# Owner-identifying tags a real template carries; blanked in every card.
 _IDENTIFYING_0TH = (0x013B, 0x8298)                    # Artist, Copyright
 _IDENTIFYING_EXIF = (0xA420, 0xA430, 0xA431, 0xA435)   # ImageUniqueID, CameraOwnerName,
                                                        # BodySerialNumber, LensSerialNumber
+
+# Tag numbers used by the in-place EXIF patch.
+_T_ORIENTATION = 0x0112
+_T_DATETIME = 0x0132
+_T_YCBCR_POS = 0x0213
+_T_IMAGE_W, _T_IMAGE_H = 0x0100, 0x0101
+_T_EXIF_IFD, _T_GPS_IFD, _T_INTEROP_IFD = 0x8769, 0x8825, 0xA005
+_T_DATE_ORIGINAL, _T_DATE_DIGITIZED = 0x9003, 0x9004
+_T_PIXEL_X, _T_PIXEL_Y = 0xA002, 0xA003
+_T_MAKE, _T_MAKERNOTE = 0x010F, 0x927C
+_T_THUMB_OFFSET, _T_THUMB_LENGTH = 0x0201, 0x0202
+_T_GPS_VERSION = 0x0000
+_APP1_MAX_PAYLOAD = 65533  # 0xFFFF minus the 2-byte length field
 
 
 @dataclass(frozen=True)
@@ -164,8 +181,31 @@ def _rebuild_jpeg(jpg: bytes, app1: bytes | None) -> bytes:
 
 
 def _frame_app1(exif_bytes: bytes) -> bytes:
-    """Wrap piexif.dump() output into a JPEG APP1 segment."""
+    """Wrap an EXIF payload (``Exif\\0\\0`` + TIFF block) into a JPEG APP1 segment."""
+    if len(exif_bytes) > _APP1_MAX_PAYLOAD:
+        raise ValueError("EXIF block too large for one APP1 segment")
     return b"\xff\xe1" + struct.pack(">H", len(exif_bytes) + 2) + exif_bytes
+
+
+def _exif_payload(jpg: bytes) -> bytes | None:
+    """Return the first APP1 payload that is EXIF (``Exif\\0\\0`` + TIFF), or None."""
+    if jpg[:2] != b"\xff\xd8":
+        return None
+    i = 2
+    n = len(jpg)
+    while i + 4 <= n and jpg[i] == 0xFF:
+        marker = jpg[i + 1]
+        if marker in (0xDA, 0xD9):
+            break
+        if 0xD0 <= marker <= 0xD7 or marker == 0x01:
+            i += 2
+            continue
+        seglen = struct.unpack(">H", jpg[i + 2:i + 4])[0]
+        payload = jpg[i + 4:i + 2 + seglen]
+        if marker == 0xE1 and payload[:6] == b"Exif\x00\x00":
+            return payload
+        i += 2 + seglen
+    return None
 
 
 def _sof_marker(jpg: bytes) -> int | None:
@@ -206,6 +246,190 @@ def _has_app0(jpg: bytes) -> bool:
 
 
 # -----------------------------------------------------------------------------
+# In-place EXIF patching
+# -----------------------------------------------------------------------------
+_TYPE_SIZES = {1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8, 13: 4}
+
+
+@dataclass(frozen=True)
+class _Entry:
+    type: int
+    count: int
+    pos: int  # where the value bytes live, relative to the TIFF header
+
+    @property
+    def size(self) -> int:
+        return _TYPE_SIZES[self.type] * self.count
+
+
+class ExifTemplate:
+    """A real camera's EXIF block, parsed once and patched in place per card.
+
+    The block is kept byte for byte: byte order, tag layout and the MakerNote
+    (whose internal offsets are relative to the TIFF header, so they only stay
+    valid if nothing moves). Only fixed-size values are overwritten.
+    """
+
+    def __init__(self, payload: bytes):
+        if payload[:6] != b"Exif\x00\x00":
+            raise ValueError("template EXIF: not an Exif APP1 payload")
+        self.tiff = bytes(payload[6:])
+        t = self.tiff
+        if len(t) < 8 or t[:2] not in (b"II", b"MM"):
+            raise ValueError("template EXIF: bad TIFF header")
+        self.byte_order = t[:2]
+        self._bo = "<" if t[:2] == b"II" else ">"
+        if self._u16(2) != 42:
+            raise ValueError("template EXIF: bad TIFF magic")
+
+        self._seen: set[int] = set()
+        self.ifds: dict[str, dict[int, _Entry]] = {}
+        self.ifds["0th"], next_ifd = self._read_ifd(self._u32(4))
+        for name, parent, tag in (("Exif", "0th", _T_EXIF_IFD),
+                                  ("GPS", "0th", _T_GPS_IFD),
+                                  ("Interop", "Exif", _T_INTEROP_IFD)):
+            e = self.ifds.get(parent, {}).get(tag)
+            if e is not None:
+                self.ifds[name], _ = self._read_ifd(self._int_at(e))
+        if next_ifd:
+            self.ifds["1st"], _ = self._read_ifd(next_ifd)
+        self._check()
+
+    # --- low-level reads ---------------------------------------------------
+    def _need(self, pos: int, size: int) -> None:
+        if pos < 0 or pos + size > len(self.tiff):
+            raise ValueError("template EXIF: offset out of range")
+
+    def _u16(self, pos: int) -> int:
+        self._need(pos, 2)
+        return struct.unpack_from(self._bo + "H", self.tiff, pos)[0]
+
+    def _u32(self, pos: int) -> int:
+        self._need(pos, 4)
+        return struct.unpack_from(self._bo + "I", self.tiff, pos)[0]
+
+    def _int_at(self, e: _Entry) -> int:
+        return self._u16(e.pos) if e.type == 3 else self._u32(e.pos)
+
+    def _read_ifd(self, off: int) -> tuple[dict[int, _Entry], int]:
+        if off in self._seen:
+            raise ValueError("template EXIF: IFD loop")
+        self._seen.add(off)
+        count = self._u16(off)
+        self._need(off + 2, count * 12 + 4)
+        entries: dict[int, _Entry] = {}
+        for k in range(count):
+            at = off + 2 + 12 * k
+            tag, typ = struct.unpack_from(self._bo + "HH", self.tiff, at)
+            n = self._u32(at + 4)
+            if typ not in _TYPE_SIZES:
+                continue  # unknown type: leave it alone, never patch it
+            size = _TYPE_SIZES[typ] * n
+            pos = at + 8 if size <= 4 else self._u32(at + 8)
+            self._need(pos, size)
+            entries[tag] = _Entry(typ, n, pos)
+        return entries, self._u32(off + 2 + 12 * count)
+
+    def _ascii(self, ifd: str, tag: int) -> str:
+        e = self.ifds.get(ifd, {}).get(tag)
+        if e is None or e.type != 2:
+            return ""
+        return self.tiff[e.pos:e.pos + e.count].split(b"\x00", 1)[0].decode("latin-1").strip()
+
+    def _check(self) -> None:
+        o = self.ifds["0th"].get(_T_ORIENTATION)
+        if o is None or o.type != 3:
+            raise ValueError("template EXIF: no Orientation tag")
+        if "Exif" not in self.ifds:
+            raise ValueError("template EXIF: no Exif IFD")
+        interop = self.ifds.get("Interop", {}).get(_INTEROP_INDEX)
+        if interop is None or self.tiff[interop.pos:interop.pos + 3] != b"R98":
+            raise ValueError("template EXIF: no R98 DCF Interop marker")
+        first = self.ifds.get("1st", {})
+        for tag in (_T_THUMB_OFFSET, _T_THUMB_LENGTH):
+            e = first.get(tag)
+            if e is None or e.type not in (3, 4):
+                raise ValueError("template EXIF: no embedded thumbnail (IFD1)")
+        self._need(self._int_at(first[_T_THUMB_OFFSET]), self._int_at(first[_T_THUMB_LENGTH]))
+        if not self.make:
+            raise ValueError("template EXIF: no Make")
+
+    # --- public read-only views (tests / validation) -----------------------
+    @property
+    def make(self) -> str:
+        return self._ascii("0th", _T_MAKE)
+
+    @property
+    def makernote(self) -> bytes:
+        e = self.ifds["Exif"].get(_T_MAKERNOTE)
+        return self.tiff[e.pos:e.pos + e.size] if e else b""
+
+    # --- patching ----------------------------------------------------------
+    def _put_int(self, buf: bytearray, ifd: str, tag: int, value: int) -> None:
+        e = self.ifds.get(ifd, {}).get(tag)
+        if e is None or e.count < 1 or e.type not in (3, 4):
+            return
+        struct.pack_into(self._bo + ("H" if e.type == 3 else "I"), buf, e.pos, value)
+
+    def _put_ascii(self, buf: bytearray, ifd: str, tag: int, value: bytes) -> None:
+        e = self.ifds.get(ifd, {}).get(tag)
+        if e is None or e.type != 2 or e.count < len(value) + 1:
+            return
+        buf[e.pos:e.pos + e.count] = value + bytes(e.count - len(value))
+
+    def _blank(self, buf: bytearray, ifd: str, tag: int) -> None:
+        e = self.ifds.get(ifd, {}).get(tag)
+        if e is not None:
+            buf[e.pos:e.pos + e.size] = bytes(e.size)
+
+    def patched(self, exif_orient: int, make_thumb) -> bytes:
+        """Return the APP1 payload for one card.
+
+        ``make_thumb(box)`` returns thumbnail JPEG bytes no larger than box px.
+        """
+        buf = bytearray(self.tiff)
+        for ifd in ("0th", "1st"):
+            self._put_int(buf, ifd, _T_ORIENTATION, exif_orient)
+            self._put_int(buf, ifd, _T_YCBCR_POS, 2)          # Co-sited (cardify.sh:389)
+            self._put_ascii(buf, ifd, _T_DATETIME, FIXED_DATE)
+        self._put_int(buf, "0th", _T_IMAGE_W, OUT_W)
+        self._put_int(buf, "0th", _T_IMAGE_H, OUT_H)
+        self._put_ascii(buf, "Exif", _T_DATE_ORIGINAL, FIXED_DATE)   # cardify.sh:375-379
+        self._put_ascii(buf, "Exif", _T_DATE_DIGITIZED, FIXED_DATE)
+        self._put_int(buf, "Exif", _T_PIXEL_X, OUT_W)               # cardify.sh:365-368
+        self._put_int(buf, "Exif", _T_PIXEL_Y, OUT_H)
+        for tag in _IDENTIFYING_0TH:
+            self._blank(buf, "0th", tag)
+        for tag in _IDENTIFYING_EXIF:
+            self._blank(buf, "Exif", tag)
+        for tag in self.ifds.get("GPS", {}):
+            if tag != _T_GPS_VERSION:
+                self._blank(buf, "GPS", tag)
+        self._place_thumbnail(buf, make_thumb)
+        return b"Exif\x00\x00" + bytes(buf)
+
+    def _place_thumbnail(self, buf: bytearray, make_thumb) -> None:
+        first = self.ifds["1st"]
+        off = self._int_at(first[_T_THUMB_OFFSET])
+        slot = self._int_at(first[_T_THUMB_LENGTH])
+        buf[off:off + slot] = bytes(slot)  # the template's own thumbnail never ships
+        thumb = make_thumb(160)
+        if len(thumb) > slot and 6 + len(buf) + len(thumb) <= _APP1_MAX_PAYLOAD:
+            off = len(buf)  # append after everything else: no other offset moves
+            buf += thumb
+        else:
+            for box in (128, 96, 64):
+                if len(thumb) <= slot:
+                    break
+                thumb = make_thumb(box)
+            if len(thumb) > slot:
+                raise ValueError("thumbnail does not fit the template's EXIF block")
+            buf[off:off + len(thumb)] = thumb
+        self._put_int(buf, "1st", _T_THUMB_OFFSET, off)
+        self._put_int(buf, "1st", _T_THUMB_LENGTH, len(thumb))
+
+
+# -----------------------------------------------------------------------------
 # Conversion
 # -----------------------------------------------------------------------------
 def _resolve_orientation(image: Image.Image, orientation: str) -> str:
@@ -217,12 +441,23 @@ def _resolve_orientation(image: Image.Image, orientation: str) -> str:
     return orientation
 
 
+def _to_rgb(img: Image.Image, bg=(255, 255, 255)) -> Image.Image:
+    """RGB copy of *img* with any transparency flattened onto *bg* (a bare
+    convert("RGB") turns transparent pixels black)."""
+    if img.mode in ("RGBA", "LA", "PA", "RGBa", "La") or (img.mode == "P" and "transparency" in img.info):
+        rgba = img.convert("RGBA")
+        flat = Image.new("RGB", rgba.size, bg)
+        flat.paste(rgba, mask=rgba.getchannel("A"))
+        return flat
+    return img.convert("RGB")
+
+
 def _fit(img: Image.Image, w: int, h: int, bg=(255, 255, 255)) -> Image.Image:
     """Scale *img* to fit within w×h preserving aspect ratio (never stretch or
     crop) and centre it on a solid background. A design already at the target
     ratio fills the frame exactly with no bars; any other shape (square,
     portrait photo, screenshot) keeps its proportions with letterbox bars."""
-    img = img.convert("RGB")
+    img = _to_rgb(img, bg)
     iw, ih = img.size
     if (iw, ih) == (w, h):
         return img
@@ -243,9 +478,9 @@ def _encode_with_qtables(image: Image.Image, qtables) -> bytes:
     return buf.getvalue()
 
 
-def _make_thumbnail(card: Image.Image, qtables) -> bytes:
+def _make_thumbnail(card: Image.Image, qtables, box: int = 160) -> bytes:
     thumb = card.copy()
-    thumb.thumbnail((160, 160), Image.LANCZOS)
+    thumb.thumbnail((box, box), Image.LANCZOS)
     raw = _encode_with_qtables(thumb, qtables)
     return _rebuild_jpeg(raw, app1=None)  # strip JFIF from the embedded thumb too
 
@@ -276,68 +511,26 @@ def _watermark(img: Image.Image) -> Image.Image:
     return Image.alpha_composite(base, overlay).convert("RGB")
 
 
-def _build_exif(exif_base: dict, exif_orient: int, thumb: bytes) -> bytes:
-    """Build the output EXIF by cloning the template's real-camera EXIF and
-    surgically overriding the parts that must differ for our card — the same
-    philosophy as cardify.sh's ``-tagsFromFile -all:all`` then targeted edits
-    (cardify.sh:345-390), but in pure Python. MakerNotes are intentionally left
-    out (see module docstring), as are the template owner's identifying tags
-    (_IDENTIFYING_0TH / _IDENTIFYING_EXIF)."""
-    ex = copy.deepcopy(exif_base)
-    ex.setdefault("0th", {})
-    ex.setdefault("Exif", {})
-
-    ex["0th"][piexif.ImageIFD.Orientation] = exif_orient
-    ex["0th"][piexif.ImageIFD.YCbCrPositioning] = 2          # Co-sited (cardify.sh:389)
-    ex["0th"][piexif.ImageIFD.DateTime] = FIXED_DATE
-    ex["Exif"][piexif.ExifIFD.DateTimeOriginal] = FIXED_DATE  # cardify.sh:375-379
-    ex["Exif"][piexif.ExifIFD.DateTimeDigitized] = FIXED_DATE
-    ex["Exif"][piexif.ExifIFD.PixelXDimension] = OUT_W        # ExifImageWidth  (cardify.sh:365-368)
-    ex["Exif"][piexif.ExifIFD.PixelYDimension] = OUT_H        # ExifImageHeight
-    ex["Exif"].pop(piexif.ExifIFD.MakerNote, None)           # never carry MakerNotes
-    for tag in _IDENTIFYING_0TH:                              # nor the template owner's
-        ex["0th"].pop(tag, None)                              # serials / name / copyright
-    for tag in _IDENTIFYING_EXIF:
-        ex["Exif"].pop(tag, None)
-
-    ex["Interop"] = {_INTEROP_INDEX: b"R98"}                  # DCF marker (cardify.sh:386)
-    ex["GPS"] = {}
-    ex["1st"] = {
-        piexif.ImageIFD.Compression: 6,
-        piexif.ImageIFD.XResolution: (72, 1),
-        piexif.ImageIFD.YResolution: (72, 1),
-        piexif.ImageIFD.ResolutionUnit: 2,
-        piexif.ImageIFD.Orientation: exif_orient,
-    }
-    ex["thumbnail"] = thumb
-    return piexif.dump(ex)
-
-
-def template_meta(template_path: str) -> tuple[list, dict]:
-    """Return (qtables, exif_base) read from a real-camera template JPEG.
+def template_meta(template_path: str) -> tuple[list, ExifTemplate]:
+    """Return (qtables, exif_template) read from a real-camera template JPEG.
 
     qtables is normalised to a list-of-tables (each 64 ints), the format Pillow's
     ``save(qtables=...)`` accepts most reliably across versions.
 
-    exif_base is the template's EXIF (so the output inherits Make/Model and the
-    full standard tag set of a real shot), with the per-card / unsafe parts
-    removed: MakerNotes (offset-fragile + not load-bearing), the template's own
-    thumbnail/IFD1, and GPS.
+    exif_template is the template's own EXIF block, ready to be patched per card
+    (see ExifTemplate). Raises ValueError if the template lacks anything a card
+    needs (Orientation, R98 marker, embedded thumbnail, Make).
     """
     tpl = Image.open(template_path)
     if not tpl.quantization:
         raise ValueError("template has no quantization tables — is it a real camera JPEG?")
     qtables = [list(tpl.quantization[k]) for k in sorted(tpl.quantization)]
 
-    ex = piexif.load(template_path)
-    ex.setdefault("0th", {})
-    ex.setdefault("Exif", {})
-    ex["Exif"].pop(piexif.ExifIFD.MakerNote, None)
-    ex.pop("1st", None)
-    ex["thumbnail"] = None
-    ex["GPS"] = {}
-    ex["Interop"] = {}
-    return qtables, ex
+    with open(template_path, "rb") as fh:
+        payload = _exif_payload(fh.read())
+    if payload is None:
+        raise ValueError("template has no EXIF — is it a real camera JPEG?")
+    return qtables, ExifTemplate(payload)
 
 
 def convert(image_bytes: bytes, template_path: str, orientation: str = "auto",
@@ -357,7 +550,7 @@ def convert(image_bytes: bytes, template_path: str, orientation: str = "auto",
     return convert_with(image_bytes, qtables, exif_base, orientation, watermark)
 
 
-def convert_with(image_bytes: bytes, qtables: list, exif_base: dict,
+def convert_with(image_bytes: bytes, qtables: list, exif_base: ExifTemplate,
                  orientation: str = "auto", watermark: bool = False) -> bytes:
     """Like convert(), but with template metadata already read — lets a batch
     read the template once and reuse it for every card."""
@@ -370,7 +563,14 @@ def convert_with(image_bytes: bytes, qtables: list, exif_base: dict,
             f"image too large ({src.width}x{src.height}); "
             f"max {MAX_INPUT_PIXELS // 1_000_000} megapixels"
         )
-    src = ImageOps.exif_transpose(src)  # honour the source's own EXIF orientation
+    try:
+        src.load()  # truncated / broken pixel data fails here, not mid-encode
+    except Exception:
+        raise ValueError("could not read image (unsupported or corrupt file)")
+    try:
+        src = ImageOps.exif_transpose(src)  # honour the source's own EXIF orientation
+    except Exception:
+        pass  # unreadable EXIF in the design: keep the pixels as stored
 
     orientation = _resolve_orientation(src, orientation)
     if orientation == "portrait":
@@ -385,6 +585,5 @@ def convert_with(image_bytes: bytes, qtables: list, exif_base: dict,
         card = card.transpose(Image.ROTATE_90)  # PIL ROTATE_90 == CCW (cardify.sh:335)
 
     raw = _encode_with_qtables(card, qtables)
-    thumb = _make_thumbnail(card, qtables)
-    app1 = _frame_app1(_build_exif(exif_base, exif_orient, thumb))
-    return _rebuild_jpeg(raw, app1)
+    exif = exif_base.patched(exif_orient, lambda box: _make_thumbnail(card, qtables, box))
+    return _rebuild_jpeg(raw, _frame_app1(exif))

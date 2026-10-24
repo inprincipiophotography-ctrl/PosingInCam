@@ -12,6 +12,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from PIL import Image
+import PIL.JpegImagePlugin as JpegPlugin
 import piexif
 
 from converter import encoder
@@ -101,26 +102,152 @@ def test_corrupt_input_raises_valueerror():
         assert "could not read" in str(e)
 
 
+def _blank(value):
+    """True if an EXIF value carries no information (empty / all NULs / spaces)."""
+    if isinstance(value, bytes):
+        return not value.strip(b"\x00 ")
+    return not value
+
+
 def test_identifying_tags_stripped_for_every_vendor():
     # Real templates carry the owner's body/lens serials, name and copyright;
-    # none of that may reach a customer's card. Make/Model must survive.
+    # none of that may reach a customer's card. The tags may stay (blanked in
+    # place, so nothing in the EXIF block moves) but must hold no data, and the
+    # values must not appear anywhere in the EXIF outside the binary MakerNote
+    # (kept verbatim, as in the hardware-tested cardify.sh output).
     src = _jpg(Image.new("RGB", (300, 200), (90, 160, 60)))
     seen_in_template = False
     for vendor, v in encoder.VENDORS.items():
         tpl = encoder.template_path_for(vendor)
         tex = piexif.load(tpl)
-        seen_in_template |= any(t in tex["0th"] for t in encoder._IDENTIFYING_0TH)
-        seen_in_template |= any(t in tex["Exif"] for t in encoder._IDENTIFYING_EXIF)
+        secrets = [tex["0th"].get(t) for t in encoder._IDENTIFYING_0TH]
+        secrets += [tex["Exif"].get(t) for t in encoder._IDENTIFYING_EXIF]
+        secrets = [x.strip(b"\x00 ") for x in secrets if isinstance(x, bytes)]
+        secrets = [x for x in secrets if len(x) >= 4 and x.strip(b"0")]
+        seen_in_template |= bool(secrets)
 
-        ex = piexif.load(encoder.convert(src, tpl))
+        out = encoder.convert(src, tpl)
+        ex = piexif.load(out)
         for t in encoder._IDENTIFYING_0TH:
-            assert t not in ex["0th"], f"{vendor}: 0th tag {t:#06x} leaked into output"
+            assert _blank(ex["0th"].get(t, b"")), f"{vendor}: 0th tag {t:#06x} leaked into output"
         for t in encoder._IDENTIFYING_EXIF:
-            assert t not in ex["Exif"], f"{vendor}: Exif tag {t:#06x} leaked into output"
+            assert _blank(ex["Exif"].get(t, b"")), f"{vendor}: Exif tag {t:#06x} leaked into output"
+        payload = encoder._exif_payload(out)
+        mn = encoder.ExifTemplate(payload).makernote
+        outside = payload.replace(mn, b"") if mn else payload
+        for secret in secrets:
+            assert secret not in outside, f"{vendor}: {secret!r} still in the EXIF block"
         assert ex["0th"][piexif.ImageIFD.Make].decode() == v.make, f"{vendor}: Make lost"
         assert ex["0th"][piexif.ImageIFD.Model].decode().startswith(v.model_prefix), f"{vendor}: Model lost"
+        for value in ex["GPS"].values():
+            assert value in ((2, 3, 0, 0), (2, 2, 0, 0)) or _blank(value) or not any(
+                (value if isinstance(value, tuple) else (value,))), f"{vendor}: GPS data leaked: {value!r}"
     # guard against a vacuous pass if the bundled templates are ever swapped for clean ones
     assert seen_in_template, "no template carries an identifying tag; test no longer exercises the strip"
+
+
+def test_every_vendor_keeps_the_template_exif_block():
+    # The hardware-tested cardify.sh output keeps the template's byte order and
+    # MakerNotes; the web output must too, and patch only the per-card values.
+    design = _jpg(Image.new("RGB", (900, 1350), (30, 60, 90)))
+    for vendor in encoder.VENDORS:
+        tpl_path = encoder.template_path_for(vendor)
+        qt, et = encoder.template_meta(tpl_path)
+        out = encoder.convert_with(design, qt, et)
+        _spec_checks(out, 6)
+        out_et = encoder.ExifTemplate(encoder._exif_payload(out))
+        assert out_et.byte_order == et.byte_order, f"{vendor}: EXIF byte order changed"
+        assert out_et.makernote == et.makernote, f"{vendor}: MakerNote changed"
+        assert len(out_et.tiff) == len(et.tiff), f"{vendor}: EXIF block grew for a simple card"
+        im = Image.open(io.BytesIO(out))
+        tpl = Image.open(tpl_path)
+        assert [list(im.quantization[k]) for k in sorted(im.quantization)] == \
+               [list(tpl.quantization[k]) for k in sorted(tpl.quantization)], f"{vendor}: q-tables differ"
+        assert JpegPlugin.get_sampling(im) == 1, f"{vendor}: not 4:2:2"
+        ex = piexif.load(out)
+        assert ex["0th"][piexif.ImageIFD.DateTime] == encoder.FIXED_DATE
+        assert ex["Exif"][piexif.ExifIFD.DateTimeOriginal] == encoder.FIXED_DATE
+        assert ex["Exif"][piexif.ExifIFD.DateTimeDigitized] == encoder.FIXED_DATE
+        assert ex["Exif"][piexif.ExifIFD.PixelXDimension] == encoder.OUT_W
+        assert ex["Exif"][piexif.ExifIFD.PixelYDimension] == encoder.OUT_H
+        assert ex["0th"][piexif.ImageIFD.YCbCrPositioning] == 2
+        im.load()
+
+
+def test_busy_design_thumbnail_always_fits():
+    # A noisy design compresses badly; its thumbnail may not fit the template's
+    # old thumbnail slot. It must still produce a valid card for every vendor.
+    import random
+    rnd = random.Random(7)
+    noise = Image.frombytes("RGB", (480, 320), bytes(rnd.getrandbits(8) for _ in range(480 * 320 * 3)))
+    for vendor in encoder.VENDORS:
+        out = encoder.convert(_jpg(noise), encoder.template_path_for(vendor))
+        _spec_checks(out, 1)
+
+
+def _libjpeg_tables():
+    """The q-tables a generic encoder (libjpeg / Pillow / ImageMagick) writes at
+    every quality setting — the fingerprint Sony A7 III rejects."""
+    tables = []
+    for q in range(1, 101):
+        buf = io.BytesIO()
+        Image.new("RGB", (16, 16)).save(buf, "JPEG", quality=q)
+        im = Image.open(buf)
+        tables.append([list(im.quantization[k]) for k in sorted(im.quantization)])
+    return tables
+
+
+def test_bundled_templates_are_straight_out_of_camera():
+    # A template must be an untouched camera JPEG: older bodies validate the
+    # q-tables (docs/SONY_Q_TABLE_DISCOVERY.md), and the tested pipeline carried
+    # the camera's MakerNotes.
+    generic = _libjpeg_tables()
+    for vendor, v in encoder.VENDORS.items():
+        path = encoder.template_path_for(vendor)
+        tpl = Image.open(path)
+        qt = [list(tpl.quantization[k]) for k in sorted(tpl.quantization)]
+        _qt, et = encoder.template_meta(path)
+        desc = piexif.load(path)["0th"].get(piexif.ImageIFD.ImageDescription, b"")
+        problems = []
+        if qt in generic:
+            problems.append("generic libjpeg q-tables (re-encoded, not a camera file)")
+        if not et.makernote:
+            problems.append("no MakerNote")
+        if b"posingincam" in desc:
+            problems.append("it is a PosingInCam output, not a camera file")
+        if et.make != v.make:
+            problems.append(f"Make is {et.make!r}, want {v.make!r}")
+        assert not problems, (
+            f"{vendor} template {os.path.basename(path)} is not straight out of camera: "
+            + "; ".join(problems)
+            + f". Copy one unedited JPEG off the camera's card into converter/templates/{vendor}/.")
+
+
+def test_transparent_png_flattens_to_white():
+    img = Image.new("RGBA", (1500, 1000), (0, 0, 0, 0))
+    buf = io.BytesIO()
+    img.save(buf, "PNG")
+    out = _conv(buf.getvalue())
+    px = Image.open(io.BytesIO(out)).convert("RGB").getpixel((encoder.OUT_W // 2, encoder.OUT_H // 2))
+    assert min(px) > 230, f"transparent area should be white, got {px}"
+
+
+def test_truncated_jpeg_raises_valueerror():
+    data = _jpg(Image.new("RGB", (800, 600), (10, 200, 10)))
+    try:
+        _conv(data[: len(data) // 2])
+        raise AssertionError("expected ValueError for truncated input")
+    except ValueError as e:
+        assert "could not read" in str(e)
+
+
+def test_zip_cards_carry_the_card_date():
+    import zipfile
+    from converter import pack
+    z = zipfile.ZipFile(io.BytesIO(pack.build_zip([("a.png", _jpg(Image.new("RGB", (300, 200))))], "canon")))
+    cards = [i for i in z.infolist() if i.filename.startswith("DCIM/")]
+    assert cards and all(i.date_time == (2024, 1, 1, 12, 0, 0) for i in cards)
+    assert encoder.FIXED_DATE == b"2024:01:01 12:00:00"  # keep both in step
 
 
 if __name__ == "__main__":

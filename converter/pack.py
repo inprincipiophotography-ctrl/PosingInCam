@@ -30,7 +30,9 @@ _INSTRUCTIONS = {
             "3. Kopiraj sve .JPG iz DCIM/100MSDCF/ ovog ZIP-a u istoimenu mapu na kartici.\n"
             "4. Pritisni ▶ Playback i listaj, kartice su među fotkama.\n"
             "   Većina Sony aparata ih prikaže odmah. Ako se ne pojave:\n"
-            "   MENU → Setup → Media → Recover Image Database → potvrdi (10–30 s)."
+            "   MENU → Setup → Media → Recover Image Database → potvrdi (10–30 s).\n"
+            "5. I dalje ih nema (stariji aparati, npr. A7 III)? Na računalu obriši mapu\n"
+            "   AVF_INFO s kartice, vrati karticu u aparat i potvrdi Recover Image Database."
         ),
         "en": (
             "1. In camera: MENU → Setup → Media → Format the card.\n"
@@ -38,7 +40,9 @@ _INSTRUCTIONS = {
             "3. Copy every .JPG from this ZIP's DCIM/100MSDCF/ into that folder on the card.\n"
             "4. Press ▶ Playback and scroll. The cards appear among your shots.\n"
             "   Most Sony bodies show them straight away. If they don't appear:\n"
-            "   MENU → Setup → Media → Recover Image Database → confirm (10–30 s)."
+            "   MENU → Setup → Media → Recover Image Database → confirm (10–30 s).\n"
+            "5. Still not showing (older bodies such as the A7 III)? On the computer, delete\n"
+            "   the AVF_INFO folder on the card, put it back in and confirm Recover Image Database."
         ),
     },
     "canon": {
@@ -114,12 +118,22 @@ def convert_cards(designs: list[tuple[str, bytes]], vendor: str, orientation: st
     template_path = encoder.template_path_for(vendor, template_dir)
     prefix = encoder.dcf_prefix(template_path, v.default_prefix)  # build-pack.sh:83-98
     qtables, exif_base = encoder.template_meta(template_path)
+    if exif_base.make != v.make:
+        raise ValueError(f"{vendor} template is a {exif_base.make or 'unknown'} file, not {v.make}")
 
     cards = []
     for i, (_orig_name, image_bytes) in enumerate(designs):
         jpeg = encoder.convert_with(image_bytes, qtables, exif_base, orientation, watermark)
         cards.append((encoder.filename_for(vendor, start + i, prefix), jpeg))
     return cards
+
+
+# ZIP entry timestamp for every card = the EXIF date the encoder pins
+# (encoder.FIXED_DATE). Unzipping sets the file's modified time from it, and
+# Finder/Explorer keep that time when copying to the SD card — the same thing
+# cardify.sh's `touch` + `cp -p` does, which older Sony firmware (A7 III)
+# checks against DateTimeOriginal.
+CARD_ZIP_TIME = (2024, 1, 1, 12, 0, 0)
 
 
 def zip_from_cards(cards: list[tuple[str, bytes]], vendor: str) -> bytes:
@@ -129,7 +143,9 @@ def zip_from_cards(cards: list[tuple[str, bytes]], vendor: str) -> bytes:
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
         for filename, jpeg in cards:
-            zf.writestr(f"DCIM/{v.folder}/{filename}", jpeg)
+            info = zipfile.ZipInfo(f"DCIM/{v.folder}/{filename}", date_time=CARD_ZIP_TIME)
+            info.external_attr = 0o644 << 16
+            zf.writestr(info, jpeg, compress_type=zipfile.ZIP_DEFLATED)
         zf.writestr("README.txt", en + "\n")
     return buf.getvalue()
 

@@ -67,7 +67,8 @@ const INSTRUCTIONS = {
     "2. Take one ordinary photo so DCIM/100MSDCF/ is created.\n" +
     "3. Copy all .JPG from the ZIP (DCIM/100MSDCF/) into that folder on the card.\n" +
     "4. ▶ Playback. The cards appear among your photos.\n" +
-    "Not showing? MENU → Setup → Media → Recover Image Database → confirm.",
+    "Not showing? MENU → Setup → Media → Recover Image Database → confirm.\n" +
+    "Still not showing (older bodies such as the A7 III)? On the computer, delete the AVF_INFO folder on the card, put it back in and confirm Recover Image Database.",
   canon:
     "CANON: plug & play, no database rebuild.\n" +
     "1. MENU → (wrench) → Format card.\n" +
