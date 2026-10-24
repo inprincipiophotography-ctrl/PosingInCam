@@ -71,26 +71,23 @@ function setPlanClasses(plan) {
 
 const INSTRUCTIONS = {
   sony:
-    "SONY: copy into DCIM/100MSDCF.\n" +
-    "1. MENU → Setup → Media → Format the card (in camera).\n" +
-    "2. Take one ordinary photo so DCIM/100MSDCF/ is created.\n" +
-    "3. Copy all .JPG from the ZIP (DCIM/100MSDCF/) into that folder on the card.\n" +
-    "4. ▶ Playback. The cards appear among your photos.\n" +
+    "SONY: copy into DCIM/100MSDCF, next to your photos. No formatting.\n" +
+    "1. No DCIM/100MSDCF/ folder on the card yet? Take one ordinary photo and the camera creates it.\n" +
+    "2. Copy all .JPG from the ZIP (DCIM/100MSDCF/) into that folder on the card.\n" +
+    "3. ▶ Playback. The cards appear among your photos.\n" +
     "Not showing? MENU → Setup → Media → Recover Image Database → confirm.\n" +
     "Still not showing (older bodies such as the A7 III)? On the computer, delete the AVF_INFO folder on the card, put it back in and confirm Recover Image Database.",
   canon:
-    "CANON: plug & play, no database rebuild.\n" +
-    "1. MENU → (wrench) → Format card.\n" +
-    "2. Take one photo so DCIM/100CANON/ is created.\n" +
-    "3. Copy the .JPG from the ZIP into DCIM/100CANON/ on the card.\n" +
-    "4. Insert the card → ▶ Playback. (Press INFO for details.)",
+    "CANON: plug & play, no database rebuild, no formatting.\n" +
+    "1. No DCIM/100CANON/ folder on the card yet? Take one ordinary photo and the camera creates it.\n" +
+    "2. Copy the .JPG from the ZIP into DCIM/100CANON/ on the card, next to your photos.\n" +
+    "3. Insert the card → ▶ Playback. (Press INFO for details.)",
   nikon:
-    "NIKON: copy into the folder YOUR camera created.\n" +
-    "1. MENU → (wrench) → Format memory card.\n" +
-    "2. Take a photo. DCIM/100NCZ_… is created (e.g. 100NCZ_8).\n" +
-    "3. Copy the DSC_*.JPG from the ZIP into THAT folder (not 100NCZ_X).\n" +
-    "4. If you don't see them: PLAYBACK MENU → Playback folder → All.\n" +
-    "5. ▶ Playback.",
+    "NIKON: copy into the folder YOUR camera created. No formatting.\n" +
+    "1. No DCIM/100NCZ_… folder on the card yet? Take one ordinary photo and the camera creates it (e.g. 100NCZ_8).\n" +
+    "2. Copy the DSC_*.JPG from the ZIP into THAT folder, next to your photos (not 100NCZ_X).\n" +
+    "3. If you don't see them: PLAYBACK MENU → Playback folder → All.\n" +
+    "4. ▶ Playback.",
 };
 
 function setStatus(kind, text) {
@@ -99,9 +96,43 @@ function setStatus(kind, text) {
   st.textContent = text;
 }
 
+// A request that failed for reasons on our side or the network's: say what
+// happened in plain words and offer the way out, never a bare status code.
+const SUPPORT_MAIL = "notalucis.dev@gmail.com";
+function failMessage(status, serverMsg) {
+  if (serverMsg) return serverMsg;
+  if (status === 0) return "We couldn't reach the converter. Check your connection and try again.";
+  if (status === 413) return "That's too much to send in one go. Remove a few images and try again.";
+  if (status === 429) return "Lots of cards in a short time. Wait a minute, then try again.";
+  return "The converter didn't answer (error " + status + "). Your card is still here, so try again in a moment.";
+}
+function retryable(status, serverMsg) {
+  return Object.assign(new Error(failMessage(status, serverMsg)), { retry: true });
+}
+function addRecovery() {
+  const st = $("status");
+  const again = document.createElement("button");
+  again.type = "button";
+  again.className = "link-btn status-act";
+  again.textContent = "Try again";
+  again.addEventListener("click", makeCards);
+  const mail = document.createElement("a");
+  mail.className = "status-act";
+  mail.href = "mailto:" + SUPPORT_MAIL + "?subject=" + encodeURIComponent("Shoot Cards: a card didn't make");
+  mail.textContent = "Tell us";
+  st.append(" ", again, " · ", mail);
+}
+// An error from the last card type shouldn't hang around under the next one.
+function clearError() {
+  if ($("status").classList.contains("err")) setStatus("", "");
+  $("cameras").classList.remove("attention");
+}
+
 /* ---------- studio: every card type in one place ---------- */
 const TYPES = ["pose", "timeline", "groups", "shotlist", "settings", "found", "upload"];
 const LIST_TYPES = ["timeline", "groups", "shotlist", "settings"];
+// Shown behind "+ 3 more" so the first choice is between four.
+const MORE_TYPES = ["settings", "found", "upload"];
 
 const LIST_UI = {
   timeline: {
@@ -193,8 +224,11 @@ function pagesNow() {
 
 function selectType(type, quiet) {
   if (!TYPES.includes(type)) return;
+  if (type !== studio.type && !quiet) clearError();
+  if (type !== studio.type) studio.pasteCut = false;
   studio.type = type;
   studio.page = 0;
+  if (MORE_TYPES.includes(type)) showMoreTypes();
   document.querySelectorAll("#types .type").forEach((b) =>
     b.setAttribute("aria-pressed", String(b.dataset.type === type)));
   const panel = LIST_TYPES.includes(type) ? "list" : type;
@@ -205,6 +239,16 @@ function selectType(type, quiet) {
   if (type === "pose") syncPoseMode();
   if (quiet) { refresh(); schedulePreview(); } else touched();
 }
+
+function showMoreTypes() {
+  $("types-extra").hidden = false;
+  $("types-more").hidden = true;
+  $("types-more").setAttribute("aria-expanded", "true");
+}
+$("types-more").addEventListener("click", () => {
+  showMoreTypes();
+  $("types-extra").querySelector(".type").focus();
+});
 
 $("types").addEventListener("click", (e) => {
   const b = e.target.closest(".type");
@@ -218,6 +262,7 @@ function touched() {
   showPreview();
   schedulePreview();
   refresh();
+  saveDraft();
   R.ensureFonts(cardData()).then(schedulePreview);
 }
 
@@ -231,9 +276,7 @@ function syncPoseMode() {
 $("pose-samples").addEventListener("click", (e) => {
   const b = e.target.closest(".pz[data-sample]");
   if (!b) return;
-  studio.pose.sample = b.dataset.sample;
-  document.querySelectorAll("#pose-samples .pz[data-sample]").forEach((x) =>
-    x.setAttribute("aria-pressed", String(x === b)));
+  setPoseSample(b.dataset.sample);
   touched();
 });
 
@@ -339,15 +382,22 @@ function rowEl(type, row, i) {
   return el;
 }
 
-function updateRowsNote() {
+function updateRowsNote(cutLines = 0) {
   if (!LIST_TYPES.includes(studio.type)) return;
   const n = R.rowsOf(studio.type, studio.lists[studio.type]).length;
   const cards = R.pages(studio.type, studio.lists[studio.type]);
   const per = R.PER_PAGE[studio.type];
-  $("rows-note").textContent = n
+  const note = $("rows-note");
+  note.textContent = n
     ? n + (n === 1 ? " line" : " lines") + " · " + cards + (cards === 1 ? " card" : " cards") +
       " (" + per + " lines fit on a card)"
     : "";
+  if (studio.pasteCut) note.textContent += " · kept the first " + R.MAX_ROWS + " lines";
+  if (cutLines) {
+    note.textContent += " · " + (cutLines === 1 ? "1 line is" : cutLines + " lines are") +
+      " too long and will end in \u2026 on the card (marked red)";
+  }
+  note.classList.toggle("warn", !!cutLines);
 }
 
 function addRow() {
@@ -420,8 +470,8 @@ $("paste-apply").addEventListener("click", () => {
   const cut = rows.length > R.MAX_ROWS;
   studio.lists[studio.type].rows = rows.slice(0, R.MAX_ROWS);
   closePaste();
+  studio.pasteCut = cut;
   renderListEditor();
-  if (cut) $("rows-note").textContent += " · kept the first " + R.MAX_ROWS + " lines";
   touched();
 });
 
@@ -582,6 +632,7 @@ function removeItem(i) {
 }
 
 $("clear-all").addEventListener("click", () => {
+  if (state.items.length > 1 && !confirm("Remove all " + state.items.length + " images?")) return;
   state.items.forEach((it) => { try { URL.revokeObjectURL(it.url); } catch (_) {} });
   state.items = [];
   state.selected = 0;
@@ -683,6 +734,28 @@ function drawPreview() {
   mini.getContext("2d").drawImage(previewCanvas, 0, 0, mw, mh);
   $("mini").classList.toggle("portrait", portrait);
   $("mini-pages").textContent = n > 1 ? "Card " + (studio.page + 1) + " of " + n + " · tap for the next" : "";
+  markCutLines();
+}
+
+// Lines too long for the card even at the smallest type end in "…" on the
+// camera: mark them in the editor so it's a choice, not a surprise.
+function markCutLines() {
+  if (!LIST_TYPES.includes(studio.type)) return;
+  const cut = R.cutTexts(studio.type, cardData());
+  let lines = 0;
+  $("rows").querySelectorAll(".row").forEach((rowEl) => {
+    let hit = false;
+    rowEl.querySelectorAll(".row-in").forEach((input) => {
+      const long = cut.has(R.clean(input.value));
+      input.classList.toggle("cut", long);
+      if (long) { input.title = "Too long for the card: it ends in \u2026"; hit = true; }
+      else input.removeAttribute("title");
+    });
+    if (hit) lines++;
+  });
+  const head = $("list-label");
+  head.classList.toggle("cut", cut.has(R.clean(head.value)));
+  updateRowsNote(lines);
 }
 
 function flipPage(step) {
@@ -720,10 +793,15 @@ function updateCaption() {
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedulePreview);
 
 /* ---------- camera picker ---------- */
+const CAMERA_KEY = "pic_camera";
 function setVendor(vendor) {
   state.vendor = vendor;
   camButtons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.vendor === vendor)));
   $("cameras").classList.remove("attention");
+  $("cam-q").textContent = "Your camera";
+  // Almost nobody switches brands between weddings: keep it for next time.
+  try { localStorage.setItem(CAMERA_KEY, vendor); } catch (_) {}
+  if ($("status").textContent.startsWith("✗ Pick your camera")) setStatus("", "");
   refresh();
 }
 camButtons.forEach((btn) => {
@@ -958,11 +1036,15 @@ async function convert() {
       chunks[c].forEach((f) => fd.append("files", f.blob, f.name));
       setStatus("", "Converting for your camera…" + (chunks.length > 1 ? ` (${c + 1} of ${chunks.length})` : ""));
 
-      resp = await fetch(API, {
-        method: "POST",
-        body: fd,
-        headers: tok ? { Authorization: "Bearer " + tok } : undefined,
-      });
+      try {
+        resp = await fetch(API, {
+          method: "POST",
+          body: fd,
+          headers: tok ? { Authorization: "Bearer " + tok } : undefined,
+        });
+      } catch (_) {
+        throw retryable(0);
+      }
 
       if (resp.status === 402) {
         let j = {}; try { j = await resp.json(); } catch (_) {}
@@ -979,9 +1061,9 @@ async function convert() {
         return;
       }
       if (!resp.ok) {
-        let msg = "Error " + resp.status;
-        try { msg = (await resp.json()).error || msg; } catch (_) {}
-        throw new Error(msg);
+        let msg = "";
+        try { msg = (await resp.json()).error || ""; } catch (_) {}
+        throw retryable(resp.status, msg);
       }
 
       const first = resp.headers.get("X-First-File"), last = resp.headers.get("X-Last-File");
@@ -1015,6 +1097,7 @@ async function convert() {
     loadHistory();
   } catch (err) {
     setStatus("err", "✗ " + err.message + partial());
+    if (err.retry) addRecovery();
   } finally {
     go.disabled = false;
   }
@@ -1866,8 +1949,121 @@ function applyDemoHandoff() {
   track("Demo handoff", { type, camera: DEMO_VENDORS.includes(vendor) ? vendor : "none", rows: card ? card.rows.length : 0 });
 }
 
+/* ---------- draft: what you typed survives a reload or a trip to the FAQ ---------- */
+// Lists, the if-found details, your pose notes and the board label are kept in
+// this browser only; your own photos are not (they can be large).
+const DRAFT_KEY = "pic_draft";
+const FIELD_MAX = { found: { name: 60, phone: 30, email: 60, note: 60 },
+                    pose: { title: 40, energy: 60, camera: 60, hack: 60, say: 160, source: 40 } };
+let draftTimer = 0;
+
+function saveDraft() {
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(() => {
+    const p = studio.pose, pose = { mode: p.mode, sample: p.sample };
+    Object.keys(FIELD_MAX.pose).forEach((k) => { pose[k] = p[k]; });
+    const d = { v: 1, at: Date.now(), type: studio.type, lists: studio.lists, found: studio.found,
+                pose, board: $("board-label").value || "" };
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch (_) {}
+  }, 400);
+}
+
+const sameAs = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+const SAMPLE_KEYS = Array.from(document.querySelectorAll("#pose-samples .pz[data-sample]")).map((b) => b.dataset.sample);
+
+function setPoseSample(key) {
+  studio.pose.sample = key;
+  document.querySelectorAll("#pose-samples .pz[data-sample]").forEach((x) =>
+    x.setAttribute("aria-pressed", String(x.dataset.sample === key)));
+}
+
+function restoreDraft() {
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null"); } catch (_) {}
+  if (!d || d.v !== 1 || typeof d !== "object") return false;
+  const text = (v, max) => Array.from(String(v == null ? "" : v).replace(/[\u0000-\u001f\u007f]/g, " ")).slice(0, max).join("");
+  let mine = false;
+
+  const lists = {};
+  LIST_TYPES.forEach((t) => {
+    const src = d.lists && d.lists[t], ui = LIST_UI[t];
+    if (!src || !Array.isArray(src.rows)) { lists[t] = studio.lists[t]; return; }
+    const rows = src.rows.slice(0, R.MAX_ROWS).map((r) => {
+      const row = {};
+      ui.fields.forEach((f) => { row[f.key] = text(r && r[f.key], f.max); });
+      return row;
+    });
+    lists[t] = { [ui.headKey]: text(src[ui.headKey], 40), rows };
+    if (!sameAs(lists[t], DEFAULTS[t])) mine = true;
+  });
+  const found = {};
+  Object.keys(FIELD_MAX.found).forEach((k) => { found[k] = text(d.found && d.found[k], FIELD_MAX.found[k]); });
+  if (!sameAs(found, DEFAULTS.found)) mine = true;
+  const pose = {};
+  Object.keys(FIELD_MAX.pose).forEach((k) => {
+    pose[k] = text(d.pose && d.pose[k], FIELD_MAX.pose[k]);
+    if (pose[k]) mine = true;
+  });
+  const board = text(d.board, 30);
+  if (board) mine = true;
+  // Only bring back what you actually changed; an untouched example isn't a draft.
+  if (!mine) return false;
+
+  studio.lists = lists;
+  studio.found = found;
+  Object.assign(studio.pose, pose);
+  studio.pose.mode = d.pose && d.pose.mode === "photo" ? "photo" : "sample";
+  if (d.pose && SAMPLE_KEYS.includes(d.pose.sample)) setPoseSample(d.pose.sample);
+  document.querySelectorAll("[data-pose]").forEach((el) => { el.value = studio.pose[el.dataset.pose] || ""; });
+  $("board-label").value = board;
+  // Your own images aren't kept, so an "Any image" draft reopens on the pose card.
+  const type = TYPES.includes(d.type) && d.type !== "upload" ? d.type : "pose";
+  selectType(type, true);
+  touched();
+  setStatus("", "Picked up where you left off. ");
+  const fresh = document.createElement("button");
+  fresh.type = "button";
+  fresh.className = "link-btn status-act";
+  fresh.textContent = "Start fresh";
+  fresh.addEventListener("click", startFresh);
+  $("status").append(fresh);
+  return true;
+}
+
+function startFresh() {
+  try { localStorage.removeItem(DRAFT_KEY); } catch (_) {}
+  LIST_TYPES.forEach((t) => { studio.lists[t] = clone(DEFAULTS[t]); });
+  studio.found = clone(DEFAULTS.found);
+  Object.keys(FIELD_MAX.pose).forEach((k) => { studio.pose[k] = ""; });
+  studio.pose.mode = "sample";
+  setPoseSample("pack-03");
+  document.querySelectorAll("[data-pose]").forEach((el) => { el.value = ""; });
+  $("board-label").value = "";
+  setStatus("", "");
+  selectType("pose", true);
+  fillFound();
+  touched();
+}
+
+function restoreCamera() {
+  let v = null;
+  try { v = localStorage.getItem(CAMERA_KEY); } catch (_) {}
+  if (VENDOR_LABEL[v]) setVendor(v);
+}
+
+/* ---------- the nav button steps back while the studio is on screen ---------- */
+// One red button at a time: when "Make my card" is in view, the nav CTA goes quiet.
+(function quietNavCta() {
+  const cta = document.querySelector(".nav-cta");
+  if (!cta || !("IntersectionObserver" in window)) return;
+  new IntersectionObserver(([e]) => cta.classList.toggle("quiet", e.isIntersecting), { threshold: 0.2 })
+    .observe($("studio"));
+})();
+
 /* ---------- boot ---------- */
 selectType("pose", true);
+restoreCamera();
+restoreDraft();
 applyDemoHandoff();
 
 (async function boot() {

@@ -69,6 +69,9 @@ window.CardRenderer = (function () {
     return chars.join("").trimEnd() + "…";
   }
 
+  // While cutTexts() runs, every text fitText has to cut is collected here.
+  let cutLog = null;
+
   /** Shrink the font until text fits, down to minSize, then cut with "…".
       Leaves ctx.font set to the size it chose. */
   function fitText(ctx, text, maxWidth, weight, size, minSize, family) {
@@ -79,7 +82,9 @@ window.CardRenderer = (function () {
       s -= 2;
       ctx.font = font(weight, s, family);
     }
-    return measure(text) <= maxWidth ? text : ellipsize(text, maxWidth, measure);
+    if (measure(text) <= maxWidth) return text;
+    if (cutLog) cutLog.add(text);
+    return ellipsize(text, maxWidth, measure);
   }
 
   // Tracked caps drawn letter by letter: ctx.letterSpacing isn't in every browser.
@@ -444,6 +449,22 @@ window.CardRenderer = (function () {
     DRAW[type](ctx, data || {}, p, total);
   }
 
+  /** The texts that won't fit on the card and end in "…": draws every page of
+      the list off screen with the same layout the camera card uses. */
+  let scratch = null;
+  function cutTexts(type, data) {
+    const found = new Set();
+    if (!PER_PAGE[type]) return found;
+    scratch = scratch || document.createElement("canvas");
+    cutLog = found;
+    try {
+      for (let p = 0, n = pages(type, data); p < n; p++) draw(scratch, type, data, p);
+    } finally {
+      cutLog = null;
+    }
+    return found;
+  }
+
   /* ---------- the board label on your own images ---------- */
   /** A small dark pill in the bottom-left corner of an image ("Emma's board ·
       3/12"), sized in card pixels so it reads the same on the camera whatever
@@ -523,5 +544,5 @@ window.CardRenderer = (function () {
     return files;
   }
 
-  return { PER_PAGE, MAX_ROWS, ROW_KEYS, pages, rowsOf, draw, tag, ensureFonts, exportCards, isPortrait: (t) => t === "pose" };
+  return { PER_PAGE, MAX_ROWS, ROW_KEYS, pages, rowsOf, draw, cutTexts, clean, tag, ensureFonts, exportCards, isPortrait: (t) => t === "pose" };
 })();

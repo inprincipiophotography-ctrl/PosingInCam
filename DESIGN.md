@@ -154,6 +154,7 @@ A near-monochrome, cool-white paper palette with a single camera-red signal.
 
 **Display Font:** Instrument Serif (with Georgia, serif)
 **Body Font:** Inter (with -apple-system, Segoe UI, Roboto, sans-serif)
+**Card Font:** Noto Serif (semi-condensed 600 and italic 400), only inside the pose cards the studio draws on canvas; never on the page itself.
 
 **Character:** A tall, condensed serif with a handwritten-italic voice for headlines, paired with a neutral, exact grotesque for reading and pressing. The serif speaks; Inter instructs.
 

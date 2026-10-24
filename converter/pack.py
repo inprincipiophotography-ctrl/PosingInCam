@@ -25,62 +25,62 @@ _INSTRUCTIONS = {
     "sony": {
         "folder": "DCIM/100MSDCF/",
         "hr": (
-            "1. U aparatu: MENU → Setup → Media → Format (formatiraj karticu).\n"
-            "2. Snimi jednu običnu fotku da aparat napravi DCIM/100MSDCF/ mapu.\n"
-            "3. Kopiraj sve .JPG iz DCIM/100MSDCF/ ovog ZIP-a u istoimenu mapu na kartici.\n"
-            "4. Pritisni ▶ Playback i listaj, kartice su među fotkama.\n"
+            "Bez formatiranja: kartice idu uz tvoje fotke, postojeće fotke ostaju.\n"
+            "1. Nema još mape DCIM/100MSDCF/ na kartici? Snimi jednu običnu fotku i aparat je napravi.\n"
+            "2. Kopiraj sve .JPG iz DCIM/100MSDCF/ ovog ZIP-a u istoimenu mapu na kartici.\n"
+            "3. Pritisni ▶ Playback i listaj, kartice su među fotkama.\n"
             "   Većina Sony aparata ih prikaže odmah. Ako se ne pojave:\n"
             "   MENU → Setup → Media → Recover Image Database → potvrdi (10–30 s).\n"
-            "5. I dalje ih nema (stariji aparati, npr. A7 III)? Na računalu obriši mapu\n"
+            "4. I dalje ih nema (stariji aparati, npr. A7 III)? Na računalu obriši mapu\n"
             "   AVF_INFO s kartice, vrati karticu u aparat i potvrdi Recover Image Database."
         ),
         "en": (
-            "1. In camera: MENU → Setup → Media → Format the card.\n"
-            "2. Take one ordinary photo so the camera creates DCIM/100MSDCF/.\n"
-            "3. Copy every .JPG from this ZIP's DCIM/100MSDCF/ into that folder on the card.\n"
-            "4. Press ▶ Playback and scroll. The cards appear among your shots.\n"
+            "No formatting: the cards go next to your photos, which stay as they are.\n"
+            "1. No DCIM/100MSDCF/ folder on the card yet? Take one ordinary photo and the camera creates it.\n"
+            "2. Copy every .JPG from this ZIP's DCIM/100MSDCF/ into that folder on the card.\n"
+            "3. Press ▶ Playback and scroll. The cards appear among your shots.\n"
             "   Most Sony bodies show them straight away. If they don't appear:\n"
             "   MENU → Setup → Media → Recover Image Database → confirm (10–30 s).\n"
-            "5. Still not showing (older bodies such as the A7 III)? On the computer, delete\n"
+            "4. Still not showing (older bodies such as the A7 III)? On the computer, delete\n"
             "   the AVF_INFO folder on the card, put it back in and confirm Recover Image Database."
         ),
     },
     "canon": {
         "folder": "DCIM/100CANON/",
         "hr": (
-            "1. U aparatu: MENU → (alat) → Format card.\n"
-            "2. Snimi jednu običnu fotku da aparat napravi DCIM/100CANON/ mapu.\n"
-            "3. Kopiraj sve .JPG iz DCIM/100CANON/ ovog ZIP-a u istoimenu mapu na kartici.\n"
-            "4. Canon ne treba rebuild baze. Ubaci karticu i pritisni ▶ Playback.\n"
+            "Bez formatiranja: kartice idu uz tvoje fotke, postojeće fotke ostaju.\n"
+            "1. Nema još mape DCIM/100CANON/ na kartici? Snimi jednu običnu fotku i aparat je napravi.\n"
+            "2. Kopiraj sve .JPG iz DCIM/100CANON/ ovog ZIP-a u istoimenu mapu na kartici.\n"
+            "3. Canon ne treba rebuild baze. Ubaci karticu i pritisni ▶ Playback.\n"
             "   (INFO prikazuje dodatne podatke.)"
         ),
         "en": (
-            "1. In camera: MENU → (wrench) → Format card.\n"
-            "2. Take one ordinary photo so the camera creates DCIM/100CANON/.\n"
-            "3. Copy every .JPG from this ZIP's DCIM/100CANON/ into that folder on the card.\n"
-            "4. No database rebuild on Canon. Insert the card and press ▶ Playback.\n"
+            "No formatting: the cards go next to your photos, which stay as they are.\n"
+            "1. No DCIM/100CANON/ folder on the card yet? Take one ordinary photo and the camera creates it.\n"
+            "2. Copy every .JPG from this ZIP's DCIM/100CANON/ into that folder on the card.\n"
+            "3. No database rebuild on Canon. Insert the card and press ▶ Playback.\n"
             "   (Press INFO to reveal extra details.)"
         ),
     },
     "nikon": {
         "folder": "DCIM/100NCZ_X/",
         "hr": (
-            "1. U aparatu: MENU → (alat) → Format memory card.\n"
-            "2. Snimi jednu običnu fotku, aparat napravi mapu DCIM/100NCZ_… (npr. 100NCZ_8 za Z8).\n"
-            "3. Kopiraj DSC_*.JPG iz ovog ZIP-a u TU mapu koju je tvoj aparat napravio\n"
+            "Bez formatiranja: kartice idu uz tvoje fotke, postojeće fotke ostaju.\n"
+            "1. Nema još mape DCIM/100NCZ_… na kartici? Snimi jednu običnu fotku i aparat je napravi (npr. 100NCZ_8 za Z8).\n"
+            "2. Kopiraj DSC_*.JPG iz ovog ZIP-a u TU mapu koju je tvoj aparat napravio\n"
             "   (NE u 100NCZ_X, to je samo primjer imena).\n"
-            "4. Nikon ne treba rebuild baze. Ako kartice ne vidiš:\n"
+            "3. Nikon ne treba rebuild baze. Ako kartice ne vidiš:\n"
             "   PLAYBACK MENU → Playback folder → All.\n"
-            "5. Pritisni ▶ Playback i listaj."
+            "4. Pritisni ▶ Playback i listaj."
         ),
         "en": (
-            "1. In camera: MENU → (wrench) → Format memory card.\n"
-            "2. Take one ordinary photo, the camera creates DCIM/100NCZ_… (e.g. 100NCZ_8 for Z8).\n"
-            "3. Copy the DSC_*.JPG from this ZIP into THAT folder your camera made\n"
+            "No formatting: the cards go next to your photos, which stay as they are.\n"
+            "1. No DCIM/100NCZ_… folder on the card yet? Take one ordinary photo and the camera creates it (e.g. 100NCZ_8 for Z8).\n"
+            "2. Copy the DSC_*.JPG from this ZIP into THAT folder your camera made\n"
             "   (NOT 100NCZ_X, that name is just a placeholder).\n"
-            "4. No database rebuild on Nikon. If you don't see the cards:\n"
+            "3. No database rebuild on Nikon. If you don't see the cards:\n"
             "   PLAYBACK MENU → Playback folder → All.\n"
-            "5. Press ▶ Playback and scroll."
+            "4. Press ▶ Playback and scroll."
         ),
     },
 }

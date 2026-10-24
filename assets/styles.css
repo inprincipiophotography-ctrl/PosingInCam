@@ -101,6 +101,8 @@ button{font-family:var(--sans)}
 .nav-links>a:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
 .nav-right{display:flex;align-items:center;gap:12px;flex:0 0 auto;min-width:0}
 .nav-cta .sm{display:none}
+/* one red button at a time: while the studio's own button is on screen */
+.nav-cta.quiet{background:var(--surface);color:var(--accent-2);border-color:var(--border);box-shadow:none}
 .nav-toggle{display:none;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;padding:0}
 .nav-toggle span{display:block;width:16px;height:1.5px;background:var(--ink);transition:transform .2s ease}
 .nav.open .nav-toggle span:first-child{transform:translateY(3.25px) rotate(45deg)}
@@ -160,6 +162,11 @@ button{font-family:var(--sans)}
 .type:hover{border-color:rgba(164,0,0,.4);color:var(--ink)}
 .type[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-2);box-shadow:0 0 0 1px var(--accent) inset;font-weight:600}
 .type:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* the three less common types wait behind "+ 3 more" */
+.types-extra{display:contents}
+.types-more{border:1px dashed var(--border);background:transparent;border-radius:999px;padding:7px 13px;font-family:var(--sans);font-size:13.5px;font-weight:500;color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s}
+.types-more:hover{border-color:rgba(164,0,0,.4);color:var(--ink)}
+.types-more:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 .panel-label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13.5px;color:var(--muted);margin:0 0 9px}
 .panel-label b{color:var(--ink);font-weight:600}
@@ -206,6 +213,8 @@ button{font-family:var(--sans)}
 .row-x:hover{color:var(--err);border-color:rgba(190,18,60,.4)}
 .row-x:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .rows-note{font-size:12.5px;color:var(--muted);margin:8px 0 0;min-height:1.2em}
+.rows-note.warn{color:var(--err)}
+.row-in.cut,#list-label.cut{border-color:var(--err);background:#fff5f7}
 .row-actions{display:flex;gap:18px;flex-wrap:wrap}
 .row-actions .link-btn{padding-left:0;font-weight:600}
 .paste{margin-top:6px;padding:12px;border:1px solid var(--border-soft);border-radius:12px;background:var(--bg)}
@@ -247,7 +256,8 @@ button{font-family:var(--sans)}
 .mini-pages{font-size:12px;color:var(--muted);min-height:1em}
 
 /* camera + make */
-.studio-foot{display:flex;align-items:stretch;gap:10px;margin-top:18px;flex-wrap:wrap}
+.cam-q{margin:18px 0 8px;font-size:13.5px;font-weight:600;color:var(--ink-2)}
+.studio-foot{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap}
 .cameras{display:flex;gap:2px;background:var(--surface-2);border-radius:12px;padding:3px;transition:box-shadow .2s}
 .cam{font-size:14px;font-weight:600;padding:10px 14px;border-radius:9px;color:var(--ink-2);border:none;background:none;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s}
 .cam:hover{color:var(--ink)}
@@ -269,6 +279,9 @@ button{font-family:var(--sans)}
 .status:empty{margin:0;min-height:0}
 .status.err{color:var(--err)}
 .status.ok{color:var(--ok)}
+/* "Try again · Tell us", "Start fresh": the way out, right next to the message */
+.status .status-act{font-size:inherit;font-weight:600;padding:0 2px;color:var(--accent-2)}
+a.status-act{text-decoration:underline;text-underline-offset:3px}
 
 /* instructions */
 .instructions{margin-top:14px}
@@ -292,7 +305,7 @@ button{font-family:var(--sans)}
 .vid{position:relative;width:min(440px,100%);border-radius:26px;overflow:hidden;box-shadow:var(--shadow-lg);aspect-ratio:4/5;background:#e9e7e3}
 .vid video{width:100%;height:100%;object-fit:cover;display:block}
 .vid-chip{position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--ink);box-shadow:var(--shadow)}
-.vid-chip b{width:8px;height:8px;border-radius:50%;background:#e11d48;box-shadow:0 0 0 4px rgba(225,29,72,.15)}
+.vid-chip b{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-line)}
 .hero-media{animation:heroFade 1.1s ease both}
 @keyframes heroFade{from{opacity:0}to{opacity:1}}
 
@@ -386,7 +399,7 @@ button{font-family:var(--sans)}
 .why-table td.us{background:#fffafa;font-weight:600;color:var(--ink)}
 .why-table tr:last-child th,.why-table tr:last-child td{border-bottom:none}
 .why-table .yes{color:var(--ok);font-weight:700}
-.why-table .no{color:#b4232a;font-weight:700}
+.why-table .no{color:var(--err);font-weight:700}
 .why-table .m{color:var(--muted)}
 .why-safe{max-width:62ch;margin:22px auto 0;text-align:center;color:var(--ink-2);font-size:14px;line-height:1.6}
 
@@ -551,6 +564,7 @@ button{font-family:var(--sans)}
 .btn,.go{transition:transform .3s ease,box-shadow .3s ease,background .15s,border-color .15s,color .15s}
 .btn:not(:disabled):hover,.go:not(:disabled):hover{transform:translateY(-2px)}
 .btn:not(:disabled):active,.go:not(:disabled):active{transform:translateY(1px);transition-duration:.05s}
+.nav-cta.quiet:hover{background:var(--surface);border-color:var(--accent);box-shadow:none}
 .btn-primary:not(:disabled):hover,.go:not(:disabled):not(.ghost):hover{box-shadow:var(--shadow-accent-lg)}
 @media(prefers-reduced-motion:reduce){
   .price-card:hover,.btn:hover,.go:hover,.pz:hover,.tile:hover .tile-screen,.pack-stack:hover img,.hero-why a:hover::after{transform:none!important}
@@ -631,7 +645,7 @@ button{font-family:var(--sans)}
 }
 /* Fingers, not cursors: every tappable control gets a 44px-tall hit area. */
 @media(pointer:coarse){
-  .type,.cam,.nav-cta,.pager-btn{min-height:44px}
+  .type,.types-more,.cam,.nav-cta,.pager-btn{min-height:44px}
   .nav-toggle{width:44px;height:44px}
   .tile .link-btn,.packs-cta .link-btn,.back-btn,.row-actions .link-btn{min-height:44px;display:inline-flex;align-items:center}
 }

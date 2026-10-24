@@ -94,9 +94,12 @@
             <button class="type" type="button" data-type="timeline" aria-pressed="false">Timeline</button>
             <button class="type" type="button" data-type="groups" aria-pressed="false">Family groups</button>
             <button class="type" type="button" data-type="shotlist" aria-pressed="false">Shot list</button>
-            <button class="type" type="button" data-type="settings" aria-pressed="false">Settings</button>
-            <button class="type" type="button" data-type="found" aria-pressed="false">If found</button>
-            <button class="type" type="button" data-type="upload" aria-pressed="false">Any image</button>
+            <button class="types-more" id="types-more" type="button" aria-expanded="false" aria-controls="types-extra" aria-label="Show 3 more card types">+ 3 more</button>
+            <span class="types-extra" id="types-extra" hidden>
+              <button class="type" type="button" data-type="settings" aria-pressed="false">Settings</button>
+              <button class="type" type="button" data-type="found" aria-pressed="false">If found</button>
+              <button class="type" type="button" data-type="upload" aria-pressed="false">Any image</button>
+            </span>
           </div>
 
           <!-- Pose: one of ours, or your own photo with your notes -->
@@ -188,8 +191,9 @@
             <span class="mini-pages" id="mini-pages"></span>
           </div>
 
+          <p class="cam-q" id="cam-q">Which camera do you shoot?</p>
           <div class="studio-foot">
-            <div class="cameras" id="cameras" role="group" aria-label="Your camera">
+            <div class="cameras" id="cameras" role="group" aria-labelledby="cam-q">
               <button class="cam" type="button" aria-pressed="false" data-vendor="sony">Sony</button>
               <button class="cam" type="button" aria-pressed="false" data-vendor="canon">Canon</button>
               <button class="cam" type="button" aria-pressed="false" data-vendor="nikon">Nikon</button>
