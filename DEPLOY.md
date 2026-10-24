@@ -35,9 +35,14 @@ links here from its `#/tools/shoot-cards` page (the product was called Specula u
 - **Request body ~4.5 MB** on Vercel. The page already downscales each image to
   ≤2400 px before upload, so a handful of cards fits. For big batches use the
   CLI (`python -m converter.cli`).
+- **Response body ~4.5 MB** too. A ZIP bigger than 4 MB (e.g. ~7+ Canon photo
+  cards, or a whole project re-download) is stored in the private `cards`
+  bucket under `<user>/zips/` and handed back as a 1-hour signed link
+  (`{"zip_url": ...}`); the page downloads it from there. Nothing is charged if
+  that fails.
 - **Python**: Vercel uses 3.12 by default — compatible (no `cgi` dependency).
-- **Canon / Nikon**: add real SOOC templates `converter/templates/canon.JPG` and
-  `nikon.JPG`, then redeploy. Sony works out of the box (bootstrapped template).
+- **Templates**: one real SOOC JPEG per brand in `converter/templates/<vendor>/`
+  (see that folder's README); `qa/test_encoder.py` refuses re-encoded ones.
 - If the function logs `ModuleNotFoundError: converter`, confirm `vercel.json`
   `includeFiles` is deployed (it is in this repo).
 

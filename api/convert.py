@@ -187,12 +187,30 @@ def convert(path):
         traceback.print_exc(file=sys.stderr)  # surfaces in Vercel runtime logs
         return jsonify(error="conversion failed"), 500
 
+    batch_key = (dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d-%H%M%S")
+                 + "-" + secrets.token_hex(3))
+    headers = {
+        "X-Tier": tier,
+        "X-Watermarked": "1" if watermark else "0",
+        "X-First-File": cards[0][0],
+        "X-Last-File": cards[-1][0],
+        **({"X-Project-Id": str(project["id"])} if project else {}),
+    }
+
+    # Too big for one Vercel response: hand it over as a signed Storage link.
+    # Decided before anything is charged, so a failure here costs no credits.
+    zip_url = None
+    if len(zip_bytes) > storage.MAX_INLINE_ZIP:
+        if uid and storage.enabled():
+            zip_url = storage.zip_link(uid, batch_key, zip_bytes)
+        if not zip_url:
+            return jsonify(error=("That batch is too big to download in one go. "
+                                  "Convert fewer images at a time.")), 413
+
     if auth.paywall_enabled() and uid:
         # Keep a copy of the batch so it shows up under "Your previous cards".
         # Strictly best-effort: any storage/schema failure only skips history.
         extra = None
-        batch_key = (dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d-%H%M%S")
-                     + "-" + secrets.token_hex(3))
         if storage.enabled() and storage.upload_cards(uid, batch_key, cards):
             extra = {"storage_prefix": f"{uid}/{batch_key}",
                      "files": [name for name, _ in cards],
@@ -202,15 +220,12 @@ def convert(path):
             extra = {**(extra or {}), "project_id": project["id"]}
         auth.consume(uid, profile, len(designs), tier, vendor, extra)
 
+    if zip_url:
+        resp = jsonify(zip_url=zip_url)
+        resp.headers.update(headers)
+        return resp
     return Response(
         zip_bytes,
         mimetype="application/zip",
-        headers={
-            "Content-Disposition": 'attachment; filename="shoot-cards.zip"',
-            "X-Tier": tier,
-            "X-Watermarked": "1" if watermark else "0",
-            "X-First-File": cards[0][0],
-            "X-Last-File": cards[-1][0],
-            **({"X-Project-Id": str(project["id"])} if project else {}),
-        },
+        headers={"Content-Disposition": 'attachment; filename="shoot-cards.zip"', **headers},
     )

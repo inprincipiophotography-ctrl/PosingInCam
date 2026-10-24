@@ -52,6 +52,31 @@ def upload_cards(uid: str, batch_key: str, cards: list[tuple[str, bytes]]) -> bo
         return False
 
 
+# Vercel caps a function's response body at 4.5 MB. A ZIP bigger than this
+# (camera q-tables are near-lossless on Canon, so ~7 photo cards already pass it)
+# is handed over as a signed Storage link instead of in the response.
+MAX_INLINE_ZIP = 4_000_000
+
+
+def zip_link(uid: str, key: str, data: bytes) -> str | None:
+    """Store a ZIP under <uid>/zips/<key>.zip and return a signed download URL
+    (served as an attachment named shoot-cards.zip), or None on any failure."""
+    path = f"{uid}/zips/{key}.zip"
+    try:
+        r = requests.post(_url(f"object/{BUCKET}/{path}"),
+                          headers={"apikey": auth.SERVICE_KEY,
+                                   "Authorization": f"Bearer {auth.SERVICE_KEY}",
+                                   "Content-Type": "application/zip",
+                                   "x-upsert": "true"},
+                          data=data, timeout=60)
+        if not r.ok:
+            return None
+    except Exception:
+        return None
+    url = sign_urls([path]).get(path)
+    return f"{url}&download=shoot-cards.zip" if url else None
+
+
 def sign_urls(paths: list[str], ttl: int = SIGN_TTL_SEC) -> dict[str, str]:
     """Batch-sign bucket-relative paths -> {path: absolute signed URL}."""
     if not paths:

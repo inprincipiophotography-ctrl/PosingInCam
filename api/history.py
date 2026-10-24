@@ -9,6 +9,7 @@ they only get signed URLs (or the rebuilt ZIP) from here.
 """
 
 import os
+import secrets
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -82,6 +83,21 @@ def history(path):
     return jsonify(batches=batches, projects=projects)
 
 
+def _zip_response(uid: str, zip_bytes: bytes):
+    """The ZIP itself, or — past Vercel's 4.5 MB response cap — a signed link."""
+    if len(zip_bytes) <= storage.MAX_INLINE_ZIP:
+        return Response(
+            zip_bytes,
+            mimetype="application/zip",
+            headers={"Content-Disposition": 'attachment; filename="shoot-cards.zip"'},
+        )
+    key = "redownload-" + secrets.token_hex(6)
+    url = storage.zip_link(uid, key, zip_bytes)
+    if not url:
+        return jsonify(error="Could not prepare this download. Please try again."), 503
+    return jsonify(zip_url=url)
+
+
 def _download(uid: str, batch_id: str):
     try:
         bid = int(batch_id)
@@ -103,12 +119,7 @@ def _download(uid: str, batch_id: str):
             return jsonify(error="Some files of this batch are no longer stored."), 410
         cards.append((name, data))
 
-    zip_bytes = pack.zip_from_cards(cards, vendor)
-    return Response(
-        zip_bytes,
-        mimetype="application/zip",
-        headers={"Content-Disposition": 'attachment; filename="shoot-cards.zip"'},
-    )
+    return _zip_response(uid, pack.zip_from_cards(cards, vendor))
 
 
 def _download_project(uid: str, project_id: str):
@@ -136,9 +147,4 @@ def _download_project(uid: str, project_id: str):
             seen.add(name)
 
     cards.sort(key=lambda c: c[0])
-    zip_bytes = pack.zip_from_cards(cards, vendor)
-    return Response(
-        zip_bytes,
-        mimetype="application/zip",
-        headers={"Content-Disposition": 'attachment; filename="shoot-cards.zip"'},
-    )
+    return _zip_response(uid, pack.zip_from_cards(cards, vendor))

@@ -923,11 +923,7 @@ async function convert() {
       throw new Error(msg);
     }
 
-    const blob = await resp.blob();
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "shoot-cards.zip";
-    document.body.appendChild(a); a.click(); a.remove();
+    await saveZip(resp);
 
     const wm = resp.headers.get("X-Watermarked") === "1";
     const first = resp.headers.get("X-First-File"), last = resp.headers.get("X-Last-File");
@@ -1568,6 +1564,21 @@ function useProject(id) {
   if (more) more.addEventListener("click", () => { hist.all = !hist.all; paintHistory(); });
 })();
 
+// A ZIP comes back either inline, or (past Vercel's 4.5 MB response cap) as
+// JSON {zip_url}: a short-lived signed Storage link served as an attachment.
+async function saveZip(resp) {
+  const a = document.createElement("a");
+  if ((resp.headers.get("Content-Type") || "").includes("application/json")) {
+    const j = await resp.json();
+    if (!j.zip_url) throw new Error(j.error || "Download failed. Please try again.");
+    a.href = j.zip_url;
+  } else {
+    a.href = URL.createObjectURL(await resp.blob());
+    a.download = "shoot-cards.zip";
+  }
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
 async function downloadZip(url, btn) {
   const tok = PoseAuth.token();
   if (!tok) { openLogin(); return; }
@@ -1581,11 +1592,7 @@ async function downloadZip(url, btn) {
       try { msg = (await r.json()).error || msg; } catch (_) {}
       throw new Error(msg);
     }
-    const blob = await r.blob();
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "shoot-cards.zip";
-    document.body.appendChild(a); a.click(); a.remove();
+    await saveZip(r);
   } catch (e) {
     btn.textContent = "✗ " + e.message;
     setTimeout(() => { btn.textContent = label; }, 4000);
