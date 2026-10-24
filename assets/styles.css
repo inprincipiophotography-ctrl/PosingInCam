@@ -31,7 +31,7 @@
 /* keyboard users: hidden until focused, then a clear jump-to-content button */
 .skip-link{position:absolute;left:-9999px;top:0;z-index:100;background:var(--accent);color:#fff;padding:10px 18px;border-radius:0 0 12px 0;font-weight:600;font-size:14px}
 .skip-link:focus{left:0}
-html{color-scheme:light;scroll-behavior:smooth}
+html{color-scheme:light;scroll-behavior:smooth;accent-color:var(--accent);caret-color:var(--accent)}
 body{
   margin:0;
   background-color:var(--bg);
@@ -536,9 +536,10 @@ button{font-family:var(--sans)}
 .pack-stack:hover img:nth-child(2){transform:translate(14px,6px) rotate(9deg)}
 .pack-stack:hover img:nth-child(3){transform:translateY(-8px)}
 
-.arr{display:inline-block;transition:transform .25s ease}
-:hover>.arr,.tile:hover .arr{transform:translateX(3px)}
-:hover>.arr.ne{transform:translate(2px,-2px)}
+/* inline (not inline-block) so the arrow never wraps away from its last word */
+.arr{position:relative;left:0;top:0;transition:left .25s ease,top .25s ease}
+:hover>.arr,.tile:hover .arr{left:3px}
+:hover>.arr.ne{left:2px;top:-2px}
 .hero-why a::after{display:inline-block;transition:transform .25s ease}
 .hero-why a:hover::after{transform:translateX(3px)}
 
@@ -548,7 +549,8 @@ button{font-family:var(--sans)}
 .btn:not(:disabled):active,.go:not(:disabled):active{transform:translateY(1px);transition-duration:.05s}
 .btn-primary:not(:disabled):hover,.go:not(:disabled):not(.ghost):hover{box-shadow:0 10px 26px rgba(164,0,0,.3)}
 @media(prefers-reduced-motion:reduce){
-  .price-card:hover,.btn:hover,.go:hover,.pz:hover,.tile:hover .tile-screen,.pack-stack:hover img,:hover>.arr,.tile:hover .arr,.hero-why a:hover::after{transform:none!important}
+  .price-card:hover,.btn:hover,.go:hover,.pz:hover,.tile:hover .tile-screen,.pack-stack:hover img,.hero-why a:hover::after{transform:none!important}
+  :hover>.arr,.tile:hover .arr{left:0!important;top:0!important}
   .pack-stack img:nth-child(1){transform:rotate(-6deg)!important}
   .pack-stack img:nth-child(2){transform:rotate(6deg)!important}
   .cameras.attention{animation:none}
@@ -620,7 +622,14 @@ button{font-family:var(--sans)}
 }
 @media(max-width:880px){
   .price-grid{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto}
-  .price-card.featured{order:-1}
+  /* Pro leads the stack only once it can be bought; a "Coming soon" card stays last. */
+  .price-card.featured:has([data-buy]){order:-1}
+}
+/* Fingers, not cursors: every tappable control gets a 44px-tall hit area. */
+@media(pointer:coarse){
+  .type,.cam,.nav-cta,.pager-btn{min-height:44px}
+  .nav-toggle{width:44px;height:44px}
+  .tile .link-btn,.packs-cta .link-btn,.back-btn,.row-actions .link-btn{min-height:44px;display:inline-flex;align-items:center}
 }
 @media(max-width:860px){
   .nav-toggle{display:flex}
