@@ -48,6 +48,23 @@ pass / partial / fail — and the reason.
 
 <!-- Append new sessions below this line. Newest first. -->
 
+## Sony A7 III / A7 IV / A7 V — 2026-10-24 (web converter output)
+
+| Field | Value |
+| --- | --- |
+| Bodies tested | Sony A7 III (firmware v4.01), Sony A7 IV, Sony A7 V |
+| Tester        | inprincipiophotography-ctrl |
+| Template used | A7 III SOOC `converter/templates/sony/DSC09259.JPG` (ILCE-7M3 v4.01, Standard quality) |
+| File(s) sent  | Cards made on the live web app (cards.notalucis.com), not cardify.sh: template EXIF reused byte for byte (MakerNotes, II byte order), template q-tables, ZIP entry time 2024-01-01 12:00 |
+| SD workflow   | ZIP instructions: copy into `DCIM/100MSDCF/` |
+| Hardware result | Plays back on all three. A7 IV and A7 V show the cards straight away; the A7 III shows them after MENU → Setup → Media → Recover Image Database (as the instructions say). |
+
+### Outcome
+
+**pass on all three bodies.** The pure-Python web converter matches the cardify.sh result on Sony, including the strict A7 III.
+
+---
+
 ## Nikon Z8 / Z9 — 2026-05-31 (first Nikon hardware verification, cross-body)
 
 | Field | Value |

@@ -8,12 +8,21 @@ function track(name, data) {
   if (window.trackEvent) window.trackEvent(name, data);
 }
 const ME = "/api/me";
-const MAX_EDGE = 2400;        // downscale uploads before sending (Vercel ~4.5MB body limit)
+const MAX_EDGE = 1920;        // a card is 1920x1280: more pixels would only be thrown away
 const JPEG_Q = 0.9;
 // How to paste on this computer (the hint under "Any image" and its messages).
 const PASTE_KEY = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent) ? "⌘V" : "Ctrl+V";
 const MAX_FILES = 30;         // matches the server-side cap (api/convert.py)
-const MAX_BODY = 4_000_000;   // Vercel request-body limit is ~4.5MB
+// Vercel caps one request (and one response) at ~4.5 MB, so a big batch goes up
+// in several requests and comes back as one merged ZIP. Each request is sized so
+// both what goes up and the ZIP that comes back stay under the cap. A card's
+// size depends on the camera's q-tables (Canon's are near-lossless): estimated
+// as upload size × ratio, at most a per-card ceiling — measured on real photos
+// at 1920 px (worst seen: Canon 820 KB, Sony 490 KB, Nikon 340 KB).
+const REQUEST_BUDGET = 3_500_000;
+const RESPONSE_BUDGET = 3_600_000;
+const CARD_ESTIMATE = { sony: [1.8, 550_000], nikon: [1.3, 400_000], canon: [3, 900_000] };
+const MAX_FILE_BYTES = 4_000_000;
 const STORE_URL = "https://www.inprincipioweddings.com/store/in-camera-posing";
 // Stripe availability comes from the API health flag (window.__stripe).
 
@@ -867,66 +876,129 @@ function appendProject(fd) {
   return true;
 }
 
+// Split files, in order, into requests whose upload and expected ZIP both stay
+// under the budgets above.
+function chunkFiles(files, vendor) {
+  const [ratio, ceiling] = CARD_ESTIMATE[vendor] || CARD_ESTIMATE.canon;
+  const chunks = [];
+  let cur = [], up = 0, down = 0;
+  for (const f of files) {
+    const out = Math.min(f.blob.size * ratio, ceiling);
+    if (cur.length && (up + f.blob.size > REQUEST_BUDGET || down + out > RESPONSE_BUDGET)) {
+      chunks.push(cur); cur = []; up = 0; down = 0;
+    }
+    cur.push(f);
+    up += f.blob.size;
+    down += out;
+  }
+  if (cur.length) chunks.push(cur);
+  return chunks;
+}
+
 async function convert() {
   const go = $("go");
   go.disabled = true;
   setStatus("", "Making your cards…");
+  const made = [];   // [first, last] file name of every request the server converted
+
+  // After a failure midway, say which cards already exist (and are paid for).
+  const partial = () => {
+    if (!made.length) return "";
+    const first = made[0][0], last = made[made.length - 1][1];
+    return " Cards " + first + " to " + last + " were already made" +
+      (window.__paywall ? " and are under Your previous cards." : ".");
+  };
 
   try {
-    const fd = new FormData();
-    fd.append("vendor", state.vendor);
-    let files;
+    let files, orientation;
     if (studio.type === "upload") {
-      fd.append("orientation", orientValue());
+      orientation = orientValue();
       files = [];
       let i = 0;
       for (const it of state.items) {
         files.push({ blob: await downscale(it.file, tagText(i, state.items.length)), name: `design-${++i}.jpg` });
       }
     } else {
-      fd.append("orientation", "auto");
+      orientation = "auto";
       files = await R.exportCards(studio.type, cardData());
     }
-    if (!appendProject(fd)) return;
-    let total = 0;
-    files.forEach((f) => { total += f.blob.size; fd.append("files", f.blob, f.name); });
-    if (total > MAX_BODY) {
-      setStatus("err", `✗ That's ${(total / 1e6).toFixed(1)} MB of images, a bit much for one go. Convert fewer at a time (upload limit is ~4 MB).`);
+    if (files.some((f) => f.blob.size > MAX_FILE_BYTES)) {
+      setStatus("err", "✗ One image is too big to send. Export it smaller (under 4 MB) and try again.");
       return;  // the finally block re-enables the button
     }
-    setStatus("", "Converting for your camera…");
+    const chunks = chunkFiles(files, state.vendor);
+    if (chunks.length > 1 && window.__paywall) {
+      // Several requests are charged one by one: check the whole batch fits
+      // first, so it never stops halfway with only some cards paid for.
+      const a = state.account;
+      if (!a) {
+        setStatus("err", "✗ Still loading your account. Try again in a moment.");
+        renderAccount();
+        return;
+      }
+      const n = files.length;
+      if (!(a.plan === "pro" || (a.credits || 0) >= n || (a.free_left || 0) >= n)) {
+        track("Hit free limit", { type: studio.type });
+        setStatus("err", `✗ Not enough left (${a.free_left || 0} free preview(s), ${a.credits || 0} credit(s)) for ${n} cards. ` +
+          "Buy a 20-pack or go Pro for unlimited.");
+        showUpsell();
+        return;
+      }
+    }
 
     const tok = window.__paywall ? PoseAuth.token() : null;
-    const resp = await fetch(API, {
-      method: "POST",
-      body: fd,
-      headers: tok ? { Authorization: "Bearer " + tok } : undefined,
-    });
+    const zips = [];
+    let resp = null, pid = null;
+    for (let c = 0; c < chunks.length; c++) {
+      const fd = new FormData();
+      fd.append("vendor", state.vendor);
+      fd.append("orientation", orientation);
+      if (pid) fd.append("project_id", pid);        // later requests: same project, numbering continues
+      else if (!appendProject(fd)) return;
+      chunks[c].forEach((f) => fd.append("files", f.blob, f.name));
+      setStatus("", "Converting for your camera…" + (chunks.length > 1 ? ` (${c + 1} of ${chunks.length})` : ""));
 
-    if (resp.status === 402) {
-      let j = {}; try { j = await resp.json(); } catch (_) {}
-      track("Hit free limit", { type: studio.type });
-      setStatus("err", "✗ " + (j.error || "Upgrade required."));
-      showUpsell();
-      renderAccount();
-      return;
-    }
-    if (resp.status === 401) {
-      let j = {}; try { j = await resp.json(); } catch (_) {}
-      setStatus("err", "✗ " + (j.error || "Sign in to continue."));
-      if (j.need_signin) openLogin();
-      return;
-    }
-    if (!resp.ok) {
-      let msg = "Error " + resp.status;
-      try { msg = (await resp.json()).error || msg; } catch (_) {}
-      throw new Error(msg);
-    }
+      resp = await fetch(API, {
+        method: "POST",
+        body: fd,
+        headers: tok ? { Authorization: "Bearer " + tok } : undefined,
+      });
 
-    await saveZip(resp);
+      if (resp.status === 402) {
+        let j = {}; try { j = await resp.json(); } catch (_) {}
+        track("Hit free limit", { type: studio.type });
+        setStatus("err", "✗ " + (j.error || "Upgrade required.") + partial());
+        showUpsell();
+        renderAccount();
+        return;
+      }
+      if (resp.status === 401) {
+        let j = {}; try { j = await resp.json(); } catch (_) {}
+        setStatus("err", "✗ " + (j.error || "Sign in to continue.") + partial());
+        if (j.need_signin) openLogin();
+        return;
+      }
+      if (!resp.ok) {
+        let msg = "Error " + resp.status;
+        try { msg = (await resp.json()).error || msg; } catch (_) {}
+        throw new Error(msg);
+      }
+
+      const first = resp.headers.get("X-First-File"), last = resp.headers.get("X-Last-File");
+      if (first && last) made.push([first, last]);
+      pid = resp.headers.get("X-Project-Id") || pid;
+      if (!window.__paywall && last) {
+        // Open flow: remember where this batch ended so the next one continues.
+        const m = last.match(/(\d{4})\.JPG$/i);
+        if (m) try { localStorage.setItem("pic_start_" + state.vendor, m[1]); } catch (_) {}
+      }
+      if (chunks.length === 1) await saveZip(resp);
+      else zips.push(await zipBytes(resp));
+    }
+    if (zips.length) downloadBlob(mergeZips(zips));
 
     const wm = resp.headers.get("X-Watermarked") === "1";
-    const first = resp.headers.get("X-First-File"), last = resp.headers.get("X-Last-File");
+    const first = made.length ? made[0][0] : null, last = made.length ? made[made.length - 1][1] : null;
     const range = first && last
       ? (first === last ? ` Your card is ${first}.` : ` Your cards are ${first} to ${last}.`)
       : "";
@@ -936,19 +1008,13 @@ async function convert() {
     setStatus("ok", "✓ Done! Your shoot-cards.zip is downloading." + range +
       (wm ? "  (free, watermarked)" : ""));
     if (anon) showSignupNudge();
-    if (!window.__paywall && last) {
-      // Anonymous flow: remember where this batch ended so the next one continues.
-      const m = last.match(/(\d{4})\.JPG$/i);
-      if (m) try { localStorage.setItem("pic_start_" + state.vendor, m[1]); } catch (_) {}
-    }
     // Keep working in the project we just converted into (it may be brand new).
-    const pid = resp.headers.get("X-Project-Id");
     if (pid) state.activeProject = pid;
     showInstructions();
     renderAccount();
     loadHistory();
   } catch (err) {
-    setStatus("err", "✗ " + err.message);
+    setStatus("err", "✗ " + err.message + partial());
   } finally {
     go.disabled = false;
   }
@@ -1566,6 +1632,71 @@ function useProject(id) {
 
 // A ZIP comes back either inline, or (past Vercel's 4.5 MB response cap) as
 // JSON {zip_url}: a short-lived signed Storage link served as an attachment.
+async function zipBytes(resp) {
+  if ((resp.headers.get("Content-Type") || "").includes("application/json")) {
+    const j = await resp.json();
+    if (!j.zip_url) throw new Error(j.error || "Download failed. Please try again.");
+    const r = await fetch(j.zip_url);
+    if (!r.ok) throw new Error("Download failed. Please try again.");
+    return await r.arrayBuffer();
+  }
+  return await resp.arrayBuffer();
+}
+
+function downloadBlob(blob) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "shoot-cards.zip";
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+// Merge the server's ZIPs (Python zipfile: no ZIP64, sizes in the local
+// headers) into one. Local records are copied byte for byte; the central
+// directory is rebuilt with new offsets. A name already taken (README.txt) is
+// skipped.
+function mergeZips(buffers) {
+  const bad = () => new Error("A download came back damaged. Please try again.");
+  const parts = [], central = [], seen = new Set(), names = new TextDecoder();
+  let offset = 0;
+  for (const buf of buffers) {
+    const u8 = new Uint8Array(buf), dv = new DataView(buf);
+    let eocd = u8.length - 22;
+    while (eocd >= 0 && dv.getUint32(eocd, true) !== 0x06054b50) eocd--;
+    if (eocd < 0) throw bad();
+    const count = dv.getUint16(eocd + 10, true);
+    let p = dv.getUint32(eocd + 16, true);
+    for (let i = 0; i < count; i++) {
+      if (dv.getUint32(p, true) !== 0x02014b50) throw bad();
+      const nameLen = dv.getUint16(p + 28, true);
+      const cdLen = 46 + nameLen + dv.getUint16(p + 30, true) + dv.getUint16(p + 32, true);
+      const name = names.decode(u8.subarray(p + 46, p + 46 + nameLen));
+      if (!seen.has(name)) {
+        seen.add(name);
+        const local = dv.getUint32(p + 42, true);
+        if (dv.getUint32(local, true) !== 0x04034b50) throw bad();
+        let len = 30 + dv.getUint16(local + 26, true) + dv.getUint16(local + 28, true) + dv.getUint32(p + 20, true);
+        if (dv.getUint16(local + 6, true) & 8) {   // data descriptor follows the data
+          len += dv.getUint32(local + len, true) === 0x08074b50 ? 16 : 12;
+        }
+        parts.push(u8.subarray(local, local + len));
+        const cd = u8.slice(p, p + cdLen);
+        new DataView(cd.buffer).setUint32(42, offset, true);
+        central.push(cd);
+        offset += len;
+      }
+      p += cdLen;
+    }
+  }
+  const cdSize = central.reduce((n, c) => n + c.length, 0);
+  const end = new Uint8Array(22), ev = new DataView(end.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(8, central.length, true);
+  ev.setUint16(10, central.length, true);
+  ev.setUint32(12, cdSize, true);
+  ev.setUint32(16, offset, true);
+  return new Blob([...parts, ...central, end], { type: "application/zip" });
+}
+
 async function saveZip(resp) {
   const a = document.createElement("a");
   if ((resp.headers.get("Content-Type") || "").includes("application/json")) {
