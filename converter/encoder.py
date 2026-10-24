@@ -400,6 +400,7 @@ class ExifTemplate:
         self._put_int(buf, "Exif", _T_PIXEL_Y, OUT_H)
         for tag in _IDENTIFYING_0TH:
             self._blank(buf, "0th", tag)
+            self._blank(buf, "1st", tag)  # Sony repeats Artist/Copyright in IFD1
         for tag in _IDENTIFYING_EXIF:
             self._blank(buf, "Exif", tag)
         for tag in self.ifds.get("GPS", {}):

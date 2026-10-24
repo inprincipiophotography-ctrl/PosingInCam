@@ -120,7 +120,7 @@ def test_identifying_tags_stripped_for_every_vendor():
     for vendor, v in encoder.VENDORS.items():
         tpl = encoder.template_path_for(vendor)
         tex = piexif.load(tpl)
-        secrets = [tex["0th"].get(t) for t in encoder._IDENTIFYING_0TH]
+        secrets = [tex[ifd].get(t) for ifd in ("0th", "1st") for t in encoder._IDENTIFYING_0TH]
         secrets += [tex["Exif"].get(t) for t in encoder._IDENTIFYING_EXIF]
         secrets = [x.strip(b"\x00 ") for x in secrets if isinstance(x, bytes)]
         secrets = [x for x in secrets if len(x) >= 4 and x.strip(b"0")]
@@ -128,8 +128,9 @@ def test_identifying_tags_stripped_for_every_vendor():
 
         out = encoder.convert(src, tpl)
         ex = piexif.load(out)
-        for t in encoder._IDENTIFYING_0TH:
-            assert _blank(ex["0th"].get(t, b"")), f"{vendor}: 0th tag {t:#06x} leaked into output"
+        for ifd in ("0th", "1st"):
+            for t in encoder._IDENTIFYING_0TH:
+                assert _blank(ex[ifd].get(t, b"")), f"{vendor}: {ifd} tag {t:#06x} leaked into output"
         for t in encoder._IDENTIFYING_EXIF:
             assert _blank(ex["Exif"].get(t, b"")), f"{vendor}: Exif tag {t:#06x} leaked into output"
         payload = encoder._exif_payload(out)
@@ -209,7 +210,9 @@ def test_bundled_templates_are_straight_out_of_camera():
         _qt, et = encoder.template_meta(path)
         desc = piexif.load(path)["0th"].get(piexif.ImageIFD.ImageDescription, b"")
         problems = []
-        if qt in generic:
+        # Sony bodies write their own q-tables and A7 III rejects generic ones.
+        # Nikon bodies genuinely write IJG-scaled tables, so this check is Sony-only.
+        if vendor == "sony" and qt in generic:
             problems.append("generic libjpeg q-tables (re-encoded, not a camera file)")
         if not et.makernote:
             problems.append("no MakerNote")
