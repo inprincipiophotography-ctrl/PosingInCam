@@ -25,6 +25,8 @@
 .story{position:absolute;left:6%;top:13%;width:37%;transition:opacity .5s var(--ease),transform .7s var(--ease)}
 /* with nothing under the words, they sit lower, level with the camera */
 .film[data-scene="playback"] .story,.film[data-scene="day"] .story{transform:translateY(12cqw)}
+/* on the day the lens pushes in on the card: the words make room */
+@media (min-width:681px){.film[data-scene="day"] .story{width:33%}}
 .film[data-scene="end"] .story{opacity:0;visibility:hidden;transform:translateY(-10px)}
 .kicker{display:inline-flex;align-items:center;gap:9px;margin:0 0 clamp(10px,1.4cqw,18px);padding:4px 13px 4px 4px;border-radius:999px;background:rgba(255,255,255,.8);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 1px 2px rgba(0,0,0,.05);font-size:clamp(11.5px,1.05cqw,13px);font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-2)}
@@ -35,11 +37,21 @@
 .cap-title em{font-style:italic;color:var(--accent)}
 .cap-title:focus{outline:none}
 .cap-text{margin:clamp(10px,1.2cqw,16px) 0 0;max-width:30em;font-size:clamp(13.5px,1.4cqw,17px);line-height:1.5;color:var(--ink-2)}
-.cap.in{animation:capIn .7s var(--ease) both}
 @keyframes capIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+/* a headline arrives word by word, each rising out from under its own mask
+   (demo.js words()); the line under it follows once the headline has landed */
+.cap-title .w{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .08em .14em 0;margin:0 -.08em -.14em 0}
+.cap-title .w>span{display:inline-block}
+.cap.in .w>span{animation:wordUp .8s var(--ease) both;animation-delay:calc(var(--i) * 42ms)}
+.cap.in .cap-text{animation:capIn .7s var(--ease) .32s both}
+@keyframes wordUp{from{transform:translateY(112%)}to{transform:none}}
+/* the hook waits for its typeface rather than swapping it in front of you */
+.film.fonts-wait .story{opacity:0}
 
 /* ---------- the camera (right), seen from the back ---------- */
 .rig{position:absolute;right:5%;top:50%;width:48%;transform:translateY(-50%);transition:transform .9s var(--ease),top .9s var(--ease)}
+/* the lens (demo.js lensAt): pushes in on the screen, racks focus, drifts in the hand */
+.cam-wrap{transform-origin:40% 54%;will-change:transform}
 .film[data-scene="playback"] .rig,.film[data-scene="why"] .rig,.film[data-scene="board"] .rig{transform:translateY(-50%) scale(1.04)}
 /* held upright for the pose cards, grip on top, like a photographer does */
 .film[data-beat="tall"] .rig{transform:translateY(-50%) rotate(-90deg) scale(.96)}

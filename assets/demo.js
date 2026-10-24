@@ -87,6 +87,61 @@
   // 7. on the day: press play, and your card is there
   const PLAY_2 = 61700;
 
+  /* ---------- the lens: the film is shot like a photographer would ---------- */
+  // Keys on .cam-wrap (the .rig keeps its per-scene layout from the CSS):
+  // s scale, x/y shift in % of the camera, blur in px (focus). Between keys the
+  // move eases; a key repeated is a hold.
+  const LENS = [
+    [0, 1, 0, 0, 0],
+    [PHONE_IN, 1, 0, 0, 0],
+    [PHONE_IN + 700, 0.96, 2, 0, 5],       // reach for the phone: focus racks off the camera…
+    [8500, 0.96, 2, 0, 5],
+    [9600, 1.05, -1, 0, 0],                // "It's already in your hand": …and back, a push in
+    [11000, 1, 0, 0, 0],
+    [PLAY_1, 1, 0, 0, 0],
+    [PLAY_1 + 520, 1.08, -1, 1, 0],        // press play: lean in to the screen
+    [ROT_IN - 50, 1, 0, 0, 0],
+    [BOARD_IN, 1, 0, 0, 0],
+    [BOARD_IN + 520, 1.06, -1, 1, 0],
+    [BROT_IN - 50, 1, 0, 0, 0],
+    [MADE_AT, 1, 0, 0, 0],
+    [MADE_AT + 260, 1.035, 0, 0, 0],       // the card is made: a small beat
+    [MADE_AT + 900, 1, 0, 0, 0],
+    [PLAY_2, 1, 0, 0, 0],
+    [PLAY_2 + 1100, 1.16, 0, 2, 0],        // on the day: the card fills the frame
+    [END - 900, 1.16, 0, 2, 0],
+    [END, 1, 0, 0, 0],
+  ];
+  const smooth = (p) => p * p * p * (p * (p * 6 - 15) + 10);   // smootherstep: no snap at either end
+  // On a phone the camera already spans the frame: the same moves, smaller.
+  const narrow = window.matchMedia("(max-width: 680px)");
+  function lensAt(ms) {
+    let k = 0;
+    while (k < LENS.length - 1 && LENS[k + 1][0] <= ms) k++;
+    const a = LENS[k], b = LENS[k + 1] || a;
+    const q = b === a ? 0 : smooth(clamp((ms - a[0]) / (b[0] - a[0]), 0, 1));
+    const lerp = (i) => a[i] + (b[i] - a[i]) * q;
+    const amp = narrow.matches ? 0.35 : 1;
+    let s = 1 + (lerp(1) - 1) * amp, x = lerp(2) * amp, y = lerp(3) * amp, blur = lerp(4), r = 0;
+    // "Cannot display image": the camera shakes its head, once.
+    const e = ms - ERR_AT;
+    if (e > 0 && e < 620) x += 1.4 * Math.sin(e / 620 * Math.PI * 5) * (1 - e / 620);
+    // held in a hand, not on a tripod: a slow drift that never repeats exactly
+    if (ms < END) {
+      x += 0.35 * Math.sin(ms / 1900) + 0.2 * Math.sin(ms / 830);
+      y += 0.3 * Math.sin(ms / 2300 + 1);
+      r = 0.18 * Math.sin(ms / 2700 + 2);
+    }
+    return { s, x, y, blur, r };
+  }
+
+  // Golden hour, fading: the light in live view while the seconds tick away,
+  // back again on the day (1 warm, 0 gone).
+  function lightAt(ms) {
+    if (ms >= CHAPTERS[6].at) return 1;
+    return 1 - 0.85 * smooth(clamp(ms / PHONE_OUT, 0, 1));
+  }
+
   // Where a finger presses (it glides between taps that follow closely).
   const TAPS = [
     { at: PLAY_1, el: "btn-play" },
@@ -195,7 +250,7 @@
     ctx.textBaseline = "alphabetic";
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, W, H);
-    if (f.kind === "live") drawLive();
+    if (f.kind === "live") drawLive(f.light == null ? 1 : f.light);
     else if (f.kind === "off") drawOff();
     else if (f.kind === "err") drawErr();
     else drawCard(f);
@@ -203,13 +258,26 @@
   }
 
   // What's in front of the lens: the couple, as the sun goes down.
-  function drawLive() {
+  function drawLive(light) {
     const L = LIVE_SRC, img = image(L.img);
     let g;
     if (loaded(img)) {
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
       ctx.drawImage(img, L.x, L.y, L.w, L.h, 0, 0, W, H);
+      // the sun low on the left: warm light over the scene while it lasts…
+      ctx.globalCompositeOperation = "soft-light";
+      g = ctx.createRadialGradient(W * 0.12, H * 0.18, 0, W * 0.12, H * 0.18, W * 1.05);
+      g.addColorStop(0, "rgba(255,170,70," + (0.95 * light).toFixed(3) + ")");
+      g.addColorStop(0.55, "rgba(255,120,40," + (0.55 * light).toFixed(3) + ")");
+      g.addColorStop(1, "rgba(120,60,30," + (0.35 * light).toFixed(3) + ")");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+      // …and blue dusk coming down as it goes
+      ctx.globalCompositeOperation = "multiply";
+      ctx.fillStyle = "rgba(52,64,108," + (0.8 * (1 - light)).toFixed(3) + ")";
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalCompositeOperation = "source-over";
     } else {
       g = ctx.createLinearGradient(0, 0, 0, H);       // still loading: a quiet gradient
       g.addColorStop(0, "#8a8679");
@@ -354,7 +422,8 @@
 
   // What the camera shows: a key (repaint only when it changes) and the frame.
   function screenAt(ms) {
-    const LIVE = { key: "live", f: { kind: "live", label: "Camera screen: live view, the couple kissing on the beach at sunset" } };
+    const light = lightAt(ms), step = Math.round(light * 24);
+    const LIVE = { key: "live:" + step, f: { kind: "live", light: step / 24, label: "Camera screen: live view, the couple kissing on the beach at sunset" } };
     const mine = (name) => ({
       key: "mine:" + name + ":" + vendor,
       f: { kind: "card", item: myCard(name, PICKS), file: VENDORS[vendor].file, label: "Camera playback: your timeline card, " + VENDORS[vendor].file },
@@ -475,6 +544,7 @@
       const text = c.text === null ? VENDORS[vendor].where + " The steps come in the ZIP." : c.text;
       put("cap", c.title + "|" + text, () => {
         $("cap-title").innerHTML = c.title;
+        words($("cap-title"));
         $("cap-text").textContent = text;
         $("cap-text").hidden = !text;
         if (live && !reduced) restart($("cap"), "in");
@@ -493,6 +563,15 @@
         else restart(canvas, s.anim, ["slide-next", "pop", "fade"]);
       }
     }
+
+    // the lens
+    const L = reduced ? { s: 1, x: 0, y: 0, blur: 0, r: 0 } : lensAt(t);
+    put("lens", L.s.toFixed(4) + L.x.toFixed(2) + L.y.toFixed(2) + L.r.toFixed(3), () => {
+      camWrap.style.transform = "translate(" + L.x.toFixed(2) + "%," + L.y.toFixed(2) + "%) rotate(" +
+        L.r.toFixed(3) + "deg) scale(" + L.s.toFixed(4) + ")";
+    });
+    put("focus", L.blur.toFixed(1), (v) => { camWrap.style.filter = v > 0 ? "blur(" + v + "px)" : ""; });
+    put("rack", L.blur > 0.5, (v) => film.classList.toggle("racked", v));
 
     // the wheel turns, a button goes down
     let deg = 0;
@@ -564,6 +643,31 @@
     });
   }
   const WHEEL = TURNS.concat(BTURNS);   // every turn of the wheel in the film
+  const camWrap = document.querySelector("#rig .cam-wrap");
+
+  // A headline arrives word by word, each rising out from under its own mask.
+  function words(el) {
+    let i = 0;
+    const walk = (node) => {
+      Array.from(node.childNodes).forEach((n) => {
+        if (n.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+            const w = document.createElement("span"), inner = document.createElement("span");
+            w.className = "w";
+            inner.textContent = part;
+            inner.style.setProperty("--i", String(i++));
+            w.appendChild(inner);
+            frag.appendChild(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1) walk(n);
+      });
+    };
+    walk(el);
+  }
   const bars = Array.from(document.querySelectorAll("#bar-chs .ch")).map((btn) => ({ btn, fill: btn.querySelector(".ch-track i") }));
 
   /* ---------- play, pause, seek ---------- */
@@ -696,5 +800,12 @@
   zipThumb();
   track("Demo started", { ref: (params.get("ref") || "direct").slice(0, 24), camera: vendor });
   seek(h === "end" ? END : h in FROM_HASH ? CHAPTERS[FROM_HASH[h]].at : 0);
-  if (!reduced && t < END) setTimeout(play, 400);
+  // The hook waits for its typeface (at most a second and a half), then plays.
+  const fontsIn = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+  Promise.race([fontsIn, new Promise((r) => setTimeout(r, 1500))]).then(() => {
+    film.classList.remove("fonts-wait");
+    cache.cap = null;
+    render(!reduced);
+    if (!reduced && t < END) setTimeout(play, 350);
+  });
 })();
