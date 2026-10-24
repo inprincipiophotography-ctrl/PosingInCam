@@ -1,6 +1,6 @@
 "use strict";
 
-/* Shoot Cards demo (/demo): a one-minute film in six chapters.
+/* Shoot Cards demo (/demo): a one-minute film in seven chapters.
    Everything in it is drawn in the browser. The camera screen is a canvas
    painted with the studio's own CardRenderer (builder.js), so the card in the
    film is the card the studio makes. The film is a pure function of time
@@ -36,13 +36,15 @@
     { id: "moment", name: "The moment", at: 0 },
     { id: "playback", name: "Playback", at: 11500 },
     { id: "why", name: "Any picture?", at: 24500 },
-    { id: "make", name: "Make yours", at: 33000 },
-    { id: "sd", name: "SD card", at: 44000 },
-    { id: "day", name: "On the day", at: 51000 },
+    { id: "board", name: "Her board", at: 33000 },
+    { id: "make", name: "Make yours", at: 42500 },
+    { id: "sd", name: "SD card", at: 53500 },
+    { id: "day", name: "On the day", at: 60500 },
   ];
-  const END = 58000;
+  const END = 67500;
   // Links into the older, step-by-step demo still land on the right chapter.
-  const FROM_HASH = { moment: 0, start: 0, playback: 1, why: 2, make: 3, camera: 3, sd: 4, copy: 4, setup: 4, day: 5, shoot: 5, done: 5 };
+  const FROM_HASH = { moment: 0, start: 0, playback: 1, why: 2, board: 3, pinterest: 3, moodboard: 3,
+                      make: 4, camera: 4, sd: 5, copy: 5, setup: 5, day: 6, shoot: 6, done: 6 };
 
   const HOOK = "7:12&nbsp;pm. The couple is waiting. <em>What's the next pose?</em>";
   const CAPTIONS = [
@@ -53,10 +55,12 @@
     { at: 20000, title: "Timelines, family groups, <em>shot lists</em> too.", text: "Every part of the day, one press away." },
     { at: 24500, title: "Why not just copy any picture? <em>Your camera won't show it.</em>", text: "Cameras only play back files saved their own way: the right size, the right metadata, the right folder." },
     { at: 29600, title: "So we save every card <em>the way your camera does</em>.", text: "It plays back like a photo you shot. That's the whole trick." },
-    { at: 33000, title: "Make your own <em>in a minute</em>.", text: "Type the names, tap the moments. No Canva, no design." },
-    { at: 44000, title: "Copy one folder to your <em>SD card</em>.", text: null },   // per camera: VENDORS[].where
-    { at: 51000, title: "Between shots, <em>press play</em>.", text: "The couple is waiting again. This time the plan is in your hand." },
-    { at: 54400, title: "Your plan, <em>right there</em>.", text: "No phone, no paper. Nobody sees you scroll." },
+    { at: 33000, title: "She sends her Pinterest board? <em>It goes in too.</em>", text: "Her pins, a moodboard, screenshots: any image, saved the way your camera does." },
+    { at: 37800, title: "Every photo she wants, <em>one press away</em>.", text: "Tick off her wishes between shots. Nobody sees you scroll." },
+    { at: 42500, title: "Make your own <em>in a minute</em>.", text: "Type the names, tap the moments. No Canva, no design." },
+    { at: 53500, title: "Copy one folder to your <em>SD card</em>.", text: null },   // per camera: VENDORS[].where
+    { at: 60500, title: "Between shots, <em>press play</em>.", text: "The couple is waiting again. This time the plan is in your hand." },
+    { at: 63900, title: "Your plan, <em>right there</em>.", text: "No phone, no paper. Nobody sees you scroll." },
   ];
 
   // 1. the moment: the phone comes up, the seconds tick away
@@ -69,20 +73,27 @@
   const TURNS = [15900, 17300, 20600, 22100];
   // 3. any picture? a saved image goes onto the camera, which can't show it
   const PNG_DRAG = 26600, ERR_AT = 27700;
-  // 4. make yours: type the names, tick the moments, pick the camera, make it
-  const NAME = "Emma & James", TYPE_AT = 33900, TYPE_MS = 95;
-  const TICKS = [[35800, 0], [36700, 1], [37600, 2], [38500, 4]];
-  const CAM_AT = 39600, GO_AT = 40500, MADE_AT = 41700;
-  // 5. SD card: the ZIP goes onto the card, the card goes into the camera
-  const COPY_AT = 45200, COPIED_AT = 46300, INSERT_AT = 47500, INSERTED_AT = 48800;
-  // 6. on the day: press play, and your card is there
-  const PLAY_2 = 52200;
+  // 4. her board: the bride's pins arrive, go onto the camera, and this time
+  //    they play back; the camera turns upright and the wheel goes through them
+  const MSG_IN = 33500, BOARD_DRAG = 35600, BOARD_IN = 36700;
+  const BROT_IN = 38300, BTALL_AT = 39000;
+  const BTURNS = [39900, 41100];
+  // 5. make yours: type the names, tick the moments, pick the camera, make it
+  const NAME = "Emma & James", TYPE_AT = 43400, TYPE_MS = 95;
+  const TICKS = [[45300, 0], [46200, 1], [47100, 2], [48000, 4]];
+  const CAM_AT = 49100, GO_AT = 50000, MADE_AT = 51200;
+  // 6. SD card: the ZIP goes onto the card, the card goes into the camera
+  const COPY_AT = 54700, COPIED_AT = 55800, INSERT_AT = 57000, INSERTED_AT = 58300;
+  // 7. on the day: press play, and your card is there
+  const PLAY_2 = 61700;
 
   // Where a finger presses (it glides between taps that follow closely).
   const TAPS = [
     { at: PLAY_1, el: "btn-play" },
     ...TURNS.map((at) => ({ at, el: "btn-dial" })),
     { at: PNG_DRAG, el: "pngchip", to: "screen-canvas", until: ERR_AT - 100 },
+    { at: BOARD_DRAG, el: "herboard", to: "screen-canvas", until: BOARD_IN - 100 },
+    ...BTURNS.map((at) => ({ at, el: "btn-dial" })),
     { at: TYPE_AT - 300, el: "st-name" },
     ...TICKS.map(([at, i]) => ({ at, el: "chip-" + i })),
     { at: CAM_AT, el: "cam-pill" },
@@ -112,6 +123,14 @@
     { card: "groups", data: SAMPLE.groups, name: "family groups card" },
   ];
   const ROLL_OF = 8;   // the counter reads like a bigger pack: 1/8, 2/8…
+  // Her board: her pins (our own wedding photos), each one an "Any image"
+  // card with the studio's board label burned in, as the studio makes them.
+  const BOARD = [
+    { pin: "pin-01", name: "her pin 1, under the veil" },
+    { pin: "pin-02", name: "her pin 2, the spin" },
+    { pin: "pin-03", name: "her pin 3, the dress" },
+  ];
+  const BOARD_LABEL = "Emma's board", BOARD_OF = 12;
   // The lines in the studio (chip-0…chip-5 in the page), as card rows.
   const LINES = [
     { time: "14:00", text: "Getting ready" }, { time: "15:30", text: "First look" },
@@ -139,6 +158,7 @@
   const canvas = $("screen-canvas");
   const ctx = canvas.getContext("2d");
   const work = document.createElement("canvas");   // CardRenderer sizes and draws this one
+  const pinWork = document.createElement("canvas"); // her pins, framed as the converter frames them
   const IMGS = {};
   let shownKey = null;
 
@@ -271,6 +291,8 @@
     if (it.img) {
       const img = image(it.img);
       if (loaded(img)) src = img;
+    } else if (it.pin) {
+      src = pinCard(it);
     } else {
       R.draw(work, it.card, it.data, 0);
       src = work;
@@ -283,10 +305,28 @@
       ctx.drawImage(src, Math.round((cw - dw) / 2), Math.round((ch - dh) / 2), dw, dh);
     }
     ctx.font = "600 52px " + SANS;
-    if (f.counter || f.file) pill(f.file ? PLAY + "  " + f.file : PLAY, 30, 16, "left");
+    if (f.counter || f.file || f.play) pill(f.file ? PLAY + "  " + f.file : PLAY, 30, 16, "left");
     if (f.counter) pill(f.counter, cw - 30, 16, "right");
     if (f.badge) pill(f.badge, cw - 30, 16, "right", "rgba(255,255,255,.94)", "#7e0000");
     ctx.setTransform(1, 0, 0, 1, 0, 0);
+  }
+
+  // One of her pins as the studio's "Any image" makes it: a portrait card,
+  // the picture letterboxed on white, the board label in its corner.
+  function pinCard(it) {
+    const img = image(it.pin);
+    if (!loaded(img)) return null;
+    const w = 1280, h = 1920, pc = pinWork.getContext("2d");
+    pinWork.width = w; pinWork.height = h;
+    pc.fillStyle = "#fff";
+    pc.fillRect(0, 0, w, h);
+    const s = Math.min(w / img.naturalWidth, h / img.naturalHeight);
+    const dw = Math.round(img.naturalWidth * s), dh = Math.round(img.naturalHeight * s);
+    const x = Math.round((w - dw) / 2), y = Math.round((h - dh) / 2);
+    pc.imageSmoothingQuality = "high";
+    pc.drawImage(img, x, y, dw, dh);
+    R.tag(pc, BOARD_LABEL + " · " + (BOARD.indexOf(it) + 1) + "/" + BOARD_OF, { x, y, w: dw, h: dh }, 1);
+    return pinWork;
   }
 
   function pill(text, x, y, align, bg, fg) {
@@ -334,6 +374,13 @@
       return { key: "roll:" + i + (tall ? ":tall" : ""), anim: flipped > moved ? "fade" : i ? "slide-next" : "pop",
                f: { kind: "card", item: it, tall, counter: (i + 1) + "/" + ROLL_OF, label: "Camera playback, card " + (i + 1) + ": " + it.name } };
     }
+    if (c === "board") {
+      if (ms < BOARD_IN) return LIVE;
+      const i = BTURNS.filter((at) => ms >= at).length, it = BOARD[i], tall = ms >= BTALL_AT;
+      const moved = Math.max(BOARD_IN, ...BTURNS.filter((at) => ms >= at));
+      return { key: "board:" + i + (tall ? ":tall" : ""), anim: tall && BTALL_AT > moved ? "fade" : i ? "slide-next" : "pop",
+               f: { kind: "card", item: it, tall, play: true, label: "Camera playback: " + it.name + ", from " + BOARD_LABEL } };
+    }
     if (c === "make") {
       const name = typedBy(ms), picks = ticksBy(ms);
       return { key: "make:" + name + ":" + picks.join(","),
@@ -349,6 +396,7 @@
     if (c === "moment") return [c, ms >= PHONE_IN && ms < PHONE_OUT ? "phone" : ""];
     if (c === "playback") return [c, ms >= ROT_IN && ms < ROT_OUT ? "tall" : ms >= PLAY_1 ? "on" : ""];
     if (c === "why") return [c, ms >= ERR_AT ? "err" : ms >= PNG_DRAG ? "drop" : "png"];
+    if (c === "board") return [c, ms >= BROT_IN ? "tall" : ms >= BOARD_IN ? "on" : ms >= BOARD_DRAG ? "drop" : ms >= MSG_IN ? "msg" : ""];
     if (c === "make") return [c, ms >= MADE_AT ? "made" : ""];
     if (c === "sd") return [c, ms >= INSERTED_AT ? "inserted" : ms >= INSERT_AT ? "insert" : ms >= COPIED_AT ? "copied" : ms >= COPY_AT ? "copy" : "zip"];
     return [c, ms >= PLAY_2 ? "on" : ""];
@@ -448,11 +496,11 @@
 
     // the wheel turns, a button goes down
     let deg = 0;
-    TURNS.forEach((at) => { deg += 36 * ease(clamp((t - at) / 320, 0, 1)); });
+    WHEEL.forEach((at) => { deg += 36 * ease(clamp((t - at) / 320, 0, 1)); });
     put("wheel", Math.round(deg), (v) => { $("btn-dial").style.transform = "rotate(" + v + "deg)"; });
     const down = (at) => t >= at && t < at + 170;
     put("play-down", down(PLAY_1) || down(PLAY_2), (v) => $("btn-play").classList.toggle("down", v));
-    put("dial-down", TURNS.some(down), (v) => $("btn-dial").classList.toggle("down", v));
+    put("dial-down", WHEEL.some(down), (v) => $("btn-dial").classList.toggle("down", v));
 
     // 1. the phone
     const tp = clamp((t - TIMER[0]) / (TIMER[1] - TIMER[0]), 0, 1);
@@ -515,6 +563,7 @@
       }
     });
   }
+  const WHEEL = TURNS.concat(BTURNS);   // every turn of the wheel in the film
   const bars = Array.from(document.querySelectorAll("#bar-chs .ch")).map((btn) => ({ btn, fill: btn.querySelector(".ch-track i") }));
 
   /* ---------- play, pause, seek ---------- */
@@ -641,7 +690,7 @@
   const params = new URLSearchParams(location.search);
   const h = location.hash.slice(1);   // read before the first render rewrites the link
   setVendor(VENDOR_KEYS.includes(params.get("camera")) ? params.get("camera") : "sony");
-  [LIVE_SRC.img].concat(ROLL.filter((r) => r.img).map((r) => r.img)).forEach(image);
+  [LIVE_SRC.img].concat(ROLL.filter((r) => r.img).map((r) => r.img), BOARD.map((b) => b.pin)).forEach(image);
   R.ensureFonts({ rows: [LINES, SAMPLE] }).then(() => { shownKey = null; zipThumb(); render(false); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { shownKey = null; render(false); });
   zipThumb();

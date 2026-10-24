@@ -66,9 +66,7 @@
           <h1>Never go <em>blank</em> on a shoot again.</h1>
           <p class="lede">Pose cards in your camera's playback, with the exact words to say to your couple.
             Plus your timeline, family groups and shot list. No phone, no paper, no Canva.</p>
-          <a class="pitch-demo" href="/demo?ref=hero"><span class="pitch-demo-play" aria-hidden="true"></span>See how it works <span class="pitch-demo-time">&middot; 60-second demo</span> &rarr;</a>
-          <p class="hero-why"><span class="hero-why-q" aria-hidden="true">?</span><span>Why not just copy any picture? <strong>Your camera won't show it.</strong>
-            <a href="/demo?ref=why#why">See why</a></span></p>
+          <a class="pitch-demo" href="/demo?ref=hero"><span class="pitch-demo-play" aria-hidden="true"></span>See how it works <span class="pitch-demo-time">&middot; one-minute demo</span> &rarr;</a>
         </div>
 
         <div class="studio" id="studio">
@@ -97,7 +95,7 @@
             <button class="type" type="button" data-type="shotlist" aria-pressed="false">Shot list</button>
             <button class="type" type="button" data-type="settings" aria-pressed="false">Settings</button>
             <button class="type" type="button" data-type="found" aria-pressed="false">If found</button>
-            <button class="type" type="button" data-type="upload" aria-pressed="false">Your own design</button>
+            <button class="type" type="button" data-type="upload" aria-pressed="false">Any image</button>
           </div>
 
           <!-- Pose: one of ours, or your own photo with your notes -->
@@ -161,13 +159,16 @@
             </div>
           </div>
 
-          <!-- Your own design: the original converter -->
+          <!-- Any image: her Pinterest pins, a moodboard, your own designs (the original converter) -->
           <div class="panel" data-panel="upload" hidden>
             <label class="drop" id="drop">
               <input type="file" id="file" accept="image/*,.heic,.heif" multiple class="sr-only" aria-label="Add images" />
               <span class="drop-title">Drag images here or click to choose</span>
-              <span class="drop-sub">Canva exports, screenshots, photos · JPG, PNG, WEBP, HEIC</span>
+              <span class="drop-sub">Her Pinterest pins, a moodboard, Canva exports, screenshots · JPG, PNG, WEBP, HEIC</span>
+              <span class="drop-sub">Or copy an image and press <kbd class="paste-key">Ctrl+V</kbd> here</span>
             </label>
+            <label class="fld full board-fld"><span>Label (optional)</span><input type="text" id="board-label" maxlength="30" placeholder="e.g. Emma's board" autocomplete="off" /></label>
+            <p class="board-note">With a label, each card reads &ldquo;Emma&rsquo;s board &middot; 3/12&rdquo;. A whole moodboard works as one screenshot, but each pin reads better on a 3-inch screen as its own card.</p>
             <div class="orient" id="orient">
               <span>Orientation:</span>
               <label><input type="radio" name="orient" value="auto" checked /> Auto</label>
@@ -206,6 +207,10 @@
           </div>
         </div>
 
+        <!-- the question most visitors have, answered right under the card -->
+        <p class="hero-why"><span class="hero-why-q" aria-hidden="true">?</span><span>Why not just copy any picture? <strong>Your camera won't show it.</strong>
+          <a href="/demo?ref=why#why">See why</a></span></p>
+
         <div class="visual" id="visual">
           <div class="vid" id="vid">
             <video class="hero-media" autoplay muted loop playsinline preload="auto"
@@ -240,7 +245,7 @@
         <div class="st"><b>2</b><span><strong>Copy one folder</strong> to your SD card.</span></div>
         <div class="st"><b>3</b><span><strong>Press &#9654; between shots.</strong> It's all there.</span></div>
       </div>
-      <p class="strip-demo"><a href="/demo?ref=how">Not sure how it works? Try the 60-second demo &rarr;</a></p>
+      <p class="strip-demo"><a href="/demo?ref=how">Not sure how it works? Try the one-minute demo &rarr;</a></p>
     </div>
 
     <!-- Your previous cards (signed-in users; rendered by app.js) -->
@@ -290,9 +295,9 @@
             <button class="link-btn" type="button" data-make="found">Make an if-found card &rarr;</button></figcaption>
         </figure>
         <figure class="tile">
-          <div class="tile-screen"><svg viewBox="0 0 1920 1280" role="img" aria-label="Your own design, converted for the camera"><rect width="1920" height="1280" fill="#ffffff"/><rect x="1790" width="130" height="1280" fill="#a40000"/><text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">YOUR DESIGN</text><text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">Made in Canva</text><rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/><rect x="120" y="430" width="1540" height="640" rx="28" fill="#faf5f5" stroke="#e6cfcf" stroke-width="5" stroke-dasharray="26 18"/><g fill="none" stroke="#a40000" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"><rect x="800" y="560" width="320" height="250" rx="30"/><circle cx="890" cy="645" r="30"/><path d="M820 780l90-80 60 50 70-70 80 70"/></g><text x="960" y="930" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="56" fill="#1d1d1f" text-anchor="middle">Canva · Photoshop · any image</text><text x="960" y="1010" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" fill="#6e6e73" text-anchor="middle">converted to your camera&#8217;s own format</text><text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">SHOOT CARDS</text></svg></div>
-          <figcaption><strong>Your own designs</strong><span>Made something in Canva? It works on your camera too.</span>
-            <button class="link-btn" type="button" data-make="upload">Upload a design &rarr;</button></figcaption>
+          <div class="tile-screen"><svg viewBox="0 0 1920 1280" role="img" aria-label="Her Pinterest board, converted for the camera"><defs><clipPath id="pin1"><rect x="120" y="430" width="450" height="600" rx="24"/></clipPath><clipPath id="pin2"><rect x="600" y="430" width="450" height="600" rx="24"/></clipPath><clipPath id="pin3"><rect x="1080" y="430" width="450" height="600" rx="24"/></clipPath></defs><rect width="1920" height="1280" fill="#ffffff"/><rect x="1790" width="130" height="1280" fill="#a40000"/><text x="120" y="150" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="40" font-weight="600" letter-spacing="6" fill="#a40000">HER BOARD</text><text x="120" y="300" font-family="'Instrument Serif',Georgia,serif" font-size="132" fill="#1d1d1f">What she asked for</text><rect x="120" y="360" width="1540" height="3" fill="#d8d8dc"/><image href="/assets/showcase/pin-01.jpg" x="120" y="430" width="450" height="600" preserveAspectRatio="xMidYMid slice" clip-path="url(#pin1)"/><image href="/assets/showcase/pin-02.jpg" x="600" y="430" width="450" height="600" preserveAspectRatio="xMidYMid slice" clip-path="url(#pin2)"/><image href="/assets/showcase/pin-03.jpg" x="1080" y="430" width="450" height="600" preserveAspectRatio="xMidYMid slice" clip-path="url(#pin3)"/><rect x="1080" y="430" width="450" height="600" rx="24" fill="rgba(0,0,0,.5)"/><text x="1305" y="760" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="110" font-weight="600" fill="#ffffff" text-anchor="middle">+9</text><rect x="150" y="930" width="390" height="70" rx="35" fill="rgba(0,0,0,.62)"/><text x="176" y="977" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" font-weight="600" fill="#ffffff">Emma&#8217;s board &#183; 1/12</text><text x="120" y="1210" font-family="'Inter',-apple-system,'Segoe UI',Roboto,sans-serif" font-size="34" letter-spacing="3" fill="#6e6e73">SHOOT CARDS</text></svg></div>
+          <figcaption><strong>Her board</strong><span>The bride&#8217;s Pinterest pins and moodboard, in your playback. Your Canva designs too.</span>
+            <button class="link-btn" type="button" data-make="upload">Add her pins &rarr;</button></figcaption>
         </figure>
       </div>
     </section>
@@ -367,11 +372,12 @@
       <div class="faq-list">
         <details class="faq-item"><summary>Why won't a normal image show on my camera?</summary><p>Cameras only display files saved in their own format: the right size, the right metadata and the right folder. We convert every card to match, so it appears in playback like a photo you shot.</p></details>
         <details class="faq-item"><summary>Will it work on my camera?</summary><p>It should work on virtually any recent Sony, Canon or Nikon body. We've tested it on the Sony A7 III/IV/V, Canon R6/R6 II/R6 III and Nikon Z6/Z8/Z9, and it works across most current Alpha, EOS R and Nikon Z cameras. Fujifilm and Panasonic support is coming soon. If something isn't working on your camera, <a href="mailto:notalucis.dev@gmail.com?subject=Shoot%20Cards%20support">let us know</a> and we'll help.</p></details>
-        <details class="faq-item"><summary>Do I need Canva or design skills?</summary><p>No. Pick a card type, fill in a few lines or choose one of our poses, and we make a camera-ready card for you. If you already design your own cards in Canva or Photoshop, upload those under "Your own design".</p></details>
+        <details class="faq-item"><summary>Do I need Canva or design skills?</summary><p>No. Pick a card type, fill in a few lines or choose one of our poses, and we make a camera-ready card for you. If you already design your own cards in Canva or Photoshop, upload those under "Any image".</p></details>
+        <details class="faq-item"><summary>Can I put the bride&#8217;s Pinterest pictures on my camera?</summary><p>Yes. When she sends her board or a few screenshots of what she wants, add them under "Any image": copy a picture and paste it in, or drop the saved files, up to 30 at once. Give them a label like "Emma&#8217;s board" and every card says so, 1/12, 2/12&hellip; so you can tick off her wishes between shots. They&#8217;re a private reference for the day; nothing is shared. <a href="/demo?ref=faq#board">See it in the demo</a>.</p></details>
         <details class="faq-item"><summary>Is the first card really free?</summary><p>Yes, and it needs no account. Free cards carry a light "preview" watermark, so you can try them on your camera first. Sign in with your email for 3 more free cards and saved projects. Pro removes the watermark and every limit.</p></details>
         <details class="faq-item"><summary>Where do the cards show up on the day?</summary><p>In playback, next to your photos. They're dated 1 January 2024, so in date view they sit in their own group, away from today's shoot.</p></details>
         <details class="faq-item"><summary>Is it safe for my camera and SD card?</summary><p>Yes. You only copy ordinary JPEG files to the card, the same kind your camera already makes. Nothing is installed and your existing photos are untouched.</p></details>
-        <details class="faq-item"><summary>What's the difference between Pro and the pose pack?</summary><p>Pro is for the cards you make: unlimited timelines, family groups, shot lists, poses with your own photos and your own designs, with no watermark. The pose pack is 50 ready-made wedding poses we shot ourselves, bought once in our studio's shop.</p></details>
+        <details class="faq-item"><summary>What's the difference between Pro and the pose pack?</summary><p>Pro is for the cards you make: unlimited timelines, family groups, shot lists, poses with your own photos, her Pinterest pins and your own designs, with no watermark. The pose pack is 50 ready-made wedding poses we shot ourselves, bought once in our studio's shop.</p></details>
         <details class="faq-item"><summary>Anything special per camera?</summary><p>No. Copy the cards into the folder your camera made and press play. Most Sony bodies show them straight away; if one doesn't, the included instructions have a one-minute fix (Recover Image Database). <a href="/demo?ref=faq#copy">See it in the demo</a>.</p></details>
         <details class="faq-item"><summary>Can I cancel or get a refund?</summary><p>Cancel Pro anytime under Billing once you're signed in. And if the cards don't show up on your camera within 14 days of buying, <a href="mailto:notalucis.dev@gmail.com?subject=Shoot%20Cards%20refund">tell us</a> and we refund you in full.</p></details>
         <details class="faq-item"><summary>Who made this?</summary><p>We're Kim &amp; Ivan, wedding photographers at <a href="https://inprincipioweddings.com" target="_blank" rel="noopener">In Principio</a> and the people behind <a href="https://notalucis.com/#/landing" target="_blank" rel="noopener">NotaLucis</a>, the CRM for photographers. Shoot Cards is what we actually run on our own cameras every weekend. We built it for our shoots first, then opened it up to other photographers.</p></details>
@@ -385,7 +391,7 @@
         <h2>Never go blank on a shoot again.</h2>
         <p>Make your first card free. It takes about a minute.</p>
         <button class="btn final-btn" type="button" data-make="pose">Make my free card &rarr;</button>
-        <p class="final-demo"><a href="/demo?ref=final">Not sure yet? Take the 60-second demo &rarr;</a></p>
+        <p class="final-demo"><a href="/demo?ref=final">Not sure yet? Take the one-minute demo &rarr;</a></p>
       </div>
     </section>
   </main>

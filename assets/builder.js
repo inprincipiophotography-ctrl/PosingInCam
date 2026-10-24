@@ -444,6 +444,33 @@ window.CardRenderer = (function () {
     DRAW[type](ctx, data || {}, p, total);
   }
 
+  /* ---------- the board label on your own images ---------- */
+  /** A small dark pill in the bottom-left corner of an image ("Emma's board ·
+      3/12"), sized in card pixels so it reads the same on the camera whatever
+      the image's own size. rect is where the image sits on ctx, and k is how
+      many ctx pixels make one card pixel. */
+  function tag(ctx, text, rect, k) {
+    text = clean(text);
+    if (!text) return;
+    const pad = 38 * k, h = 108 * k, inset = 40 * k;
+    const maxW = Math.max(0, rect.w - inset * 2 - pad * 2);
+    ctx.save();
+    ctx.font = font(600, 60 * k, SANS);
+    let t = text;
+    while (t.length > 1 && ctx.measureText(t).width > maxW) t = t.slice(0, -2) + "…";
+    const w = ctx.measureText(t).width + pad * 2;
+    const x = rect.x + inset, y = rect.y + rect.h - inset - h;
+    ctx.fillStyle = "rgba(0,0,0,.62)";
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, w, h, h / 2); else ctx.rect(x, y, w, h);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(t, x + pad, y + h / 2 + 2 * k);
+    ctx.restore();
+  }
+
   /* ---------- fonts ---------- */
   const FACES = [font(400, 60, "Inter"), font(600, 40, "Inter"), font(700, 46, "Inter"),
                  font(400, 132, "'Instrument Serif'"),
@@ -496,5 +523,5 @@ window.CardRenderer = (function () {
     return files;
   }
 
-  return { PER_PAGE, MAX_ROWS, ROW_KEYS, pages, rowsOf, draw, ensureFonts, exportCards, isPortrait: (t) => t === "pose" };
+  return { PER_PAGE, MAX_ROWS, ROW_KEYS, pages, rowsOf, draw, tag, ensureFonts, exportCards, isPortrait: (t) => t === "pose" };
 })();
