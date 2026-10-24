@@ -1,5 +1,5 @@
 /* Shoot Cards — light theme in the NotaLucis design language:
-   Inter + Instrument Serif, red accent, soft dot grid, gentle shadows. */
+   Inter + Instrument Serif, red accent, drifting line grid, gentle shadows. */
 :root{
   --bg:#fbfbfd;
   --surface:#ffffff;        /* cards */
@@ -35,9 +35,6 @@ html{color-scheme:light;scroll-behavior:smooth}
 body{
   margin:0;
   background-color:var(--bg);
-  /* dot grid on a 40px grid (matches NotaLucis light bg-grid) */
-  background-image:radial-gradient(circle,rgba(0,0,0,.04) 1px,transparent 1px);
-  background-size:40px 40px;
   color:var(--ink);
   font-family:var(--sans);
   font-weight:400;
@@ -49,6 +46,28 @@ body{
 a{color:var(--accent-2);text-decoration:none}
 img{max-width:100%}
 button{font-family:var(--sans)}
+
+/* ---------- background grid (built by assets/grid-bg.js) ---------- */
+/* A 40px line grid at 6%, drifting diagonally; a 40% copy of it shows only in
+   a 200px circle around the cursor; a soft accent glow sits off the top right. */
+.bg-grid{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.bg-grid-lines{
+  position:absolute;inset:-40px 0 0 -40px;opacity:.06;
+  background-image:linear-gradient(to right,var(--muted) 1px,transparent 1px),linear-gradient(to bottom,var(--muted) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.bg-grid-spot{
+  position:absolute;inset:0;opacity:0;transition:opacity .4s ease;
+  -webkit-mask-image:radial-gradient(200px circle at var(--mx,-9999px) var(--my,-9999px),#000,transparent);
+  mask-image:radial-gradient(200px circle at var(--mx,-9999px) var(--my,-9999px),#000,transparent);
+}
+.bg-grid.live .bg-grid-spot{opacity:1}
+.bg-grid-spot .bg-grid-lines{opacity:.4}
+.bg-grid-glow{position:absolute;right:-20%;top:-20%;width:40%;height:40%;border-radius:50%;background:var(--accent);opacity:.1;filter:blur(120px)}
+@media (prefers-reduced-motion:no-preference){
+  .bg-grid-lines{animation:gridDrift 22s linear infinite}
+}
+@keyframes gridDrift{to{transform:translate(40px,40px)}}
 
 /* shared section rhythm */
 .hero,.packs,.more,.why,.pricing,.faq,.history,#studio{scroll-margin-top:76px}
@@ -498,12 +517,40 @@ button{font-family:var(--sans)}
 .nudge-cta{font-size:14px;padding:9px 18px;white-space:nowrap}
 
 /* ---------- hover interactions ---------- */
-.price-card{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
-.price-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
-.price-card.featured:hover{box-shadow:0 0 0 1px var(--accent) inset,var(--shadow-lg)}
-.btn:hover{transform:translateY(-1px)}
+/* Cards lift, their border warms to the accent and the shadow deepens; their
+   title takes the accent and any arrow (.arr) nudges forward. */
+.price-card{transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease}
+.price-card:hover{transform:translateY(-4px);border-color:rgba(164,0,0,.25);box-shadow:0 8px 20px rgba(0,0,0,.08),var(--shadow-lg)}
+.price-card.featured:hover{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,0 8px 20px rgba(0,0,0,.08),var(--shadow-lg)}
+.price-name{transition:color .3s ease}
+.price-card:hover .price-name{color:var(--accent-2)}
+
+.tile-screen{transition:transform .3s ease,box-shadow .3s ease}
+.tile:hover .tile-screen{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,.1),var(--shadow-lg)}
+.tile figcaption strong,.parts strong,.faq-item summary{transition:color .3s ease}
+.tile:hover figcaption strong,.parts li:hover strong,.faq-item summary:hover{color:var(--accent-2)}
+
+/* the three pose cards fan out a little */
+.pack-stack img{transition:transform .5s cubic-bezier(.2,.6,.2,1),box-shadow .5s ease}
+.pack-stack:hover img:nth-child(1){transform:translate(-14px,6px) rotate(-9deg)}
+.pack-stack:hover img:nth-child(2){transform:translate(14px,6px) rotate(9deg)}
+.pack-stack:hover img:nth-child(3){transform:translateY(-8px)}
+
+.arr{display:inline-block;transition:transform .25s ease}
+:hover>.arr,.tile:hover .arr{transform:translateX(3px)}
+:hover>.arr.ne{transform:translate(2px,-2px)}
+.hero-why a::after{display:inline-block;transition:transform .25s ease}
+.hero-why a:hover::after{transform:translateX(3px)}
+
+/* buttons rise with a stronger accent shadow; a press snaps back down */
+.btn,.go{transition:transform .3s ease,box-shadow .3s ease,background .15s,border-color .15s,color .15s}
+.btn:not(:disabled):hover,.go:not(:disabled):hover{transform:translateY(-2px)}
+.btn:not(:disabled):active,.go:not(:disabled):active{transform:translateY(1px);transition-duration:.05s}
+.btn-primary:not(:disabled):hover,.go:not(:disabled):not(.ghost):hover{box-shadow:0 10px 26px rgba(164,0,0,.3)}
 @media(prefers-reduced-motion:reduce){
-  .price-card:hover,.btn:hover,.pz:hover{transform:none}
+  .price-card:hover,.btn:hover,.go:hover,.pz:hover,.tile:hover .tile-screen,.pack-stack:hover img,:hover>.arr,.tile:hover .arr,.hero-why a:hover::after{transform:none!important}
+  .pack-stack img:nth-child(1){transform:rotate(-6deg)!important}
+  .pack-stack img:nth-child(2){transform:rotate(6deg)!important}
   .cameras.attention{animation:none}
 }
 
