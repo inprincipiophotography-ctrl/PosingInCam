@@ -39,8 +39,8 @@ Built on the Ultimate Editors method; the full breakdown and per-pass report is 
 - `scripts/sfx.py` synthesises the library (no samples, no licence): whooshes, textures, risers and hits, three variations each, into `public/sfx/`. `src/sfx-manifest.json` records each file's length and its alignment point (whoosh peak, transient, riser top).
 - `src/v5/sound.ts` is the cue sheet: one list per family, each cue = the moment it serves, the file, the level in dB, and why. `src/v5/moves.ts` holds every movement's timing, so the picture and the whoosh peaks read the same numbers.
 - In Remotion Studio each family is its own track (`WHOOSHES`, `TEXTURES`, `RISERS`, `HITS`, `MUSIC (bed)`), each sound its own clip named with its id, variation and level.
-- Levels: `masterDb` moves everything, `bedDb` the music bed (−19 dB, `python3 scripts/music.py src/v5/timeline.json public/music/ad-a-v5.wav`, pad and arpeggio only).
-- After rendering, `scripts/master.sh out/AdA5-9x16.mp4` brings the ad to −14 LUFS through a true-peak limiter (video copied, not re-encoded).
+- Levels: `masterDb` moves everything, `bedDb` the music bed (−13 dB, `python3 scripts/music.py src/v5/timeline.json public/music/ad-a-v5.wav`, pad and arpeggio only).
+- After rendering, `scripts/master.sh out/AdA5-9x16.mp4` measures the render and brings it to −14 LUFS through a true-peak limiter (video copied, not re-encoded).
 
 ## Run it
 

@@ -30,67 +30,42 @@ Departure from the method: it asks for approval after every pass. All four passe
 | 15.00 | EVENT | the offer |
 | 15.50 | EVENT | "Tap Learn more" |
 
-## Pass 1 · WHOOSHES (movement), −12 dB, −10/−11 for big moves
+## Revision 2 · pared back (feedback: "too many sounds, it must be elegant and not distracting")
 
-Each peak sits on the fastest frame of its move. `fastest()` finds that frame from the same easing curve the picture uses (`moves.ts`).
-- With the overshoot ease, the fastest frame is the very start of the move.
-- With the camera ease, it is the middle.
-- With the exit ease, it is the end.
-- Transition whooshes peak 2 frames before the cut they carry.
+The first round followed the method to the letter: 37 cues, a sound on every movement and event, four risers. It was too busy. This round keeps **9 cues**, only on the moments the story turns on. All of them are 5–10 dB softer, and the music bed carries everything in between (−13 dB instead of −19).
 
-| id | at | sound | dB | why |
+Taken out:
+- the callout whooshes and clicks, the callout exit, the tagline whoosh,
+- the fan gear ticks, the chip pops,
+- the sci-fi sounds (scifi_click, scifi_impact) and the reward sound,
+- three of the four risers and two of the three hits,
+- the transition whooshes on the cuts at 3 s and 11 s. A quiet shutter carries those instead.
+
+This departs from the method's rule of at least 2 sharp_bass and 2 metallic risers: one riser was enough here.
+
+| id | at | sound | dB | moment |
 |---|---|---|---|---|
-| W01 | 0.301 | deep_voice_1 | −12 | notification drop; the shortest deep whoosh, as it is the first sound |
-| W02 | 2.933 | synthetic_transition_1 | −11 | hook → couple |
-| W03 | 5.266 | deep_voice_3 | −10 | card rise, the biggest move: the longest, heaviest variation |
-| W04–06 | 6.101 / 6.901 / 7.701 | hollow_1 / 2 / 3 | −12 | the three callouts, a different variation each so they don't repeat |
-| W07 | 9.199 | short_2 | −12 | callouts leave, a fast exit |
-| W08 | 9.466 | deep_voice_2 | −11 | card to centre and the fan |
-| W09 | 10.933 | synthetic_transition_2 | −11 | card → playback |
-| W10 | 13.933 | synthetic_transition_3 | −11 | playback → end, the longest transition |
-| W11 | 14.451 | short_1 | −12 | tagline |
+| W01 | 0.301 | deep_voice_1 | −18 | notification drops in, barely there |
+| T01 | 3.00 | digital_camera_click_1 | −16 | cut to the couple: the shutter that took the shot |
+| R01 | ends 5.00 | sharp_bass_2 | −16 | the only build, into the body of the ad |
+| H01 | 5.00 | impact_1 | −19 | under R01, felt more than heard |
+| W02 | 5.266 | deep_voice_3 | −15 | the card rises out of the dark |
+| W03 | 9.466 | deep_voice_2 | −17 | the fan opens |
+| T02 | 11.00 | digital_camera_click_2 | −18 | cut to the camera, the same shutter, quieter |
+| W04 | 13.933 | organic_wind_2 | −17 | into the end card, the airiest whoosh |
+| T03 | 14.10 | activate_energy_1 | −15 | the mark appears, one chime |
 
-Not whooshed: the chips' small scale-in (a pop carries it), the end drift (too slow to read as movement), and the per-frame float of the card.
+Whoosh peaks still sit on the fastest frame of their move (`fastest()` on the easing curves in `moves.ts`).
 
-## Pass 2 · TEXTURES (events), −6 to −9 dB
+## Mix
 
-| id | at | sound | dB | why |
-|---|---|---|---|---|
-| T01 | 0.60 | ui_click_1 | −7 | notification lands |
-| T02 | 3.00 | digital_camera_click_1 | −6 | cut to the couple: the shutter that took the shot |
-| T03 | 5.00 | activate_energy_1 | −8 | the card scene powers on |
-| T04 | 5.80 | scifi_click_2 | −7 | card settles |
-| T05–07 | 6.40 / 7.20 / 8.00 | ui_click_1 / 2 / 3 | −8 | callouts land |
-| T08–11 | 9.55–9.85 | gears_1 / 2 / 3 / 1 | −9 | fan cards land, a ratchet tick each, 3 frames apart |
-| T12 | 11.00 | digital_camera_click_2 | −6 | cut to the camera |
-| T13–15 | 12.30 / 12.40 / 12.50 | pop_1 / 2 / 3 | −8 | Sony, Canon, Nikon |
-| T16 | 14.10 | scifi_impact_1 | −7 | the mark appears |
-| T17 | 15.00 | success_reward_1 | −7 | the offer: first card free |
-| T18 | 15.50 | ui_click_3 | −9 | "Tap Learn more" |
-
-## Pass 3 · RISERS (−5 dB) + HITS
-
-Every riser ends exactly on its transition frame, with a hit underneath. The first big riser ends at 5.0 s, where the ad moves from the hook into its body. The set uses two sharp_bass and two metallic risers.
-
-| id | ends at | sound | dB | hit under it |
-|---|---|---|---|---|
-| R01 | 3.00 | metallic_1 (1.5 s) | −6 | (camera click T02) |
-| R02 | 5.00 | sharp_bass_2 (2.0 s) | −5 | H01 impact_1, −8 |
-| R03 | 11.00 | metallic_2 (2.0 s) | −5 | H02 impact_2, −10 |
-| R04 | 14.00 | sharp_bass_3 (2.6 s) | −5 | H03 impact_3, −8 |
-
-## Pass 4 · MUSIC bed, −19 dB
-
-`music.py` in bed mode plays an Fmaj9 pad and an arpeggio on the ad's clock: no drums, no bass, no riser, no sidechain. It sits under the sound design so the SFX carry the rhythm.
-
-## Mix and loudest stack
-
-- **Raw render:** −19.2 LUFS integrated, peak −1.6 dBFS. Nothing clips.
-- **Loudest stack:** **11.0 s**, about −3.3 dBFS. That is R03 metallic_2 at its top, plus H02 impact, the T12 camera click and the W09 whoosh tail. It is louder than the 5.0 s stack (≈ −4.9 dBFS), because the metallic riser is brighter. To calm it, take H02 down further or move T12 to −8.
-- **Master:** `scripts/master.sh` applies +5.5 dB into a true-peak limiter (ceiling −2 dBFS). The result is **−14.3 LUFS, −1.4 dBTP**, video stream copied untouched. The limiter only shaves the click and hit transients.
+- **Raw render:** about −26 LUFS, peaks well under 0 dBFS.
+- **Master:** `scripts/master.sh` measures the render, gains it to −14 LUFS, then runs a true-peak limiter. Result: **−14.1 LUFS, −1.9 dBTP**.
+- **Loudest moment:** 5.0 s, the riser top and hit. It is about 6 dB above the music for a quarter of a second; this is the one accent.
+- **Everywhere else** the sound sits within 0–3 dB of the music.
 
 ## To change something
 
-- **A level or a variation:** edit its cue in `src/v5/sound.ts`, re-render, then run `scripts/master.sh out/AdA5-9x16.mp4`.
+- **A level or a variation:** edit its cue in `src/v5/sound.ts`, re-render, then run `scripts/master.sh out/AdA5-9x16.mp4`. The first-round cue list is in git history (commit 053c15c), if any of it should come back.
 - **A timing:** edit `src/v5/timeline.json`. The picture, the whoosh peaks and the bed all follow.
 - **Re-synthesising:** `python3 scripts/sfx.py` is deterministic (seed 2026), so the same files come back.
