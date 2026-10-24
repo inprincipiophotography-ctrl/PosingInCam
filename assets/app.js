@@ -122,6 +122,71 @@ function addRecovery() {
   mail.textContent = "Tell us";
   st.append(" ", again, " · ", mail);
 }
+/* ---------- toast: undo, and news that isn't about the studio ---------- */
+// One pattern for "that happened, here's the way back": a removed line, a pasted
+// list, a checkout that didn't open. Fixed at the bottom so it shows wherever
+// you are on the page.
+let toastTimer = 0;
+function toast(text, opts = {}) {
+  const el = $("toast");
+  clearTimeout(toastTimer);
+  el.className = "toast" + (opts.kind ? " " + opts.kind : "");
+  el.textContent = "";
+  const msg = document.createElement("span");
+  msg.textContent = text;
+  el.appendChild(msg);
+  if (opts.action) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "toast-act";
+    b.textContent = opts.actionLabel || "Undo";
+    b.addEventListener("click", () => { hideToast(); opts.action(); });
+    el.appendChild(b);
+  }
+  if (opts.support) {
+    const a = document.createElement("a");
+    a.className = "toast-act";
+    a.href = "mailto:" + SUPPORT_MAIL + "?subject=" + encodeURIComponent("Shoot Cards: " + opts.support);
+    a.textContent = "Contact us";
+    el.appendChild(a);
+  }
+  const x = document.createElement("button");
+  x.type = "button";
+  x.className = "toast-x";
+  x.setAttribute("aria-label", "Dismiss");
+  x.textContent = "×";
+  x.addEventListener("click", hideToast);
+  el.appendChild(x);
+  el.hidden = false;
+  toastTimer = setTimeout(hideToast, opts.ms || (opts.action ? 8000 : 6000));
+}
+function hideToast() {
+  clearTimeout(toastTimer);
+  $("toast").hidden = true;
+}
+
+/* ---------- one way to say how many cards are left ---------- */
+// The account badge, the nudge above the studio and every refusal read the
+// same: used / total, that free cards don't renew, and how to get more.
+// Free and paid cards don't add up within one make (webauth/auth.py decide()).
+function allowance(a) {
+  const limit = a && a.free_limit != null ? a.free_limit : (state.freeLimit || 3);
+  const left = Math.max(0, a && a.free_left != null ? a.free_left : limit);
+  const paid = (a && a.credits) || 0;
+  return { limit, left, used: Math.max(0, limit - left), paid, canMake: Math.max(left, paid) };
+}
+const cardsWord = (n) => n + (n === 1 ? " card" : " cards");
+function limitRefusal(a, need) {
+  const x = allowance(a);
+  if (!x.canMake) {
+    return x.used + " of " + x.limit + " free cards used, and free cards don't renew. " +
+      "Go Pro for unlimited cards, or get a 20-card pack once.";
+  }
+  return "This makes " + cardsWord(need) + " and you can make " + x.canMake + " now (" +
+    (x.paid ? cardsWord(x.paid).replace("card", "paid card") : x.used + " of " + x.limit + " free cards used") +
+    "). Trim it to " + cardsWord(x.canMake) + ", or go Pro for unlimited.";
+}
+
 // An error from the last card type shouldn't hang around under the next one.
 function clearError() {
   if ($("status").classList.contains("err")) setStatus("", "");
@@ -422,13 +487,21 @@ $("rows").addEventListener("input", (e) => {
 $("rows").addEventListener("click", (e) => {
   const x = e.target.closest(".row-x");
   if (!x) return;
-  const rows = studio.lists[studio.type].rows;
+  const type = studio.type, rows = studio.lists[type].rows;
   const i = Number(x.dataset.i);
-  rows.splice(i, 1);
+  const [gone] = rows.splice(i, 1);
   renderListEditor();
   const next = $("rows").querySelector('.row-x[data-i="' + Math.min(i, rows.length - 1) + '"]');
   (next || $("row-add")).focus();
   touched();
+  const said = LIST_UI[type].fields.map((f) => gone[f.key]).filter(Boolean).join(" ");
+  toast("Removed line " + (i + 1) + (said ? ": " + said.slice(0, 40) : "") + ".", {
+    action: () => {
+      studio.lists[type].rows.splice(i, 0, gone);
+      if (studio.type !== type) selectType(type); else renderListEditor();
+      touched();
+    },
+  });
 });
 
 // Enter moves down the list (and adds a line at the end), like a checklist app.
@@ -468,11 +541,21 @@ $("paste-apply").addEventListener("click", () => {
   const rows = parseList(studio.type, $("paste-text").value);
   if (!rows.length) { $("paste-text").focus(); return; }
   const cut = rows.length > R.MAX_ROWS;
-  studio.lists[studio.type].rows = rows.slice(0, R.MAX_ROWS);
+  const type = studio.type, before = clone(studio.lists[type].rows);
+  studio.lists[type].rows = rows.slice(0, R.MAX_ROWS);
   closePaste();
   studio.pasteCut = cut;
   renderListEditor();
   touched();
+  const kept = studio.lists[type].rows.length;
+  toast("Pasted " + kept + (kept === 1 ? " line" : " lines") + ", replacing the " + before.length + " you had.", {
+    action: () => {
+      studio.lists[type].rows = before;
+      studio.pasteCut = false;
+      if (studio.type !== type) selectType(type); else renderListEditor();
+      touched();
+    },
+  });
 });
 
 /** Turn pasted text (from an email, WhatsApp, a doc) into rows: one per line,
@@ -976,6 +1059,8 @@ function chunkFiles(files, vendor) {
 async function convert() {
   const go = $("go");
   go.disabled = true;
+  go.setAttribute("aria-busy", "true");
+  go.textContent = "Making your card…";
   setStatus("", "Making your cards…");
   const made = [];   // [first, last] file name of every request the server converted
 
@@ -1017,8 +1102,7 @@ async function convert() {
       const n = files.length;
       if (!(a.plan === "pro" || (a.credits || 0) >= n || (a.free_left || 0) >= n)) {
         track("Hit free limit", { type: studio.type });
-        setStatus("err", `✗ Not enough left (${a.free_left || 0} free preview(s), ${a.credits || 0} credit(s)) for ${n} cards. ` +
-          "Buy a 20-pack or go Pro for unlimited.");
+        setStatus("err", "✗ " + limitRefusal(a, n));
         showUpsell();
         return;
       }
@@ -1049,14 +1133,18 @@ async function convert() {
       if (resp.status === 402) {
         let j = {}; try { j = await resp.json(); } catch (_) {}
         track("Hit free limit", { type: studio.type });
-        setStatus("err", "✗ " + (j.error || "Upgrade required.") + partial());
+        const known = j.free_left != null || j.credits != null;
+        const msg = known
+          ? limitRefusal({ free_left: j.free_left, credits: j.credits, free_limit: state.account && state.account.free_limit }, files.length)
+          : (j.error || "You've used your free cards. Go Pro for unlimited cards.");
+        setStatus("err", "✗ " + msg + partial());
         showUpsell();
         renderAccount();
         return;
       }
       if (resp.status === 401) {
         let j = {}; try { j = await resp.json(); } catch (_) {}
-        setStatus("err", "✗ " + (j.error || "Sign in to continue.") + partial());
+        setStatus("err", "✗ " + (j.error || "Your sign-in has expired. Sign in again; your card is still here.") + partial());
         if (j.need_signin) openLogin();
         return;
       }
@@ -1074,7 +1162,7 @@ async function convert() {
         const m = last.match(/(\d{4})\.JPG$/i);
         if (m) try { localStorage.setItem("pic_start_" + state.vendor, m[1]); } catch (_) {}
       }
-      if (chunks.length === 1) await saveZip(resp);
+      if (chunks.length === 1) await saveZip(resp, true);
       else zips.push(await zipBytes(resp));
     }
     if (zips.length) downloadBlob(mergeZips(zips));
@@ -1088,7 +1176,16 @@ async function convert() {
     track("Card made", { type: studio.type, camera: state.vendor, tier: resp.headers.get("X-Tier") || "unknown",
                          src: state.fromDemo ? "demo" : "studio" });
     setStatus("ok", "✓ Done! Your shoot-cards.zip is downloading." + range +
-      (wm ? "  (free, watermarked)" : ""));
+      (wm ? "  (free, watermarked)" : "") + " ");
+    // If the browser held the download back, the same file is one click away.
+    if (state.lastZip) {
+      const again = document.createElement("button");
+      again.type = "button";
+      again.className = "link-btn status-act";
+      again.textContent = "Download again";
+      again.addEventListener("click", () => clickDownload(state.lastZip));
+      $("status").append(again);
+    }
     if (anon) showSignupNudge();
     // Keep working in the project we just converted into (it may be brand new).
     if (pid) state.activeProject = pid;
@@ -1100,6 +1197,8 @@ async function convert() {
     if (err.retry) addRecovery();
   } finally {
     go.disabled = false;
+    go.removeAttribute("aria-busy");
+    refresh();
   }
 }
 
@@ -1142,7 +1241,7 @@ function showUpsell() {
   el.hidden = false;
   if (window.__stripe) {
     el.innerHTML =
-      '<p class="muted upsell-text">You\'ve used your free cards. Go Pro for unlimited cards with no watermark, or buy a card pack:</p>' +
+      '<p class="muted upsell-text">Go Pro for unlimited cards with no watermark, or get a 20-card pack once:</p>' +
       '<div class="buy-row">' +
         '<button class="go" type="button" data-kind="monthly">Go Pro (monthly)</button>' +
         '<button class="go ghost" type="button" data-kind="yearly">Pro (yearly)</button>' +
@@ -1167,7 +1266,8 @@ async function startCheckout(kind, btn) {
     openLogin("checkout");
     return;
   }
-  if (btn) btn.disabled = true;
+  const label = btn ? btn.textContent : "";
+  if (btn) { btn.disabled = true; btn.textContent = "Opening checkout…"; }
   track("Checkout started", { plan: kind });
   try {
     const r = await fetch("/api/checkout", {
@@ -1175,12 +1275,13 @@ async function startCheckout(kind, btn) {
       headers: { Authorization: "Bearer " + tok, "Content-Type": "application/json" },
       body: JSON.stringify({ kind }),
     });
-    const j = await r.json();
-    if (!r.ok || !j.url) throw new Error(j.error || "Could not start checkout.");
+    let j = {}; try { j = await r.json(); } catch (_) {}
+    if (!r.ok || !j.url) throw new Error(j.error || "");
     window.location.href = j.url;
-  } catch (e) {
-    setStatus("err", "✗ " + e.message);
-    if (btn) btn.disabled = false;
+  } catch (_) {
+    toast("Checkout didn't open, so nothing was charged. Try again in a moment.",
+          { kind: "err", support: "checkout didn't open", ms: 12000 });
+    if (btn) { btn.disabled = false; btn.textContent = label; }
   }
 }
 
@@ -1196,16 +1297,20 @@ function resumePendingCheckout() {
   startCheckout(p.kind);
 }
 
-async function startPortal() {
+async function startPortal(e) {
   const tok = PoseAuth.token();
-  if (!tok) return;
+  if (!tok) { openLogin(); return; }
+  const btn = e && e.currentTarget, label = btn ? btn.textContent : "";
+  if (btn) { btn.disabled = true; btn.textContent = "Opening billing…"; }
   try {
     const r = await fetch("/api/portal", { method: "POST", headers: { Authorization: "Bearer " + tok } });
-    const j = await r.json();
-    if (!r.ok || !j.url) throw new Error(j.error || "Could not open billing.");
+    let j = {}; try { j = await r.json(); } catch (_) {}
+    if (!r.ok || !j.url) throw new Error(j.error || "");
     window.location.href = j.url;
-  } catch (e) {
-    setStatus("err", "✗ " + e.message);
+  } catch (_) {
+    toast("Billing didn't open. Your plan is unchanged. Try again in a moment.",
+          { kind: "err", support: "billing didn't open", ms: 12000 });
+    if (btn) { btn.disabled = false; btn.textContent = label; }
   }
 }
 
@@ -1230,6 +1335,7 @@ async function renderPricing() {
   try { data = await (await fetch("/api/prices")).json(); } catch (_) {}
   const P = data.prices || {};
   const freeN = data.free_limit ?? 3;
+  state.freeLimit = freeN;
   const packN = data.pack_size ?? 20;
   const hasM = !!P.monthly, hasY = !!P.yearly, hasPack = !!P.pack20;
 
@@ -1371,8 +1477,8 @@ async function renderAccount() {
       badge = ends ? "Pro · ends " + ends : "Pro";
       if (window.__stripe) { $("manage-btn").hidden = false; setMenuAccount(true, true); }
     }
-    else if ((j.credits || 0) > 0) badge = j.credits + " credits";
-    else badge = (j.free_left ?? 0) + " free left";
+    else if ((j.credits || 0) > 0) badge = cardsWord(j.credits).replace("card", "paid card");
+    else { const x = allowance(j); badge = x.used + " of " + x.limit + " free used"; }
     setAcctInfo(who, badge);
   } catch (_) {
     setAcctInfo((PoseAuth.user() && PoseAuth.user().email) || "signed in", "");
@@ -1397,20 +1503,18 @@ function renderUpgradeNudge(j) {
   if (!box) return;
   if (!j || j.plan === "pro") { box.hidden = true; return; }
 
-  const credits = j.credits || 0;
-  const left = j.free_left ?? 0;
-  const limit = j.free_limit ?? 3;
-  const spent = !credits && left <= 0;
+  const x = allowance(j);
+  const spent = !x.paid && x.left <= 0;
 
-  if (credits > 0) {
-    text.innerHTML = "<strong>" + credits + "</strong> credit" + (credits === 1 ? "" : "s") +
-      " left. Go Pro for unlimited cards, no watermark.";
+  if (x.paid > 0) {
+    text.innerHTML = "<strong>" + cardsWord(x.paid).replace("card", "paid card") + "</strong> left, no watermark. " +
+      "Go Pro for unlimited.";
   } else if (spent) {
-    text.innerHTML = "You've used all <strong>" + limit + "</strong> free cards. " +
-      "Go Pro for unlimited cards, no watermark.";
+    text.innerHTML = "<strong>" + x.used + " of " + x.limit + " free cards used.</strong> Free cards don't renew. " +
+      "Go Pro for unlimited cards with no watermark.";
   } else {
-    text.innerHTML = "<strong>" + left + "</strong> of " + limit + " free card" +
-      (limit === 1 ? "" : "s") + " left, watermarked. Go Pro to remove both limits.";
+    text.innerHTML = "<strong>" + x.used + " of " + x.limit + " free cards used</strong>, watermarked. " +
+      "Go Pro for unlimited cards with no watermark.";
   }
   box.classList.toggle("spent", spent);
 
@@ -1500,8 +1604,23 @@ async function loadHistory() {
     renderHistory(j.batches || [], state.projects);
   } catch (_) {
     renderProjectPicker();
-    if (section) section.hidden = true;
-    if ($("nav-projects")) $("nav-projects").hidden = true;
+    if (!section) return;
+    // Signed in but the list didn't come: say so, the cards themselves are safe.
+    section.hidden = false;
+    $("proj-tools").hidden = true;
+    $("proj-more").hidden = true;
+    const list = $("history-list");
+    list.innerHTML = "";
+    const p = document.createElement("p");
+    p.className = "proj-none";
+    p.textContent = "Couldn't load your projects just now. Your cards are saved on your account. ";
+    const again = document.createElement("button");
+    again.type = "button";
+    again.className = "link-btn";
+    again.textContent = "Try again";
+    again.addEventListener("click", () => { p.textContent = "Loading your projects…"; loadHistory(); });
+    p.appendChild(again);
+    list.appendChild(p);
   }
 }
 
@@ -1726,11 +1845,22 @@ async function zipBytes(resp) {
   return await resp.arrayBuffer();
 }
 
-function downloadBlob(blob) {
+function clickDownload(z) {
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "shoot-cards.zip";
+  a.href = z.href;
+  if (z.download) a.download = z.download;
   document.body.appendChild(a); a.click(); a.remove();
+}
+// The last studio ZIP, kept for "Download again" (a signed link lasts an hour).
+function rememberZip(z) {
+  if (state.lastZip && state.lastZip.blob) { try { URL.revokeObjectURL(state.lastZip.href); } catch (_) {} }
+  state.lastZip = z;
+}
+
+function downloadBlob(blob) {
+  const z = { href: URL.createObjectURL(blob), download: "shoot-cards.zip", blob: true };
+  rememberZip(z);
+  clickDownload(z);
 }
 
 // Merge the server's ZIPs (Python zipfile: no ZIP64, sizes in the local
@@ -1780,17 +1910,17 @@ function mergeZips(buffers) {
   return new Blob([...parts, ...central, end], { type: "application/zip" });
 }
 
-async function saveZip(resp) {
-  const a = document.createElement("a");
+async function saveZip(resp, keep) {
+  let z;
   if ((resp.headers.get("Content-Type") || "").includes("application/json")) {
     const j = await resp.json();
     if (!j.zip_url) throw new Error(j.error || "Download failed. Please try again.");
-    a.href = j.zip_url;
+    z = { href: j.zip_url };
   } else {
-    a.href = URL.createObjectURL(await resp.blob());
-    a.download = "shoot-cards.zip";
+    z = { href: URL.createObjectURL(await resp.blob()), download: "shoot-cards.zip", blob: true };
   }
-  document.body.appendChild(a); a.click(); a.remove();
+  if (keep) rememberZip(z);
+  clickDownload(z);
 }
 
 async function downloadZip(url, btn) {
@@ -1840,6 +1970,11 @@ function openLogin(reason) {
       ? "We'll email you a magic link. Open it and you go straight on to checkout. No password."
       : "We'll email you a magic link. No password.";
   }
+  // A fresh dialog each time: no "Send again" or old message from last time.
+  $("login-send").textContent = "Send magic link";
+  $("login-send").disabled = false;
+  $("login-status").className = "status";
+  $("login-status").textContent = "";
   $("login-modal").hidden = false;
   $("login-email").focus();
 }
@@ -1863,17 +1998,24 @@ $("login-modal").addEventListener("keydown", (e) => {   // keep Tab inside the d
 $("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = $("login-email").value.trim();
-  const st = $("login-status");
-  if (!email) { st.className = "status err"; st.textContent = "Enter your email."; return; }
-  st.className = "status"; st.textContent = "Sending…";
+  const st = $("login-status"), send = $("login-send");
+  if (!email) { st.className = "status err"; st.textContent = "Enter your email."; $("login-email").focus(); return; }
+  send.disabled = true;
+  send.textContent = "Sending…";
+  st.className = "status"; st.textContent = "";
   try {
     await PoseAuth.signIn(email);
     track("Sign-in link sent");
     st.className = "status ok";
-    st.textContent = "Check your email for the magic link.";
+    st.textContent = "✓ Link sent to " + email + ". Open it on this device and you're signed in. " +
+      "Not there in a minute? Check spam, or send it again.";
+    send.textContent = "Send again";
   } catch (err) {
     st.className = "status err";
-    st.textContent = err.message || "Could not send link.";
+    st.textContent = "✗ " + (err.message || "The link didn't send.") + " Check the address and try again.";
+    send.textContent = "Send magic link";
+  } finally {
+    send.disabled = false;
   }
 });
 
@@ -2099,6 +2241,9 @@ applyDemoHandoff();
 function handleCheckoutReturn() {
   const c = new URLSearchParams(location.search).get("checkout");
   if (!c) return;
+  if (c === "cancel") {
+    toast("Checkout cancelled. Nothing was charged.");
+  }
   if (c === "success") {
     track("Checkout completed");
     setStatus("ok", "✓ Payment received. Your account is updating. Thank you!");
@@ -2112,7 +2257,7 @@ function handleCheckoutReturn() {
       if (a && (a.plan === "pro" || (a.credits || 0) > 0)) {
         setStatus("ok", a.plan === "pro"
           ? "✓ You're on Pro: every card is clean and unlimited. Thank you!"
-          : "✓ " + a.credits + " credits are on your account. Thank you!");
+          : "✓ " + cardsWord(a.credits).replace("card", "paid card") + " on your account, no watermark. Thank you!");
       } else if (++n < 15) {
         setTimeout(check, 2000);
       } else {
