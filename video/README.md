@@ -23,6 +23,7 @@ This folder is not part of the website: `.vercelignore` keeps it out of the depl
 | `AdA2-9x16` "Blank" v2 | 1080 × 1920 | 30 | 16 s | Instagram ad, with music |
 | `AdPOV-9x16` "POV" (Ad A v3) | 1080 × 1920 | 30 | 16 s | Instagram ad, with music |
 | `AdA4-9x16` Ad A v4 | 1080 × 1920 | 30 | 19 s | Instagram ad, with music |
+| `AdA6-9x16` Ad A v6 | 1080 × 1920 | 30 | 21 s | Instagram ad, with music: v4 + the fan |
 | `AdA5-9x16` Ad A v5 "Dark glass" | 1080 × 1920 | 30 | 18.5 s | Instagram ad, sound design + music bed |
 
 `AdA2` is the rebuild on the Relay motion rules (`.claude/skills/launch-motion/references/relay-motion-skill.md`): real images full-bleed, editorial type, bordo wipes, cut to a 120 BPM track. Its code is in `src/v2/`, its storyboard in `storyboards/ad-a-v2.md`, and picture and music share one clock, `src/v2/timeline.json`.
@@ -32,6 +33,8 @@ This folder is not part of the website: `.vercelignore` keeps it out of the depl
 `AdA4` (Ad A v4) keeps the POV hook and fixes the rest: one 3-second rhythm, one caption style in one place, the pose card rebuilt as vector UI (`src/v4/PoseCard.tsx`, builder.js's exact layout) so its words stay sharp at any zoom, centred framing, and an end card that points at Meta's own button instead of drawing a fake one. Code in `src/v4/`, storyboard in `storyboards/ad-a-v4.md`, clock in `src/v4/timeline.json`. `CardPreview` renders the vector card at 1280 × 1920 to check it against the real card. The final v4 render is kept in `renders/AdA4-9x16.mp4`.
 
 `AdA5` (Ad A v5, "Dark glass") is built on the inspiration in `inspo/`: frosted glass UI over the footage and on a near-black stage, white Inter with one italic serif word, all in NotaLucis red. Code in `src/v5/`, storyboard in `storyboards/ad-a-v5.md`, clock in `src/v5/timeline.json`, mastered render in `renders/AdA5-9x16.mp4`.
+
+`AdA6` (Ad A v6) is Ad A v4 unchanged, with the fan of pose cards from v5 added as its own scene before playback (`src/v6/Fan.tsx`). It uses v4's music on the longer clock. Storyboard in `storyboards/ad-a-v6.md`, render in `renders/AdA6-9x16.mp4`.
 
 ### Sound design (v5)
 
