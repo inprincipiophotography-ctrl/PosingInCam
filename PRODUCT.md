@@ -25,12 +25,14 @@ The camera itself is the reference screen. A normal image won't show in playback
 - Strict CSP in `vercel.json`: scripts only from `'self'`, fonts only from Google Fonts, no third-party script CDNs.
 - Tested bodies: Sony A7 III/IV/V, Canon R6/R6 II/R6 III, Nikon Z6/Z8/Z9. Fujifilm and Panasonic are "coming soon", not supported.
 - Free cards carry a "preview" watermark; Pro removes it and all limits; 14-day money-back guarantee.
+- Open: the Pro card can render a "Coming soon" button (seen on a local run without Stripe prices); whether Pro is purchasable in production is unconfirmed.
 
 ## Brand Commitments
-- Shoot Cards is a NotaLucis tool and shares the NotaLucis look with notalucis.com: Inter + Instrument Serif, one red accent, soft dot grid, light theme. These are binding; do not replace them.
+- Shoot Cards is a NotaLucis tool and shares the NotaLucis look with notalucis.com: Inter + Instrument Serif, one red accent, light theme. These are binding; do not replace them.
+- Background: a faint 40px line grid that drifts slowly, brighter in a circle around the cursor (`assets/grid-bg.js`), with lifting cards and nudging arrows on hover. Asked for by the makers in October 2026 after chaseai.io; it replaced the NotaLucis soft dot grid on this site. Whether notalucis.com follows is undecided.
 - Kim & Ivan, wedding photographers at In Principio and the people behind NotaLucis (the CRM for photographers), are the makers and the main proof of credibility.
 - Voice: short, concrete, a working photographer talking to another one. No marketing filler.
-- Formerly called Specula; accounts and cards carry over.
+- Formerly called Specula; accounts and cards carry over. The site no longer mentions the old name (FAQ entry removed October 2026).
 
 ## Evidence on Hand
 - Real Sony camera video and poster: `assets/showcase/hero-poster.jpg` and the hero video.
