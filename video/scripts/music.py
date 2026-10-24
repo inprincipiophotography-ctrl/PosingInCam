@@ -10,7 +10,8 @@ the usual target for Instagram.
     python3 scripts/music.py src/v3/timeline.json public/music/ad-pov.wav
 
 Timeline keys used: bpm, seconds, drop, end.from, end.press, whooshes, and optionally
-gap [a, b] (silence), riser [a, b], introKick (a pulse before the drop), shutters (else stopMotion.cuts).
+gap [a, b] (silence), riser [a, b], introKick (a pulse before the drop), shutters (else stopMotion.cuts),
+bed (true: only the pad and the arpeggio, no drums, bass or effects, to sit under a separate sound design).
 Needs numpy, scipy and ffmpeg.
 """
 import json
@@ -36,6 +37,7 @@ END = T["end"]["from"]
 GAP = T.get("gap")  # [a, b]: everything stops (the "blank"), then the drop
 RISER = T.get("riser", [max(0.0, DROP - 1.5), DROP])
 SHUTTERS = T.get("shutters", T.get("stopMotion", {}).get("cuts", []))
+BED = bool(T.get("bed"))
 
 
 def in_gap(t):
@@ -131,7 +133,7 @@ def chord_at(t):
 duck = np.ones(N)
 kick_times = [DROP + i * BEAT for i in range(int(round((END - DROP) / BEAT)))]
 intro_kicks = [i * BEAT for i in range(int(round(DROP / BEAT)))] if T.get("introKick") else []
-for kt in kick_times + intro_kicks:
+for kt in [] if BED else kick_times + intro_kicks:  # no pumping under a bed: there is no kick to pump to
     i = s(kt)
     n = s(0.32)
     seg = 1 - 0.65 * np.exp(-tt(n) / 0.09)
@@ -164,16 +166,17 @@ def hat(open_=False):
     return filt(rng.standard_normal(n), "highpass", 7000) * np.exp(-t / (0.07 if open_ else 0.014))
 
 
-for kt in kick_times:
+DRUMS = [] if BED else kick_times
+for kt in DRUMS:
     place(kick(), kt, 1.0, to="kick")
-for kt in intro_kicks:
+for kt in [] if BED else intro_kicks:
     place(filt(kick(), "lowpass", 900), kt, 0.6, to="kick")
-for i, kt in enumerate(kick_times):
+for i, kt in enumerate(DRUMS):
     if i % 2 == 1:
         place(clap(), kt, 1.0, pan=0.05, send=0.25, to="clap")
 
 # Hats: offbeat 8ths through the whole track (quiet and dark in the intro), 16th ghosts after the drop.
-for i in range(int(END / (BEAT / 2))):
+for i in range(0 if BED else int(END / (BEAT / 2))):
     t0 = i * BEAT / 2
     if in_gap(t0):
         continue
@@ -184,7 +187,7 @@ for i in range(int(END / (BEAT / 2))):
         place(hat(), t0 + BEAT / 4, 0.35, pan=-0.2, to="hats")
 
 # ---------- bass: offbeat 8ths after the drop ----------
-for kt in kick_times:
+for kt in DRUMS:
     t0 = kt + BEAT / 2
     root = hz(ROOTS[chord_at(t0)])
     n = s(BEAT / 2 * 0.9)
@@ -269,8 +272,8 @@ if GAP:
         b["dry"] *= gate
         b["send"] *= gate
 
-rs, re_ = RISER
-n = s(re_ - rs)
+rs, re_ = RISER if not BED else (0, 0)
+n = max(1, s(re_ - rs))
 noise = rng.standard_normal(n)
 parts = [filt(noise, "bandpass", [lo, lo * 2.2]) for lo in (300, 900, 2500, 6000)]
 pos = np.linspace(0, len(parts) - 1, n)
@@ -280,7 +283,8 @@ for k, p in enumerate(parts):
     riser += p * w
 riser *= np.linspace(0, 1, n) ** 2
 tone = np.sin(2 * np.pi * np.cumsum(np.linspace(220, 880, n)) / SR) * np.linspace(0, 1, n) ** 3 * 0.25
-place(riser * 0.3 + tone * 0.35, rs, 1.0, send=0.4)
+if not BED:
+    place(riser * 0.3 + tone * 0.35, rs, 1.0, send=0.4)
 
 # faint ring in the silence (the mind going blank)
 if GAP:
@@ -297,8 +301,9 @@ def impact(size=1.0):
     return boom * 0.9 + crash
 
 
-place(impact(1.0), DROP, 0.8, send=0.4)
-place(impact(0.8), END, 0.6, send=0.5)
+if not BED:
+    place(impact(1.0), DROP, 0.8, send=0.4)
+    place(impact(0.8), END, 0.6, send=0.5)
 
 # ---------- SFX ----------
 def whoosh(length=0.55):
@@ -322,16 +327,17 @@ def shutter():
     return x
 
 
-for w in T["whooshes"]:
-    place(whoosh(), w - 0.2, 0.32, pan=0.0, send=0.3)
-for c in SHUTTERS:
-    place(shutter(), c, 0.55, pan=0.1, send=0.15)
-# soft tick on the button press
-n = s(0.05)
-place(np.sin(2 * np.pi * 1800 * tt(n)) * np.exp(-tt(n) / 0.008), T["end"]["press"], 0.18)
+if not BED:
+    for w in T["whooshes"]:
+        place(whoosh(), w - 0.2, 0.32, pan=0.0, send=0.3)
+    for c in SHUTTERS:
+        place(shutter(), c, 0.55, pan=0.1, send=0.15)
+    # soft tick on the button press
+    n = s(0.05)
+    place(np.sin(2 * np.pi * 1800 * tt(n)) * np.exp(-tt(n) / 0.008), T["end"]["press"], 0.18)
 
 # ---------- balance: each instrument to a target loudness in the drop (dB RMS, relative) ----------
-TARGET = {"kick": -15, "bass": -18, "pad": -18, "arp": -21, "clap": -22, "hats": -27}
+TARGET = {"pad": -18, "arp": -21} if BED else {"kick": -15, "bass": -18, "pad": -18, "arp": -21, "clap": -22, "hats": -27}
 a, b_ = s(DROP), s(END)
 ref = None
 for name, target in TARGET.items():
@@ -343,8 +349,9 @@ for name, target in TARGET.items():
     if name == "kick":
         ref = g
 # fx were placed with gains relative to a unit kick
-BUSES["fx"]["dry"] *= ref * 0.8
-BUSES["fx"]["send"] *= ref * 0.8
+if "fx" in BUSES:
+    BUSES["fx"]["dry"] *= (ref or 1.0) * 0.8
+    BUSES["fx"]["send"] *= (ref or 1.0) * 0.8
 
 dry = sum(b["dry"] for b in BUSES.values())
 send = sum(b["send"] for b in BUSES.values())

@@ -1,0 +1,13 @@
+{
+  "_": "Ad A v5 'Dark glass'. One clock for picture, sound design (sound.ts) and the music bed: python3 scripts/music.py src/v5/timeline.json public/music/ad-a-v5.wav. 120 BPM.",
+  "bpm": 120,
+  "fps": 30,
+  "seconds": 18.5,
+  "bed": true,
+  "drop": 3.0,
+  "hook": { "from": 0, "to": 3.0, "notify": 0.3, "text": -0.6 },
+  "couple": { "from": 3.0, "to": 5.0, "source": 5.55, "rate": 0.55, "chip": 3.35, "text": 3.1 },
+  "card": { "from": 5.0, "to": 11.0, "rise": [5.0, 5.8], "title": 5.35, "callouts": [6.1, 6.9, 7.7], "fan": [9.2, 10.0], "fanText": 9.45 },
+  "playback": { "from": 11.0, "to": 14.0, "text": 11.1, "chips": 12.3 },
+  "end": { "from": 14.0, "logo": 14.1, "tagline": 14.45, "offer": 15.0, "tap": 15.5, "press": 15.5 }
+}

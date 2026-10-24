@@ -23,12 +23,24 @@ This folder is not part of the website: `.vercelignore` keeps it out of the depl
 | `AdA2-9x16` "Blank" v2 | 1080 × 1920 | 30 | 16 s | Instagram ad, with music |
 | `AdPOV-9x16` "POV" (Ad A v3) | 1080 × 1920 | 30 | 16 s | Instagram ad, with music |
 | `AdA4-9x16` Ad A v4 | 1080 × 1920 | 30 | 19 s | Instagram ad, with music |
+| `AdA5-9x16` Ad A v5 "Dark glass" | 1080 × 1920 | 30 | 18.5 s | Instagram ad, sound design + music bed |
 
 `AdA2` is the rebuild on the Relay motion rules (`.claude/skills/launch-motion/references/relay-motion-skill.md`): real images full-bleed, editorial type, bordo wipes, cut to a 120 BPM track. Its code is in `src/v2/`, its storyboard in `storyboards/ad-a-v2.md`, and picture and music share one clock, `src/v2/timeline.json`.
 
 `AdPOV` (Ad A v3) is built on the strongest of three hook prototypes (`Hook1–3-9x16`, `src/v2/Hooks.tsx`): "POV: your camera tells you the next pose" over the wedding take, Reels-native captions, a hard cut with a punch-in on every beat. Code in `src/v3/`, storyboard in `storyboards/ad-pov.md`, clock in `src/v3/timeline.json`.
 
-`AdA4` (Ad A v4) keeps the POV hook and fixes the rest: one 3-second rhythm, one caption style in one place, the pose card rebuilt as vector UI (`src/v4/PoseCard.tsx`, builder.js's exact layout) so its words stay sharp at any zoom, centred framing, and an end card that points at Meta's own button instead of drawing a fake one. Code in `src/v4/`, storyboard in `storyboards/ad-a-v4.md`, clock in `src/v4/timeline.json`. `CardPreview` renders the vector card at 1280 × 1920 to check it against the real card.
+`AdA4` (Ad A v4) keeps the POV hook and fixes the rest: one 3-second rhythm, one caption style in one place, the pose card rebuilt as vector UI (`src/v4/PoseCard.tsx`, builder.js's exact layout) so its words stay sharp at any zoom, centred framing, and an end card that points at Meta's own button instead of drawing a fake one. Code in `src/v4/`, storyboard in `storyboards/ad-a-v4.md`, clock in `src/v4/timeline.json`. `CardPreview` renders the vector card at 1280 × 1920 to check it against the real card. The final v4 render is kept in `renders/AdA4-9x16.mp4`.
+
+`AdA5` (Ad A v5, "Dark glass") is built on the inspiration in `inspo/`: frosted glass UI over the footage and on a near-black stage, white Inter with one italic serif word, all in NotaLucis red. Code in `src/v5/`, storyboard in `storyboards/ad-a-v5.md`, clock in `src/v5/timeline.json`, mastered render in `renders/AdA5-9x16.mp4`.
+
+### Sound design (v5)
+
+Built on the Ultimate Editors method; the full breakdown and per-pass report is in `storyboards/ad-a-v5-sound.md`.
+- `scripts/sfx.py` synthesises the library (no samples, no licence): whooshes, textures, risers and hits, three variations each, into `public/sfx/`. `src/sfx-manifest.json` records each file's length and its alignment point (whoosh peak, transient, riser top).
+- `src/v5/sound.ts` is the cue sheet: one list per family, each cue = the moment it serves, the file, the level in dB, and why. `src/v5/moves.ts` holds every movement's timing, so the picture and the whoosh peaks read the same numbers.
+- In Remotion Studio each family is its own track (`WHOOSHES`, `TEXTURES`, `RISERS`, `HITS`, `MUSIC (bed)`), each sound its own clip named with its id, variation and level.
+- Levels: `masterDb` moves everything, `bedDb` the music bed (−19 dB, `python3 scripts/music.py src/v5/timeline.json public/music/ad-a-v5.wav`, pad and arpeggio only).
+- After rendering, `scripts/master.sh out/AdA5-9x16.mp4` brings the ad to −14 LUFS through a true-peak limiter (video copied, not re-encoded).
 
 ## Run it
 

@@ -57,10 +57,11 @@ export const PHONE_GRID = ["showcase/pack-01.jpg", "showcase/live-couple.jpg", "
 
 // Music, once licensed for paid ads: drop the file in public/music/ and set the path, e.g. "music/track.mp3".
 // adA2 and adPov are composed and synthesised by scripts/music.py on each ad's own timeline: no licence needed.
-export const MUSIC: { launch: string | null; ads: string | null; adA2: string | null; adPov: string | null; adA4: string | null } = {
+export const MUSIC: { launch: string | null; ads: string | null; adA2: string | null; adPov: string | null; adA4: string | null; adA5: string | null } = {
   launch: null,
   ads: null,
   adA2: "music/ad-a-v2.wav",
   adPov: "music/ad-pov.wav",
   adA4: "music/ad-a-v4.wav",
+  adA5: "music/ad-a-v5.wav", // quiet bed (pad + arpeggio) under the v5 sound design
 };

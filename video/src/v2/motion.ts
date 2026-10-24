@@ -8,8 +8,8 @@ export const BEAT = 60 / TL.bpm;
 export const STAGGER = 4; // frames between related children
 
 const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
-const OVERSHOOT = Easing.bezier(0.34, 1.22, 0.64, 1);
-const EXIT = Easing.bezier(0.55, 0, 1, 0.45);
+export const OVERSHOOT = Easing.bezier(0.34, 1.22, 0.64, 1);
+export const EXIT = Easing.bezier(0.55, 0, 1, 0.45);
 export const CAMERA = Easing.bezier(0.45, 0, 0.2, 1);
 
 const fr = (sec: number, fps: number) => Math.round(sec * fps);

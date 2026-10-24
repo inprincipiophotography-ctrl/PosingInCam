@@ -16,6 +16,7 @@ const TIMES = {
   Ad: [0.8, 2.8, 4.5, 6.5, 8.8, 9.8, 11.0, 12.8],
   Hook: [0.1, 0.5, 1.0, 1.6, 2.8],
   AdA4: [0.0, 1.5, 3.1, 4.0, 4.9, 5.2, 5.9, 7.4, 8.8, 10.2, 11.3, 12.8, 14.4, 15.8, 18.5],
+  AdA5: [0.0, 0.9, 2.5, 3.6, 4.8, 5.4, 6.0, 6.8, 8.4, 9.6, 10.6, 11.6, 12.9, 14.3, 15.2, 18.0],
   AdPOV: [0.0, 1.2, 2.6, 3.2, 3.9, 4.7, 5.6, 6.3, 7.4, 8.3, 9.4, 10.2, 10.7, 11.2, 11.7, 12.3, 13.0, 15.5],
   AdA2: [0.9, 2.6, 3.7, 4.3, 4.9, 5.4, 6.0, 6.6, 7.4, 8.3, 8.7, 9.2, 9.7, 10.7, 11.6, 12.5, 13.7, 15.5],
 };
@@ -26,7 +27,7 @@ const comps = await getCompositions(serveUrl, { browserExecutable });
 
 for (const comp of comps) {
   if (only.length && !only.includes(comp.id)) continue;
-  const times = comp.id.startsWith("AdA4") ? TIMES.AdA4 : comp.id.startsWith("AdPOV") ? TIMES.AdPOV : comp.id.startsWith("Hook") ? TIMES.Hook : comp.id.startsWith("AdA2") ? TIMES.AdA2 : comp.id.startsWith("Launch") ? TIMES.Launch : TIMES.Ad;
+  const times = comp.id.startsWith("AdA5") ? TIMES.AdA5 : comp.id.startsWith("AdA4") ? TIMES.AdA4 : comp.id.startsWith("AdPOV") ? TIMES.AdPOV : comp.id.startsWith("Hook") ? TIMES.Hook : comp.id.startsWith("AdA2") ? TIMES.AdA2 : comp.id.startsWith("Launch") ? TIMES.Launch : TIMES.Ad;
   const dir = join(root, "out", "stills", comp.id);
   mkdirSync(dir, { recursive: true });
   const files = [];

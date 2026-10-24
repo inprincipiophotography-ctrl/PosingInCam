@@ -1,0 +1,434 @@
+{
+ "sfx/whooshes/hollow_1.wav": {
+  "file": "sfx/whooshes/hollow_1.wav",
+  "family": "whooshes",
+  "sound": "hollow",
+  "variation": 1,
+  "duration": 0.55,
+  "align": 0.325
+ },
+ "sfx/whooshes/hollow_2.wav": {
+  "file": "sfx/whooshes/hollow_2.wav",
+  "family": "whooshes",
+  "sound": "hollow",
+  "variation": 2,
+  "duration": 0.75,
+  "align": 0.488
+ },
+ "sfx/whooshes/hollow_3.wav": {
+  "file": "sfx/whooshes/hollow_3.wav",
+  "family": "whooshes",
+  "sound": "hollow",
+  "variation": 3,
+  "duration": 0.95,
+  "align": 0.611
+ },
+ "sfx/whooshes/deep_voice_1.wav": {
+  "file": "sfx/whooshes/deep_voice_1.wav",
+  "family": "whooshes",
+  "sound": "deep_voice",
+  "variation": 1,
+  "duration": 0.6,
+  "align": 0.337
+ },
+ "sfx/whooshes/deep_voice_2.wav": {
+  "file": "sfx/whooshes/deep_voice_2.wav",
+  "family": "whooshes",
+  "sound": "deep_voice",
+  "variation": 2,
+  "duration": 0.85,
+  "align": 0.51
+ },
+ "sfx/whooshes/deep_voice_3.wav": {
+  "file": "sfx/whooshes/deep_voice_3.wav",
+  "family": "whooshes",
+  "sound": "deep_voice",
+  "variation": 3,
+  "duration": 1.1,
+  "align": 0.68
+ },
+ "sfx/whooshes/organic_wind_1.wav": {
+  "file": "sfx/whooshes/organic_wind_1.wav",
+  "family": "whooshes",
+  "sound": "organic_wind",
+  "variation": 1,
+  "duration": 1.2,
+  "align": 0.671
+ },
+ "sfx/whooshes/organic_wind_2.wav": {
+  "file": "sfx/whooshes/organic_wind_2.wav",
+  "family": "whooshes",
+  "sound": "organic_wind",
+  "variation": 2,
+  "duration": 1.6,
+  "align": 0.939
+ },
+ "sfx/whooshes/organic_wind_3.wav": {
+  "file": "sfx/whooshes/organic_wind_3.wav",
+  "family": "whooshes",
+  "sound": "organic_wind",
+  "variation": 3,
+  "duration": 2.0,
+  "align": 1.211
+ },
+ "sfx/whooshes/synthetic_transition_1.wav": {
+  "file": "sfx/whooshes/synthetic_transition_1.wav",
+  "family": "whooshes",
+  "sound": "synthetic_transition",
+  "variation": 1,
+  "duration": 0.7,
+  "align": 0.463
+ },
+ "sfx/whooshes/synthetic_transition_2.wav": {
+  "file": "sfx/whooshes/synthetic_transition_2.wav",
+  "family": "whooshes",
+  "sound": "synthetic_transition",
+  "variation": 2,
+  "duration": 0.9,
+  "align": 0.563
+ },
+ "sfx/whooshes/synthetic_transition_3.wav": {
+  "file": "sfx/whooshes/synthetic_transition_3.wav",
+  "family": "whooshes",
+  "sound": "synthetic_transition",
+  "variation": 3,
+  "duration": 1.2,
+  "align": 0.8
+ },
+ "sfx/whooshes/generic_long_1.wav": {
+  "file": "sfx/whooshes/generic_long_1.wav",
+  "family": "whooshes",
+  "sound": "generic_long",
+  "variation": 1,
+  "duration": 1.8,
+  "align": 1.386
+ },
+ "sfx/whooshes/generic_long_2.wav": {
+  "file": "sfx/whooshes/generic_long_2.wav",
+  "family": "whooshes",
+  "sound": "generic_long",
+  "variation": 2,
+  "duration": 2.4,
+  "align": 1.881
+ },
+ "sfx/whooshes/generic_long_3.wav": {
+  "file": "sfx/whooshes/generic_long_3.wav",
+  "family": "whooshes",
+  "sound": "generic_long",
+  "variation": 3,
+  "duration": 3.0,
+  "align": 2.642
+ },
+ "sfx/whooshes/short_1.wav": {
+  "file": "sfx/whooshes/short_1.wav",
+  "family": "whooshes",
+  "sound": "short",
+  "variation": 1,
+  "duration": 0.22,
+  "align": 0.115
+ },
+ "sfx/whooshes/short_2.wav": {
+  "file": "sfx/whooshes/short_2.wav",
+  "family": "whooshes",
+  "sound": "short",
+  "variation": 2,
+  "duration": 0.3,
+  "align": 0.15
+ },
+ "sfx/whooshes/short_3.wav": {
+  "file": "sfx/whooshes/short_3.wav",
+  "family": "whooshes",
+  "sound": "short",
+  "variation": 3,
+  "duration": 0.4,
+  "align": 0.207
+ },
+ "sfx/textures/pop_1.wav": {
+  "file": "sfx/textures/pop_1.wav",
+  "family": "textures",
+  "sound": "pop",
+  "variation": 1,
+  "duration": 0.12,
+  "align": 0.0
+ },
+ "sfx/textures/pop_2.wav": {
+  "file": "sfx/textures/pop_2.wav",
+  "family": "textures",
+  "sound": "pop",
+  "variation": 2,
+  "duration": 0.12,
+  "align": 0.0
+ },
+ "sfx/textures/pop_3.wav": {
+  "file": "sfx/textures/pop_3.wav",
+  "family": "textures",
+  "sound": "pop",
+  "variation": 3,
+  "duration": 0.12,
+  "align": 0.0
+ },
+ "sfx/textures/ui_click_1.wav": {
+  "file": "sfx/textures/ui_click_1.wav",
+  "family": "textures",
+  "sound": "ui_click",
+  "variation": 1,
+  "duration": 0.09,
+  "align": 0.0
+ },
+ "sfx/textures/ui_click_2.wav": {
+  "file": "sfx/textures/ui_click_2.wav",
+  "family": "textures",
+  "sound": "ui_click",
+  "variation": 2,
+  "duration": 0.09,
+  "align": 0.0
+ },
+ "sfx/textures/ui_click_3.wav": {
+  "file": "sfx/textures/ui_click_3.wav",
+  "family": "textures",
+  "sound": "ui_click",
+  "variation": 3,
+  "duration": 0.09,
+  "align": 0.0
+ },
+ "sfx/textures/scifi_click_1.wav": {
+  "file": "sfx/textures/scifi_click_1.wav",
+  "family": "textures",
+  "sound": "scifi_click",
+  "variation": 1,
+  "duration": 0.14,
+  "align": 0.0
+ },
+ "sfx/textures/scifi_click_2.wav": {
+  "file": "sfx/textures/scifi_click_2.wav",
+  "family": "textures",
+  "sound": "scifi_click",
+  "variation": 2,
+  "duration": 0.14,
+  "align": 0.0
+ },
+ "sfx/textures/scifi_click_3.wav": {
+  "file": "sfx/textures/scifi_click_3.wav",
+  "family": "textures",
+  "sound": "scifi_click",
+  "variation": 3,
+  "duration": 0.14,
+  "align": 0.0
+ },
+ "sfx/textures/gears_1.wav": {
+  "file": "sfx/textures/gears_1.wav",
+  "family": "textures",
+  "sound": "gears",
+  "variation": 1,
+  "duration": 0.32,
+  "align": 0.003
+ },
+ "sfx/textures/gears_2.wav": {
+  "file": "sfx/textures/gears_2.wav",
+  "family": "textures",
+  "sound": "gears",
+  "variation": 2,
+  "duration": 0.32,
+  "align": 0.001
+ },
+ "sfx/textures/gears_3.wav": {
+  "file": "sfx/textures/gears_3.wav",
+  "family": "textures",
+  "sound": "gears",
+  "variation": 3,
+  "duration": 0.32,
+  "align": 0.002
+ },
+ "sfx/textures/digital_camera_click_1.wav": {
+  "file": "sfx/textures/digital_camera_click_1.wav",
+  "family": "textures",
+  "sound": "digital_camera_click",
+  "variation": 1,
+  "duration": 0.16,
+  "align": 0.0
+ },
+ "sfx/textures/digital_camera_click_2.wav": {
+  "file": "sfx/textures/digital_camera_click_2.wav",
+  "family": "textures",
+  "sound": "digital_camera_click",
+  "variation": 2,
+  "duration": 0.16,
+  "align": 0.0
+ },
+ "sfx/textures/digital_camera_click_3.wav": {
+  "file": "sfx/textures/digital_camera_click_3.wav",
+  "family": "textures",
+  "sound": "digital_camera_click",
+  "variation": 3,
+  "duration": 0.16,
+  "align": 0.0
+ },
+ "sfx/textures/scifi_impact_1.wav": {
+  "file": "sfx/textures/scifi_impact_1.wav",
+  "family": "textures",
+  "sound": "scifi_impact",
+  "variation": 1,
+  "duration": 1.3,
+  "align": 0.001
+ },
+ "sfx/textures/scifi_impact_2.wav": {
+  "file": "sfx/textures/scifi_impact_2.wav",
+  "family": "textures",
+  "sound": "scifi_impact",
+  "variation": 2,
+  "duration": 1.3,
+  "align": 0.001
+ },
+ "sfx/textures/scifi_impact_3.wav": {
+  "file": "sfx/textures/scifi_impact_3.wav",
+  "family": "textures",
+  "sound": "scifi_impact",
+  "variation": 3,
+  "duration": 1.3,
+  "align": 0.001
+ },
+ "sfx/textures/activate_energy_1.wav": {
+  "file": "sfx/textures/activate_energy_1.wav",
+  "family": "textures",
+  "sound": "activate_energy",
+  "variation": 1,
+  "duration": 1.1,
+  "align": 0.462
+ },
+ "sfx/textures/activate_energy_2.wav": {
+  "file": "sfx/textures/activate_energy_2.wav",
+  "family": "textures",
+  "sound": "activate_energy",
+  "variation": 2,
+  "duration": 1.1,
+  "align": 0.461
+ },
+ "sfx/textures/activate_energy_3.wav": {
+  "file": "sfx/textures/activate_energy_3.wav",
+  "family": "textures",
+  "sound": "activate_energy",
+  "variation": 3,
+  "duration": 1.1,
+  "align": 0.475
+ },
+ "sfx/textures/success_reward_1.wav": {
+  "file": "sfx/textures/success_reward_1.wav",
+  "family": "textures",
+  "sound": "success_reward",
+  "variation": 1,
+  "duration": 1.0,
+  "align": 0.003
+ },
+ "sfx/textures/success_reward_2.wav": {
+  "file": "sfx/textures/success_reward_2.wav",
+  "family": "textures",
+  "sound": "success_reward",
+  "variation": 2,
+  "duration": 1.0,
+  "align": 0.003
+ },
+ "sfx/textures/success_reward_3.wav": {
+  "file": "sfx/textures/success_reward_3.wav",
+  "family": "textures",
+  "sound": "success_reward",
+  "variation": 3,
+  "duration": 1.0,
+  "align": 0.003
+ },
+ "sfx/risers/sharp_bass_1.wav": {
+  "file": "sfx/risers/sharp_bass_1.wav",
+  "family": "risers",
+  "sound": "sharp_bass",
+  "variation": 1,
+  "duration": 1.5,
+  "align": 1.488
+ },
+ "sfx/risers/sharp_bass_2.wav": {
+  "file": "sfx/risers/sharp_bass_2.wav",
+  "family": "risers",
+  "sound": "sharp_bass",
+  "variation": 2,
+  "duration": 2.0,
+  "align": 1.988
+ },
+ "sfx/risers/sharp_bass_3.wav": {
+  "file": "sfx/risers/sharp_bass_3.wav",
+  "family": "risers",
+  "sound": "sharp_bass",
+  "variation": 3,
+  "duration": 2.6,
+  "align": 2.59
+ },
+ "sfx/risers/metallic_1.wav": {
+  "file": "sfx/risers/metallic_1.wav",
+  "family": "risers",
+  "sound": "metallic",
+  "variation": 1,
+  "duration": 1.5,
+  "align": 1.489
+ },
+ "sfx/risers/metallic_2.wav": {
+  "file": "sfx/risers/metallic_2.wav",
+  "family": "risers",
+  "sound": "metallic",
+  "variation": 2,
+  "duration": 2.0,
+  "align": 1.989
+ },
+ "sfx/risers/metallic_3.wav": {
+  "file": "sfx/risers/metallic_3.wav",
+  "family": "risers",
+  "sound": "metallic",
+  "variation": 3,
+  "duration": 2.6,
+  "align": 2.586
+ },
+ "sfx/risers/suck_back_1.wav": {
+  "file": "sfx/risers/suck_back_1.wav",
+  "family": "risers",
+  "sound": "suck_back",
+  "variation": 1,
+  "duration": 1.0,
+  "align": 0.987
+ },
+ "sfx/risers/suck_back_2.wav": {
+  "file": "sfx/risers/suck_back_2.wav",
+  "family": "risers",
+  "sound": "suck_back",
+  "variation": 2,
+  "duration": 1.4,
+  "align": 1.368
+ },
+ "sfx/risers/suck_back_3.wav": {
+  "file": "sfx/risers/suck_back_3.wav",
+  "family": "risers",
+  "sound": "suck_back",
+  "variation": 3,
+  "duration": 1.8,
+  "align": 1.79
+ },
+ "sfx/hits/impact_1.wav": {
+  "file": "sfx/hits/impact_1.wav",
+  "family": "hits",
+  "sound": "impact",
+  "variation": 1,
+  "duration": 1.6,
+  "align": 0.001
+ },
+ "sfx/hits/impact_2.wav": {
+  "file": "sfx/hits/impact_2.wav",
+  "family": "hits",
+  "sound": "impact",
+  "variation": 2,
+  "duration": 1.6,
+  "align": 0.001
+ },
+ "sfx/hits/impact_3.wav": {
+  "file": "sfx/hits/impact_3.wav",
+  "family": "hits",
+  "sound": "impact",
+  "variation": 3,
+  "duration": 1.6,
+  "align": 0.001
+ }
+}
