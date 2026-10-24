@@ -1,0 +1,64 @@
+{
+  "_": "Ad A v8 = Ad A v6 (v4 + the fan) with v7's end card and the founders' photo. Same clock and music as v6 (public/music/ad-a-v6.wav).",
+  "bpm": 120,
+  "fps": 30,
+  "seconds": 21,
+  "introKick": true,
+  "riser": [
+    1.5,
+    3.0
+  ],
+  "drop": 3.0,
+  "hook": {
+    "from": 0,
+    "to": 3.0
+  },
+  "couple": {
+    "from": 3.0,
+    "to": 5.0,
+    "source": 5.55,
+    "rate": 0.55
+  },
+  "card": {
+    "from": 5.0,
+    "to": 11.0,
+    "swap": 5.3,
+    "lift": [
+      5.5,
+      6.4
+    ],
+    "pose": 6.6,
+    "say": 8.0,
+    "notes": 9.5
+  },
+  "fan": {
+    "from": 11.0,
+    "to": 13.0,
+    "open": [
+      0.15,
+      0.85
+    ]
+  },
+  "playback": {
+    "from": 13.0,
+    "to": 16.0
+  },
+  "end": {
+    "from": 16.0,
+    "logo": 16.05,
+    "offer": 16.25,
+    "how": 16.55,
+    "madeBy": 16.8,
+    "tap": 17.2,
+    "press": 17.2
+  },
+  "shutters": [
+    5.3
+  ],
+  "whooshes": [
+    5.5,
+    8.0,
+    9.5,
+    16.0
+  ]
+}
