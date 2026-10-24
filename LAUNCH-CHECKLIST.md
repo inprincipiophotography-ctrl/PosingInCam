@@ -25,6 +25,29 @@ Tracked so nothing gets lost between sessions. (Excluded from the public deploy.
 - [ ] Vercel → `posing-in-cam` → Analytics → enable Web Analytics (no cookies; `assets/visits.js`
       queues page views and funnel events until it is on; custom events show on the Pro plan)
 
+## 📣 Prije oglašavanja (skaliranje)
+Cijela analiza (5000 posjetitelja / 1000 kupaca odjednom) je u `docs/SCALING-REVIEW.md`.
+Kod se skalira dobro, a pucaju planovi i kvote, pa ove stavke odraditi PRIJE prvog oglasa.
+
+Računi i postavke (bez koda):
+- [ ] Supabase → Auth → SMTP: vlastiti SMTP (Resend / Postmark / SES, plaćeni plan) + SPF/DKIM.
+      Bez toga magic link ide samo članovima tima, ~2 maila/h
+- [ ] Supabase → Auth → Rate Limits: "emails per hour" podići (npr. 1000+; zadano je 30/h čak i s vlastitim SMTP-om)
+- [ ] Supabase org → Pro ($25/mj: 100 GB storage, 250 GB egress, backupi) + spend cap/alerti;
+      razmisliti o zasebnoj organizaciji (dijeli se s Wedding Managerom)
+- [ ] Vercel → Pro ($20/mj): Hobby ne dopušta komercijalnu upotrebu i pauzira projekt kad potroši kvotu
+- [ ] Vercel → Spend Management alert
+- [ ] Vercel Firewall: rate-limit pravilo po IP-u na `/api/convert` i `/api/history` (npr. 30/min)
+
+Izmjene koda (detalji i verifikacija u `docs/SCALING-REVIEW.md` → Faza 1):
+- [ ] CDN cache (`Cache-Control: s-maxage`) na `GET /api/convert` i `GET /api/prices`
+- [ ] Mali thumbnailovi za povijest umjesto punih kartica (egress)
+- [ ] Jedan `requests.Session()` za sve pozive prema Supabaseu
+- [ ] Dnevni Vercel Cron koji briše privremene ZIP-ove (`zips/`)
+- [ ] Paralelno skidanje kartica kod ponovnog downloada (`api/history.py`)
+- [ ] Indeks `projects(user_id)` u `supabase/projects.sql`
+- [ ] Test: magic link na 3–4 adrese izvan tima + mali load test na preview deployu
+
 ## ⚠️ After everything works
 - [ ] **ROTATE Supabase `secret` key + `JWT secret`** (Dashboard → Settings → API).
       They were shared in chat during setup; anon/publishable keys are public and fine.
