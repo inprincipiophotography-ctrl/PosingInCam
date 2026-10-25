@@ -31,7 +31,7 @@ What the research says works, and how it's used:
 7. The close (as A10).
 
 **C: "Never look unprepared in front of a couple again"** (12 slides; the one to post first). Problem solving for the whole day, not just posing, and the reassurance of looking professional.
-1. "For wedding photographers", the headline, and the real thing, upright and whole: DSC08435, a hand on the camera, thumb on the dial, The First Look on the screen, its edges fading into the paper. "Poses, timeline, family groups, shot list. All on the camera already in your hand."
+1. "For wedding photographers", the headline, and the real thing, upright and whole: DSC08435 cropped tight from the full-size original (`public/carousel/hook-camera.jpg`): a hand on the camera, thumb on the dial, The First Look on the screen, its edges fading into the paper. The line "Poses · timeline · family groups · shot list. On your camera." sits under the headline. "Poses, timeline, family groups, shot list. All on the camera already in your hand."
 2. "The wedding day, the old way:" Pinterest, a PDF, the planner, a notes app, each struck through. Then "All on your phone, in front of your couple. It looks like you don't know what's next."
 3. "Now it's all on your camera screen. Faster, calmer, more professional.": the pose card next to the timeline, groups and shot-list cards.
 4. Mid-shoot: "Glance down. Swipe. Shoot." over a frame from the real wedding take (the card on the camera, the couple waiting).
@@ -39,7 +39,7 @@ What the research says works, and how it's used:
 6. The timeline, one swipe away.
 7. Family groups, in order.
 8. The must-haves, covered (shot list).
-9. Any image: "If it's an image, it's in your camera." Her Pinterest pins, a moodboard, Canva designs, screenshots, labelled "Emma's board · 3/12". JPG · PNG · WEBP · HEIC, up to 30 at once (the site's "Any image" / "Her board").
+9. Any image: "If it's an image, it's in your camera." Her Pinterest pins, a moodboard, Canva designs, screenshots. JPG · PNG · WEBP · HEIC, up to 30 at once (the site's "Any image" / "Her board").
 10. Be ready for anything: "Better prepared than sorry." The couple freezes, the day runs late, "Did we get Grandma?", she shows you her Pinterest: each with the card that already has the answer.
 11. Three steps, with three real cards on the camera.
 12. The close.

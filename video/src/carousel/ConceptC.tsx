@@ -20,19 +20,19 @@ const Wide: React.FC<{ src: string; width: number; rotate?: number; style?: Reac
 const Hook: React.FC<P> = ({ n }) => {
   // The real thing, upright and whole: a hand on the camera, thumb on the dial, The First Look on the screen.
   // Its light wall melts into the paper at every edge.
-  const fade = "linear-gradient(to bottom, transparent 0%, #000 10%, #000 86%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%)";
+  const fade = "linear-gradient(to bottom, transparent 0%, #000 5%, #000 82%, transparent 96%), linear-gradient(to right, transparent 0%, #000 7%, #000 93%, transparent 100%)";
   return (
     <Slide n={n} total={N}>
-      <div style={{ position: "absolute", left: 108, top: 300, width: 864, height: 1152, WebkitMaskImage: fade, maskImage: fade, WebkitMaskComposite: "source-in", maskComposite: "intersect" }}>
-        <Img src={staticFile("photos/DSC08435.jpg")} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      {/* cropped from the full-size original (source/DSC08435.jpg) so the camera fills the slide */}
+      <div style={{ position: "absolute", left: 140, top: 468, width: 800, height: 1067, WebkitMaskImage: fade, maskImage: fade, WebkitMaskComposite: "source-in", maskComposite: "intersect" }}>
+        <Img src={staticFile("carousel/hook-camera.jpg")} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       </div>
       <div style={{ position: "absolute", left: M, right: M, top: 150 }}>
         <Label>For wedding photographers</Label>
         <Headline size={98} style={{ marginTop: 16 }}>{"Never look *unprepared*\nin front of a couple again."}</Headline>
+        <Body size={32} style={{ marginTop: 18, color: INK }}>Poses · timeline · family groups · shot list. <b style={{ color: RED }}>On your camera.</b></Body>
       </div>
-      <div style={{ position: "absolute", left: M, top: 1220, background: "rgba(20,20,22,0.85)", color: "#fff", borderRadius: 18, padding: "18px 26px", fontFamily: SANS, fontSize: 30, fontWeight: 600, letterSpacing: "-0.01em" }}>
-        Poses · timeline · family groups · shot list. <span style={{ color: "#ff8a7e" }}>On your camera.</span>
-      </div>
+
     </Slide>
   );
 };
@@ -144,12 +144,11 @@ const AnyImage: React.FC<P> = ({ n }) => {
               {i === 2 ? <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.5)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: SANS, fontWeight: 600, fontSize: 110, color: "#fff" }}>+9</div> : null}
             </div>
           ))}
-          <div style={{ position: "absolute", left: 150, top: 930, height: 70, padding: "0 26px", borderRadius: 35, background: "rgba(0,0,0,.62)", display: "flex", alignItems: "center", fontFamily: SANS, fontWeight: 600, fontSize: 34, color: "#fff" }}>Emma’s board · 1/12</div>
           <div style={{ position: "absolute", left: 120, top: 1180, fontFamily: SANS, fontSize: 34, letterSpacing: 3, color: "#6e6e73" }}>SHOOT CARDS</div>
         </div>
       </div>
       <Body size={33} style={{ position: "absolute", left: M, right: M, top: 1118, color: INK }}>
-        Her Pinterest pins, a moodboard, your own Canva designs, a screenshot. <b>Upload any image and it shows up in your playback</b>, labelled “Emma’s board · 3/12”.
+        Her Pinterest pins, a moodboard, your own Canva designs, a screenshot. <b>Upload any image and it shows up in your playback.</b>
       </Body>
       <div style={{ position: "absolute", left: M, right: M, top: 1268, fontFamily: SANS, fontSize: 26, color: MUTED }}>JPG · PNG · WEBP · HEIC · up to 30 at once</div>
     </Slide>
