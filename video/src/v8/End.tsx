@@ -73,6 +73,8 @@ export const End: React.FC = () => {
           </div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 34 }}>
             <EndLine lines={["Your first card", "is [free]."]} at={at(e.offer)} />
+            {/* the address, for everyone who won't tap the button today */}
+            <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 52, letterSpacing: "-0.02em", color: "#fff", ...rise(e.offer + 0.15) }}>{COPY.url}</div>
             <div style={{ fontFamily: SANS, fontWeight: 600, fontSize: 36, color: "#fff", textAlign: "center", ...rise(e.how) }}>{COPY.how}</div>
             {/* Who made it: the founders, small, in a round frame beside the line. */}
             <div style={{ display: "flex", alignItems: "center", gap: 18, ...rise(e.madeBy) }}>

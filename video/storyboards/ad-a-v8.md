@@ -9,7 +9,7 @@ Scenes 1–5 (0–16 s) are as in `ad-a-v6.md`.
 
 **6 · End card** · 16.0–21.0
 - The mark and "Shoot Cards by NotaLucis".
-- "Your first card / is **free**."
+- "Your first card / is **free**.", then **cards.notalucis.com**, for everyone who won't tap the button today.
 - "Save it to your SD card · open it in playback"
 - Kim & Ivan in a small round frame (84 px, thin white ring) beside "Made by wedding photographers / Kim & Ivan · In Principio". The photo is `public/brand/kim-ivan.jpg`, cropped from their black-and-white portrait.
 - "Tap **Learn more** to make yours", with the arrow nudging on the beat towards Meta's button.

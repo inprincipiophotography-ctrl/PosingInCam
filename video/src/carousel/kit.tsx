@@ -15,6 +15,13 @@ export const MUTED = "#6e6a64";
 export const RED = "#a40000";
 export const BORDO = "#7d0303";
 export const W = 1080;
+
+/**
+ * Whether the set shows the web address. The organic post doesn't (its close is "comment POSE", and an address
+ * nobody can tap only competes with that); the ad does, on every card's footer and big on the close, so people who
+ * don't tap the button today remember where to go.
+ */
+export const ShowUrl = React.createContext(false);
 export const H = 1440;
 export const M = 72; // side margin
 
@@ -52,6 +59,7 @@ export const Slide: React.FC<{ n: number; total: number; bg?: React.ReactNode; d
   const ink = dark ? "#fff" : INK;
   const sub = dark ? "rgba(255,255,255,0.75)" : MUTED;
   const last = n === total;
+  const url = React.useContext(ShowUrl);
   return (
     <AbsoluteFill style={paper}>
       {bg}
@@ -71,8 +79,7 @@ export const Slide: React.FC<{ n: number; total: number; bg?: React.ReactNode; d
         <div style={{ position: "absolute", left: n === 1 ? M : 0, right: last ? M : -40, top: H - 92, height: 4, background: dark ? "#fff" : RED }} />
         {last ? <div style={{ position: "absolute", right: M - 8, top: H - 98, width: 16, height: 16, borderRadius: 8, background: dark ? "#fff" : RED }} /> : null}
         <div style={{ position: "absolute", left: M, right: M, top: H - 72, display: "flex", justifyContent: "space-between", fontFamily: SANS, fontSize: 24, color: sub }}>
-          {/* no web address: the close sends people to comment POSE (DM) or the link in bio */}
-          <span />
+          {url ? <span style={{ fontWeight: 600, color: ink }}>{COPY.url}</span> : <span />}
           {last ? <span /> : <span style={{ fontWeight: 600, color: ink }}>Swipe →</span>}
         </div>
       </div>
@@ -117,8 +124,9 @@ export const Fan: React.FC<{ cardWidth: number; spread?: number; style?: React.C
 
 /** Three numbered steps: how a card gets into the camera. */
 export const Steps: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
+  const url = React.useContext(ShowUrl);
   const steps = [
-    ["Pick your cards", "Poses, timelines, family groups and shot lists, or any image of your own."],
+    ["Pick your cards", "Poses, timelines, family groups and shot lists, or any image of your own" + (url ? `, at ${COPY.url}.` : ".")],
     ["Save them to your SD card", "They’re images, so the camera opens them like any photo."],
     ["Swipe in playback", "The next pose is one thumb-press away. No phone in sight."],
   ];
@@ -185,7 +193,11 @@ const CtaAd: React.FC = () => (
       <Headline size={150} style={{ marginTop: 22 }}>{"Your first\ncard is *free.*"}</Headline>
       <Body size={34} style={{ marginTop: 28, maxWidth: 820 }}>No account. Make it, save it to your SD card, and see it in your camera’s playback tonight.</Body>
     </div>
-    <Founders style={{ position: "absolute", left: M, top: 840 }} />
+    {/* the address, big: for everyone who won't tap today */}
+    <div style={{ position: "absolute", left: M, right: M, top: 700, fontFamily: SANS, fontWeight: 700, fontSize: 60, letterSpacing: "-0.03em", color: INK }}>
+      <span style={{ borderBottom: `5px solid ${RED}`, paddingBottom: 4 }}>{COPY.url}</span>
+    </div>
+    <Founders style={{ position: "absolute", left: M, top: 860 }} />
     {/* right above the button Meta draws under the ad */}
     <div style={{ position: "absolute", left: M, right: M, top: 1050, display: "flex", alignItems: "center", justifyContent: "space-between", background: BORDO, color: "#fff", borderRadius: 26, padding: "34px 40px" }}>
       <div style={{ fontFamily: SANS, fontSize: 40, letterSpacing: "-0.01em" }}>

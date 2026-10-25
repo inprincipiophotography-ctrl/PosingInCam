@@ -1,7 +1,7 @@
 import React from "react";
 import { Img, staticFile } from "remotion";
 import { SANS } from "../theme";
-import { Body, CameraStrip, Card, CardAnatomy, Cta, Headline, INK, Label, M, MUTED, RED, Slide, Steps } from "./kit";
+import { Body, CameraStrip, Card, CardAnatomy, Cta, Headline, INK, Label, M, MUTED, RED, ShowUrl, Slide, Steps } from "./kit";
 
 // Concept C, problem solving for the whole wedding day: the photographer runs the day from a phone (Pinterest,
 // a PDF timeline, the planner, a notes app); Shoot Cards puts poses, timeline, family groups and the shot list on
@@ -210,9 +210,14 @@ const Groups: React.FC<P> = (p) => <Feature {...p} label="Family groups" title={
 const ShotList: React.FC<P> = (p) => <Feature {...p} label="Shot list" title={"The must-haves,\n*covered.*"} src="cards/shotlist.png" line="Every shot the couple asked for, a swipe away." />;
 const CloseAd: React.FC<P> = (p) => <Close {...p} ad />;
 
-const set = (order: React.FC<P>[]): React.FC[] => order.map((S, i) => () => <S n={i + 1} total={order.length} />);
+const set = (order: React.FC<P>[], url = false): React.FC[] =>
+  order.map((S, i) => () => (
+    <ShowUrl.Provider value={url}>
+      <S n={i + 1} total={order.length} />
+    </ShowUrl.Provider>
+  ));
 
 /** The organic post (12 slides, comment POSE). */
 export const SLIDES_C = set([Hook, OldWay, AllOnCamera, MidShoot, Poses, Timeline, Groups, ShotList, AnyImage, Ready, How, Close]);
-/** The Meta ad (10 cards, the most a carousel ad takes; the last points at Meta's "Learn more" button). */
-export const SLIDES_C_AD = set([Hook, OldWay, AllOnCamera, Poses, Timeline, Groups, AnyImage, Ready, How, CloseAd]);
+/** The Meta ad (10 cards, the most a carousel ad takes; the address on every card, the last points at Meta's "Learn more" button). */
+export const SLIDES_C_AD = set([Hook, OldWay, AllOnCamera, Poses, Timeline, Groups, AnyImage, Ready, How, CloseAd], true);
