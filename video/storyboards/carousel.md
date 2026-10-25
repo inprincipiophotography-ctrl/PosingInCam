@@ -30,15 +30,17 @@ What the research says works, and how it's used:
 6. The fan: every pose for the whole day, plus Kim & Ivan.
 7. The close (as A10).
 
-**C: "Never look unprepared in front of a couple again"** (9 slides; the one to post first). Problem solving for the whole day, not just posing, and the reassurance of looking professional.
-1. "For wedding photographers", then the headline. Under it, a frame from the real wedding take: over the photographer's shoulder, the pose card on the camera, the couple waiting. "Poses, timeline, family groups, shot list. All on the camera already in your hand."
+**C: "Never look unprepared in front of a couple again"** (11 slides; the one to post first). Problem solving for the whole day, not just posing, and the reassurance of looking professional.
+1. "For wedding photographers", the headline, and the real thing: a thumb on the dial, The First Look card on the camera screen (a 4K frame from the playback clip). "Poses, timeline, family groups, shot list. All on the camera already in your hand."
 2. "The wedding day, the old way:" Pinterest, a PDF, the planner, a notes app, each struck through. Then "All on your phone, in front of your couple. It looks like you don't know what's next."
 3. "Now it's all on your camera screen. Faster, calmer, more professional.": the pose card next to the timeline, groups and shot-list cards.
-4. Poses, with the words to say (the card's four parts).
-5. The timeline, one swipe away.
-6. Family groups, in order.
-7. The must-haves, covered (shot list).
-8. Three steps, with three real cards on the camera.
-9. The close.
+4. Mid-shoot: "Glance down. Swipe. Shoot." over a frame from the real wedding take (the card on the camera, the couple waiting).
+5. Poses, with the words to say (the card's four parts).
+6. The timeline, one swipe away.
+7. Family groups, in order.
+8. The must-haves, covered (shot list).
+9. Any image: "If it's an image, it's in your camera." Her Pinterest pins, a moodboard, Canva designs, screenshots, labelled "Emma's board · 3/12". JPG · PNG · WEBP · HEIC, up to 30 at once (the site's "Any image" / "Her board").
+10. Three steps, with three real cards on the camera.
+11. The close.
 
-The timeline, groups and shot-list cards are drawn by the site's own renderer (`scripts/render-cards.mjs`) with the /demo page's sample couple, Emma & James.
+The timeline, groups and shot-list cards are drawn by the site's own renderer (`scripts/render-cards.mjs`) with the /demo page's sample couple, Emma & James. The board pins are `assets/showcase/pin-0x.jpg`, In Principio's own photos.
