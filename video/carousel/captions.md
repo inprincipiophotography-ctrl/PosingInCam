@@ -54,5 +54,5 @@ Made by wedding photographers Kim & Ivan (In Principio). Your first card is free
 ## Testing them
 
 - **Organic:** post C first. It sells the whole product: the problem every wedding photographer knows, then poses, timeline, groups and shot list on the camera. Post A (the five poses, made to be saved) a week later.
-- **Ads (4:5):** run C and B side by side at the same budget. Compare CTR and cost per click to cards.notalucis.com. Keep the winner.
+- **Ads (4:5):** run C and B side by side at the same budget. Compare CTR and cost per click to the site. Keep the winner.
 - **What to watch:** saves and shares (organic A), and link clicks plus "POSE" comments (both).

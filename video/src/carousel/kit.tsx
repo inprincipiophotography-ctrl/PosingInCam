@@ -71,7 +71,8 @@ export const Slide: React.FC<{ n: number; total: number; bg?: React.ReactNode; d
         <div style={{ position: "absolute", left: n === 1 ? M : 0, right: last ? M : -40, top: H - 92, height: 4, background: dark ? "#fff" : RED }} />
         {last ? <div style={{ position: "absolute", right: M - 8, top: H - 98, width: 16, height: 16, borderRadius: 8, background: dark ? "#fff" : RED }} /> : null}
         <div style={{ position: "absolute", left: M, right: M, top: H - 72, display: "flex", justifyContent: "space-between", fontFamily: SANS, fontSize: 24, color: sub }}>
-          <span>{COPY.url}</span>
+          {/* no web address: the close sends people to comment POSE (DM) or the link in bio */}
+          <span />
           {last ? <span /> : <span style={{ fontWeight: 600, color: ink }}>Swipe →</span>}
         </div>
       </div>
@@ -117,7 +118,7 @@ export const Fan: React.FC<{ cardWidth: number; spread?: number; style?: React.C
 /** Three numbered steps: how a card gets into the camera. */
 export const Steps: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const steps = [
-    ["Pick your cards", "Poses, timelines, family groups, shot lists, at " + COPY.url + "."],
+    ["Pick your cards", "Poses, timelines, family groups and shot lists, or any image of your own."],
     ["Save them to your SD card", "They’re images, so the camera opens them like any photo."],
     ["Swipe in playback", "The next pose is one thumb-press away. No phone in sight."],
   ];
@@ -164,7 +165,7 @@ export const Cta: React.FC = () => (
         </div>
       </div>
       <div style={{ fontFamily: SANS, fontSize: 32, color: INK, textAlign: "center", marginTop: 6 }}>
-        or tap the link in bio · <b>{COPY.url}</b>
+        or tap the link in bio
       </div>
     </div>
     <div style={{ position: "absolute", left: M, right: M, top: 1150, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
