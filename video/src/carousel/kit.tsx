@@ -173,3 +173,51 @@ export const Cta: React.FC = () => (
     </div>
   </>
 );
+
+/** The Editorial card with its four parts called out on the right: what's on every card. */
+export const CardAnatomy: React.FC<{ top: number }> = ({ top }) => {
+  const cw = 470;
+  const s = cw / CARD.w;
+  const left = M;
+  const parts = [
+    { k: "The pose", v: "A real photo to copy", at: { x: 820, y: 700 }, y: 30 },
+    { k: "Camera settings", v: "Vertical, eye level or lower", at: { x: 200, y: 700 }, y: 240 },
+    { k: "The hack", v: "The detail that makes the shot", at: { x: 200, y: 1000 }, y: 450 },
+    { k: "What to say", v: "The exact words for the couple", at: { x: 400, y: 1620 }, y: 660 },
+  ];
+  const bx = 600;
+  return (
+    <>
+      <div style={{ position: "absolute", left, top, width: cw, height: CARD.h * s, borderRadius: 10, overflow: "hidden", boxShadow: "0 30px 60px rgba(40,20,10,0.22)" }}>
+        <div style={{ transform: `scale(${s})`, transformOrigin: "0 0" }}>
+          <PoseCard data={EDITORIAL} />
+        </div>
+      </div>
+      <svg style={{ position: "absolute", left: 0, top: 0, overflow: "visible" }} width={W} height={H}>
+        {parts.map((p) => (
+          <g key={p.k}>
+            <line x1={left + p.at.x * s} y1={top + p.at.y * s} x2={bx - 14} y2={top + p.y + 22} stroke={RED} strokeWidth={3} />
+            <circle cx={left + p.at.x * s} cy={top + p.at.y * s} r={9} fill={RED} stroke="#fff" strokeWidth={3} />
+          </g>
+        ))}
+      </svg>
+      {parts.map((p) => (
+        <div key={p.k} style={{ position: "absolute", left: bx, right: M, top: top + p.y }}>
+          <Label>{p.k}</Label>
+          <div style={{ fontFamily: SANS, fontSize: 30, lineHeight: 1.3, color: INK, marginTop: 8 }}>{p.v}</div>
+        </div>
+      ))}
+    </>
+  );
+};
+
+/** Three real cards on the real camera: what "swipe in playback" looks like. */
+export const CameraStrip: React.FC<{ top: number }> = ({ top }) => (
+  <div style={{ position: "absolute", left: M, right: M, top, display: "flex", gap: 18 }}>
+    {["DSC08435", "DSC08439", "DSC08442"].map((f) => (
+      <div key={f} style={{ flex: 1, height: 190, borderRadius: 16, overflow: "hidden", boxShadow: "0 16px 34px rgba(40,20,10,0.16)" }}>
+        <Img src={staticFile(`photos/${f}.jpg`)} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 40%", transform: "scale(1.5)" }} />
+      </div>
+    ))}
+  </div>
+);

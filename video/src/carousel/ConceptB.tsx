@@ -1,8 +1,7 @@
 import React from "react";
 import { AbsoluteFill, Img, staticFile } from "remotion";
 import { SANS } from "../theme";
-import { CARD, EDITORIAL, PoseCard } from "../v4/PoseCard";
-import { Body, Cta, Fan, Founders, Headline, INK, Label, M, MUTED, RED, Slide, Steps, W } from "./kit";
+import { Body, CameraStrip, CardAnatomy, Cta, Fan, Founders, Headline, INK, Label, M, MUTED, RED, Slide, Steps, W } from "./kit";
 
 // Concept B, direct sale: the moment every photographer knows, the phone, the answer in the camera, what's on a
 // card, how it gets there, the range, the free card. 7 slides.
@@ -57,49 +56,14 @@ const Answer: React.FC = () => (
   </Slide>
 );
 
-const Anatomy: React.FC = () => {
-  const cw = 470;
-  const s = cw / CARD.w;
-  const left = M;
-  const top = 400;
-  const parts = [
-    { k: "The pose", v: "A real photo to copy", at: { x: 820, y: 700 }, y: 430 },
-    { k: "Camera settings", v: "Vertical, eye level or lower", at: { x: 200, y: 700 }, y: 640 },
-    { k: "The hack", v: "The detail that makes the shot", at: { x: 200, y: 1000 }, y: 850 },
-    { k: "What to say", v: "The exact words for the couple", at: { x: 400, y: 1620 }, y: 1060 },
-  ];
-  const bx = 600;
-  return (
-    <Slide n={4} total={N}>
-      <div style={{ position: "absolute", left: M, right: M, top: 150 }}>
-        <Headline size={108}>{"Everything you need,\non *one card.*"}</Headline>
-      </div>
-      <div style={{ position: "absolute", left, top, width: cw, height: CARD.h * s, borderRadius: 10, overflow: "hidden", boxShadow: "0 30px 60px rgba(40,20,10,0.22)" }}>
-        <div style={{ transform: `scale(${s})`, transformOrigin: "0 0" }}>
-          <PoseCard data={EDITORIAL} />
-        </div>
-      </div>
-      <svg style={{ position: "absolute", left: 0, top: 0, overflow: "visible" }} width={W} height={1440}>
-        {parts.map((p) => {
-          const ax = left + p.at.x * s;
-          const ay = top + p.at.y * s;
-          return (
-            <g key={p.k}>
-              <line x1={ax} y1={ay} x2={bx - 14} y2={p.y + 22} stroke={RED} strokeWidth={3} />
-              <circle cx={ax} cy={ay} r={9} fill={RED} stroke="#fff" strokeWidth={3} />
-            </g>
-          );
-        })}
-      </svg>
-      {parts.map((p) => (
-        <div key={p.k} style={{ position: "absolute", left: bx, right: M, top: p.y }}>
-          <Label>{p.k}</Label>
-          <div style={{ fontFamily: SANS, fontSize: 30, lineHeight: 1.3, color: INK, marginTop: 8 }}>{p.v}</div>
-        </div>
-      ))}
-    </Slide>
-  );
-};
+const Anatomy: React.FC = () => (
+  <Slide n={4} total={N}>
+    <div style={{ position: "absolute", left: M, right: M, top: 150 }}>
+      <Headline size={108}>{"Everything you need,\non *one card.*"}</Headline>
+    </div>
+    <CardAnatomy top={400} />
+  </Slide>
+);
 
 const How: React.FC = () => (
   <Slide n={5} total={N}>
@@ -108,14 +72,7 @@ const How: React.FC = () => (
       <Headline size={112} style={{ marginTop: 18 }}>{"Three steps,\n*zero* phone."}</Headline>
     </div>
     <Steps style={{ position: "absolute", left: M, right: M, top: 560 }} />
-    {/* Three real cards on the real camera: what step 3 looks like. */}
-    <div style={{ position: "absolute", left: M, right: M, top: 1050, display: "flex", gap: 18 }}>
-      {["DSC08435", "DSC08439", "DSC08442"].map((f) => (
-        <div key={f} style={{ flex: 1, height: 190, borderRadius: 16, overflow: "hidden", boxShadow: "0 16px 34px rgba(40,20,10,0.16)" }}>
-          <Img src={staticFile(`photos/${f}.jpg`)} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 40%", transform: "scale(1.5)" }} />
-        </div>
-      ))}
-    </div>
+    <CameraStrip top={1050} />
     <div style={{ position: "absolute", left: M, right: M, top: 1268, fontFamily: SANS, fontWeight: 600, fontSize: 30, color: INK }}>
       Sony · Canon · Nikon <span style={{ color: MUTED, fontWeight: 400 }}>· no account needed</span>
     </div>

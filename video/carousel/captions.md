@@ -7,6 +7,20 @@ For "Comment POSE" to work, set up an automatic DM (ManyChat or Meta's own autom
 
 ---
 
+## Concept C: "Stop running the wedding day from your phone" (post this first)
+
+Stop running the wedding day from your phone. 📵
+
+Pinterest for the next pose. The timeline in a PDF. Asking the planner who’s next for the family photos. The shot list in your notes app. All on your phone, in front of your couple.
+
+Shoot Cards puts all of it on your camera screen: poses with the exact words to say, the day’s timeline, the family groups in order and the shot list. Save them to your SD card and swipe in playback. Sony, Canon and Nikon, no account.
+
+Made by wedding photographers Kim & Ivan (In Principio). Your first card is free: comment POSE and we’ll DM you the link, or tap the link in bio.
+
+#weddingphotographer #weddingphotography #weddingday #photographytips #weddingtimeline #familyphotos #sonyalpha #canonphotography
+
+---
+
 ## Concept A: "5 poses that work on every couple"
 
 5 poses that work on every couple (and the exact words to say to them) 👇
@@ -37,6 +51,6 @@ Made by wedding photographers Kim & Ivan (In Principio). Your first card is free
 
 ## Testing them
 
-- **Organic:** post A first. It is built to be saved and shared, which is what Instagram pushes to new people. Post B a week later.
-- **Ads (4:5):** run A and B side by side at the same budget. Compare CTR and cost per click to cards.notalucis.com. Keep the winner.
+- **Organic:** post C first. It sells the whole product: the problem every wedding photographer knows, then poses, timeline, groups and shot list on the camera. Post A (the five poses, made to be saved) a week later.
+- **Ads (4:5):** run C and B side by side at the same budget. Compare CTR and cost per click to cards.notalucis.com. Keep the winner.
 - **What to watch:** saves and shares (organic A), and link clicks plus "POSE" comments (both).

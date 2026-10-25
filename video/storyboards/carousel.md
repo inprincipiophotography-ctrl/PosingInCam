@@ -1,6 +1,6 @@
 # Instagram carousel
 
-Two concepts, each in 3:4 (1080 × 1440, the profile-grid size, organic posts) and 4:5 (1080 × 1350, ads).
+Three concepts, each in 3:4 (1080 × 1440, the profile-grid size, organic posts) and 4:5 (1080 × 1350, ads).
 - **Code:** `src/carousel/`. `kit.tsx` holds the slide frame and the blocks; `ConceptA.tsx` and `ConceptB.tsx` the slides; `data.ts` the five cards' words.
 - **Render:** `node scripts/carousel.mjs [A|B]` → `renders/carousel/<concept>-<ratio>/NN.jpg` plus a contact sheet per set.
 - **Captions:** `carousel/captions.md`.
@@ -29,3 +29,16 @@ What the research says works, and how it's used:
 5. Three steps, with three real cards on the camera.
 6. The fan: every pose for the whole day, plus Kim & Ivan.
 7. The close (as A10).
+
+**C: "Stop running the wedding day from your phone"** (9 slides; the one to post first). Problem solving for the whole day, not just posing.
+1. The camera with the card (DSC08438) under the headline. "Poses · timeline · family groups · shot list. On your camera."
+2. "The wedding day, the old way:" Pinterest, a PDF, the planner, a notes app, each struck through. Then "All on your phone. In front of your couple."
+3. "Now it's all on your camera screen": the pose card next to the timeline, groups and shot-list cards.
+4. Poses, with the words to say (the card's four parts).
+5. The timeline, one swipe away.
+6. Family groups, in order.
+7. The must-haves, covered (shot list).
+8. Three steps, with three real cards on the camera.
+9. The close.
+
+The timeline, groups and shot-list cards are drawn by the site's own renderer (`scripts/render-cards.mjs`) with the /demo page's sample couple, Emma & James.

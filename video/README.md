@@ -44,7 +44,7 @@ This folder is not part of the website: `.vercelignore` keeps it out of the depl
 
 ### Instagram carousel
 
-Two carousels (A: "5 poses that work on every couple", value first, 10 slides; B: "Your mind goes blank", direct sale, 7 slides), each in 3:4 for the feed and 4:5 for ads, rendered as stills from `src/carousel/`: `node scripts/carousel.mjs` → `renders/carousel/`. Storyboard and research notes in `storyboards/carousel.md`, post captions in `carousel/captions.md`.
+Three carousels (C: "Stop running the wedding day from your phone", the whole day, 9 slides, to post first; A: "5 poses that work on every couple", value first, 10 slides; B: "Your mind goes blank", direct sale, 7 slides), each in 3:4 for the feed and 4:5 for ads, rendered as stills from `src/carousel/`: `node scripts/carousel.mjs` → `renders/carousel/`. Storyboard and research notes in `storyboards/carousel.md`, post captions in `carousel/captions.md`.
 
 ### Sound design (v5)
 
