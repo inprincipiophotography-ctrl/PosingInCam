@@ -42,6 +42,10 @@ This folder is not part of the website: `.vercelignore` keeps it out of the depl
 
 `AdA8` (Ad A v8) is Ad A v6 unchanged, with v7's end card and Kim & Ivan in a small round photo (`public/brand/kim-ivan.jpg`). Code in `src/v8/`, storyboard in `storyboards/ad-a-v8.md`, render in `renders/AdA8-9x16.mp4`.
 
+### Instagram carousel
+
+Two carousels (A: "5 poses that work on every couple", value first, 10 slides; B: "Your mind goes blank", direct sale, 7 slides), each in 3:4 for the feed and 4:5 for ads, rendered as stills from `src/carousel/`: `node scripts/carousel.mjs` → `renders/carousel/`. Storyboard and research notes in `storyboards/carousel.md`, post captions in `carousel/captions.md`.
+
 ### Sound design (v5)
 
 Built on the Ultimate Editors method; the full breakdown and per-pass report is in `storyboards/ad-a-v5-sound.md`.

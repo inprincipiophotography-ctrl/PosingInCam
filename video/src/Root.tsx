@@ -1,5 +1,5 @@
 import React from "react";
-import { Composition } from "remotion";
+import { Composition, Still } from "remotion";
 import { AD_SECONDS, AdA, AdB, AdC } from "./Ads";
 import { LAUNCH_SECONDS, Launch } from "./Launch";
 import { AD_A2_SECONDS, AdA2 } from "./v2/AdA2";
@@ -11,6 +11,8 @@ import { AD_A5_SECONDS, AdA5 } from "./v5/AdA5";
 import { AD_A6_SECONDS, AdA6 } from "./v6/AdA6";
 import { AD_A7_SECONDS, AdA7 } from "./v7/AdA7";
 import { AD_A8_SECONDS, AdA8 } from "./v8/AdA8";
+import { SLIDES_A } from "./carousel/ConceptA";
+import { SLIDES_B } from "./carousel/ConceptB";
 import "./theme";
 
 const FORMATS = {
@@ -50,6 +52,17 @@ export const Root: React.FC = () => (
     <Composition id="AdA4-9x16" component={AdA4} durationInFrames={AD_A4_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
     <Composition id="AdA6-9x16" component={AdA6} durationInFrames={AD_A6_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
     <Composition id="AdA8-9x16" component={AdA8} durationInFrames={AD_A8_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
+    {/* Instagram carousel: concept A (value first) and B (direct sale), 3:4 for the feed and 4:5 for ads. */}
+    {(
+      [
+        ["A", SLIDES_A],
+        ["B", SLIDES_B],
+      ] as const
+    ).flatMap(([c, slides]) =>
+      ([["3x4", 1440], ["4x5", 1350]] as const).flatMap(([r, h]) =>
+        slides.map((S, i) => <Still key={`${c}${r}${i}`} id={`Carousel${c}-${r}-${String(i + 1).padStart(2, "0")}`} component={S} width={1080} height={h} />),
+      ),
+    )}
     <Composition id="AdA7-H1-9x16" component={AdA7} durationInFrames={AD_A7_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ hook: "H1" as const, guides: false }} />
     <Composition id="AdA7-H2-9x16" component={AdA7} durationInFrames={AD_A7_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ hook: "H2" as const, guides: false }} />
     <Composition id="AdA7-H3-9x16" component={AdA7} durationInFrames={AD_A7_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ hook: "H3" as const, guides: false }} />
