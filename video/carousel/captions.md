@@ -13,7 +13,9 @@ Wedding photographers: never look unprepared in front of a couple again. 📷
 
 Pinterest for the next pose. The timeline in a PDF. Asking the planner who’s next for the family photos. The shot list in your notes app. All on your phone, in front of your couple, and it looks like you don’t know what’s next.
 
-Shoot Cards puts all of it on the camera that’s already in your hand: poses with the exact words to say, the day’s timeline, the family groups in order and the shot list. And any image you want: her Pinterest pins, a moodboard, your own Canva designs. Save them to your SD card and swipe in playback. Faster, calmer, more professional. Sony, Canon and Nikon, no account.
+Shoot Cards puts all of it on the camera that’s already in your hand: poses with the exact words to say, the day’s timeline, the family groups in order and the shot list. And any image you want: her Pinterest pins, a moodboard, your own Canva designs. Save them to your SD card and swipe in playback. Faster, calmer, more professional.
+
+Every wedding throws something at you: a couple that freezes, a day that runs late, “did we get Grandma?”. Better prepared than sorry. Walk in with the answers already on your camera. Sony, Canon and Nikon, no account.
 
 Made by wedding photographers Kim & Ivan (In Principio). Your first card is free: comment POSE and we’ll DM you the link, or tap the link in bio.
 

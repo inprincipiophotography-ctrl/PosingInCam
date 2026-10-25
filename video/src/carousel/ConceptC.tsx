@@ -5,9 +5,9 @@ import { Body, CameraStrip, Card, CardAnatomy, Cta, Headline, INK, Label, M, MUT
 
 // Concept C, problem solving for the whole wedding day: the photographer runs the day from a phone (Pinterest,
 // a PDF timeline, the planner, a notes app); Shoot Cards puts poses, timeline, family groups and the shot list on
-// the camera screen, plus any image (her Pinterest pins, a moodboard, your own designs). 11 slides. The timeline, groups and shot-list cards are drawn by the site's own renderer
+// the camera screen, plus any image (her Pinterest pins, a moodboard, your own designs). 12 slides. The timeline, groups and shot-list cards are drawn by the site's own renderer
 // (scripts/render-cards.mjs) with the /demo page's sample couple.
-const N = 11;
+const N = 12;
 type P = { n: number };
 
 /** A landscape Shoot Card (timeline, groups, shot list), as the camera shows it. */
@@ -17,21 +17,25 @@ const Wide: React.FC<{ src: string; width: number; rotate?: number; style?: Reac
   </div>
 );
 
-const Hook: React.FC<P> = ({ n }) => (
-  <Slide n={n} total={N}>
-    <div style={{ position: "absolute", left: M, right: M, top: 150 }}>
-      <Label>For wedding photographers</Label>
-      <Headline size={104} style={{ marginTop: 16 }}>{"Never look *unprepared*\nin front of a\ncouple again."}</Headline>
-    </div>
-    {/* The real thing: a thumb on the dial, the next pose card on the camera screen. */}
-    <div style={{ position: "absolute", left: M, right: M, top: 545, height: 650, borderRadius: 22, overflow: "hidden", boxShadow: "0 30px 60px rgba(40,20,10,0.22)" }}>
-      <Img src={staticFile("carousel/thumb-swipe.jpg")} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-    </div>
-    <Body size={33} style={{ position: "absolute", left: M, right: M, top: 1218, color: INK }}>
-      Poses, timeline, family groups, shot list. <b>All on the camera already in your hand.</b>
-    </Body>
-  </Slide>
-);
+const Hook: React.FC<P> = ({ n }) => {
+  // The real thing, upright and whole: a hand on the camera, thumb on the dial, The First Look on the screen.
+  // Its light wall melts into the paper at every edge.
+  const fade = "linear-gradient(to bottom, transparent 0%, #000 10%, #000 86%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%)";
+  return (
+    <Slide n={n} total={N}>
+      <div style={{ position: "absolute", left: 108, top: 300, width: 864, height: 1152, WebkitMaskImage: fade, maskImage: fade, WebkitMaskComposite: "source-in", maskComposite: "intersect" }}>
+        <Img src={staticFile("photos/DSC08435.jpg")} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      </div>
+      <div style={{ position: "absolute", left: M, right: M, top: 150 }}>
+        <Label>For wedding photographers</Label>
+        <Headline size={98} style={{ marginTop: 16 }}>{"Never look *unprepared*\nin front of a couple again."}</Headline>
+      </div>
+      <div style={{ position: "absolute", left: M, top: 1220, background: "rgba(20,20,22,0.85)", color: "#fff", borderRadius: 18, padding: "18px 26px", fontFamily: SANS, fontSize: 30, fontWeight: 600, letterSpacing: "-0.01em" }}>
+        Poses · timeline · family groups · shot list. <span style={{ color: "#ff8a7e" }}>On your camera.</span>
+      </div>
+    </Slide>
+  );
+};
 
 const OldWay: React.FC<P> = ({ n }) => {
   const rows = [
@@ -152,6 +156,36 @@ const AnyImage: React.FC<P> = ({ n }) => {
   );
 };
 
+/** Be ready for anything: what goes wrong on a wedding day, and the card that already has the answer. */
+const Ready: React.FC<P> = ({ n }) => {
+  const rows = [
+    ["The couple freezes.", "The next pose, and the words to say, are a swipe away."],
+    ["The day runs late.", "The timeline is on your camera, not in a PDF."],
+    ["“Did we get Grandma?”", "The family groups, in order, one by one."],
+    ["She shows you her Pinterest.", "Her board is already in your playback."],
+  ];
+  return (
+    <Slide n={n} total={N}>
+      <div style={{ position: "absolute", left: M, right: M, top: 160 }}>
+        <Label>Be ready for anything</Label>
+        <Headline size={112} style={{ marginTop: 16 }}>{"Better prepared\n*than sorry.*"}</Headline>
+        <Body style={{ marginTop: 22, maxWidth: 900 }}>Every wedding throws something at you. Walk in with the answers already in your hand.</Body>
+      </div>
+      <div style={{ position: "absolute", left: M, right: M, top: 640, display: "flex", flexDirection: "column", gap: 26 }}>
+        {rows.map(([q, a]) => (
+          <div key={q} style={{ display: "flex", gap: 24, alignItems: "flex-start", paddingBottom: 24, borderBottom: "1.5px solid rgba(20,20,22,0.12)" }}>
+            <div style={{ width: 34, height: 34, borderRadius: 17, background: RED, color: "#fff", flex: "none", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: SANS, fontWeight: 700, fontSize: 22, marginTop: 6 }}>✓</div>
+            <div>
+              <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 38, letterSpacing: "-0.02em", color: INK }}>{q}</div>
+              <div style={{ fontFamily: SANS, fontSize: 30, lineHeight: 1.35, color: MUTED, marginTop: 6 }}>{a}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Slide>
+  );
+};
+
 const How: React.FC<P> = ({ n }) => (
   <Slide n={n} total={N}>
     <div style={{ position: "absolute", left: M, right: M, top: 160 }}>
@@ -182,6 +216,7 @@ const ORDER: React.FC<P>[] = [
   ({ n }) => <Feature n={n} label="Family groups" title={"Family groups,\n*in order.*"} src="cards/groups.png" line="Call the next group by name, without asking the planner." />,
   ({ n }) => <Feature n={n} label="Shot list" title={"The must-haves,\n*covered.*"} src="cards/shotlist.png" line="Every shot the couple asked for, a swipe away." />,
   AnyImage,
+  Ready,
   How,
   Close,
 ];
