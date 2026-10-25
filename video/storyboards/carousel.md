@@ -30,10 +30,10 @@ What the research says works, and how it's used:
 6. The fan: every pose for the whole day, plus Kim & Ivan.
 7. The close (as A10).
 
-**C: "Stop running the wedding day from your phone"** (9 slides; the one to post first). Problem solving for the whole day, not just posing.
-1. The camera with the card (DSC08438) under the headline. "Poses · timeline · family groups · shot list. On your camera."
-2. "The wedding day, the old way:" Pinterest, a PDF, the planner, a notes app, each struck through. Then "All on your phone. In front of your couple."
-3. "Now it's all on your camera screen": the pose card next to the timeline, groups and shot-list cards.
+**C: "Never look unprepared in front of a couple again"** (9 slides; the one to post first). Problem solving for the whole day, not just posing, and the reassurance of looking professional.
+1. "For wedding photographers", then the headline. Under it, a frame from the real wedding take: over the photographer's shoulder, the pose card on the camera, the couple waiting. "Poses, timeline, family groups, shot list. All on the camera already in your hand."
+2. "The wedding day, the old way:" Pinterest, a PDF, the planner, a notes app, each struck through. Then "All on your phone, in front of your couple. It looks like you don't know what's next."
+3. "Now it's all on your camera screen. Faster, calmer, more professional.": the pose card next to the timeline, groups and shot-list cards.
 4. Poses, with the words to say (the card's four parts).
 5. The timeline, one swipe away.
 6. Family groups, in order.

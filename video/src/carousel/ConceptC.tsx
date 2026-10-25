@@ -1,7 +1,7 @@
 import React from "react";
-import { AbsoluteFill, Img, staticFile } from "remotion";
+import { Img, staticFile } from "remotion";
 import { SANS } from "../theme";
-import { Body, CameraStrip, Card, CardAnatomy, Cta, Headline, INK, Label, M, MUTED, PAPER, RED, Slide, Steps } from "./kit";
+import { Body, CameraStrip, Card, CardAnatomy, Cta, Headline, INK, Label, M, MUTED, RED, Slide, Steps } from "./kit";
 
 // Concept C, problem solving for the whole wedding day: the photographer runs the day from a phone (Pinterest,
 // a PDF timeline, the planner, a notes app); Shoot Cards puts poses, timeline, family groups and the shot list on
@@ -17,22 +17,18 @@ const Wide: React.FC<{ src: string; width: number; rotate?: number; style?: Reac
 );
 
 const Hook: React.FC = () => (
-  <Slide
-    n={1} total={N}
-    bg={
-      <AbsoluteFill>
-        {/* the camera photo slid down a fifth, so the headline sits above it on paper */}
-        <Img src={staticFile("photos/DSC08438.jpg")} style={{ width: "100%", height: "100%", objectFit: "cover", transform: "translateY(22%)" }} />
-        <AbsoluteFill style={{ background: `linear-gradient(180deg, ${PAPER} 0%, ${PAPER} 30%, rgba(246,243,238,0) 44%, rgba(246,243,238,0) 84%, ${PAPER} 95%)` }} />
-      </AbsoluteFill>
-    }
-  >
+  <Slide n={1} total={N}>
     <div style={{ position: "absolute", left: M, right: M, top: 150 }}>
-      <Headline size={120}>{"Stop running\nthe wedding day\n*from your phone.*"}</Headline>
+      <Label>For wedding photographers</Label>
+      <Headline size={118} style={{ marginTop: 18 }}>{"Never look *unprepared*\nin front of a\ncouple again."}</Headline>
     </div>
-    <div style={{ position: "absolute", left: M, top: 1220, background: "rgba(20,20,22,0.82)", color: "#fff", borderRadius: 18, padding: "18px 26px", fontFamily: SANS, fontSize: 30, fontWeight: 600, letterSpacing: "-0.01em" }}>
-      Poses · timeline · family groups · shot list. <span style={{ color: "#ff8a7e" }}>On your camera.</span>
+    {/* At a real wedding, over the photographer's shoulder: the pose card on the camera, the couple waiting. */}
+    <div style={{ position: "absolute", left: M, right: M, top: 640, height: 527, borderRadius: 22, overflow: "hidden", boxShadow: "0 30px 60px rgba(40,20,10,0.22)" }}>
+      <Img src={staticFile("carousel/wedding-pov.jpg")} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
     </div>
+    <Body size={34} style={{ position: "absolute", left: M, right: M, top: 1200, color: INK }}>
+      Poses, timeline, family groups, shot list. <b>All on the camera already in your hand.</b>
+    </Body>
   </Slide>
 );
 
@@ -61,7 +57,7 @@ const OldWay: React.FC = () => {
         ))}
       </div>
       <Body size={38} style={{ position: "absolute", left: M, right: M, top: 1200, color: INK }}>
-        All on your phone. <b>In front of your couple.</b>
+        All on your phone, in front of your couple. <b>It looks like you don’t know what’s next.</b>
       </Body>
     </Slide>
   );
@@ -71,12 +67,13 @@ const AllOnCamera: React.FC = () => (
   <Slide n={3} total={N}>
     <div style={{ position: "absolute", left: M, right: M, top: 150 }}>
       <Headline size={112}>{"Now it’s all\n*on your camera screen.*"}</Headline>
+      <Body size={32} style={{ marginTop: 14 }}>Faster, calmer, more professional. Everything within reach of the camera you’re already holding.</Body>
     </div>
-    <Card card="editorial" width={430} rotate={-3} style={{ position: "absolute", left: M, top: 500 }} />
-    <div style={{ position: "absolute", left: 560, top: 450, display: "flex", flexDirection: "column", gap: 24 }}>
-      <Wide src="cards/timeline.png" width={410} rotate={2} />
-      <Wide src="cards/groups.png" width={410} rotate={-1.5} />
-      <Wide src="cards/shotlist.png" width={410} rotate={1.5} />
+    <Card card="editorial" width={430} rotate={-3} style={{ position: "absolute", left: M, top: 580 }} />
+    <div style={{ position: "absolute", left: 580, top: 520, display: "flex", flexDirection: "column", gap: 20 }}>
+      <Wide src="cards/timeline.png" width={370} rotate={2} />
+      <Wide src="cards/groups.png" width={370} rotate={-1.5} />
+      <Wide src="cards/shotlist.png" width={370} rotate={1.5} />
     </div>
   </Slide>
 );
