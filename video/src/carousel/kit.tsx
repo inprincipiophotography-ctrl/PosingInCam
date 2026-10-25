@@ -22,6 +22,13 @@ export const W = 1080;
  * don't tap the button today remember where to go.
  */
 export const ShowUrl = React.createContext(false);
+
+/**
+ * How much bigger the small type is (labels, body copy, header, footer, steps, callouts). The organic sets use 1;
+ * the ad uses more, because a 1080 px card is ~390 pt wide on a phone and 33 px body copy reads at ~12 pt.
+ */
+export const TextScale = React.createContext(1);
+const useK = () => React.useContext(TextScale);
 export const H = 1440;
 export const M = 72; // side margin
 
@@ -41,13 +48,15 @@ export const Headline: React.FC<{ children: string; size?: number; color?: strin
   </div>
 );
 
-export const Label: React.FC<{ children: React.ReactNode; color?: string; style?: React.CSSProperties }> = ({ children, color = RED, style }) => (
-  <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 22, letterSpacing: "0.18em", textTransform: "uppercase", color, ...style }}>{children}</div>
-);
+export const Label: React.FC<{ children: React.ReactNode; color?: string; style?: React.CSSProperties }> = ({ children, color = RED, style }) => {
+  const k = useK();
+  return <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 22 * k, letterSpacing: "0.16em", textTransform: "uppercase", color, ...style }}>{children}</div>;
+};
 
-export const Body: React.FC<{ children: React.ReactNode; size?: number; color?: string; style?: React.CSSProperties }> = ({ children, size = 34, color = "#3b3a38", style }) => (
-  <div style={{ fontFamily: SANS, fontSize: size, lineHeight: 1.38, color, letterSpacing: "-0.005em", ...style }}>{children}</div>
-);
+export const Body: React.FC<{ children: React.ReactNode; size?: number; color?: string; style?: React.CSSProperties }> = ({ children, size = 34, color = "#3b3a38", style }) => {
+  const k = useK();
+  return <div style={{ fontFamily: SANS, fontSize: size * k, lineHeight: 1.34, color, letterSpacing: "-0.005em", ...style }}>{children}</div>;
+};
 
 /**
  * The slide: background full-bleed, content on the 1080 × 1440 canvas (scaled for 4:5), a small header with the
@@ -60,6 +69,7 @@ export const Slide: React.FC<{ n: number; total: number; bg?: React.ReactNode; d
   const sub = dark ? "rgba(255,255,255,0.75)" : MUTED;
   const last = n === total;
   const url = React.useContext(ShowUrl);
+  const k = useK();
   return (
     <AbsoluteFill style={paper}>
       {bg}
@@ -67,10 +77,10 @@ export const Slide: React.FC<{ n: number; total: number; bg?: React.ReactNode; d
         {/* header */}
         <div style={{ position: "absolute", left: M, right: M, top: 52, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <LogoMark size={40} inverse={dark} />
-            <span style={{ fontFamily: SANS, fontWeight: 700, fontSize: 26, letterSpacing: "-0.02em", color: ink }}>{COPY.brand}</span>
+            <LogoMark size={40 * k} inverse={dark} />
+            <span style={{ fontFamily: SANS, fontWeight: 700, fontSize: 26 * k, letterSpacing: "-0.02em", color: ink }}>{COPY.brand}</span>
           </div>
-          <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: 24, color: sub, fontVariantNumeric: "tabular-nums" }}>
+          <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: 24 * k, color: sub, fontVariantNumeric: "tabular-nums" }}>
             {String(n).padStart(2, "0")} / {String(total).padStart(2, "0")}
           </span>
         </div>
@@ -78,7 +88,7 @@ export const Slide: React.FC<{ n: number; total: number; bg?: React.ReactNode; d
         {/* the rule that carries the eye to the next slide */}
         <div style={{ position: "absolute", left: n === 1 ? M : 0, right: last ? M : -40, top: H - 92, height: 4, background: dark ? "#fff" : RED }} />
         {last ? <div style={{ position: "absolute", right: M - 8, top: H - 98, width: 16, height: 16, borderRadius: 8, background: dark ? "#fff" : RED }} /> : null}
-        <div style={{ position: "absolute", left: M, right: M, top: H - 72, display: "flex", justifyContent: "space-between", fontFamily: SANS, fontSize: 24, color: sub }}>
+        <div style={{ position: "absolute", left: M, right: M, top: H - 72 - 24 * (k - 1), display: "flex", justifyContent: "space-between", fontFamily: SANS, fontSize: 24 * k, color: sub }}>
           {url ? <span style={{ fontWeight: 600, color: ink }}>{COPY.url}</span> : <span />}
           {last ? <span /> : <span style={{ fontWeight: 600, color: ink }}>Swipe →</span>}
         </div>
@@ -125,6 +135,7 @@ export const Fan: React.FC<{ cardWidth: number; spread?: number; style?: React.C
 /** Three numbered steps: how a card gets into the camera. */
 export const Steps: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const url = React.useContext(ShowUrl);
+  const k = useK();
   const steps = [
     ["Pick your cards", "Poses, timelines, family groups and shot lists, or any image of your own" + (url ? `, at ${COPY.url}.` : ".")],
     ["Save them to your SD card", "They’re images, so the camera opens them like any photo."],
@@ -136,7 +147,7 @@ export const Steps: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         <div key={t} style={{ display: "flex", gap: 34, alignItems: "flex-start" }}>
           <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 120, lineHeight: 0.8, color: RED, width: 70, textAlign: "center", flex: "none" }}>{i + 1}</div>
           <div>
-            <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 42, letterSpacing: "-0.02em", color: INK }}>{t}</div>
+            <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 42 * k, letterSpacing: "-0.02em", color: INK }}>{t}</div>
             <Body size={30} style={{ marginTop: 8, color: MUTED }}>{d}</Body>
           </div>
         </div>
@@ -146,16 +157,19 @@ export const Steps: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
 };
 
 /** Kim & Ivan, small and round, beside who they are. */
-export const Founders: React.FC<{ dark?: boolean; style?: React.CSSProperties }> = ({ dark, style }) => (
+export const Founders: React.FC<{ dark?: boolean; style?: React.CSSProperties }> = ({ dark, style }) => {
+  const k = useK();
+  return (
   <div style={{ display: "flex", alignItems: "center", gap: 22, ...style }}>
-    <div style={{ width: 96, height: 96, borderRadius: "50%", overflow: "hidden", flex: "none", boxShadow: `0 0 0 2px ${dark ? "rgba(255,255,255,0.85)" : "#fff"}, 0 8px 20px rgba(40,20,10,0.2)` }}>
+    <div style={{ width: 96 * k, height: 96 * k, borderRadius: "50%", overflow: "hidden", flex: "none", boxShadow: `0 0 0 2px ${dark ? "rgba(255,255,255,0.85)" : "#fff"}, 0 8px 20px rgba(40,20,10,0.2)` }}>
       <Img src={staticFile("brand/kim-ivan.jpg")} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
     </div>
-    <div style={{ fontFamily: SANS, fontSize: 28, lineHeight: 1.35, color: dark ? "rgba(255,255,255,0.8)" : MUTED }}>
+    <div style={{ fontFamily: SANS, fontSize: 28 * k, lineHeight: 1.3, color: dark ? "rgba(255,255,255,0.8)" : MUTED }}>
       {COPY.madeBy.map((l, i) => <div key={l} style={i === 1 ? { color: dark ? "#fff" : INK, fontWeight: 600 } : undefined}>{l}</div>)}
     </div>
   </div>
-);
+  );
+};
 
 /**
  * The close. Organic: what's free, comment POSE (DM) or the link in bio, and a reason to save the post.
@@ -186,32 +200,37 @@ export const Cta: React.FC<{ variant?: "organic" | "ad" }> = ({ variant = "organ
   </>
 ));
 
-const CtaAd: React.FC = () => (
-  <>
-    <div style={{ position: "absolute", left: M, right: M, top: 190 }}>
-      <Label>Try it on your next wedding</Label>
-      <Headline size={150} style={{ marginTop: 22 }}>{"Your first\ncard is *free.*"}</Headline>
-      <Body size={34} style={{ marginTop: 28, maxWidth: 820 }}>No account. Make it, save it to your SD card, and see it in your camera’s playback tonight.</Body>
-    </div>
-    {/* the address, big: for everyone who won't tap today */}
-    <div style={{ position: "absolute", left: M, right: M, top: 700, fontFamily: SANS, fontWeight: 700, fontSize: 60, letterSpacing: "-0.03em", color: INK }}>
-      <span style={{ borderBottom: `5px solid ${RED}`, paddingBottom: 4 }}>{COPY.url}</span>
-    </div>
-    <Founders style={{ position: "absolute", left: M, top: 860 }} />
-    {/* right above the button Meta draws under the ad */}
-    <div style={{ position: "absolute", left: M, right: M, top: 1050, display: "flex", alignItems: "center", justifyContent: "space-between", background: BORDO, color: "#fff", borderRadius: 26, padding: "34px 40px" }}>
-      <div style={{ fontFamily: SANS, fontSize: 40, letterSpacing: "-0.01em" }}>
-        Tap <b style={{ background: "#fff", color: BORDO, padding: "0 12px", borderRadius: 8 }}>Learn more</b> below
+const CtaAd: React.FC = () => {
+  const k = useK();
+  return (
+    <>
+      {/* stacked, so bigger type (TextScale) pushes things down instead of overlapping */}
+      <div style={{ position: "absolute", left: M, right: M, top: 180, display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+        <Label>Try it on your next wedding</Label>
+        <Headline size={150} style={{ marginTop: 22 }}>{"Your first\ncard is *free.*"}</Headline>
+        <Body size={34} style={{ marginTop: 24, maxWidth: 880 }}>No account. Make it, save it to your SD card, see it in playback tonight.</Body>
+        {/* the address, big: for everyone who won't tap today */}
+        <div style={{ marginTop: 36, fontFamily: SANS, fontWeight: 700, fontSize: 60, letterSpacing: "-0.03em", color: INK }}>
+          <span style={{ borderBottom: `5px solid ${RED}`, paddingBottom: 4 }}>{COPY.url}</span>
+        </div>
+        <Founders style={{ marginTop: 44 }} />
       </div>
-      <svg width={56} height={56} viewBox="0 0 56 56">
-        <path d="M28 10 V44 M14 31 L28 45 L42 31" fill="none" stroke="#fff" strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </div>
-  </>
-);
+      {/* right above the button Meta draws under the ad */}
+      <div style={{ position: "absolute", left: M, right: M, top: 1100, display: "flex", alignItems: "center", justifyContent: "space-between", background: BORDO, color: "#fff", borderRadius: 26, padding: "34px 40px" }}>
+        <div style={{ fontFamily: SANS, fontSize: 40 * k, letterSpacing: "-0.01em" }}>
+          Tap <b style={{ background: "#fff", color: BORDO, padding: "0 12px", borderRadius: 8 }}>Learn more</b> below
+        </div>
+        <svg width={56 * k} height={56 * k} viewBox="0 0 56 56">
+          <path d="M28 10 V44 M14 31 L28 45 L42 31" fill="none" stroke="#fff" strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+    </>
+  );
+};
 
 /** The Editorial card with its four parts called out on the right: what's on every card. */
 export const CardAnatomy: React.FC<{ top: number }> = ({ top }) => {
+  const k = useK();
   const cw = 470;
   const s = cw / CARD.w;
   const left = M;
@@ -240,7 +259,7 @@ export const CardAnatomy: React.FC<{ top: number }> = ({ top }) => {
       {parts.map((p) => (
         <div key={p.k} style={{ position: "absolute", left: bx, right: M, top: top + p.y }}>
           <Label>{p.k}</Label>
-          <div style={{ fontFamily: SANS, fontSize: 30, lineHeight: 1.3, color: INK, marginTop: 8 }}>{p.v}</div>
+          <div style={{ fontFamily: SANS, fontSize: 30 * k, lineHeight: 1.25, color: INK, marginTop: 8 }}>{p.v}</div>
         </div>
       ))}
     </>
@@ -257,3 +276,44 @@ export const CameraStrip: React.FC<{ top: number }> = ({ top }) => (
     ))}
   </div>
 );
+
+/** A landscape Shoot Card (timeline, groups, shot list), as the camera shows it. */
+export const Wide: React.FC<{ src: string; width: number; rotate?: number; style?: React.CSSProperties }> = ({ src, width, rotate = 0, style }) => (
+  <div style={{ width, height: (width * 2) / 3, borderRadius: 12, overflow: "hidden", boxShadow: "0 30px 60px rgba(40,20,10,0.2), 0 4px 12px rgba(40,20,10,0.1)", transform: `rotate(${rotate}deg)`, ...style }}>
+    <Img src={staticFile(src)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+  </div>
+);
+
+/** "Her board": the bride's Pinterest pins as a camera card, drawn like the site's demo tile on the 1920 × 1280 frame. */
+export const HerBoard: React.FC<{ width: number; style?: React.CSSProperties }> = ({ width, style }) => {
+  const k = width / 1920;
+  const pins = ["pin-01", "pin-02", "pin-03"];
+  return (
+    <div style={{ position: "relative", width, height: 1280 * k, borderRadius: 12, overflow: "hidden", background: "#fff", boxShadow: "0 30px 60px rgba(40,20,10,0.2), 0 4px 12px rgba(40,20,10,0.1)", transform: "rotate(-1deg)", ...style }}>
+      <div style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1280, transform: `scale(${k})`, transformOrigin: "0 0" }}>
+        <div style={{ position: "absolute", right: 0, top: 0, width: 130, height: 1280, background: "#a40000" }} />
+        <div style={{ position: "absolute", left: 120, top: 105, fontFamily: SANS, fontWeight: 600, fontSize: 40, letterSpacing: 6, color: "#a40000" }}>HER BOARD</div>
+        <div style={{ position: "absolute", left: 120, top: 170, fontFamily: SERIF, fontSize: 132, lineHeight: 1, color: "#1d1d1f" }}>What she asked for</div>
+        <div style={{ position: "absolute", left: 120, top: 360, width: 1540, height: 3, background: "#d8d8dc" }} />
+        {pins.map((p, i) => (
+          <div key={p} style={{ position: "absolute", left: 120 + i * 480, top: 430, width: 450, height: 600, borderRadius: 24, overflow: "hidden" }}>
+            <Img src={staticFile(`carousel/pins/${p}.jpg`)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            {i === 2 ? <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.5)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: SANS, fontWeight: 600, fontSize: 110, color: "#fff" }}>+9</div> : null}
+          </div>
+        ))}
+        <div style={{ position: "absolute", left: 120, top: 1180, fontFamily: SANS, fontSize: 34, letterSpacing: 3, color: "#6e6e73" }}>SHOOT CARDS</div>
+      </div>
+    </div>
+  );
+};
+
+/** A small rounded tag, e.g. a camera brand. */
+export const Chip: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const k = useK();
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: `${10 * k}px ${22 * k}px`, borderRadius: 999, background: "#fff", boxShadow: "0 0 0 1.5px rgba(20,20,22,0.12)", fontFamily: SANS, fontWeight: 700, fontSize: 28 * k, letterSpacing: "-0.01em", color: INK }}>
+      <span style={{ width: 10, height: 10, borderRadius: 5, background: RED }} />
+      {children}
+    </span>
+  );
+};

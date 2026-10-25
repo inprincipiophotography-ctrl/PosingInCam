@@ -1,7 +1,7 @@
 import React from "react";
 import { Img, staticFile } from "remotion";
 import { SANS } from "../theme";
-import { Body, CameraStrip, Card, CardAnatomy, Cta, Headline, INK, Label, M, MUTED, RED, ShowUrl, Slide, Steps } from "./kit";
+import { Body, CameraStrip, Card, CardAnatomy, Cta, Headline, HerBoard, INK, Label, M, MUTED, RED, ShowUrl, Slide, Steps, Wide } from "./kit";
 
 // Concept C, problem solving for the whole wedding day: the photographer runs the day from a phone (Pinterest,
 // a PDF timeline, the planner, a notes app); Shoot Cards puts poses, timeline, family groups and the shot list on
@@ -9,13 +9,6 @@ import { Body, CameraStrip, Card, CardAnatomy, Cta, Headline, INK, Label, M, MUT
 // (scripts/render-cards.mjs) with the /demo page's sample couple.
 // Slides take their number and the set's length, so the same slides make the 12-slide post and the 10-card ad.
 type P = { n: number; total: number };
-
-/** A landscape Shoot Card (timeline, groups, shot list), as the camera shows it. */
-const Wide: React.FC<{ src: string; width: number; rotate?: number; style?: React.CSSProperties }> = ({ src, width, rotate = 0, style }) => (
-  <div style={{ width, height: (width * 2) / 3, borderRadius: 12, overflow: "hidden", boxShadow: "0 30px 60px rgba(40,20,10,0.2), 0 4px 12px rgba(40,20,10,0.1)", transform: `rotate(${rotate}deg)`, ...style }}>
-    <Img src={staticFile(src)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-  </div>
-);
 
 const Hook: React.FC<P> = ({ n, total }) => {
   // The real thing, upright and whole: a hand on the camera, thumb on the dial, The First Look on the screen.
@@ -123,30 +116,13 @@ const Feature: React.FC<P & { label: string; title: string; src: string; line: s
 
 /** "Any image": her Pinterest pins, a moodboard, your own designs, labelled and in playback (the site's "Her board"). */
 const AnyImage: React.FC<P> = ({ n, total }) => {
-  const cw = 880;
-  const k = cw / 1920; // the card is drawn on the camera's 1920 × 1280 frame, like the site's demo tile
-  const pins = ["pin-01", "pin-02", "pin-03"];
   return (
     <Slide n={n} total={total}>
       <div style={{ position: "absolute", left: M, right: M, top: 160 }}>
         <Label>Any image</Label>
         <Headline size={108} style={{ marginTop: 16 }}>{"If it’s an image,\n*it’s in your camera.*"}</Headline>
       </div>
-      <div style={{ position: "absolute", left: M + 28, top: 495, width: cw, height: 1280 * k, borderRadius: 12, overflow: "hidden", background: "#fff", boxShadow: "0 30px 60px rgba(40,20,10,0.2), 0 4px 12px rgba(40,20,10,0.1)", transform: "rotate(-1deg)" }}>
-        <div style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1280, transform: `scale(${k})`, transformOrigin: "0 0" }}>
-          <div style={{ position: "absolute", right: 0, top: 0, width: 130, height: 1280, background: "#a40000" }} />
-          <div style={{ position: "absolute", left: 120, top: 105, fontFamily: SANS, fontWeight: 600, fontSize: 40, letterSpacing: 6, color: "#a40000" }}>HER BOARD</div>
-          <div style={{ position: "absolute", left: 120, top: 170, fontFamily: "Instrument Serif", fontSize: 132, lineHeight: 1, color: "#1d1d1f" }}>What she asked for</div>
-          <div style={{ position: "absolute", left: 120, top: 360, width: 1540, height: 3, background: "#d8d8dc" }} />
-          {pins.map((p, i) => (
-            <div key={p} style={{ position: "absolute", left: 120 + i * 480, top: 430, width: 450, height: 600, borderRadius: 24, overflow: "hidden" }}>
-              <Img src={staticFile(`carousel/pins/${p}.jpg`)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              {i === 2 ? <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.5)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: SANS, fontWeight: 600, fontSize: 110, color: "#fff" }}>+9</div> : null}
-            </div>
-          ))}
-          <div style={{ position: "absolute", left: 120, top: 1180, fontFamily: SANS, fontSize: 34, letterSpacing: 3, color: "#6e6e73" }}>SHOOT CARDS</div>
-        </div>
-      </div>
+      <HerBoard width={880} style={{ position: "absolute", left: M + 28, top: 495 }} />
       <Body size={33} style={{ position: "absolute", left: M, right: M, top: 1118, color: INK }}>
         Her Pinterest pins, a moodboard, your own Canva designs, a screenshot. <b>Upload any image and it shows up in your playback.</b>
       </Body>
@@ -208,7 +184,6 @@ const Close: React.FC<P & { ad?: boolean }> = ({ n, total, ad }) => (
 const Timeline: React.FC<P> = (p) => <Feature {...p} label="Timeline" title={"The timeline,\n*one swipe away.*"} src="cards/timeline.png" line="No PDF. No checking your phone between the ceremony and the family photos." />;
 const Groups: React.FC<P> = (p) => <Feature {...p} label="Family groups" title={"Family groups,\n*in order.*"} src="cards/groups.png" line="Call the next group by name, without asking the planner." />;
 const ShotList: React.FC<P> = (p) => <Feature {...p} label="Shot list" title={"The must-haves,\n*covered.*"} src="cards/shotlist.png" line="Every shot the couple asked for, a swipe away." />;
-const CloseAd: React.FC<P> = (p) => <Close {...p} ad />;
 
 const set = (order: React.FC<P>[], url = false): React.FC[] =>
   order.map((S, i) => () => (
@@ -219,5 +194,3 @@ const set = (order: React.FC<P>[], url = false): React.FC[] =>
 
 /** The organic post (12 slides, comment POSE). */
 export const SLIDES_C = set([Hook, OldWay, AllOnCamera, MidShoot, Poses, Timeline, Groups, ShotList, AnyImage, Ready, How, Close]);
-/** The Meta ad (10 cards, the most a carousel ad takes; the address on every card, the last points at Meta's "Learn more" button). */
-export const SLIDES_C_AD = set([Hook, OldWay, AllOnCamera, Poses, Timeline, Groups, AnyImage, Ready, How, CloseAd], true);

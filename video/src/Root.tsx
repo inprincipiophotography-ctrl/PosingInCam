@@ -13,7 +13,8 @@ import { AD_A7_SECONDS, AdA7 } from "./v7/AdA7";
 import { AD_A8_SECONDS, AdA8 } from "./v8/AdA8";
 import { SLIDES_A } from "./carousel/ConceptA";
 import { SLIDES_B } from "./carousel/ConceptB";
-import { SLIDES_C, SLIDES_C_AD } from "./carousel/ConceptC";
+import { SLIDES_C } from "./carousel/ConceptC";
+import { SLIDES_C_AD } from "./carousel/ConceptCAd";
 import "./theme";
 
 const FORMATS = {
@@ -54,7 +55,7 @@ export const Root: React.FC = () => (
     <Composition id="AdA6-9x16" component={AdA6} durationInFrames={AD_A6_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
     <Composition id="AdA8-9x16" component={AdA8} durationInFrames={AD_A8_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
     {/* Instagram carousel: concept A (value first), B (direct sale) and C (the whole wedding day), 3:4 for the feed and 4:5 for ads. */}
-    {/* Cad is carousel C as a Meta ad: 10 cards, 4:5 only. */}
+    {/* Cad is carousel C as a Meta ad: 8 cards, 4:5 only (src/carousel/ConceptCAd.tsx). */}
     {(
       [
         ["A", SLIDES_A, ["3x4", "4x5"]],

@@ -46,4 +46,14 @@ What the research says works, and how it's used:
 
 The timeline, groups and shot-list cards are drawn by the site's own renderer (`scripts/render-cards.mjs`) with the /demo page's sample couple, Emma & James. The board pins are `assets/showcase/pin-0x.jpg`, In Principio's own photos.
 
-**C as a Meta ad (`Cad`, 10 cards, 4:5 only).** C runs as an ad from the In Principio Weddings page, not as a post on its profile, because its followers are couples. A carousel ad takes at most 10 cards, so the ad drops "Mid-shoot" and "Shot list". The ad's last card swaps "Comment POSE / link in bio" for the address, big, and "Tap Learn more below" with an arrow down to the button Meta draws under the ad. The ad also shows cards.notalucis.com on every card's footer and in step 1 (the `ShowUrl` context in `kit.tsx`), so people who don't tap today remember where to go. The organic post keeps it off, because its close is "comment POSE". Ad copy, per-card headlines and settings: `carousel/ad-copy.md`. Download: `renders/carousel/Shoot-Cards-carousel-C-ad.zip`.
+**C as a Meta ad (`Cad`, v2: 8 cards, 4:5 only; `src/carousel/ConceptCAd.tsx`).** Runs as an ad from the In Principio Weddings page, not as a post on its profile, because its followers are couples. After feedback it leads with what's new rather than fear, puts Sony · Canon · Nikon on the first card and "we use it at every wedding we shoot" on the second, and sets the small type 25 % bigger (the `TextScale` context in `kit.tsx`) so it reads on a phone, where a 1080 px card is ~390 pt wide.
+1. "New · for wedding photographers": "Your wedding day plan, now inside your camera.", Sony · Canon · Nikon chips, the camera with the thumb (DSC08435).
+2. "We use it at every wedding we shoot.": the over-the-shoulder frame from our own wedding, Kim & Ivan, "The couple never sees a phone."
+3. "Everything for the day, one swipe away.": the pose card with the timeline, groups and shot-list cards. "Faster, calmer, more professional."
+4. Poses, with the words to say (the card's four parts).
+5. "Your timeline and groups, in order.": "No PDF. No asking the planner who's next."
+6. "Her Pinterest board, on your camera.": any image shows up in playback.
+7. Three steps, zero phone. Sony · Canon · Nikon · no account.
+8. "Your first card is free.", cards.notalucis.com big, Kim & Ivan, "Tap Learn more below".
+
+The address is on every card's footer (the `ShowUrl` context). Ad copy, per-card headlines and settings: `carousel/ad-copy.md`. Download: `renders/carousel/Shoot-Cards-carousel-C-ad.zip`.
