@@ -45,3 +45,5 @@ What the research says works, and how it's used:
 12. The close.
 
 The timeline, groups and shot-list cards are drawn by the site's own renderer (`scripts/render-cards.mjs`) with the /demo page's sample couple, Emma & James. The board pins are `assets/showcase/pin-0x.jpg`, In Principio's own photos.
+
+**C as a Meta ad (`Cad`, 10 cards, 4:5 only).** C runs as an ad from the In Principio Weddings page, not as a post on its profile, because its followers are couples. A carousel ad takes at most 10 cards, so the ad drops "Mid-shoot" and "Shot list". The ad's last card swaps "Comment POSE / link in bio" for "Tap Learn more below" with an arrow down to the button Meta draws under the ad. Ad copy, per-card headlines and settings: `carousel/ad-copy.md`. Download: `renders/carousel/Shoot-Cards-carousel-C-ad.zip`.

@@ -13,7 +13,7 @@ import { AD_A7_SECONDS, AdA7 } from "./v7/AdA7";
 import { AD_A8_SECONDS, AdA8 } from "./v8/AdA8";
 import { SLIDES_A } from "./carousel/ConceptA";
 import { SLIDES_B } from "./carousel/ConceptB";
-import { SLIDES_C } from "./carousel/ConceptC";
+import { SLIDES_C, SLIDES_C_AD } from "./carousel/ConceptC";
 import "./theme";
 
 const FORMATS = {
@@ -54,15 +54,17 @@ export const Root: React.FC = () => (
     <Composition id="AdA6-9x16" component={AdA6} durationInFrames={AD_A6_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
     <Composition id="AdA8-9x16" component={AdA8} durationInFrames={AD_A8_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ guides: false }} />
     {/* Instagram carousel: concept A (value first), B (direct sale) and C (the whole wedding day), 3:4 for the feed and 4:5 for ads. */}
+    {/* Cad is carousel C as a Meta ad: 10 cards, 4:5 only. */}
     {(
       [
-        ["A", SLIDES_A],
-        ["B", SLIDES_B],
-        ["C", SLIDES_C],
+        ["A", SLIDES_A, ["3x4", "4x5"]],
+        ["B", SLIDES_B, ["3x4", "4x5"]],
+        ["C", SLIDES_C, ["3x4", "4x5"]],
+        ["Cad", SLIDES_C_AD, ["4x5"]],
       ] as const
-    ).flatMap(([c, slides]) =>
-      ([["3x4", 1440], ["4x5", 1350]] as const).flatMap(([r, h]) =>
-        slides.map((S, i) => <Still key={`${c}${r}${i}`} id={`Carousel${c}-${r}-${String(i + 1).padStart(2, "0")}`} component={S} width={1080} height={h} />),
+    ).flatMap(([c, slides, ratios]) =>
+      ratios.flatMap((r) =>
+        slides.map((S, i) => <Still key={`${c}${r}${i}`} id={`Carousel${c}-${r}-${String(i + 1).padStart(2, "0")}`} component={S} width={1080} height={r === "3x4" ? 1440 : 1350} />),
       ),
     )}
     <Composition id="AdA7-H1-9x16" component={AdA7} durationInFrames={AD_A7_SECONDS * 30} fps={30} width={1080} height={1920} defaultProps={{ hook: "H1" as const, guides: false }} />

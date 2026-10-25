@@ -149,8 +149,11 @@ export const Founders: React.FC<{ dark?: boolean; style?: React.CSSProperties }>
   </div>
 );
 
-/** The close: what's free, two ways to get it, and a reason to save the post. */
-export const Cta: React.FC = () => (
+/**
+ * The close. Organic: what's free, comment POSE (DM) or the link in bio, and a reason to save the post.
+ * Ad: what's free, and an arrow down to the "Learn more" button Meta draws under the ad.
+ */
+export const Cta: React.FC<{ variant?: "organic" | "ad" }> = ({ variant = "organic" }) => (variant === "ad" ? <CtaAd /> : (
   <>
     <div style={{ position: "absolute", left: M, right: M, top: 190 }}>
       <Label>Try it on your next wedding</Label>
@@ -171,6 +174,26 @@ export const Cta: React.FC = () => (
     <div style={{ position: "absolute", left: M, right: M, top: 1150, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
       <Founders />
       <div style={{ fontFamily: SANS, fontSize: 24, fontWeight: 600, color: RED, textAlign: "right", lineHeight: 1.3 }}>Save this<br />for your next<br />wedding ↗</div>
+    </div>
+  </>
+));
+
+const CtaAd: React.FC = () => (
+  <>
+    <div style={{ position: "absolute", left: M, right: M, top: 190 }}>
+      <Label>Try it on your next wedding</Label>
+      <Headline size={150} style={{ marginTop: 22 }}>{"Your first\ncard is *free.*"}</Headline>
+      <Body size={34} style={{ marginTop: 28, maxWidth: 820 }}>No account. Make it, save it to your SD card, and see it in your camera’s playback tonight.</Body>
+    </div>
+    <Founders style={{ position: "absolute", left: M, top: 840 }} />
+    {/* right above the button Meta draws under the ad */}
+    <div style={{ position: "absolute", left: M, right: M, top: 1050, display: "flex", alignItems: "center", justifyContent: "space-between", background: BORDO, color: "#fff", borderRadius: 26, padding: "34px 40px" }}>
+      <div style={{ fontFamily: SANS, fontSize: 40, letterSpacing: "-0.01em" }}>
+        Tap <b style={{ background: "#fff", color: BORDO, padding: "0 12px", borderRadius: 8 }}>Learn more</b> below
+      </div>
+      <svg width={56} height={56} viewBox="0 0 56 56">
+        <path d="M28 10 V44 M14 31 L28 45 L42 31" fill="none" stroke="#fff" strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
     </div>
   </>
 );

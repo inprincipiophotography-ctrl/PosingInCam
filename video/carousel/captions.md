@@ -7,7 +7,9 @@ For "Comment POSE" to work, set up an automatic DM (ManyChat or Meta's own autom
 
 ---
 
-## Concept C: "Never look unprepared in front of a couple again" (post this first)
+## Concept C: "Never look unprepared in front of a couple again"
+
+C now runs as a Meta ad only (see `ad-copy.md`, cards in `renders/carousel/Cad-4x5`). This caption is for an organic post later, e.g. on a Shoot Cards profile.
 
 Wedding photographers: never look unprepared in front of a couple again. 📷
 

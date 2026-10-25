@@ -7,8 +7,8 @@ import { Body, CameraStrip, Card, CardAnatomy, Cta, Headline, INK, Label, M, MUT
 // a PDF timeline, the planner, a notes app); Shoot Cards puts poses, timeline, family groups and the shot list on
 // the camera screen, plus any image (her Pinterest pins, a moodboard, your own designs). 12 slides. The timeline, groups and shot-list cards are drawn by the site's own renderer
 // (scripts/render-cards.mjs) with the /demo page's sample couple.
-const N = 12;
-type P = { n: number };
+// Slides take their number and the set's length, so the same slides make the 12-slide post and the 10-card ad.
+type P = { n: number; total: number };
 
 /** A landscape Shoot Card (timeline, groups, shot list), as the camera shows it. */
 const Wide: React.FC<{ src: string; width: number; rotate?: number; style?: React.CSSProperties }> = ({ src, width, rotate = 0, style }) => (
@@ -17,12 +17,12 @@ const Wide: React.FC<{ src: string; width: number; rotate?: number; style?: Reac
   </div>
 );
 
-const Hook: React.FC<P> = ({ n }) => {
+const Hook: React.FC<P> = ({ n, total }) => {
   // The real thing, upright and whole: a hand on the camera, thumb on the dial, The First Look on the screen.
   // Its light wall melts into the paper at every edge.
   const fade = "linear-gradient(to bottom, transparent 0%, #000 5%, #000 82%, transparent 96%), linear-gradient(to right, transparent 0%, #000 7%, #000 93%, transparent 100%)";
   return (
-    <Slide n={n} total={N}>
+    <Slide n={n} total={total}>
       {/* cropped from the full-size original (source/DSC08435.jpg) so the camera fills the slide */}
       <div style={{ position: "absolute", left: 140, top: 468, width: 800, height: 1067, WebkitMaskImage: fade, maskImage: fade, WebkitMaskComposite: "source-in", maskComposite: "intersect" }}>
         <Img src={staticFile("carousel/hook-camera.jpg")} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -37,7 +37,7 @@ const Hook: React.FC<P> = ({ n }) => {
   );
 };
 
-const OldWay: React.FC<P> = ({ n }) => {
+const OldWay: React.FC<P> = ({ n, total }) => {
   const rows = [
     ["Pinterest", "for the next pose"],
     ["A PDF", "for the timeline"],
@@ -45,7 +45,7 @@ const OldWay: React.FC<P> = ({ n }) => {
     ["A notes app", "for the shot list"],
   ];
   return (
-    <Slide n={n} total={N}>
+    <Slide n={n} total={total}>
       <div style={{ position: "absolute", left: M, right: M, top: 160 }}>
         <Headline size={116}>{"The wedding day,\n*the old way:*"}</Headline>
       </div>
@@ -68,8 +68,8 @@ const OldWay: React.FC<P> = ({ n }) => {
   );
 };
 
-const AllOnCamera: React.FC<P> = ({ n }) => (
-  <Slide n={n} total={N}>
+const AllOnCamera: React.FC<P> = ({ n, total }) => (
+  <Slide n={n} total={total}>
     <div style={{ position: "absolute", left: M, right: M, top: 150 }}>
       <Headline size={112}>{"Now it’s all\n*on your camera screen.*"}</Headline>
       <Body size={32} style={{ marginTop: 14 }}>Faster, calmer, more professional. Everything within reach of the camera you’re already holding.</Body>
@@ -84,8 +84,8 @@ const AllOnCamera: React.FC<P> = ({ n }) => (
 );
 
 /** At a real wedding: the photographer glances at the card, the couple waits for the next pose. */
-const MidShoot: React.FC<P> = ({ n }) => (
-  <Slide n={n} total={N}>
+const MidShoot: React.FC<P> = ({ n, total }) => (
+  <Slide n={n} total={total}>
     <div style={{ position: "absolute", left: M, right: M, top: 160 }}>
       <Label>Mid-shoot</Label>
       <Headline size={112} style={{ marginTop: 16 }}>{"Glance down.\nSwipe. *Shoot.*"}</Headline>
@@ -99,8 +99,8 @@ const MidShoot: React.FC<P> = ({ n }) => (
   </Slide>
 );
 
-const Poses: React.FC<P> = ({ n }) => (
-  <Slide n={n} total={N}>
+const Poses: React.FC<P> = ({ n, total }) => (
+  <Slide n={n} total={total}>
     <div style={{ position: "absolute", left: M, right: M, top: 150 }}>
       <Label>Posing</Label>
       <Headline size={104} style={{ marginTop: 16 }}>{"Poses, with\n*the words to say.*"}</Headline>
@@ -110,8 +110,8 @@ const Poses: React.FC<P> = ({ n }) => (
 );
 
 /** Timeline, family groups, shot list: one landscape card each, big, with what it replaces. */
-const Feature: React.FC<{ n: number; label: string; title: string; src: string; line: string }> = ({ n, label, title, src, line }) => (
-  <Slide n={n} total={N}>
+const Feature: React.FC<P & { label: string; title: string; src: string; line: string }> = ({ n, total, label, title, src, line }) => (
+  <Slide n={n} total={total}>
     <div style={{ position: "absolute", left: M, right: M, top: 160 }}>
       <Label>{label}</Label>
       <Headline size={112} style={{ marginTop: 16 }}>{title}</Headline>
@@ -122,12 +122,12 @@ const Feature: React.FC<{ n: number; label: string; title: string; src: string; 
 );
 
 /** "Any image": her Pinterest pins, a moodboard, your own designs, labelled and in playback (the site's "Her board"). */
-const AnyImage: React.FC<P> = ({ n }) => {
+const AnyImage: React.FC<P> = ({ n, total }) => {
   const cw = 880;
   const k = cw / 1920; // the card is drawn on the camera's 1920 × 1280 frame, like the site's demo tile
   const pins = ["pin-01", "pin-02", "pin-03"];
   return (
-    <Slide n={n} total={N}>
+    <Slide n={n} total={total}>
       <div style={{ position: "absolute", left: M, right: M, top: 160 }}>
         <Label>Any image</Label>
         <Headline size={108} style={{ marginTop: 16 }}>{"If it’s an image,\n*it’s in your camera.*"}</Headline>
@@ -156,7 +156,7 @@ const AnyImage: React.FC<P> = ({ n }) => {
 };
 
 /** Be ready for anything: what goes wrong on a wedding day, and the card that already has the answer. */
-const Ready: React.FC<P> = ({ n }) => {
+const Ready: React.FC<P> = ({ n, total }) => {
   const rows = [
     ["The couple freezes.", "The next pose, and the words to say, are a swipe away."],
     ["The day runs late.", "The timeline is on your camera, not in a PDF."],
@@ -164,7 +164,7 @@ const Ready: React.FC<P> = ({ n }) => {
     ["She shows you her Pinterest.", "Her board is already in your playback."],
   ];
   return (
-    <Slide n={n} total={N}>
+    <Slide n={n} total={total}>
       <div style={{ position: "absolute", left: M, right: M, top: 160 }}>
         <Label>Be ready for anything</Label>
         <Headline size={112} style={{ marginTop: 16 }}>{"Better prepared\n*than sorry.*"}</Headline>
@@ -185,8 +185,8 @@ const Ready: React.FC<P> = ({ n }) => {
   );
 };
 
-const How: React.FC<P> = ({ n }) => (
-  <Slide n={n} total={N}>
+const How: React.FC<P> = ({ n, total }) => (
+  <Slide n={n} total={total}>
     <div style={{ position: "absolute", left: M, right: M, top: 160 }}>
       <Label>How it works</Label>
       <Headline size={112} style={{ marginTop: 18 }}>{"Three steps,\n*zero* phone."}</Headline>
@@ -199,25 +199,20 @@ const How: React.FC<P> = ({ n }) => (
   </Slide>
 );
 
-const Close: React.FC<P> = ({ n }) => (
-  <Slide n={n} total={N}>
-    <Cta />
+const Close: React.FC<P & { ad?: boolean }> = ({ n, total, ad }) => (
+  <Slide n={n} total={total}>
+    <Cta variant={ad ? "ad" : "organic"} />
   </Slide>
 );
 
-const ORDER: React.FC<P>[] = [
-  Hook,
-  OldWay,
-  AllOnCamera,
-  MidShoot,
-  Poses,
-  ({ n }) => <Feature n={n} label="Timeline" title={"The timeline,\n*one swipe away.*"} src="cards/timeline.png" line="No PDF. No checking your phone between the ceremony and the family photos." />,
-  ({ n }) => <Feature n={n} label="Family groups" title={"Family groups,\n*in order.*"} src="cards/groups.png" line="Call the next group by name, without asking the planner." />,
-  ({ n }) => <Feature n={n} label="Shot list" title={"The must-haves,\n*covered.*"} src="cards/shotlist.png" line="Every shot the couple asked for, a swipe away." />,
-  AnyImage,
-  Ready,
-  How,
-  Close,
-];
+const Timeline: React.FC<P> = (p) => <Feature {...p} label="Timeline" title={"The timeline,\n*one swipe away.*"} src="cards/timeline.png" line="No PDF. No checking your phone between the ceremony and the family photos." />;
+const Groups: React.FC<P> = (p) => <Feature {...p} label="Family groups" title={"Family groups,\n*in order.*"} src="cards/groups.png" line="Call the next group by name, without asking the planner." />;
+const ShotList: React.FC<P> = (p) => <Feature {...p} label="Shot list" title={"The must-haves,\n*covered.*"} src="cards/shotlist.png" line="Every shot the couple asked for, a swipe away." />;
+const CloseAd: React.FC<P> = (p) => <Close {...p} ad />;
 
-export const SLIDES_C: React.FC[] = ORDER.map((S, i) => () => <S n={i + 1} />);
+const set = (order: React.FC<P>[]): React.FC[] => order.map((S, i) => () => <S n={i + 1} total={order.length} />);
+
+/** The organic post (12 slides, comment POSE). */
+export const SLIDES_C = set([Hook, OldWay, AllOnCamera, MidShoot, Poses, Timeline, Groups, ShotList, AnyImage, Ready, How, Close]);
+/** The Meta ad (10 cards, the most a carousel ad takes; the last points at Meta's "Learn more" button). */
+export const SLIDES_C_AD = set([Hook, OldWay, AllOnCamera, Poses, Timeline, Groups, AnyImage, Ready, How, CloseAd]);
