@@ -798,6 +798,7 @@ function drawPreview() {
     R.draw(previewCanvas, studio.type, cardData(), studio.page);
   }
   $("cam-body").classList.toggle("portrait", portrait);
+  previewCanvas.dispatchEvent(new Event("cam:drawn"));
   const pager = $("pager");
   pager.hidden = n <= 1;
   if (n > 1) {

@@ -95,6 +95,13 @@
 .dwheel i{position:absolute;inset:27%;border-radius:50%;background:radial-gradient(circle at 36% 30%,#55555b,#252528 68%);box-shadow:0 0 0 .45cqw #161618,inset 0 1px 0 rgba(255,255,255,.16)}
 .dkey.down{transform:translateY(1px);filter:brightness(1.45)}
 .dwheel.down{filter:brightness(1.3)}
+/* the 3D camera (cam3d.js) draws the body; the CSS one stays for layout, state and as the fallback */
+.cam3d-gl{position:absolute;z-index:-1;pointer-events:none}
+.dcam[data-cam3d-ready]{background:none;box-shadow:none;isolation:isolate}
+.dcam[data-cam3d-ready]::before{visibility:hidden}
+.dcam[data-cam3d-ready] .dcam-evf,.dcam[data-cam3d-ready] .dcam-dial,.dcam[data-cam3d-ready] .dcam-shutter,.dcam[data-cam3d-ready] .dcam-keys{visibility:hidden}
+.dcam[data-cam3d-ready] .dcam-screen{background:none;box-shadow:none}
+.dcam[data-cam3d-ready] .dcam-screen::after,.dcam[data-cam3d-ready] #screen-canvas{visibility:hidden}
 
 /* what happens on the screen */
 .dcam-screen.flash::before{content:"";position:absolute;inset:.9cqw;z-index:2;border-radius:.9cqw;background:#fff;pointer-events:none;animation:blink .35s ease-out forwards}

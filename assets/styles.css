@@ -344,6 +344,12 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .cam-body.portrait::before{top:16%;left:-26px;width:30px;height:30%;border-radius:14px 4px 4px 14px;background:linear-gradient(90deg,#1b1b1e,#323236)}
 .cam-body.portrait .cam-screen{width:100%}
 .cam-body.portrait .cam-buttons{flex-direction:row;width:auto;justify-content:center}
+/* the 3D camera (cam3d.js) draws the body; the CSS one stays for layout and as the fallback */
+.cam3d-gl{position:absolute;z-index:-1;pointer-events:none}
+.cam-body[data-cam3d-ready]{background:none;box-shadow:none;isolation:isolate}
+.cam-body[data-cam3d-ready]::before{visibility:hidden}
+.cam-body[data-cam3d-ready] .cam-buttons,.cam-body[data-cam3d-ready] .cam-screen canvas,.cam-body[data-cam3d-ready] .cam-screen::after{visibility:hidden}
+.cam-body[data-cam3d-ready] .cam-screen{background:none;border-color:transparent}
 .pager{display:flex;align-items:center;gap:12px;margin-top:14px;font-size:13.5px;color:var(--ink-2)}
 .pager-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface);font-size:20px;line-height:1;cursor:pointer;color:var(--ink);padding:0}
 .pager-btn:disabled{opacity:.4;cursor:default}

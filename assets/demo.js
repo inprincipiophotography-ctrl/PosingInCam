@@ -255,6 +255,7 @@
     else if (f.kind === "err") drawErr();
     else drawCard(f);
     canvas.setAttribute("aria-label", f.label);
+    canvas.dispatchEvent(new Event("cam:drawn"));
   }
 
   // What's in front of the lens: the couple, as the sun goes down.

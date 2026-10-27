@@ -223,6 +223,7 @@ Rounded, consistent and slightly generous: corners grow with the size of the obj
 
 ### Camera Screen (signature)
 - Card previews always sit inside a Camera Black bezel (16px radius, 9px padding), and live previews inside a full camera body (dark gradient, viewfinder hump, dial and buttons). Cards are never shown floating on paper without the camera around them, except in the fanned pose stack.
+- The camera bodies (the live preview on the homepage, the camera in `/demo`) are drawn in 3D with three.js (`assets/cam3d.js` loads `assets/cam3d-scene.js` only once a camera is on screen). The model is built in code and measured off the CSS camera it covers, so its screen lands on the CSS screen canvas. The CSS camera keeps drawing the card, turning the wheel and pressing keys; the 3D model reads that state and only renders when something changes. It turns 10° to show its grip side, follows the mouse by up to 7°, and holds still with reduced motion or a touch screen. Without WebGL2 the CSS camera is shown, unchanged.
 
 ### Background Grid (signature)
 - A 40px line grid in Muted at 6% opacity drifts diagonally (40px every 22s); a 40% copy shows in a 200px radial circle around the cursor and fades out when the cursor leaves; a soft Record Red glow (10%, 120px blur) sits off the top-right corner. Fixed behind content, pointer-events none, still under reduced motion, no cursor spotlight on touch.
