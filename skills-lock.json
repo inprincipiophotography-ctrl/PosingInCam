@@ -7,6 +7,30 @@
       "skillPath": "skills/taste-skill/SKILL.md",
       "computedHash": "6ac8ba6089dcbc303744a507a4587113c5d845ca2f658b3ce2b0b5eab108fb0d"
     },
+    "editorial": {
+      "source": "bergside/awesome-design-skills",
+      "sourceType": "github",
+      "skillPath": "skills/editorial/SKILL.md",
+      "computedHash": "e1520060a3f71ec27913bf6e892bb0a23b6bb7a599b39ea680ac47521c980bbb"
+    },
+    "minimal": {
+      "source": "bergside/awesome-design-skills",
+      "sourceType": "github",
+      "skillPath": "skills/minimal/SKILL.md",
+      "computedHash": "0d76c8d85ee4cd854fb472d9ec64ee6aafa30f4d885e780f5cd3388d58176030"
+    },
+    "premium": {
+      "source": "bergside/awesome-design-skills",
+      "sourceType": "github",
+      "skillPath": "skills/premium/SKILL.md",
+      "computedHash": "5890697097fd3a3d1d131288b68e6082cb432842607732d0ea3c2226f0cf4d42"
+    },
+    "refined": {
+      "source": "bergside/awesome-design-skills",
+      "sourceType": "github",
+      "skillPath": "skills/refined/SKILL.md",
+      "computedHash": "e193776de1628457b4fad34c36fc125ca00c5383f21042ab17ba0fd488ce137b"
+    },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
