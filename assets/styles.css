@@ -47,6 +47,9 @@ body{
   overflow-x:hidden;
 }
 ::selection{background:var(--accent-line)}
+/* taps: no double-tap zoom delay, and a tap flash in the brand tint */
+html{-webkit-tap-highlight-color:rgba(164,0,0,.12)}
+a,button,summary,label,input,select,textarea,[role="button"]{touch-action:manipulation}
 a{color:var(--accent-2);text-decoration:none}
 img{max-width:100%}
 button{font-family:var(--sans)}
@@ -251,9 +254,10 @@ button{font-family:var(--sans)}
 
 /* phones: a small preview inside the studio */
 .mini{display:flex;flex-direction:column;align-items:center;gap:6px;margin:16px 0 2px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mini:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:8px}
 .mini canvas{display:block;width:min(100%,360px);height:auto;border-radius:6px;border:7px solid #1c1c1e;background:#fff;box-shadow:var(--shadow)}
 .mini.portrait canvas{width:min(62%,230px)}
-.mini-pages{font-size:12px;color:var(--muted);min-height:1em}
+.mini-pages{font-variant-numeric:tabular-nums;font-size:12px;color:var(--muted);min-height:1em}
 
 /* camera + make */
 .cam-q{margin:18px 0 8px;font-size:13.5px;font-weight:600;color:var(--ink-2)}
@@ -419,7 +423,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .price-card.featured{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,var(--shadow-lg)}
 .price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--accent);color:#fff;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 4px 12px rgba(164,0,0,.3)}
 .price-name{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.price-amount{font-family:var(--serif);font-weight:400;font-size:46px;line-height:1;margin:12px 0 2px;color:var(--ink)}
+.price-amount{font-variant-numeric:tabular-nums;font-family:var(--serif);font-weight:400;font-size:46px;line-height:1;margin:12px 0 2px;color:var(--ink)}
 .price-amount .per{font-family:var(--sans);font-size:15px;color:var(--muted);font-weight:400;letter-spacing:0}
 .price-note{color:var(--muted);font-size:13px;margin:2px 0 20px;min-height:1.2em}
 .price-feats{list-style:none;margin:0 0 24px;padding:0;display:flex;flex-direction:column;gap:10px}
@@ -492,7 +496,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 @media(pointer:coarse){.toast-act{min-height:44px}.toast-x{width:44px;height:44px}}
 
 /* ---------- login modal ---------- */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;padding:20px;z-index:60}
+.modal{position:fixed;inset:0;overscroll-behavior:contain;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;padding:20px;z-index:60}
 .modal-card{background:var(--surface);border:1px solid var(--border-soft);border-radius:16px;box-shadow:var(--shadow-lg);padding:26px 24px;max-width:380px;width:100%}
 .modal-card h3{font-family:var(--serif);font-weight:400;font-size:26px;margin:0 0 6px}
 .modal-card input{width:100%;margin:14px 0 12px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:16px;background:var(--bg);color:var(--ink)}

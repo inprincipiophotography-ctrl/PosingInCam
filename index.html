@@ -32,7 +32,7 @@
 
   <!-- Nav -->
   <header class="nav" id="nav">
-    <a class="brand" href="/">
+    <a class="brand" href="/" translate="no">
       <span class="brand-mark"></span>
       <span class="brand-name">Shoot Cards</span>
       <span class="brand-by">by NotaLucis</span>
@@ -81,7 +81,7 @@
           <div class="project-field" id="project-field" hidden>
             <label class="project-label" for="project-select" id="project-label">Project</label>
             <select id="project-select" hidden></select>
-            <input type="text" id="project-new" placeholder="e.g. Emma &amp; James" maxlength="80" hidden />
+            <input type="text" id="project-new" name="project" placeholder="e.g. Emma &amp; James" maxlength="80" aria-label="New project name" autocomplete="off" hidden />
             <p class="project-hint" id="project-hint"></p>
           </div>
 
@@ -121,12 +121,12 @@
                 <span class="photo-drop-sub">A pose you love: yours, or one you found</span>
               </label>
               <div class="fields">
-                <label class="fld full"><span>Pose name</span><input type="text" data-pose="title" maxlength="40" placeholder="e.g. The first look" /></label>
-                <label class="fld"><span>Energy</span><input type="text" data-pose="energy" maxlength="60" placeholder="e.g. Tender, unhurried" /></label>
-                <label class="fld"><span>Camera</span><input type="text" data-pose="camera" maxlength="60" placeholder="e.g. Eye level, burst" /></label>
-                <label class="fld full"><span>Posing hack</span><input type="text" data-pose="hack" maxlength="60" placeholder="e.g. Let him turn first" /></label>
-                <label class="fld full"><span>Say to the couple</span><textarea data-pose="say" rows="2" maxlength="160" placeholder="e.g. Foreheads together, breathe out, don't rush it."></textarea></label>
-                <label class="fld full"><span>Source</span><input type="text" data-pose="source" maxlength="40" placeholder="e.g. your studio, or where you found the photo" /></label>
+                <label class="fld full"><span>Pose name</span><input type="text" data-pose="title" name="pose-title" autocomplete="off" maxlength="40" placeholder="e.g. The first look" /></label>
+                <label class="fld"><span>Energy</span><input type="text" data-pose="energy" name="pose-energy" autocomplete="off" maxlength="60" placeholder="e.g. Tender, unhurried" /></label>
+                <label class="fld"><span>Camera</span><input type="text" data-pose="camera" name="pose-camera" autocomplete="off" maxlength="60" placeholder="e.g. Eye level, burst" /></label>
+                <label class="fld full"><span>Posing hack</span><input type="text" data-pose="hack" name="pose-hack" autocomplete="off" maxlength="60" placeholder="e.g. Let him turn first" /></label>
+                <label class="fld full"><span>Say to the couple</span><textarea data-pose="say" name="pose-say" autocomplete="off" rows="2" maxlength="160" placeholder="e.g. Foreheads together, breathe out, don't rush it."></textarea></label>
+                <label class="fld full"><span>Source</span><input type="text" data-pose="source" name="pose-source" autocomplete="off" maxlength="40" placeholder="e.g. your studio, or where you found the photo" /></label>
               </div>
               <button class="link-btn back-btn" id="pose-back" type="button">&larr; Pick one of our poses instead</button>
             </div>
@@ -136,7 +136,7 @@
           <div class="panel" data-panel="list" hidden>
             <label class="fld full">
               <span id="list-label-name">Heading</span>
-              <input type="text" id="list-label" maxlength="40" />
+              <input type="text" id="list-label" name="list-heading" autocomplete="off" maxlength="40" />
             </label>
             <div class="rows" id="rows"></div>
             <p class="rows-note" id="rows-note"></p>
@@ -145,7 +145,7 @@
               <button class="link-btn" id="paste-toggle" type="button" aria-expanded="false" aria-controls="paste">Paste a list</button>
             </div>
             <div class="paste" id="paste" hidden>
-              <label class="fld full"><span id="paste-help">One per line</span><textarea id="paste-text" rows="5"></textarea></label>
+              <label class="fld full"><span id="paste-help">One per line</span><textarea id="paste-text" name="paste" autocomplete="off" rows="5"></textarea></label>
               <div class="paste-actions">
                 <button class="btn btn-ghost btn-sm" id="paste-apply" type="button">Use these lines</button>
                 <button class="link-btn" id="paste-cancel" type="button">Cancel</button>
@@ -156,10 +156,10 @@
           <!-- If found -->
           <div class="panel" data-panel="found" hidden>
             <div class="fields">
-              <label class="fld full"><span>Your name &amp; studio</span><input type="text" data-found="name" maxlength="60" autocomplete="name" /></label>
-              <label class="fld"><span>Phone</span><input type="tel" data-found="phone" maxlength="30" autocomplete="tel" /></label>
-              <label class="fld"><span>Email</span><input type="email" data-found="email" maxlength="60" autocomplete="email" /></label>
-              <label class="fld full"><span>Note</span><input type="text" data-found="note" maxlength="60" /></label>
+              <label class="fld full"><span>Your name &amp; studio</span><input type="text" data-found="name" name="name" maxlength="60" autocomplete="name" /></label>
+              <label class="fld"><span>Phone</span><input type="tel" data-found="phone" name="tel" maxlength="30" autocomplete="tel" /></label>
+              <label class="fld"><span>Email</span><input type="email" data-found="email" name="email" maxlength="60" autocomplete="email" spellcheck="false" /></label>
+              <label class="fld full"><span>Note</span><input type="text" data-found="note" name="note" autocomplete="off" maxlength="60" /></label>
             </div>
           </div>
 
@@ -171,7 +171,7 @@
               <span class="drop-sub">The bride&#8217;s Pinterest pins, a moodboard, Canva exports, screenshots · JPG, PNG, WEBP, HEIC</span>
               <span class="drop-sub">Or copy an image and press <kbd class="paste-key">Ctrl+V</kbd> here</span>
             </label>
-            <label class="fld full board-fld"><span>Label (optional)</span><input type="text" id="board-label" maxlength="30" placeholder="e.g. Emma's board" autocomplete="off" /></label>
+            <label class="fld full board-fld"><span>Label (optional)</span><input type="text" id="board-label" name="board-label" maxlength="30" placeholder="e.g. Emma's board" autocomplete="off" /></label>
             <p class="board-note">With a label, each card reads &ldquo;Emma&rsquo;s board &middot; 3/12&rdquo;. A whole moodboard works as one screenshot, but each pin reads better on a 3-inch screen as its own card.</p>
             <div class="orient" id="orient">
               <span>Orientation:</span>
@@ -186,7 +186,7 @@
           </div>
 
           <!-- Phones: the preview sits here, next to the form (the camera column is above) -->
-          <div class="mini" id="mini" hidden>
+          <div class="mini" id="mini" role="button" tabindex="0" aria-label="Next card" hidden>
             <canvas id="mini-canvas" width="480" height="320" aria-hidden="true"></canvas>
             <span class="mini-pages" id="mini-pages"></span>
           </div>
@@ -361,8 +361,8 @@
       <p class="eyebrow center">Pricing</p>
       <h2 class="section-h center">Start free. Go Pro when it saves your day.</h2>
       <div class="price-toggle" id="price-toggle" hidden>
-        <button class="active" type="button" data-cycle="monthly">Monthly</button>
-        <button type="button" data-cycle="yearly">Yearly</button>
+        <button class="active" type="button" data-cycle="monthly" aria-pressed="true">Monthly</button>
+        <button type="button" data-cycle="yearly" aria-pressed="false">Yearly</button>
       </div>
       <div class="price-grid" id="price-grid"><!-- rendered by app.js --></div>
       <p class="price-extra" id="price-extra" hidden></p>
@@ -377,9 +377,9 @@
       <div class="faq-list">
         <details class="faq-item"><summary>Why won't a normal image show on my camera?</summary><p>Cameras only display files saved in their own format: the right size, the right metadata and the right folder. We convert every card to match, so it appears in playback like a photo you shot.</p></details>
         <details class="faq-item"><summary>Will it work on my camera?</summary><p>It should work on virtually any recent Sony, Canon or Nikon body. We've tested it on the Sony A7 III/IV/V, Canon R6/R6 II/R6 III and Nikon Z6/Z8/Z9, and it works across most current Alpha, EOS R and Nikon Z cameras. Fujifilm and Panasonic support is coming soon. If something isn't working on your camera, <a href="mailto:notalucis.dev@gmail.com?subject=Shoot%20Cards%20support">let us know</a> and we'll help.</p></details>
-        <details class="faq-item"><summary>Do I need Canva or design skills?</summary><p>No. Pick a card type, fill in a few lines or choose one of our poses, and we make a camera-ready card for you. If you already design your own cards in Canva or Photoshop, upload those under "Any image".</p></details>
-        <details class="faq-item"><summary>Can I put the bride&#8217;s Pinterest pictures on my camera?</summary><p>Yes. When she sends her board or a few screenshots of what she wants, add them under "Any image": copy a picture and paste it in, or drop the saved files, up to 30 at once. Give them a label like "Emma&#8217;s board" and every card says so, 1/12, 2/12&hellip; so you can tick off her wishes between shots. They&#8217;re a private reference for the day; nothing is shared. <a href="/demo?ref=faq#board">See it in the demo</a>.</p></details>
-        <details class="faq-item"><summary>Is the first card really free?</summary><p>Yes, and it needs no account. Free cards carry a light "preview" watermark, so you can try them on your camera first. Sign in with your email for 3 more free cards and saved projects. Pro removes the watermark and every limit.</p></details>
+        <details class="faq-item"><summary>Do I need Canva or design skills?</summary><p>No. Pick a card type, fill in a few lines or choose one of our poses, and we make a camera-ready card for you. If you already design your own cards in Canva or Photoshop, upload those under &ldquo;Any image&rdquo;.</p></details>
+        <details class="faq-item"><summary>Can I put the bride&#8217;s Pinterest pictures on my camera?</summary><p>Yes. When she sends her board or a few screenshots of what she wants, add them under &ldquo;Any image&rdquo;: copy a picture and paste it in, or drop the saved files, up to 30 at once. Give them a label like &ldquo;Emma&#8217;s board&rdquo; and every card says so, 1/12, 2/12&hellip; so you can tick off her wishes between shots. They&#8217;re a private reference for the day; nothing is shared. <a href="/demo?ref=faq#board">See it in the demo</a>.</p></details>
+        <details class="faq-item"><summary>Is the first card really free?</summary><p>Yes, and it needs no account. Free cards carry a light &ldquo;preview&rdquo; watermark, so you can try them on your camera first. Sign in with your email for 3 more free cards and saved projects. Pro removes the watermark and every limit.</p></details>
         <details class="faq-item"><summary>Where do the cards show up on the day?</summary><p>In playback, next to your photos. They're dated 1 January 2024, so in date view they sit in their own group, away from today's shoot.</p></details>
         <details class="faq-item"><summary>Is it safe for my camera and SD card?</summary><p>Yes. You only copy ordinary JPEG files to the card, the same kind your camera already makes. Nothing is installed and your existing photos are untouched.</p></details>
         <details class="faq-item"><summary>What's the difference between Pro and the pose pack?</summary><p>Pro is for the cards you make: unlimited timelines, family groups, shot lists, poses with your own photos, the bride&#8217;s Pinterest pins and your own designs, with no watermark. The pose pack is 50 ready-made wedding poses we shot ourselves, bought once in our studio's shop.</p></details>
@@ -414,7 +414,7 @@
       <h3 id="login-title">Sign in</h3>
       <p class="muted" id="login-sub">We'll email you a magic link. No password.</p>
       <form id="login-form">
-        <input type="email" id="login-email" placeholder="you@email.com" autocomplete="email" required />
+        <input type="email" id="login-email" placeholder="you@email.com" autocomplete="email" spellcheck="false" aria-label="Email address" required />
         <button class="go" id="login-send" type="submit">Send magic link</button>
       </form>
       <p class="login-spam-note">Tip: the link can land in your <strong>spam</strong> folder, so check there if it's not in your inbox.</p>

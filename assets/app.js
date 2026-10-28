@@ -857,6 +857,9 @@ function flipPage(step) {
 $("pg-prev").addEventListener("click", () => flipPage(-1));
 $("pg-next").addEventListener("click", () => flipPage(1));
 $("mini").addEventListener("click", () => flipPage(1));
+$("mini").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flipPage(1); }
+});
 
 const cleanCards = () => {
   const a = state.account;
@@ -1413,10 +1416,16 @@ async function renderPricing() {
   toggle.querySelectorAll("button").forEach((b) =>
     b.addEventListener("click", () => {
       cycle = b.dataset.cycle;
-      toggle.querySelectorAll("button").forEach((x) => x.classList.toggle("active", x === b));
+      toggle.querySelectorAll("button").forEach((x) => {
+        x.classList.toggle("active", x === b);
+        x.setAttribute("aria-pressed", String(x === b));
+      });
       paint();
     }));
-  toggle.querySelectorAll("button").forEach((x) => x.classList.toggle("active", x.dataset.cycle === cycle));
+  toggle.querySelectorAll("button").forEach((x) => {
+    x.classList.toggle("active", x.dataset.cycle === cycle);
+    x.setAttribute("aria-pressed", String(x.dataset.cycle === cycle));
+  });
 
   paint();
 }
