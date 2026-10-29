@@ -3,6 +3,21 @@
 Tracked so nothing gets lost between sessions. (Excluded from the public deploy.)
 
 ## 📌 Open items (parked 29 Oct 2026, pick up later)
+**Live test purchase of Pro (€29.99 once)**: everything is deployed and live (see "Go live" below);
+only the real purchase is left.
+- [ ] Buy Pro on cards.notalucis.com with your own card → the bar says "Pro", a new card has no
+      watermark, the receipt and invoice arrive by email
+- [ ] Refund it in Stripe (Payments → that payment → Refund), then Supabase → `profiles` → your row:
+      `plan = 'free'`, `subscription_status = null`
+- [ ] No "Pro" a minute after paying: Stripe → Webhooks → Livee → the latest event. A 400 there
+      means `STRIPE_WEBHOOK_SECRET` in Vercel doesn't match Livee's signing secret; also check the
+      Vercel logs for `/api/webhook`
+- [ ] Vercel env: delete `STRIPE_PRICE_PRO_MONTHLY`, `STRIPE_PRICE_PRO_YEARLY`, `STRIPE_PRICE_PACK20`
+      if they're still there (unused since PR #13)
+- [ ] Before the first real customer: the blockers under "Go live" (legal name, accountant on
+      VAT/OSS and fiskalizacija, Vercel Pro), Stripe account activation and "Successful payments"
+      emails
+
 - [ ] Legal name (obrt / d.o.o.), address and country of the business → add to the Organization
       JSON-LD in `index.html` (`address` as PostalAddress) and to `/privacy` in `agent/pages.js`
       (then `node scripts/build-pages.mjs`)
@@ -26,18 +41,19 @@ skipped: the code is covered by `qa/test_billing.py`, and one real purchase + re
 
 **Stripe (live mode, toggle top right OFF "Test mode")**
 - [ ] Activate the account: business details, bank account for payouts
-- [ ] Product catalog → "Shoot Cards Pro" → one-off price €29.99 → copy the live `price_…`
-- [ ] Developers → Webhooks → add endpoint `https://cards.notalucis.com/api/webhook`, events
-      `checkout.session.completed` + `checkout.session.async_payment_succeeded` → copy `whsec_…`
-- [ ] Developers → API keys → copy the live secret key `sk_live_…` (never paste it in a chat)
+- [x] Product catalog → "Shoot Cards Pro" → one-off price €29.99 → live `price_1UVveq8CcLir0eW5ba8Gy53H`
+- [x] Developers → Webhooks → endpoint "Livee" `https://cards.notalucis.com/api/webhook`, events
+      `checkout.session.completed` + `checkout.session.async_payment_succeeded` only
+- [x] Developers → API keys → copy the live secret key `sk_live_…` (never paste it in a chat)
 - [ ] Settings → Customer emails: "Successful payments" ON (receipt). Checkout also creates an
       invoice for every purchase (small Stripe fee per invoice)
 
 **Vercel (`posing-in-cam` → Settings → Environment Variables, Production)**
-- [ ] `STRIPE_SECRET_KEY` = `sk_live_…`, `STRIPE_WEBHOOK_SECRET` = live `whsec_…`,
+- [x] `STRIPE_SECRET_KEY` = `sk_live_…`, `STRIPE_WEBHOOK_SECRET` = live `whsec_…`,
       `STRIPE_PRICE_PRO` = live `price_…`
 - [ ] Delete `STRIPE_PRICE_PRO_MONTHLY`, `STRIPE_PRICE_PRO_YEARLY`, `STRIPE_PRICE_PACK20`
-- [ ] Merge the "Pro becomes one payment" branch → the production deploy picks up the new env
+- [x] Merge the "Pro becomes one payment" branch → the production deploy picks up the new env
+      (PR #13 + #14, 29 Oct 2026; `/api/prices` returns €29.99, `/api/convert` says paywall + stripe on)
 
 **Prove it**
 - [ ] Buy Pro with your own card → `/api/me` says `plan: pro`, the watermark is gone, the receipt
