@@ -1,19 +1,16 @@
 """
 Stripe billing for the Pose Cards paywall.
 
-Active only when STRIPE_SECRET_KEY + at least one price ID are set. Handles:
-  - Checkout sessions (Pro monthly/yearly subscriptions, 20-pack one-time)
+Active only when STRIPE_SECRET_KEY + the Pro price ID are set. Handles:
+  - Checkout sessions (Pro, one payment, no subscription)
   - Webhook events -> writes entitlement into Supabase (via webauth.auth)
-  - Billing portal (manage/cancel subscription)
 
-Env: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET,
-     STRIPE_PRICE_PRO_MONTHLY, STRIPE_PRICE_PRO_YEARLY, STRIPE_PRICE_PACK20
+Env: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_PRO
 """
 
 from __future__ import annotations
 
 import json
-import datetime as dt
 
 import requests
 
@@ -22,11 +19,8 @@ from . import auth
 STRIPE_SECRET = auth.env_key("STRIPE_SECRET_KEY")
 WEBHOOK_SECRET = auth.env_key("STRIPE_WEBHOOK_SECRET")
 PRICE_FOR = {
-    "monthly": auth.env_key("STRIPE_PRICE_PRO_MONTHLY"),
-    "yearly": auth.env_key("STRIPE_PRICE_PRO_YEARLY"),
-    "pack20": auth.env_key("STRIPE_PRICE_PACK20"),
+    "pro": auth.env_key("STRIPE_PRICE_PRO"),
 }
-PACK20_CREDITS = 20
 STATEMENT_SUFFIX = "SHOOTCARDS"
 _TIMEOUT = 10
 
@@ -51,7 +45,7 @@ _prices_cache = None
 
 
 def get_prices() -> dict:
-    """Public pricing for the page: {kind: {amount, currency, interval}}.
+    """Public pricing for the page: {kind: {amount, currency}}.
     Read once from Stripe and cached per warm instance."""
     global _prices_cache
     if _prices_cache is not None:
@@ -67,7 +61,6 @@ def get_prices() -> dict:
                 out[kind] = {
                     "amount": (p.get("unit_amount") or 0) / 100.0,
                     "currency": (p.get("currency") or "eur").upper(),
-                    "interval": (p.get("recurring") or {}).get("interval"),  # 'month'|'year'|None
                 }
             except Exception:
                 pass
@@ -82,80 +75,45 @@ def _stripe():
 
 
 # --- Supabase writes (service role, bypasses RLS) ---------------------------
-# Columns added after launch (supabase/cancel_at.sql). Until one is installed
-# the write goes ahead without it, so a missing column never loses a payment.
-OPTIONAL_COLUMNS = ("cancel_at",)
-
-
-def _patch(match_field: str, match_val: str, patch: dict, require_row: bool = False) -> None:
-    def send(body):
-        return requests.patch(
-            f"{auth.SUPABASE_URL}/rest/v1/profiles",
-            params={match_field: f"eq.{match_val}"},
-            headers=auth._headers({"Prefer": "return=representation" if require_row else "return=minimal"}),
-            json={**body, "updated_at": auth._now()},
-            timeout=_TIMEOUT,
-        )
-
-    r = send(patch)
-    if r.status_code == 400 and any(c in patch for c in OPTIONAL_COLUMNS):
-        r = send({k: v for k, v in patch.items() if k not in OPTIONAL_COLUMNS})
+def _patch(match_field: str, match_val: str, patch: dict) -> None:
+    r = requests.patch(
+        f"{auth.SUPABASE_URL}/rest/v1/profiles",
+        params={match_field: f"eq.{match_val}"},
+        headers=auth._headers({"Prefer": "return=representation"}),
+        json={**patch, "updated_at": auth._now()},
+        timeout=_TIMEOUT,
+    )
     r.raise_for_status()  # raise on failure so the webhook 4xx's and Stripe retries
     # A PATCH that matches nothing still succeeds; for a buyer that would mean a
     # payment recorded nowhere, so fail loudly (and let Stripe retry) instead.
-    if require_row and not r.json():
+    if not r.json():
         raise RuntimeError(f"no profile row matched {match_field}={match_val}")
 
 
-def _iso(unix_ts) -> str | None:
-    if not unix_ts:
-        return None
-    return dt.datetime.fromtimestamp(int(unix_ts), dt.timezone.utc).isoformat()
-
-
-def _period_end(sub) -> str | None:
-    """Subscription period end, tolerant of API versions: recent versions
-    (2025-basil / 2026-dahlia) moved current_period_end onto the items."""
-    cpe = sub.get("current_period_end")
-    if not cpe:
-        try:
-            cpe = sub["items"]["data"][0]["current_period_end"]
-        except (KeyError, IndexError, TypeError):
-            cpe = None
-    return _iso(cpe)
-
-
-def _cancel_at(sub) -> str | None:
-    """When a cancelled subscription stops, or None while it renews. Newer API
-    versions set cancel_at for every scheduled cancellation; older ones only
-    flag cancel_at_period_end."""
-    if sub.get("cancel_at"):
-        return _iso(sub["cancel_at"])
-    if sub.get("cancel_at_period_end"):
-        return _period_end(sub)
-    return None
-
-
-# --- Checkout / portal ------------------------------------------------------
+# --- Checkout ---------------------------------------------------------------
 def create_checkout(uid: str, email: str, kind: str, origin: str) -> str:
     price = PRICE_FOR.get(kind)
     if not price:
         raise ValueError(f"unknown or unconfigured plan: {kind}")
     stripe = _stripe()
-    mode = "payment" if kind == "pack20" else "subscription"
     session = stripe.checkout.Session.create(
-        mode=mode,
+        mode="payment",
         line_items=[{"price": price, "quantity": 1}],
         client_reference_id=uid,
         customer_email=email or None,
-        customer_creation="always" if mode == "payment" else None,
-        # The Stripe account is shared with the wedding site, so its descriptor
-        # stays the studio's; card statements read "<prefix>* SHOOTCARDS" (no
-        # space: with the account's prefix of up to 10 characters it stays within
-        # Stripe's 22). Checkout
-        # only takes a suffix in payment mode: subscriptions get theirs from the
-        # Pro product's own statement descriptor, set in the Stripe Dashboard.
-        payment_intent_data={"statement_descriptor_suffix": STATEMENT_SUFFIX} if mode == "payment" else None,
+        customer_creation="always",
+        # The webhook unlocks Pro only for sessions marked as ours: the Stripe
+        # account is shared with the wedding site.
+        metadata={"kind": kind},
+        # The account's descriptor stays the studio's; card statements read
+        # "<prefix>* SHOOTCARDS" (no space: with the account's prefix of up to
+        # 10 characters it stays within Stripe's 22).
+        payment_intent_data={"statement_descriptor_suffix": STATEMENT_SUFFIX,
+                             "metadata": {"kind": kind}},
+        # Photographers buy this for their business: an invoice, with their VAT
+        # number on it if they give one.
+        invoice_creation={"enabled": True},
+        tax_id_collection={"enabled": True},
         allow_promotion_codes=True,
         success_url=f"{origin}/?checkout=success",
         cancel_url=f"{origin}/?checkout=cancel",
@@ -163,17 +121,7 @@ def create_checkout(uid: str, email: str, kind: str, origin: str) -> str:
     return session.url
 
 
-def create_portal(customer_id: str, origin: str) -> str:
-    stripe = _stripe()
-    return stripe.billing_portal.Session.create(customer=customer_id, return_url=f"{origin}/").url
-
-
 # --- Webhook ----------------------------------------------------------------
-def _retrieve_sub(stripe, sub_id) -> dict:
-    """Retrieve a subscription as a plain dict (stripe>=15 objects aren't dicts)."""
-    return json.loads(str(stripe.Subscription.retrieve(sub_id)))
-
-
 def _claim_event(eid) -> bool:
     """Record the Stripe event id for idempotency. Returns True if it was ALREADY
     processed (caller should skip). Degrades gracefully — if the stripe_events
@@ -210,87 +158,36 @@ def handle_webhook(payload: bytes, sig: str) -> None:
     if _claim_event(eid):           # already handled (Stripe retry / duplicate delivery)
         return
     try:
-        _process_event(stripe, event)
+        _process_event(event)
     except Exception:
         _release_event(eid)         # let Stripe's retry reprocess this event
         raise
 
 
-def _process_event(stripe, event: dict) -> None:
-    etype = event.get("type")
-    obj = (event.get("data") or {}).get("object") or {}
-
-    if etype == "checkout.session.completed":
-        uid = obj.get("client_reference_id")
-        email = obj.get("customer_email") or (obj.get("customer_details") or {}).get("email") or ""
-        # Only our checkouts carry a Shoot Cards user id. The Stripe account is
-        # shared with the wedding site, whose checkouts arrive here too: skip
-        # those quietly (a failure would make Stripe retry them for days).
-        if not auth.ensure_profile(uid, email):
-            return
-        customer = obj.get("customer")
-        if obj.get("mode") == "subscription":
-            _set_pro(uid, customer, _retrieve_sub(stripe, obj.get("subscription")))
-        else:  # one-time 20-pack
-            _add_credits(uid, customer, PACK20_CREDITS)
-
-    elif etype in ("customer.subscription.updated", "customer.subscription.deleted"):
-        _sync_subscription(obj)
-
-    elif etype == "invoice.paid":
-        sub_id = obj.get("subscription")
-        if not sub_id:  # newer API versions nest it under parent
-            sub_id = ((obj.get("parent") or {}).get("subscription_details") or {}).get("subscription")
-        if sub_id:
-            _sync_subscription(_retrieve_sub(stripe, sub_id))
-
-
-def _set_pro(uid: str, customer: str, sub) -> None:
-    if not uid:
+def _process_event(event: dict) -> None:
+    # completed: card payments, paid at once. async_payment_succeeded: methods
+    # like SEPA Debit, whose session completes unpaid and is paid days later.
+    if event.get("type") not in ("checkout.session.completed",
+                                 "checkout.session.async_payment_succeeded"):
         return
+    obj = (event.get("data") or {}).get("object") or {}
+    if (obj.get("metadata") or {}).get("kind") != "pro" or obj.get("payment_status") != "paid":
+        return
+    uid = obj.get("client_reference_id")
+    email = obj.get("customer_email") or (obj.get("customer_details") or {}).get("email") or ""
+    # Only our checkouts carry a Shoot Cards user id. The Stripe account is
+    # shared with the wedding site, whose checkouts arrive here too: skip
+    # those quietly (a failure would make Stripe retry them for days).
+    if not auth.ensure_profile(uid, email):
+        return
+    _set_pro(uid, obj.get("customer"))
+
+
+def _set_pro(uid: str, customer: str | None) -> None:
+    """Pro bought once: no renewal date, nothing to cancel."""
     _patch("id", uid, {
         "plan": "pro",
-        "subscription_status": sub.get("status"),
-        "current_period_end": _period_end(sub),
-        "cancel_at": _cancel_at(sub),
+        "subscription_status": auth.PAID_ONCE,
+        "current_period_end": None,
         "stripe_customer_id": customer,
-    }, require_row=True)
-
-
-def _add_credits(uid: str, customer: str, n: int) -> None:
-    if not uid:
-        return
-    if customer:
-        _patch("id", uid, {"stripe_customer_id": customer}, require_row=True)  # idempotent; do first
-    if not auth._rpc("add_credits", {"p_uid": uid, "p_n": n}):  # atomic; fallback below
-        current = int(auth.get_profile(uid).get("credits") or 0)
-        _patch("id", uid, {"credits": current + n}, require_row=True)
-
-
-def _is_ours(sub) -> bool:
-    """Does this subscription bill one of our prices?
-
-    This Stripe account is shared with the wedding site, so subscriptions that
-    have nothing to do with Shoot Cards can produce events here. We match
-    profiles by customer id, and one customer could hold both, so check the
-    price before rewriting anyone's plan. Skipped when no price is configured,
-    otherwise a missing env var would silently ignore every real event.
-    """
-    ours = {p for p in PRICE_FOR.values() if p}
-    if not ours:
-        return True
-    items = ((sub.get("items") or {}).get("data")) or []
-    return bool({(it.get("price") or {}).get("id") for it in items} & ours)
-
-
-def _sync_subscription(sub) -> None:
-    customer = sub.get("customer")
-    if not customer or not _is_ours(sub):
-        return
-    active = sub.get("status") in ("active", "trialing")
-    _patch("stripe_customer_id", customer, {
-        "plan": "pro" if active else "free",
-        "subscription_status": sub.get("status"),
-        "current_period_end": _period_end(sub),
-        "cancel_at": _cancel_at(sub),
     })

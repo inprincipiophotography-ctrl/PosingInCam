@@ -180,11 +180,11 @@ function limitRefusal(a, need) {
   const x = allowance(a);
   if (!x.canMake) {
     return x.used + " of " + x.limit + " free cards used, and free cards don't renew. " +
-      "Go Pro for unlimited cards, or get a 20-card pack once.";
+      "Get Pro once for unlimited cards with no watermark.";
   }
   return "This makes " + cardsWord(need) + " and you can make " + x.canMake + " now (" +
     (x.paid ? cardsWord(x.paid).replace("card", "paid card") : x.used + " of " + x.limit + " free cards used") +
-    "). Trim it to " + cardsWord(x.canMake) + ", or go Pro for unlimited.";
+    "). Trim it to " + cardsWord(x.canMake) + ", or get Pro once for unlimited.";
 }
 
 // An error from the last card type shouldn't hang around under the next one.
@@ -1135,7 +1135,7 @@ async function convert() {
         const known = j.free_left != null || j.credits != null;
         const msg = known
           ? limitRefusal({ free_left: j.free_left, credits: j.credits, free_limit: state.account && state.account.free_limit }, files.length)
-          : (j.error || "You've used your free cards. Go Pro for unlimited cards.");
+          : (j.error || "You've used your free cards. Get Pro once for unlimited cards.");
         setStatus("err", "✗ " + msg + partial());
         showUpsell();
         renderAccount();
@@ -1229,7 +1229,7 @@ function showSignupOffer() {
   el.hidden = false;
   el.innerHTML =
     '<p class="muted upsell-text">Sign in free with an email link (no password) to make up to 3 cards, ' +
-    'or go Pro for unlimited cards with no watermark.</p>' +
+    'or get Pro once for unlimited cards with no watermark.</p>' +
     '<div class="buy-row"><button class="go" type="button" id="offer-signin">Sign in free</button>' +
     '<a class="link-btn" href="#pricing">See Pro</a></div>';
   const btn = $("offer-signin");
@@ -1241,14 +1241,11 @@ function showUpsell() {
   el.hidden = false;
   if (window.__stripe) {
     el.innerHTML =
-      '<p class="muted upsell-text">Go Pro for unlimited cards with no watermark, or get a 20-card pack once:</p>' +
+      '<p class="muted upsell-text">Pay once for unlimited cards with no watermark. No subscription.</p>' +
       '<div class="buy-row">' +
-        '<button class="go" type="button" data-kind="monthly">Go Pro (monthly)</button>' +
-        '<button class="go ghost" type="button" data-kind="yearly">Pro (yearly)</button>' +
-        '<button class="link-btn" type="button" data-kind="pack20">Buy 20 cards</button>' +
+        '<button class="go" type="button" data-kind="pro">' + proLabel() + '</button>' +
       '</div>';
-    el.querySelectorAll("[data-kind]").forEach((b) =>
-      b.addEventListener("click", () => startCheckout(b.dataset.kind, b)));
+    el.querySelector("[data-kind]").addEventListener("click", (e) => startCheckout("pro", e.currentTarget));
   } else {
     el.innerHTML = '<p class="muted upsell-text">You\'ve used your free cards. Paid plans are launching soon. Thanks for trying it!</p>';
   }
@@ -1257,7 +1254,7 @@ function showUpsell() {
 // Picked a plan while signed out: remember it, so after the email link the
 // checkout opens by itself instead of leaving them to find the button again.
 const PENDING_BUY = "pic_pending_checkout";
-const PLAN_KINDS = ["monthly", "yearly", "pack20"];
+const PLAN_KINDS = ["pro"];
 
 async function startCheckout(kind, btn) {
   if (!isSignedIn()) {
@@ -1296,22 +1293,6 @@ function resumePendingCheckout() {
   startCheckout(p.kind);
 }
 
-async function startPortal(e) {
-  if (!isSignedIn()) { openLogin(); return; }
-  const btn = e && e.currentTarget, label = btn ? btn.textContent : "";
-  if (btn) { btn.disabled = true; btn.textContent = "Opening billing…"; }
-  try {
-    const r = await fetch("/api/portal", { method: "POST" });
-    let j = {}; try { j = await r.json(); } catch (_) {}
-    if (!r.ok || !j.url) throw new Error(j.error || "");
-    window.location.href = j.url;
-  } catch (_) {
-    toast("Billing didn't open. Your plan is unchanged. Try again in a moment.",
-          { kind: "err", support: "billing didn't open", ms: 12000 });
-    if (btn) { btn.disabled = false; btn.textContent = label; }
-  }
-}
-
 /* ---------- pricing section ---------- */
 function currencySym(o) {
   return o.currency === "EUR" ? "€" : (o.currency || "") + " ";
@@ -1323,26 +1304,22 @@ function fmtMoney(o) {
   return currencySym(o) + (Number.isInteger(n) ? n : n.toFixed(2));
 }
 
+// "Get Pro · €29" once the price has loaded, "Get Pro" until then.
+function proLabel() {
+  const amt = fmtMoney(state.proPrice);
+  return amt ? "Get Pro · " + amt : "Get Pro";
+}
+
 async function renderPricing() {
   const grid = $("price-grid");
-  const toggle = $("price-toggle");
-  const extra = $("price-extra");
   if (!grid) return;
 
-  let data = { prices: {}, free_limit: 3, pack_size: 20 };
+  let data = { prices: {}, free_limit: 3 };
   try { data = await (await fetch("/api/prices")).json(); } catch (_) {}
-  const P = data.prices || {};
+  const pro = (data.prices || {}).pro;
   const freeN = data.free_limit ?? 3;
   state.freeLimit = freeN;
-  const packN = data.pack_size ?? 20;
-  const hasM = !!P.monthly, hasY = !!P.yearly, hasPack = !!P.pack20;
-
-  let cycle = hasM ? "monthly" : (hasY ? "yearly" : "monthly");
-  toggle.hidden = !(hasM && hasY);
-  if (hasM && hasY) {
-    const save = Math.round((1 - P.yearly.amount / (P.monthly.amount * 12)) * 100);
-    if (save > 0) toggle.querySelector('[data-cycle="yearly"]').textContent = "Yearly · save " + save + "%";
-  }
+  state.proPrice = pro || null;
 
   const card = (o) =>
     '<div class="price-card' + (o.featured ? " featured" : "") + '">' +
@@ -1355,81 +1332,50 @@ async function renderPricing() {
       o.cta +
     "</div>";
 
-  function paint() {
-    const pro = P[cycle];
-    const proAmt = fmtMoney(pro);
-    let proNote = "Every wedding you shoot";
-    if (cycle === "yearly" && hasY) {
-      proNote = currencySym(P.yearly) + (P.yearly.amount / 12).toFixed(2) + "/mo, billed yearly";
-    }
+  grid.innerHTML =
+    card({
+      name: "Free",
+      amount: "€0",
+      note: "No credit card",
+      feats: ["Your first card, no account", freeN + " more when you sign in",
+              "Every card type", "Light preview watermark"],
+      cta: '<button class="btn btn-ghost" type="button" data-make="pose">Make a free card</button>',
+    }) +
+    card({
+      name: "Pose pack",
+      amount: "50",
+      per: " poses",
+      note: "Ready-made, bought once",
+      feats: ["Couples, bridal and group poses", "What to say to the couple",
+              "Sony, Canon &amp; Nikon", "From our wedding studio, In Principio"],
+      cta: '<a class="btn btn-ghost" href="' + STORE_URL + '" target="_blank" rel="noopener">See the pose pack</a>',
+    }) +
+    card({
+      featured: true,
+      badge: "Pay once",
+      name: "Pro",
+      amount: fmtMoney(pro) || "",
+      per: pro ? " once" : "",
+      note: "No subscription. Nothing to renew.",
+      feats: ["Unlimited cards, every type", "No watermark",
+              "A project per wedding", "The bride's pins &amp; your designs, converted",
+              "New cameras as we add them"],
+      cta: pro
+        ? '<button class="btn btn-primary" type="button" data-buy="pro">' + proLabel() + '</button>'
+        : '<button class="btn btn-primary" type="button" disabled>Coming soon</button>',
+    });
 
-    grid.innerHTML =
-      card({
-        name: "Free",
-        amount: "€0",
-        note: "No credit card",
-        feats: ["Your first card, no account", freeN + " more when you sign in",
-                "Every card type", "Light preview watermark"],
-        cta: '<button class="btn btn-ghost" type="button" data-make="pose">Make a free card</button>',
-      }) +
-      card({
-        name: "Pose pack",
-        amount: "50",
-        per: " poses",
-        note: "Ready-made, bought once",
-        feats: ["Couples, bridal and group poses", "What to say to the couple",
-                "Sony, Canon &amp; Nikon", "From our wedding studio, In Principio"],
-        cta: '<a class="btn btn-ghost" href="' + STORE_URL + '" target="_blank" rel="noopener">See the pose pack</a>',
-      }) +
-      card({
-        featured: true,
-        badge: "Best value",
-        name: "Pro",
-        amount: proAmt || "",
-        per: proAmt ? (cycle === "yearly" ? "/yr" : "/mo") : "",
-        note: proNote,
-        feats: ["Unlimited cards, every type", "No watermark",
-                "A project per wedding", "The bride's pins &amp; your designs, converted", "Cancel anytime"],
-        cta: (hasM || hasY)
-          ? '<button class="btn btn-primary" type="button" data-buy="' + cycle + '">Go Pro</button>'
-          : '<button class="btn btn-primary" type="button" disabled>Coming soon</button>',
-      });
-
-    grid.querySelectorAll("[data-buy]").forEach((b) =>
-      b.addEventListener("click", () => startCheckout(b.dataset.buy, b)));
-  }
-
-  if (hasPack && extra) {
-    extra.innerHTML = "Shooting just one wedding? " +
-      '<button class="link-btn" type="button" data-buy="pack20">Get ' + packN + " cards for " +
-      fmtMoney(P.pack20) + "</button>, once, no subscription.";
-    extra.querySelector("[data-buy]").addEventListener("click", (e) => startCheckout("pack20", e.currentTarget));
-    extra.hidden = false;
-  }
-
-  toggle.querySelectorAll("button").forEach((b) =>
-    b.addEventListener("click", () => {
-      cycle = b.dataset.cycle;
-      toggle.querySelectorAll("button").forEach((x) => {
-        x.classList.toggle("active", x === b);
-        x.setAttribute("aria-pressed", String(x === b));
-      });
-      paint();
-    }));
-  toggle.querySelectorAll("button").forEach((x) => {
-    x.classList.toggle("active", x.dataset.cycle === cycle);
-    x.setAttribute("aria-pressed", String(x.dataset.cycle === cycle));
-  });
-
-  paint();
+  grid.querySelectorAll("[data-buy]").forEach((b) =>
+    b.addEventListener("click", () => startCheckout(b.dataset.buy, b)));
+  // The account bar can load first: give its button the price too.
+  if (state.account) renderUpgradeNudge(state.account);
 }
 
 /* ---------- auth / account ---------- */
-// The phone menu's copies of Billing / Sign out (CSS shows them on phones only).
-function setMenuAccount(signedIn, billing) {
-  const nb = $("nav-billing"), ns = $("nav-signout");
+// The phone menu's copy of Sign out (CSS shows it on phones only).
+function setMenuAccount(signedIn) {
+  const ns = $("nav-signout");
   if (ns) { ns.hidden = !signedIn; ns.onclick = async () => { await PoseAuth.signOut(); }; }
-  if (nb) { nb.hidden = !(signedIn && billing); nb.onclick = startPortal; }
 }
 
 // "email · plan": the email shrinks first so the plan always shows.
@@ -1460,11 +1406,9 @@ async function renderAccount() {
     return;
   }
   el.innerHTML = '<span class="acct-info" id="acct-info">…</span>' +
-    '<button class="link-btn" type="button" id="manage-btn" hidden>Billing</button>' +
     '<button class="link-btn" type="button" id="signout-btn">Sign out</button>';
   $("signout-btn").onclick = async () => { await PoseAuth.signOut(); };
-  $("manage-btn").onclick = startPortal;
-  setMenuAccount(true, false);
+  setMenuAccount(true);
   try {
     const r = await fetch(ME, { cache: "no-store" });
     const j = await r.json();
@@ -1472,15 +1416,10 @@ async function renderAccount() {
     const who = j.email || (PoseAuth.user() && PoseAuth.user().email) || "signed in";
     let badge;
     state.account = j;
-    // Subscribers have nothing left to buy: .is-pro hides pricing and the nudge.
+    // Pro has nothing left to buy: .is-pro hides pricing and the nudge.
     setPlanClasses(j.plan);
     renderUpgradeNudge(j);
-    if (j.plan === "pro") {
-      // Cancelled but paid up: still Pro, and say until when.
-      const ends = j.pro_ends ? shortDate(j.pro_ends) : "";
-      badge = ends ? "Pro · ends " + ends : "Pro";
-      if (window.__stripe) { $("manage-btn").hidden = false; setMenuAccount(true, true); }
-    }
+    if (j.plan === "pro") badge = "Pro";
     else if ((j.credits || 0) > 0) badge = cardsWord(j.credits).replace("card", "paid card");
     else { const x = allowance(j); badge = x.used + " of " + x.limit + " free used"; }
     setAcctInfo(who, badge);
@@ -1512,20 +1451,20 @@ function renderUpgradeNudge(j) {
 
   if (x.paid > 0) {
     text.innerHTML = "<strong>" + cardsWord(x.paid).replace("card", "paid card") + "</strong> left, no watermark. " +
-      "Go Pro for unlimited.";
+      "Get Pro once for unlimited.";
   } else if (spent) {
     text.innerHTML = "<strong>" + x.used + " of " + x.limit + " free cards used.</strong> Free cards don't renew. " +
-      "Go Pro for unlimited cards with no watermark.";
+      "Get Pro once for unlimited cards with no watermark.";
   } else {
     text.innerHTML = "<strong>" + x.used + " of " + x.limit + " free cards used</strong>, watermarked. " +
-      "Go Pro for unlimited cards with no watermark.";
+      "Get Pro once for unlimited cards with no watermark.";
   }
   box.classList.toggle("spent", spent);
 
   // Without Stripe there is no checkout to start, so point at the plans instead.
-  cta.textContent = window.__stripe ? "Go Pro" : "See plans";
+  cta.textContent = window.__stripe ? proLabel() : "See plans";
   cta.onclick = window.__stripe
-    ? () => startCheckout("monthly", cta)
+    ? () => startCheckout("pro", cta)
     : () => document.getElementById("pricing").scrollIntoView({ behavior: "smooth" });
   box.hidden = false;
 }
@@ -2303,15 +2242,13 @@ function handleCheckoutReturn() {
     setStatus("ok", "✓ Payment received. Your account is updating. Thank you!");
     $("status").scrollIntoView({ behavior: "smooth", block: "center" });
     // Stripe tells our server a moment later (webhook): keep checking for up to
-    // half a minute and say so once the plan or the credits show up.
+    // half a minute and say so once Pro shows up.
     let n = 0;
     const check = async () => {
       await renderAccount();
       const a = state.account;
-      if (a && (a.plan === "pro" || (a.credits || 0) > 0)) {
-        setStatus("ok", a.plan === "pro"
-          ? "✓ You're on Pro: every card is clean and unlimited. Thank you!"
-          : "✓ " + cardsWord(a.credits).replace("card", "paid card") + " on your account, no watermark. Thank you!");
+      if (a && a.plan === "pro") {
+        setStatus("ok", "✓ Pro is yours: unlimited cards, no watermark. Your receipt and invoice are on their way by email. Thank you!");
       } else if (++n < 15) {
         setTimeout(check, 2000);
       } else {

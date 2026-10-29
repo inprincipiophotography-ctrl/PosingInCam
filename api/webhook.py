@@ -1,7 +1,6 @@
 """POST /api/webhook — Stripe webhook. Verifies the signature and writes
-entitlement (Pro / credits) into Supabase. Configure the endpoint in Stripe with
-events: checkout.session.completed, customer.subscription.updated,
-customer.subscription.deleted, invoice.paid."""
+entitlement (Pro) into Supabase. Configure the endpoint in Stripe with events:
+checkout.session.completed, checkout.session.async_payment_succeeded."""
 
 import os
 import sys

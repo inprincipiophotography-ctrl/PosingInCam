@@ -5,8 +5,8 @@
 --
 -- Unit = one converted card (image):
 --   Free:    3 cards total, watermarked
---   20-pack: 20 credits (one-time), no watermark
---   Pro:     unlimited, no watermark
+--   Credits: left from the old 20-pack, no watermark
+--   Pro:     unlimited, no watermark, bought once
 
 create table if not exists public.profiles (
   id                  uuid primary key references auth.users(id) on delete cascade,
@@ -14,8 +14,8 @@ create table if not exists public.profiles (
   free_used           int  not null default 0,        -- watermarked free cards used (cap below)
   credits             int  not null default 0,         -- one-time 20-pack credits remaining
   plan                text not null default 'free',    -- 'free' | 'pro'
-  subscription_status text,                             -- Stripe subscription status
-  current_period_end  timestamptz,                      -- Pro access valid until
+  subscription_status text,                             -- 'lifetime' = Pro bought once; else old Stripe subscription status
+  current_period_end  timestamptz,                      -- old subscriptions only: Pro access valid until
   stripe_customer_id  text,
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now()

@@ -11,7 +11,24 @@ Tracked so nothing gets lost between sessions. (Excluded from the public deploy.
 - [ ] Google Search Console: add `cards.notalucis.com`, submit `https://cards.notalucis.com/sitemap.xml`,
       then re-run https://is-agentic.com/scan/cards.notalucis.com (was 68/100)
 - [ ] Prices are written in three places (JSON-LD in `index.html`, `agent/pages.js`, `llms.txt`):
-      update all three whenever a Stripe price changes (`qa/test_agents.py` checks they agree)
+      update all three whenever the Stripe price changes (`qa/test_agents.py` checks they agree)
+
+## Pro becomes one payment (Oct 2026, in this order)
+The subscription (€3.99/mo, €30/yr) and the 20-pack are gone; Pro is €29 once.
+- [ ] Stripe (test mode) → Product catalog → new product "Shoot Cards Pro" → one-off price €29 → copy `price_…`
+- [ ] Stripe → archive the old Pro monthly, Pro yearly and 20-pack prices; cancel any test subscriptions
+- [ ] Vercel env: add `STRIPE_PRICE_PRO`; delete `STRIPE_PRICE_PRO_MONTHLY`, `STRIPE_PRICE_PRO_YEARLY`,
+      `STRIPE_PRICE_PACK20` → Redeploy
+- [ ] Stripe → Webhooks → endpoint events: `checkout.session.completed` and
+      `checkout.session.async_payment_succeeded` only (remove the subscription and invoice events)
+- [ ] Stripe → Settings → Customer emails: "Successful payments" ON (receipt). Checkout also creates
+      an invoice for every purchase (small Stripe fee per invoice)
+- [ ] Ask the accountant: VAT for EU consumers (OSS) and fiskalizacija for card payments as an obrt,
+      before the live switch; turn on Stripe Tax if they say so
+- [ ] Refund (14-day guarantee): refund in Stripe, then in Supabase → `profiles` set `plan = 'free'`,
+      `subscription_status = null` for that user
+- [ ] Test: buy with card 4242 → `/api/me` says `plan: pro`, the watermark is gone, the receipt and
+      invoice arrive by email
 - [ ] Live test of the sign-in limits: 6 link requests in a row get "Too many sign-in
       attempts", and the CAPTCHA shows from the 4th
 - [ ] Before taking live payments: move Vercel from Hobby to Pro (Hobby is non-commercial only),
@@ -22,8 +39,8 @@ Tracked so nothing gets lost between sessions. (Excluded from the public deploy.
 - [ ] Supabase: Authentication → Email provider ON (magic link)
 - [ ] Supabase: Auth → URL Configuration → Site URL = `https://cards.notalucis.com`, Redirect URLs = `https://cards.notalucis.com/**` (keep `https://posing-in-cam.vercel.app/**` while the old URL redirects)
 - [ ] Vercel (`posing-in-cam`) env: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SUPABASE_JWT_SECRET`
-- [ ] Stripe: create 3 prices (Pro monthly, Pro yearly, 20-pack) → send price IDs + secret key
-- [ ] Vercel env: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_PRO_MONTHLY`, `STRIPE_PRICE_PRO_YEARLY`, `STRIPE_PRICE_PACK20`
+- [ ] Stripe: create the Pro price (€29, one-off) → send the price ID + secret key
+- [ ] Vercel env: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_PRO`
 - [ ] Stripe: add webhook endpoint (URL provided once `/api/webhook` is built)
 
 ## Move to cards.notalucis.com (in this order)
@@ -32,10 +49,8 @@ Tracked so nothing gets lost between sessions. (Excluded from the public deploy.
 - [ ] Deploy. `posing-in-cam.vercel.app` now redirects to `cards.notalucis.com`, except `/api/*` (Stripe does not follow redirects)
 - [ ] Stripe → Webhooks: edit the existing endpoint's URL to `https://cards.notalucis.com/api/webhook` (same `whsec_`, no env change)
 - [ ] Stripe → Settings → Public details: the account is shared with the wedding site, so keep the
-      studio's statement descriptor there (shortened descriptor ≤ 10 chars). Pack purchases add the
+      studio's statement descriptor there (shortened descriptor ≤ 10 chars). Every purchase adds the
       suffix in code (`<prefix>* SHOOTCARDS`)
-- [ ] Stripe → Product catalog → Pro product → statement descriptor `NOTALUCIS SHOOT CARDS` (subscriptions
-      can't take a suffix from Checkout; the product's descriptor wins over the account's)
 - [x] Old-URL redirect in `vercel.json` is permanent (308), still sparing `/api/*`
 - [ ] Vercel → `posing-in-cam` → Analytics → enable Web Analytics (no cookies; `assets/visits.js`
       queues page views and funnel events until it is on; custom events show on the Pro plan)
@@ -82,10 +97,10 @@ CAPTCHA on `/api/auth` (see `docs/security-audit-auth.md`).
 ## 🚀 Go live (test → live)
 Everything above is in Stripe **test/sandbox** mode. To take real payments:
 - [ ] Activate the Stripe account fully (business details + bank account for payouts).
-- [ ] Recreate the 3 prices in **live** mode; create a **live** webhook endpoint
-      (`https://cards.notalucis.com/api/webhook`, same 4 events) → get `whsec_…`.
-- [ ] In Vercel, swap the 5 Stripe env vars to live values
-      (`sk_live_…`, live `price_…` ×3, live `whsec_…`) → Redeploy.
-- [ ] Re-test once with a real card, then refund/cancel.
+- [ ] Recreate the Pro price in **live** mode; create a **live** webhook endpoint
+      (`https://cards.notalucis.com/api/webhook`, same 2 events) → get `whsec_…`.
+- [ ] In Vercel, swap the 3 Stripe env vars to live values
+      (`sk_live_…`, live `price_…`, live `whsec_…`) → Redeploy.
+- [ ] Re-test once with a real card, then refund (and reset the plan, see above).
 
 > Reminder owner: Claude will surface the rotation step when the full paywall is verified live.

@@ -75,7 +75,7 @@ origin. Analytics strips sign-in tokens from page URLs (`assets/visits.js`).
 | `GET /api/history` | batches, projects, thumbnails | `user_id = uid` on every query, and `storage.owned_path()` signs only files under `<uid>/` |
 | `GET /api/history?download=` / `download_project=` | stored cards | the row must match `user_id = uid`, and each file must pass `owned_path` (404 or 410 otherwise) |
 | `POST /api/convert` | project, history, credits | `project_id` must belong to `uid`, otherwise the user's own default project is used |
-| `POST /api/portal`, `/api/checkout` | Stripe | customer and user ID taken from the verified session, never from the request |
+| `POST /api/checkout` | Stripe | customer and user ID taken from the verified session, never from the request |
 | `POST /api/webhook` | entitlements | Stripe signature verified |
 
 - **Database:** RLS is enabled on all 5 public tables and all storage tables.

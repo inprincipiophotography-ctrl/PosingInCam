@@ -44,8 +44,7 @@ Tested on Sony A7 III, A7 IV and A7 V, Canon R6, R6 II and R6 III, and Nikon Z6,
 ## Pricing
 
 - **Free:** the first card needs no account. Signing in with an email link (no password) adds 3 more free cards and saved projects. Free cards carry a light "preview" watermark.
-- **Pro:** €3.99 per month or €30 per year. No watermark and no card limits, every card type, saved projects. Cancel anytime.
-- **20-pack:** €7.99 once for 20 cards without a watermark.
+- **Pro:** €29 once, no subscription. No watermark and no card limits, every card type, saved projects. Nothing renews; a receipt and an invoice come by email.
 - **Wedding pose pack:** 50 ready-made wedding poses, sold separately in the In Principio shop: https://www.inprincipioweddings.com/store/in-camera-posing
 - 14-day money-back guarantee: if the cards don't show up on the camera, email ${MAIL} for a full refund.
 
@@ -54,7 +53,7 @@ Tested on Sony A7 III, A7 IV and A7 V, Canon R6, R6 II and R6 III, and Nikon Z6,
 - No Canva or design skills needed.
 - The couple's Pinterest pictures stay a private reference; nothing is shared.
 - Most Sony bodies show the cards straight away; if one doesn't, the included instructions have a one-minute fix (Recover Image Database).
-- Cancel Pro anytime under Billing once signed in.
+- Pro is one payment: nothing renews and there is nothing to cancel.
 
 ## Links
 
@@ -117,7 +116,7 @@ We are Kim & Ivan, the two wedding photographers who make Shoot Cards. Every mes
 
 - **A camera that doesn't show the cards.** Tell us the exact camera model, which folder you copied the cards into, and what playback shows (a screenshot or phone photo of the screen helps). Most cases are fixed in a minute.
 - **A refund.** If the cards don't show up on your camera within 14 days of buying, you get a full refund. Write from the email you signed in with.
-- **Billing.** Cancel or change Pro yourself under Billing once you're signed in; for anything else, email us.
+- **Billing.** Pro is one payment, so there is nothing to cancel. For a copy of your invoice or anything else about a payment, email us.
 - **Your data.** Ask for a copy of your data or for your account and stored cards to be deleted. See ${SITE}/privacy.
 - **Ideas and camera support.** Fujifilm and Panasonic support is coming; tell us which body you shoot.
 
@@ -138,7 +137,7 @@ Shoot Cards (${SITE}) is run by Kim & Ivan, the wedding photographers behind In 
 - **Your email address**, when you sign in. We use it to send the sign-in link, to keep your account and to tell you about payments. Sign-in is passwordless; there is no password to store.
 - **The images you upload.** They are converted into camera cards on our server. The originals are not kept. If you are signed in, the converted cards are stored in your account so you can download them again under "Your projects". Signed-out preview cards are not stored.
 - **What you made:** number of cards, camera brand, time, and project names you give. Used for your history, your free and paid allowance, and limits that prevent abuse.
-- **Payments.** Stripe handles card details; we never see them. We keep your Stripe customer ID, plan and subscription status.
+- **Payments.** Stripe handles card details; we never see them. We keep your Stripe customer ID and your plan.
 - **Security logs.** Sign-in attempts (email address and a keyed hash of your IP address, never the IP itself) are kept for 30 days to stop abuse. Our hosting keeps short technical logs.
 
 We do not sell your data, show ads or build marketing profiles.

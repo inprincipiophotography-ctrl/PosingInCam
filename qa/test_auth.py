@@ -21,7 +21,7 @@ os.environ.update({
     "SUPABASE_SERVICE_KEY": "sb_secret_fake",
     "SUPABASE_JWT_SECRET": "unused",
     "STRIPE_SECRET_KEY": "sk_test_fake",
-    "STRIPE_PRICE_PRO_MONTHLY": "price_monthly",
+    "STRIPE_PRICE_PRO": "price_pro",
 })
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -324,12 +324,16 @@ def test_old_localstorage_session_moves_to_cookies_once():
 def test_cross_site_writes_are_refused():
     reset()
     jar = sign_in("kim@example.com")
-    evil = CHECKOUT.post("/api/checkout", json={"kind": "monthly"},
+    evil = CHECKOUT.post("/api/checkout", json={"kind": "pro"},
                          headers={"Cookie": cookie_header(jar), "Origin": "https://evil.example"})
     assert evil.status_code == 403
-    sibling = CHECKOUT.post("/api/checkout", json={"kind": "monthly"},
+    sibling = CHECKOUT.post("/api/checkout", json={"kind": "pro"},
                             headers={"Cookie": cookie_header(jar), "Sec-Fetch-Site": "same-site"})
     assert sibling.status_code == 403
+    # The subscription plans are gone: asking for one is refused before Stripe.
+    gone = CHECKOUT.post("/api/checkout", json={"kind": "monthly"},
+                         headers={"Cookie": cookie_header(jar), "Origin": ORIGIN})
+    assert gone.status_code == 400
     assert login("kim@example.com", fresh_ip(), origin="https://evil.example").status_code == 403
 
 
