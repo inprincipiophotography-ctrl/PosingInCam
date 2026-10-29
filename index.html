@@ -415,6 +415,7 @@
       <p class="muted" id="login-sub">We'll email you a magic link. No password.</p>
       <form id="login-form">
         <input type="email" id="login-email" placeholder="you@email.com" autocomplete="email" spellcheck="false" aria-label="Email address" required />
+        <div class="login-captcha" id="login-captcha" hidden></div>
         <button class="go" id="login-send" type="submit">Send magic link</button>
       </form>
       <p class="login-spam-note">Tip: the link can land in your <strong>spam</strong> folder, so check there if it's not in your inbox.</p>
@@ -423,8 +424,6 @@
     </div>
   </div>
 
-  <!-- supabase-js v2.107.0, self-hosted (no CDN single-point-of-failure) -->
-  <script src="/assets/vendor/supabase.js"></script>
   <script src="/assets/auth.js"></script>
   <script src="/assets/builder.js"></script>
   <script src="/assets/app.js"></script>

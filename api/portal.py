@@ -7,9 +7,10 @@ import traceback
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from flask import Flask, request, jsonify  # noqa: E402
-from webauth import auth, billing  # noqa: E402
+from webauth import auth, billing, session  # noqa: E402
 
 app = Flask(__name__)
+session.install(app)
 
 
 @app.after_request
@@ -28,8 +29,10 @@ def portal(path):
         return ("", 204)
     if not billing.enabled():
         return jsonify(error="Billing is not configured yet."), 503
+    if not session.same_origin(request):
+        return jsonify(error="Cross-site request refused."), 403
     try:
-        uid, _email = auth.verify_user(request.headers.get("Authorization"))
+        uid, _email = session.current_user(request)
     except auth.AuthError as e:
         return jsonify(error=e.message), e.status
     customer = auth.get_profile(uid).get("stripe_customer_id")

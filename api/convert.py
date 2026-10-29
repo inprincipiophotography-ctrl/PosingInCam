@@ -1,8 +1,8 @@
 """
 Vercel Python serverless function: POST design images -> SD-card ZIP.
 
-When the paywall env vars (SUPABASE_*) are set, requests must carry a Supabase
-access token (Authorization: Bearer ...) and are metered:
+When the paywall env vars (SUPABASE_*) are set, requests must carry a signed-in
+session (HttpOnly cookie, see webauth/session.py) and are metered:
   Free: 3 cards, watermarked · 20-pack: credits · Pro: unlimited.
 Without those env vars the converter stays open (no login, no watermark).
 
@@ -22,9 +22,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from flask import Flask, request, Response, jsonify  # noqa: E402
 from converter import pack, encoder  # noqa: E402
-from webauth import auth, billing, storage  # noqa: E402
+from webauth import auth, billing, session, storage  # noqa: E402
 
 app = Flask(__name__)
+session.install(app)
 
 MAX_FILES = 30
 MAX_BYTES_PER_FILE = 15 * 1024 * 1024
@@ -45,16 +46,6 @@ _RL_WINDOW = int(os.environ.get("RATE_WINDOW_SEC", "60"))
 _RL_MAX = int(os.environ.get("RATE_MAX", "20"))
 _rl_lock = threading.Lock()
 _rl_hits = {}  # ip -> [timestamps within the window]
-
-
-def _client_ip():
-    # Vercel sets x-real-ip to the actual peer; x-forwarded-for's first hop is
-    # client-spoofable, so prefer x-real-ip and fall back conservatively.
-    ip = request.headers.get("x-real-ip")
-    if ip:
-        return ip.strip()
-    xff = request.headers.get("x-forwarded-for", "")
-    return (xff.split(",")[0].strip() if xff else request.remote_addr) or "?"
 
 
 def _rate_limited(ip):
@@ -93,7 +84,9 @@ def convert(path):
         return jsonify(ok=True, vendors=sorted(encoder.VENDORS),
                        paywall=auth.paywall_enabled(), stripe=billing.enabled())
 
-    if _rate_limited(_client_ip()):
+    if not session.same_origin(request):
+        return jsonify(error="Cross-site request refused."), 403
+    if _rate_limited(session.client_ip(request)):
         resp = jsonify(error="Too many requests — please wait a moment and try again.")
         resp.headers["Retry-After"] = str(_RL_WINDOW)
         return resp, 429
@@ -126,7 +119,7 @@ def convert(path):
     watermark = False
     uid = profile = None
     tier = "open"
-    if auth.paywall_enabled() and not request.headers.get("Authorization"):
+    if auth.paywall_enabled() and not session.has_session(request):
         # Signed-out preview: one watermarked card, no account, no history.
         if len(designs) > ANON_MAX_CARDS:
             return jsonify(
@@ -137,7 +130,7 @@ def convert(path):
         tier = "anon"
     elif auth.paywall_enabled():
         try:
-            uid, email = auth.verify_user(request.headers.get("Authorization"))
+            uid, email = session.current_user(request)
         except auth.AuthError as e:
             return jsonify(error=e.message), e.status
         profile = auth.get_profile(uid, email)

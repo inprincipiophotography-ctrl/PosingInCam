@@ -3,7 +3,7 @@ GET  /api/history                 -> the signed-in user's stored batches, with
                                      short-lived signed thumbnail URLs.
 GET  /api/history?download=<id>   -> rebuild that batch as an SD-card ZIP.
 
-Both require a Supabase access token (Authorization: Bearer ...). Cards live in
+Both require a signed-in session (cookie, see webauth/session.py). Cards live in
 the private ``cards`` storage bucket; clients never talk to storage directly,
 they only get signed URLs (or the rebuilt ZIP) from here.
 """
@@ -16,9 +16,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from flask import Flask, request, Response, jsonify  # noqa: E402
 from converter import pack  # noqa: E402
-from webauth import auth, billing, storage  # noqa: E402
+from webauth import auth, billing, session, storage  # noqa: E402
 
 app = Flask(__name__)
+session.install(app)
 
 
 @app.after_request
@@ -39,7 +40,7 @@ def history(path):
         return jsonify(batches=[])
 
     try:
-        uid, _email = auth.verify_user(request.headers.get("Authorization"))
+        uid, _email = session.current_user(request)
     except auth.AuthError as e:
         return jsonify(error=e.message), e.status
 
