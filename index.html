@@ -14,6 +14,118 @@
   <meta property="og:image" content="https://cards.notalucis.com/assets/showcase/01.jpg" />
   <meta property="og:site_name" content="Shoot Cards by NotaLucis" />
   <link rel="canonical" href="https://cards.notalucis.com/" />
+  <link rel="alternate" type="text/markdown" href="https://cards.notalucis.com/index.md" />
+  <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Organization",
+   "@id": "https://cards.notalucis.com/#org",
+   "name": "NotaLucis",
+   "url": "https://notalucis.com/",
+   "logo": "https://cards.notalucis.com/apple-touch-icon.png",
+   "description": "NotaLucis makes software for photographers: the NotaLucis CRM and Shoot Cards. Made by wedding photographers Kim & Ivan of In Principio.",
+   "email": "notalucis.dev@gmail.com",
+   "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer support",
+    "email": "notalucis.dev@gmail.com",
+    "url": "https://cards.notalucis.com/contact",
+    "availableLanguage": [
+     "English"
+    ]
+   }
+  },
+  {
+   "@type": "WebSite",
+   "@id": "https://cards.notalucis.com/#website",
+   "name": "Shoot Cards",
+   "alternateName": "Shoot Cards by NotaLucis",
+   "url": "https://cards.notalucis.com/",
+   "inLanguage": "en",
+   "publisher": {
+    "@id": "https://cards.notalucis.com/#org"
+   }
+  },
+  {
+   "@type": "WebApplication",
+   "@id": "https://cards.notalucis.com/#app",
+   "name": "Shoot Cards",
+   "alternateName": "Shoot Cards by NotaLucis",
+   "url": "https://cards.notalucis.com/",
+   "description": "Pose cards, wedding timelines, family groups, shot lists and any image, converted so Sony, Canon and Nikon cameras show them in playback next to your photos. For wedding and portrait photographers.",
+   "applicationCategory": "MultimediaApplication",
+   "operatingSystem": "Any (web browser)",
+   "browserRequirements": "Requires JavaScript",
+   "image": "https://cards.notalucis.com/assets/showcase/01.jpg",
+   "featureList": [
+    "Pose cards with what to say to the couple",
+    "Timeline",
+    "Family groups",
+    "Shot list",
+    "Camera settings recipes",
+    "If found contact card",
+    "Any image: Pinterest pins, Canva and Photoshop designs",
+    "Sony, Canon and Nikon playback"
+   ],
+   "publisher": {
+    "@id": "https://cards.notalucis.com/#org"
+   },
+   "offers": [
+    {
+     "@type": "Offer",
+     "name": "Free",
+     "price": "0",
+     "priceCurrency": "EUR",
+     "description": "First card without an account, 3 more with email sign-in. Preview watermark."
+    },
+    {
+     "@type": "Offer",
+     "name": "Pro monthly",
+     "price": "3.99",
+     "priceCurrency": "EUR",
+     "priceSpecification": {
+      "@type": "UnitPriceSpecification",
+      "price": "3.99",
+      "priceCurrency": "EUR",
+      "unitCode": "MON",
+      "referenceQuantity": {
+       "@type": "QuantitativeValue",
+       "value": 1,
+       "unitCode": "MON"
+      }
+     }
+    },
+    {
+     "@type": "Offer",
+     "name": "Pro yearly",
+     "price": "30.00",
+     "priceCurrency": "EUR",
+     "priceSpecification": {
+      "@type": "UnitPriceSpecification",
+      "price": "30.00",
+      "priceCurrency": "EUR",
+      "unitCode": "ANN",
+      "referenceQuantity": {
+       "@type": "QuantitativeValue",
+       "value": 1,
+       "unitCode": "ANN"
+      }
+     }
+    },
+    {
+     "@type": "Offer",
+     "name": "20-card pack",
+     "price": "7.99",
+     "priceCurrency": "EUR",
+     "description": "20 cards without a watermark, one-time purchase."
+    }
+   ]
+  }
+ ]
+}
+  </script>
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -402,7 +514,7 @@
 
   <footer class="site-foot">
     <span>Shoot Cards is a NotaLucis tool, made by wedding photographers Kim &amp; Ivan</span>
-    <a href="https://notalucis.com/#/landing">NotaLucis, the CRM for photographers&nbsp;<span class="arr">&rarr;</span></a>
+    <nav class="foot-links" aria-label="About Shoot Cards"><a href="/about">About</a><a href="/contact">Contact</a><a href="/privacy">Privacy</a><a href="https://notalucis.com/#/landing">NotaLucis, the CRM for photographers&nbsp;<span class="arr">&rarr;</span></a></nav>
   </footer>
 
   <!-- Undo and news that isn't about the studio (assets/app.js toast()) -->

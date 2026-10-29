@@ -465,6 +465,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   color:var(--muted);font-size:13px;border-top:1px solid var(--border-soft)
 }
 .site-foot a{color:var(--accent-2)}
+.foot-links{display:flex;flex-wrap:wrap;gap:6px 18px}
 .site-foot a:hover{color:var(--accent)}
 
 /* ---------- account bar (in nav) ---------- */
