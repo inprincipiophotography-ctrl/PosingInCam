@@ -13,8 +13,8 @@ Tracked so nothing gets lost between sessions. (Excluded from the public deploy.
 - [ ] Prices are written in three places (JSON-LD in `index.html`, `agent/pages.js`, `llms.txt`):
       update all three whenever the Stripe price changes (`qa/test_agents.py` checks they agree)
 
-## 🚀 Go live: Pro €29 once, straight in live mode (one pass, in this order)
-The subscription (€3.99/mo, €30/yr) and the 20-pack are gone; Pro is €29 once. Test mode is
+## 🚀 Go live: Pro €29.99 once, straight in live mode (one pass, in this order)
+The subscription (€3.99/mo, €30/yr) and the 20-pack are gone; Pro is €29.99 once. Test mode is
 skipped: the code is covered by `qa/test_billing.py`, and one real purchase + refund proves the rest.
 
 **Blockers before the first real euro**
@@ -26,7 +26,7 @@ skipped: the code is covered by `qa/test_billing.py`, and one real purchase + re
 
 **Stripe (live mode, toggle top right OFF "Test mode")**
 - [ ] Activate the account: business details, bank account for payouts
-- [ ] Product catalog → "Shoot Cards Pro" → one-off price €29 → copy the live `price_…`
+- [ ] Product catalog → "Shoot Cards Pro" → one-off price €29.99 → copy the live `price_…`
 - [ ] Developers → Webhooks → add endpoint `https://cards.notalucis.com/api/webhook`, events
       `checkout.session.completed` + `checkout.session.async_payment_succeeded` → copy `whsec_…`
 - [ ] Developers → API keys → copy the live secret key `sk_live_…` (never paste it in a chat)

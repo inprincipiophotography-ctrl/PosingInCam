@@ -107,11 +107,11 @@ def test_json_ld_describes_the_product_and_the_organization():
     assert site["url"] == app["url"] == SITE + "/"
     assert app["name"] == "Shoot Cards" and app["description"] and app["publisher"]["@id"] == org["@id"]
     prices = {o["name"]: o["price"] for o in app["offers"]}
-    assert prices == {"Free": "0", "Pro": "29.00"}, prices
+    assert prices == {"Free": "0", "Pro": "29.99"}, prices
     # The same prices in the Markdown and llms.txt, so agents never see two stories.
     md = read("agent/pages.js")
     for text in (md, read("llms.txt")):
-        assert "€29 once" in text and "no subscription" in text, text[:200]
+        assert "€29.99 once" in text and "no subscription" in text, text[:200]
         assert "per month" not in text and "per year" not in text and "€7.99" not in text
 
 
