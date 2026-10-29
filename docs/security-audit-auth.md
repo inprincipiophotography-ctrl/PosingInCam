@@ -53,3 +53,55 @@ Known limits:
 - Email scanners that open links before you do can use up a one-time link. Ask for another
   one if that happens; this was true before the change too.
 - Without the `auth_events` table, limits only hold per serverless instance.
+
+## Follow-up audit: keys, ownership, cost limits (29 Oct 2026)
+
+**1. Keys in the browser: none.** Searched the code, the whole git history (every
+branch) and the files the live site serves for Stripe, Supabase, JWT, AWS,
+Google, GitHub, Slack, OpenAI and Anthropic key patterns and private keys.
+Nothing secret turned up. The browser holds no Supabase key at all anymore (the
+publishable key went with supabase-js). Turnstile's *site* key is public by
+design. Every secret is read on the server only, through `auth.env_key()`:
+`SUPABASE_SERVICE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
+`TURNSTILE_SECRET_KEY` and `AUTH_LOG_SALT`. Server code, SQL, tests, docs and
+`.env*` files return 404 or redirect on the live site (`.vercelignore` plus
+`vercel.json` redirects). CSP `connect-src` lost the unused Supabase WebSocket
+origin. Analytics strips sign-in tokens from page URLs (`assets/visits.js`).
+
+**2. Ownership: every route checks it, and RLS is on every table.**
+| Route | Data | Owner check |
+|---|---|---|
+| `GET /api/me` | own profile | `id = uid` from the verified session |
+| `GET /api/history` | batches, projects, thumbnails | `user_id = uid` on every query, and `storage.owned_path()` signs only files under `<uid>/` |
+| `GET /api/history?download=` / `download_project=` | stored cards | the row must match `user_id = uid`, and each file must pass `owned_path` (404 or 410 otherwise) |
+| `POST /api/convert` | project, history, credits | `project_id` must belong to `uid`, otherwise the user's own default project is used |
+| `POST /api/portal`, `/api/checkout` | Stripe | customer and user ID taken from the verified session, never from the request |
+| `POST /api/webhook` | entitlements | Stripe signature verified |
+
+- **Database:** RLS is enabled on all 5 public tables and all storage tables.
+  `profiles`, `conversions` and `projects` are readable only by their owner,
+  and there is no client write policy anywhere. `stripe_events` and
+  `auth_events` have no client access. The credit RPCs can't be called from
+  the client. The `cards` bucket is private, with no client policies.
+- **Proven live** with the browser key: reads return `[]` or "permission
+  denied", inserts and uploads violate RLS, a mass update matches nothing, and
+  RPCs and the storage listing are refused.
+- **Proven in code:** `qa/test_ownership.py` signs in as two users and covers
+  every route above. Removing a single `user_id` filter makes it fail.
+- **At database level:** `supabase/rls_check.sql` reads as a real user and
+  must show 0 rows of anyone else's.
+
+**3. Cost limits: no AI endpoints exist.** The app calls no AI model. Its one
+costly endpoint is `/api/convert` (function time and storage), and the same
+rules now apply there:
+- **Auth:** signed out you get 1 watermarked card per request. More needs a session.
+- **Per user:** `DAILY_CARD_CAP` (default 300 cards per 24 h, every plan
+  including Pro), counted from `conversions` and checked before any work starts.
+- **Per signed-out IP:** `ANON_DAILY_CAP` (default 5 per 24 h), counted
+  per hashed IP in `auth_events`.
+- **Bursts:** `RATE_MAX` requests per minute per IP, per instance.
+- **Input:** at most 30 files and 15 MB each (Vercel caps a request at
+  4.5 MB anyway). Pixel bombs and non-images are rejected (`qa/test_security.py`).
+  Project names are capped at 80 characters and emails at 254.
+- **Spend alerts** are set at the providers: Vercel Spend Management and the
+  Supabase spend cap (see `LAUNCH-CHECKLIST.md`).

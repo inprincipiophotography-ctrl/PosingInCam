@@ -14,6 +14,7 @@ download, it just means that batch won't show up in their history.
 from __future__ import annotations
 
 import concurrent.futures
+import re
 
 import requests
 
@@ -30,6 +31,22 @@ def enabled() -> bool:
 
 def _url(path: str) -> str:
     return f"{auth.SUPABASE_URL}/storage/v1/{path}"
+
+
+_CARD_NAME = re.compile(r"^[A-Za-z0-9_]{1,40}\.(?:JPG|jpg)$")
+_BATCH_KEY = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
+
+
+def owned_path(uid: str, prefix: str, name: str) -> str | None:
+    """The bucket path of one stored card, only if it lies in this user's own
+    folder. Rows are already fetched with user_id = uid; this is a second lock,
+    so a bad or tampered row can never serve another user's files."""
+    parts = (prefix or "").split("/")
+    if len(parts) != 2 or parts[0] != uid or not _BATCH_KEY.match(parts[1]):
+        return None
+    if not _CARD_NAME.match(name or ""):
+        return None
+    return f"{prefix}/{name}"
 
 
 def upload_cards(uid: str, batch_key: str, cards: list[tuple[str, bytes]]) -> bool:

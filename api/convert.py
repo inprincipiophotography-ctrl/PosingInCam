@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from flask import Flask, request, Response, jsonify  # noqa: E402
 from converter import pack, encoder  # noqa: E402
-from webauth import auth, billing, session, storage  # noqa: E402
+from webauth import auth, billing, guard, session, storage  # noqa: E402
 
 app = Flask(__name__)
 session.install(app)
@@ -36,6 +36,15 @@ MAX_BYTES_PER_FILE = 15 * 1024 * 1024
 # per-IP counter would mean storing IP addresses, and the worst case here is a
 # few extra watermarked cards.
 ANON_MAX_CARDS = 1
+
+# Daily caps on what one person can convert, whatever their plan: conversion
+# costs function time and storage, so a script on a Pro account or a loop of
+# signed-out previews can't run up the bill. Far above real use (a whole
+# wedding is under 100 cards). Durable across instances: signed-in cards are
+# counted from the conversions table, signed-out ones per hashed IP in
+# auth_events. Tunable via env; 0 disables a cap.
+DAILY_CARD_CAP = int(os.environ.get("DAILY_CARD_CAP", "300"))
+ANON_DAILY_CAP = int(os.environ.get("ANON_DAILY_CAP", "5"))
 
 # --- best-effort per-IP rate limit ------------------------------------------
 # Serverless instances don't share memory, so this caps abuse per warm instance
@@ -126,6 +135,12 @@ def convert(path):
                 error=("Sign in to convert more than one image at a time. "
                        "It's a one-time email link, no password."),
                 need_signin=True), 401
+        if ANON_DAILY_CAP and guard.anon_cards_today(session.client_ip(request)) + len(designs) > ANON_DAILY_CAP:
+            resp = jsonify(error=("That's today's free preview cards from here. Sign in free "
+                                  "(a one-time email link) to keep making cards."),
+                           need_signin=True)
+            resp.headers["Retry-After"] = "3600"
+            return resp, 429
         watermark = True
         tier = "anon"
     elif auth.paywall_enabled():
@@ -133,6 +148,11 @@ def convert(path):
             uid, email = session.current_user(request)
         except auth.AuthError as e:
             return jsonify(error=e.message), e.status
+        if DAILY_CARD_CAP and auth.cards_last_24h(uid) + len(designs) > DAILY_CARD_CAP:
+            resp = jsonify(error=(f"That's the daily limit of {DAILY_CARD_CAP} cards. It resets over the "
+                                  "next 24 hours; if you need more, write to notalucis.dev@gmail.com."))
+            resp.headers["Retry-After"] = "3600"
+            return resp, 429
         profile = auth.get_profile(uid, email)
         decision = auth.decide(profile, len(designs), email)
         if not decision["allowed"]:
@@ -212,6 +232,10 @@ def convert(path):
         if project:
             extra = {**(extra or {}), "project_id": project["id"]}
         auth.consume(uid, profile, len(designs), tier, vendor, extra)
+
+    if tier == "anon":
+        for _ in designs:
+            guard.log("anon_convert", session.client_ip(request))
 
     if zip_url:
         resp = jsonify(zip_url=zip_url)

@@ -39,6 +39,7 @@ from . import auth
 
 WINDOW = 15 * 60
 LOOKBACK = 60 * 60
+DAY = 24 * 60 * 60
 MAX_LOCK = 60 * 60
 LINK_IP_MAX = 5
 LINK_EMAIL_MAX = 3
@@ -103,8 +104,8 @@ def log(kind: str, ip: str, email: str | None = None, detail: str = "") -> None:
             pass
     with _mem_lock:
         _mem.append((now, kind, ih, email or None))
-        cutoff = now - LOOKBACK
-        while _mem and _mem[0][0] < cutoff:
+        cutoff = now - DAY
+        while _mem and (_mem[0][0] < cutoff or len(_mem) > 20000):
             _mem.pop(0)
 
 
@@ -117,9 +118,9 @@ def _prune() -> None:
         pass
 
 
-def _times(field: str, value: str, kinds: tuple) -> list[float]:
-    """Attempt timestamps for one key over the last hour, newest first."""
-    since = time.time() - LOOKBACK
+def _times(field: str, value: str, kinds: tuple, lookback: int = LOOKBACK) -> list[float]:
+    """Attempt timestamps for one key over the last hour (or lookback), newest first."""
+    since = time.time() - lookback
     if _table_ok is not False and auth.SUPABASE_URL:
         try:
             r = requests.get(f"{auth.SUPABASE_URL}/rest/v1/auth_events",
@@ -183,6 +184,12 @@ def check_verify(ip: str) -> Verdict:
     """May this IP try another link or session token right now?"""
     return Verdict(_retry_after(_times("ip_hash", ip_key(ip), VERIFY_KINDS), VERIFY_FAIL_MAX),
                    why="ip")
+
+
+def anon_cards_today(ip: str) -> int:
+    """Signed-out preview cards made from this IP in the last 24 hours (one
+    "anon_convert" event per card, logged by /api/convert)."""
+    return len(_times("ip_hash", ip_key(ip), ("anon_convert",), DAY))
 
 
 def verify_captcha(token: str | None, ip: str) -> bool:
