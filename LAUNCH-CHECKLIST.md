@@ -25,6 +25,26 @@ Tracked so nothing gets lost between sessions. (Excluded from the public deploy.
 - [ ] Vercel → `posing-in-cam` → Analytics → enable Web Analytics (no cookies; `assets/visits.js`
       queues page views and funnel events until it is on; custom events show on the Pro plan)
 
+## Sign-in hardening (October 2026, in this order)
+Sessions moved from localStorage to HttpOnly cookies, with rate limits, lockout and
+CAPTCHA on `/api/auth` (see `docs/security-audit-auth.md`).
+- [ ] Supabase SQL Editor: run `supabase/auth_security.sql` (attempt log; without it the
+      limits only hold per serverless instance)
+- [ ] Vercel env (optional but recommended): `AUTH_LOG_SALT` = a long random string (keys the
+      IP hashes; falls back to the service key)
+- [ ] Cloudflare → Turnstile → add widget for `cards.notalucis.com` (Managed) → Vercel env
+      `TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET_KEY`. Without them everything works, just no CAPTCHA
+- [ ] Deploy. Signed-in users stay signed in: their old localStorage session moves to cookies on first visit
+- [ ] AFTER the deploy: paste the updated `supabase/email-template.html` into Auth → Email Templates →
+      "Magic Link" AND "Confirm signup" (the link now goes to `/api/auth` and works on any device;
+      before that, links still work, but only in the browser they were asked from)
+- [ ] Supabase → Auth → Providers → Email → Email OTP Expiration: `900` (15 min; default is an hour)
+- [ ] Supabase → Auth → Rate Limits → IP Address Forwarding ON. Only honoured with an `sb_secret_…`
+      key in `SUPABASE_SERVICE_KEY` (Settings → API Keys); with a legacy `service_role` JWT Supabase
+      counts every visitor as Vercel's IP for its own limits
+- [ ] Test: sign in on the phone from a link asked for on the laptop; sign out; 6 link requests in a
+      row get "Too many sign-in attempts"
+
 ## ⚠️ After everything works
 - [ ] **ROTATE Supabase `secret` key + `JWT secret`** (Dashboard → Settings → API).
       They were shared in chat during setup; anon/publishable keys are public and fine.

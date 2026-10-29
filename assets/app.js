@@ -33,7 +33,7 @@ const camButtons = Array.from(document.querySelectorAll("#cameras .cam"));
 const VENDOR_LABEL = { sony: "Sony", canon: "Canon", nikon: "Nikon" };
 const R = window.CardRenderer;
 
-const isSignedIn = () => !!(window.PoseAuth && PoseAuth.token());
+const isSignedIn = () => !!(window.PoseAuth && PoseAuth.signedIn());
 // Until /api/convert answers, assume production (paywall on) so labels don't flicker.
 const paywallOn = () => window.__paywall !== false;
 
@@ -1112,7 +1112,6 @@ async function convert() {
       }
     }
 
-    const tok = window.__paywall ? PoseAuth.token() : null;
     const zips = [];
     let resp = null, pid = null;
     for (let c = 0; c < chunks.length; c++) {
@@ -1125,11 +1124,7 @@ async function convert() {
       setStatus("", "Converting for your camera…" + (chunks.length > 1 ? ` (${c + 1} of ${chunks.length})` : ""));
 
       try {
-        resp = await fetch(API, {
-          method: "POST",
-          body: fd,
-          headers: tok ? { Authorization: "Bearer " + tok } : undefined,
-        });
+        resp = await fetch(API, { method: "POST", body: fd });
       } catch (_) {
         throw retryable(0);
       }
@@ -1150,6 +1145,7 @@ async function convert() {
         let j = {}; try { j = await resp.json(); } catch (_) {}
         setStatus("err", "✗ " + (j.error || "Your sign-in has expired. Sign in again; your card is still here.") + partial());
         if (j.need_signin) openLogin();
+        else if (isSignedIn()) await PoseAuth.signOut();   // the session ended on the server
         return;
       }
       if (!resp.ok) {
@@ -1264,8 +1260,7 @@ const PENDING_BUY = "pic_pending_checkout";
 const PLAN_KINDS = ["monthly", "yearly", "pack20"];
 
 async function startCheckout(kind, btn) {
-  const tok = PoseAuth.token();
-  if (!tok) {
+  if (!isSignedIn()) {
     try { localStorage.setItem(PENDING_BUY, JSON.stringify({ kind, at: Date.now() })); } catch (_) {}
     openLogin("checkout");
     return;
@@ -1276,7 +1271,7 @@ async function startCheckout(kind, btn) {
   try {
     const r = await fetch("/api/checkout", {
       method: "POST",
-      headers: { Authorization: "Bearer " + tok, "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ kind }),
     });
     let j = {}; try { j = await r.json(); } catch (_) {}
@@ -1302,12 +1297,11 @@ function resumePendingCheckout() {
 }
 
 async function startPortal(e) {
-  const tok = PoseAuth.token();
-  if (!tok) { openLogin(); return; }
+  if (!isSignedIn()) { openLogin(); return; }
   const btn = e && e.currentTarget, label = btn ? btn.textContent : "";
   if (btn) { btn.disabled = true; btn.textContent = "Opening billing…"; }
   try {
-    const r = await fetch("/api/portal", { method: "POST", headers: { Authorization: "Bearer " + tok } });
+    const r = await fetch("/api/portal", { method: "POST" });
     let j = {}; try { j = await r.json(); } catch (_) {}
     if (!r.ok || !j.url) throw new Error(j.error || "");
     window.location.href = j.url;
@@ -1458,8 +1452,7 @@ async function renderAccount() {
   const el = $("account"), nudge = $("upgrade-nudge");
   if (!window.__paywall) { el.hidden = true; if (nudge) nudge.hidden = true; setMenuAccount(false); return; }
   el.hidden = false;
-  const tok = PoseAuth.token();
-  if (!tok) {
+  if (!isSignedIn()) {
     el.innerHTML = '<button class="link-btn" type="button" id="signin-btn">Sign in</button>';
     $("signin-btn").onclick = openLogin;
     if (nudge) nudge.hidden = true;
@@ -1473,8 +1466,9 @@ async function renderAccount() {
   $("manage-btn").onclick = startPortal;
   setMenuAccount(true, false);
   try {
-    const r = await fetch(ME, { headers: { Authorization: "Bearer " + tok } });
+    const r = await fetch(ME, { cache: "no-store" });
     const j = await r.json();
+    if (j.signed_in === false) { await PoseAuth.signOut(); return; }   // session ended
     const who = j.email || (PoseAuth.user() && PoseAuth.user().email) || "signed in";
     let badge;
     state.account = j;
@@ -1542,7 +1536,7 @@ const MAX_HISTORY_THUMBS = 6;
 function renderProjectPicker() {
   const field = $("project-field"), sel = $("project-select");
   if (!field) return;
-  const signedIn = !!(window.__paywall && window.PoseAuth && PoseAuth.token());
+  const signedIn = !!window.__paywall && isSignedIn();
   if (!signedIn) { field.hidden = true; return; }
   field.hidden = false;
 
@@ -1597,8 +1591,7 @@ function syncProjectRow() {
 
 async function loadHistory() {
   const section = $("history");
-  const tok = window.__paywall && window.PoseAuth ? PoseAuth.token() : null;
-  if (!tok) {
+  if (!window.__paywall || !isSignedIn()) {
     state.projects = [];
     renderProjectPicker();
     if (section) section.hidden = true;
@@ -1606,7 +1599,7 @@ async function loadHistory() {
     return;
   }
   try {
-    const r = await fetch("/api/history", { headers: { Authorization: "Bearer " + tok } });
+    const r = await fetch("/api/history");
     if (!r.ok) throw new Error("history unavailable");
     const j = await r.json();
     state.projects = j.projects || [];
@@ -1934,13 +1927,12 @@ async function saveZip(resp, keep) {
 }
 
 async function downloadZip(url, btn) {
-  const tok = PoseAuth.token();
-  if (!tok) { openLogin(); return; }
+  if (!isSignedIn()) { openLogin(); return; }
   const label = btn.textContent;
   btn.disabled = true;
   btn.textContent = "Preparing…";
   try {
-    const r = await fetch(url, { headers: { Authorization: "Bearer " + tok } });
+    const r = await fetch(url);
     if (!r.ok) {
       let msg = "Could not rebuild this download.";
       try { msg = (await r.json()).error || msg; } catch (_) {}
@@ -2005,6 +1997,33 @@ $("login-modal").addEventListener("keydown", (e) => {   // keep Tab inside the d
   if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
   else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
 });
+// CAPTCHA (Cloudflare Turnstile), only once the server asks for it: after a
+// few sign-in attempts from this address or for this email.
+const captcha = { id: null, token: null };
+function loadTurnstile() {
+  return new Promise((resolve, reject) => {
+    if (window.turnstile) return resolve();
+    const sc = document.createElement("script");
+    sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+    sc.async = true;
+    sc.onload = resolve;
+    sc.onerror = reject;
+    document.head.appendChild(sc);
+  });
+}
+async function showCaptcha(siteKey) {
+  const box = $("login-captcha");
+  box.hidden = false;
+  captcha.token = null;
+  await loadTurnstile();
+  if (captcha.id != null) { window.turnstile.reset(captcha.id); return; }
+  captcha.id = window.turnstile.render(box, {
+    sitekey: siteKey,
+    callback: (t) => { captcha.token = t; },
+    "expired-callback": () => { captcha.token = null; },
+  });
+}
+
 $("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = $("login-email").value.trim();
@@ -2013,8 +2032,10 @@ $("login-form").addEventListener("submit", async (e) => {
   send.disabled = true;
   send.textContent = "Sending…";
   st.className = "status"; st.textContent = "";
+  const token = captcha.token;
+  if (captcha.id != null) { captcha.token = null; try { window.turnstile.reset(captcha.id); } catch (_) {} }
   try {
-    await PoseAuth.signIn(email);
+    await PoseAuth.signIn(email, token);
     track("Sign-in link sent");
     st.className = "status ok";
     st.textContent = "✓ Link sent to " + email + ". Open it on this device and you're signed in. " +
@@ -2022,7 +2043,16 @@ $("login-form").addEventListener("submit", async (e) => {
     send.textContent = "Send again";
   } catch (err) {
     st.className = "status err";
-    st.textContent = "✗ " + (err.message || "The link didn't send.") + " Check the address and try again.";
+    if (err.captcha) {
+      st.textContent = "✗ " + err.message;
+      showCaptcha(err.captcha).catch(() => {
+        st.textContent = "✗ The human check didn't load. Refresh the page and try again.";
+      });
+    } else if (err.retryAfter) {
+      st.textContent = "✗ " + err.message;
+    } else {
+      st.textContent = "✗ " + (err.message || "The link didn't send.") + " Check the address and try again.";
+    }
     send.textContent = "Send magic link";
   } finally {
     send.disabled = false;
@@ -2227,12 +2257,7 @@ applyDemoHandoff();
     window.__paywall = false;
     window.__stripe = false;
   }
-  if (window.__paywall && !window.supabase) {
-    // vendor auth script failed to load — say so instead of a dead Sign in button
-    const el = $("account");
-    el.hidden = false;
-    el.innerHTML = '<span class="acct-info">Sign-in temporarily unavailable. Refresh and try again.</span>';
-  } else if (window.__paywall && window.PoseAuth) {
+  if (window.__paywall && window.PoseAuth) {
     await PoseAuth.init(async () => {
       $("login-modal").hidden = true;
       syncSignedInLayout();
@@ -2245,8 +2270,27 @@ applyDemoHandoff();
   }
   syncSignedInLayout();
   renderPricing();
+  handleSigninReturn();
   handleCheckoutReturn();
 })();
+
+// Back from the email link: /api/auth set the session cookie (or said why not).
+function handleSigninReturn() {
+  const params = new URLSearchParams(location.search);
+  const r = params.get("signin");
+  if (!r) return;
+  params.delete("signin");
+  const q = params.toString();
+  history.replaceState({}, "", location.pathname + (q ? "?" + q : ""));
+  if (r === "ok") { track("Signed in"); return; }
+  const why = {
+    expired: "That sign-in link has expired or was already used. Send yourself a new one.",
+    "other-browser": "Open the sign-in link in the same browser you asked for it from, or send a new one here.",
+    limited: "Too many sign-in attempts from here. Wait a few minutes, then send a new link.",
+  }[r] || "Sign-in didn't finish. Send yourself a new link.";
+  toast(why, { kind: "err", ms: 12000 });
+  openLogin();
+}
 
 function handleCheckoutReturn() {
   const c = new URLSearchParams(location.search).get("checkout");
