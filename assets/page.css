@@ -14,7 +14,7 @@
 .prose a{color:var(--accent-2);text-decoration:underline;text-decoration-color:var(--accent-line);text-underline-offset:3px;overflow-wrap:anywhere}
 .prose a:hover{color:var(--accent);text-decoration-color:currentColor}
 .prose code{font-family:var(--mono);font-size:.88em;background:var(--surface-2);border-radius:6px;padding:1px 6px}
-.prose blockquote{margin:0 0 22px;padding:14px 18px;border-left:3px solid var(--accent);background:var(--surface);border-radius:0 12px 12px 0;color:var(--ink)}
+.prose blockquote{margin:0 0 22px;padding:14px 18px;border:1px solid var(--border-soft);background:var(--surface);border-radius:12px;color:var(--ink)}
 .prose blockquote p{margin:0}
 .prose .page-cta{margin-top:40px}
 .prose a.btn,.prose a.btn:hover{color:#fff;text-decoration:none}
