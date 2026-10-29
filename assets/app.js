@@ -1304,7 +1304,7 @@ function fmtMoney(o) {
   return currencySym(o) + (Number.isInteger(n) ? n : n.toFixed(2));
 }
 
-// "Get Pro · €29" once the price has loaded, "Get Pro" until then.
+// "Get Pro · €29.99" once the price has loaded, "Get Pro" until then.
 function proLabel() {
   const amt = fmtMoney(state.proPrice);
   return amt ? "Get Pro · " + amt : "Get Pro";

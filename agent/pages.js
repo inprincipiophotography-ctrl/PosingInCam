@@ -44,7 +44,7 @@ Tested on Sony A7 III, A7 IV and A7 V, Canon R6, R6 II and R6 III, and Nikon Z6,
 ## Pricing
 
 - **Free:** the first card needs no account. Signing in with an email link (no password) adds 3 more free cards and saved projects. Free cards carry a light "preview" watermark.
-- **Pro:** €29 once, no subscription. No watermark and no card limits, every card type, saved projects. Nothing renews; a receipt and an invoice come by email.
+- **Pro:** €29.99 once, no subscription. No watermark and no card limits, every card type, saved projects. Nothing renews; a receipt and an invoice come by email.
 - **Wedding pose pack:** 50 ready-made wedding poses, sold separately in the In Principio shop: https://www.inprincipioweddings.com/store/in-camera-posing
 - 14-day money-back guarantee: if the cards don't show up on the camera, email ${MAIL} for a full refund.
 
