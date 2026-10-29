@@ -19,9 +19,17 @@ import datetime as dt
 
 import requests
 
-SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
-SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
-JWT_SECRET = os.environ.get("SUPABASE_JWT_SECRET", "")
+def env_key(name: str) -> str:
+    """A key or ID from the environment, with any whitespace removed. None of
+    them contain spaces, but a value pasted into the Vercel dashboard can pick
+    up a line break, and requests then refuses every call (and prints the key
+    in the error)."""
+    return "".join(os.environ.get(name, "").split())
+
+
+SUPABASE_URL = env_key("SUPABASE_URL").rstrip("/")
+SERVICE_KEY = env_key("SUPABASE_SERVICE_KEY")
+JWT_SECRET = env_key("SUPABASE_JWT_SECRET")
 
 FREE_LIMIT = 3
 _TIMEOUT = 10

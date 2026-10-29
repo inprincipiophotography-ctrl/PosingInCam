@@ -417,6 +417,15 @@ def test_visitor_ip_is_forwarded_to_supabase():
     assert "192.0.2.44" in FAKE.forwarded
 
 
+def test_pasted_key_with_a_line_break_still_works():
+    os.environ["X_TEST_KEY"] = " sb_secret_abc\ndef \r\n"
+    try:
+        assert auth.env_key("X_TEST_KEY") == "sb_secret_abcdef"
+        assert auth.env_key("X_TEST_MISSING") == ""
+    finally:
+        del os.environ["X_TEST_KEY"]
+
+
 def test_bad_email_rejected():
     reset()
     assert login("not-an-email", fresh_ip()).status_code == 400

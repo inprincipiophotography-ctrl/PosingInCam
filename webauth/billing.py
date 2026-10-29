@@ -12,7 +12,6 @@ Env: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET,
 
 from __future__ import annotations
 
-import os
 import json
 import datetime as dt
 
@@ -20,12 +19,12 @@ import requests
 
 from . import auth
 
-STRIPE_SECRET = os.environ.get("STRIPE_SECRET_KEY", "")
-WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+STRIPE_SECRET = auth.env_key("STRIPE_SECRET_KEY")
+WEBHOOK_SECRET = auth.env_key("STRIPE_WEBHOOK_SECRET")
 PRICE_FOR = {
-    "monthly": os.environ.get("STRIPE_PRICE_PRO_MONTHLY", ""),
-    "yearly": os.environ.get("STRIPE_PRICE_PRO_YEARLY", ""),
-    "pack20": os.environ.get("STRIPE_PRICE_PACK20", ""),
+    "monthly": auth.env_key("STRIPE_PRICE_PRO_MONTHLY"),
+    "yearly": auth.env_key("STRIPE_PRICE_PRO_YEARLY"),
+    "pack20": auth.env_key("STRIPE_PRICE_PACK20"),
 }
 PACK20_CREDITS = 20
 STATEMENT_SUFFIX = "SHOOTCARDS"
