@@ -46,8 +46,8 @@ VERIFY_FAIL_MAX = 5
 CAPTCHA_AFTER = 3
 RETENTION_DAYS = 30
 
-TURNSTILE_SITE_KEY = os.environ.get("TURNSTILE_SITE_KEY", "")
-TURNSTILE_SECRET = os.environ.get("TURNSTILE_SECRET_KEY", "")
+TURNSTILE_SITE_KEY = auth.env_key("TURNSTILE_SITE_KEY")
+TURNSTILE_SECRET = auth.env_key("TURNSTILE_SECRET_KEY")
 _TIMEOUT = 10
 
 # Kinds that count against a key. "link" covers sent, refused and blocked link
