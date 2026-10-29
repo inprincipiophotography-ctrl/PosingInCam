@@ -260,6 +260,21 @@ def cards_in_project(uid: str, project_id: str) -> int:
         return 0
 
 
+def cards_last_24h(uid: str) -> int:
+    """Cards this user converted in the last 24 hours, for the daily cap.
+    Returns 0 on any error: the cap guards cost, never a paid entitlement."""
+    since = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=1)).isoformat()
+    try:
+        r = requests.get(f"{SUPABASE_URL}/rest/v1/conversions",
+                         params={"user_id": f"eq.{uid}", "created_at": f"gte.{since}",
+                                 "select": "cards", "limit": "10000"},
+                         headers=_headers(), timeout=_TIMEOUT)
+        r.raise_for_status()
+        return sum(int(row.get("cards") or 0) for row in r.json())
+    except Exception:
+        return 0
+
+
 def cards_so_far(uid: str, vendor: str) -> int:
     """Fallback counter (all-time per vendor) used only while the projects table
     isn't installed yet. Returns 0 on any error."""

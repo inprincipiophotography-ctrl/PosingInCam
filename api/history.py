@@ -66,13 +66,15 @@ def history(path):
     for row in rows:
         prefix = row.get("storage_prefix") or ""
         for name in (row.get("files") or []):
-            all_paths.append(f"{prefix}/{name}")
+            p = storage.owned_path(uid, prefix, name)
+            if p:
+                all_paths.append(p)
     signed = storage.sign_urls(all_paths)
 
     batches = []
     for row in rows:
         prefix = row.get("storage_prefix") or ""
-        files = [{"name": name, "url": signed.get(f"{prefix}/{name}")}
+        files = [{"name": name, "url": signed.get(storage.owned_path(uid, prefix, name) or "")}
                  for name in (row.get("files") or [])]
         batches.append({"id": row.get("id"),
                         "created_at": row.get("created_at"),
@@ -115,7 +117,8 @@ def _download(uid: str, batch_id: str):
     prefix = batch.get("storage_prefix") or ""
     cards = []
     for name in batch["files"]:
-        data = storage.download(f"{prefix}/{name}")
+        path = storage.owned_path(uid, prefix, name)
+        data = storage.download(path) if path else None
         if data is None:
             return jsonify(error="Some files of this batch are no longer stored."), 410
         cards.append((name, data))
@@ -141,7 +144,8 @@ def _download_project(uid: str, project_id: str):
         for name in (row.get("files") or []):
             if name in seen:  # same number converted twice: keep the newest
                 cards = [(n, d) for n, d in cards if n != name]
-            data = storage.download(f"{prefix}/{name}")
+            path = storage.owned_path(uid, prefix, name)
+            data = storage.download(path) if path else None
             if data is None:
                 return jsonify(error="Some files of this project are no longer stored."), 410
             cards.append((name, data))

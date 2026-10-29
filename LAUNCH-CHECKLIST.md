@@ -45,6 +45,17 @@ CAPTCHA on `/api/auth` (see `docs/security-audit-auth.md`).
 - [ ] Test: sign in on the phone from a link asked for on the laptop (done); sign out; 6 link requests in a
       row get "Too many sign-in attempts"
 
+## Cost limits (29 Oct 2026)
+- [x] `/api/convert` daily caps: `DAILY_CARD_CAP` (300 cards / 24 h per user, every plan) and
+      `ANON_DAILY_CAP` (5 signed-out cards / 24 h per IP). Change via Vercel env; 0 turns a cap off
+- [ ] Vercel → Settings → Billing: on **Hobby** nothing can be charged (limits pause the site
+      instead); on **Pro** open Spend Management, set a monthly amount (e.g. $20), notifications
+      at 50/75/100 % and "pause production deployments" at 100 %
+- [x] Supabase org "In Principio" is on the **Free** plan: no charges possible. If it moves to Pro,
+      keep Billing → Spend Cap ON
+- [ ] Supabase SQL Editor: run `supabase/rls_check.sql` once (expect 0 in every others_* /
+      *_visible column)
+
 ## ⚠️ After everything works
 - [x] **ROTATE Supabase `secret` key + `JWT secret`** (done 29 Oct 2026): new secret key
       `vercel_cards_2026_10b` in `SUPABASE_SERVICE_KEY`, the old `sb_secret_lR0pX…` deleted, legacy
