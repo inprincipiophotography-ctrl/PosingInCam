@@ -28,27 +28,28 @@ Tracked so nothing gets lost between sessions. (Excluded from the public deploy.
 ## Sign-in hardening (October 2026, in this order)
 Sessions moved from localStorage to HttpOnly cookies, with rate limits, lockout and
 CAPTCHA on `/api/auth` (see `docs/security-audit-auth.md`).
-- [ ] Supabase SQL Editor: run `supabase/auth_security.sql` (attempt log; without it the
+- [x] Supabase SQL Editor: run `supabase/auth_security.sql` (attempt log; without it the
       limits only hold per serverless instance)
-- [ ] Vercel env (optional but recommended): `AUTH_LOG_SALT` = a long random string (keys the
+- [x] Vercel env (optional but recommended): `AUTH_LOG_SALT` = a long random string (keys the
       IP hashes; falls back to the service key)
-- [ ] Cloudflare → Turnstile → add widget for `cards.notalucis.com` (Managed) → Vercel env
+- [x] Cloudflare → Turnstile → add widget for `cards.notalucis.com` (Managed) → Vercel env
       `TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET_KEY`. Without them everything works, just no CAPTCHA
-- [ ] Deploy. Signed-in users stay signed in: their old localStorage session moves to cookies on first visit
-- [ ] AFTER the deploy: paste the updated `supabase/email-template.html` into Auth → Email Templates →
+- [x] Deploy. Signed-in users stay signed in: their old localStorage session moves to cookies on first visit
+- [x] AFTER the deploy: paste the updated `supabase/email-template.html` into Auth → Email Templates →
       "Magic Link" AND "Confirm signup" (the link now goes to `/api/auth` and works on any device;
       before that, links still work, but only in the browser they were asked from)
-- [ ] Supabase → Auth → Providers → Email → Email OTP Expiration: `900` (15 min; default is an hour)
-- [ ] Supabase → Auth → Rate Limits → IP Address Forwarding ON. Only honoured with an `sb_secret_…`
+- [x] Supabase → Auth → Providers → Email → Email OTP Expiration: `900` (15 min; default is an hour)
+- [x] Supabase → Auth → Rate Limits → IP Address Forwarding ON. Only honoured with an `sb_secret_…`
       key in `SUPABASE_SERVICE_KEY` (Settings → API Keys); with a legacy `service_role` JWT Supabase
       counts every visitor as Vercel's IP for its own limits
-- [ ] Test: sign in on the phone from a link asked for on the laptop; sign out; 6 link requests in a
+- [ ] Test: sign in on the phone from a link asked for on the laptop (done); sign out; 6 link requests in a
       row get "Too many sign-in attempts"
 
 ## ⚠️ After everything works
-- [ ] **ROTATE Supabase `secret` key + `JWT secret`** (Dashboard → Settings → API).
-      They were shared in chat during setup; anon/publishable keys are public and fine.
-      → After rotating, update `SUPABASE_SERVICE_KEY` + `SUPABASE_JWT_SECRET` in Vercel and redeploy.
+- [x] **ROTATE Supabase `secret` key + `JWT secret`** (done 29 Oct 2026): new secret key
+      `vercel_cards_2026_10b` in `SUPABASE_SERVICE_KEY`, the old `sb_secret_lR0pX…` deleted, legacy
+      JWT-based API keys disabled and the legacy HS256 JWT secret revoked. `SUPABASE_JWT_SECRET` in
+      Vercel is now a dead value; leave it set, `paywall_enabled()` still checks it is non-empty.
 - [ ] **ROTATE the Stripe test secret key** (Developers → API keys → roll) — also shared in chat.
 - [ ] (optional) Enable Stripe Tax for EU VAT.
 
