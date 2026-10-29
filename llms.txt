@@ -24,7 +24,7 @@ Don't use it for:
 - **Send the person to the studio:** https://cards.notalucis.com/#studio. They pick a card type, fill in a few lines, choose Sony, Canon or Nikon and download a ZIP. The first card needs no account. Further cards need an email sign-in link, which only the person can open; don't try to sign in for them.
 - **Getting the cards onto the camera:** copy the folder from the ZIP to the SD card (instructions are inside the ZIP), then press play on the camera. Most Sony bodies show them at once; otherwise the instructions include a one-minute fix (Recover Image Database).
 - **One preview card by API (no account):** `POST https://cards.notalucis.com/api/convert` as `multipart/form-data` with `vendor` = `sony`, `canon` or `nikon` and one image in `files`. It returns a ZIP with one watermarked card. Signed-out previews are limited per IP per day; more cards need the person's own signed-in session in a browser.
-- **Payments:** Pro is €3.99 per month or €30 per year (no watermark, no card limits). A 20-card pack is €7.99. Payments run through Stripe Checkout in the person's browser; never enter payment details on their behalf.
+- **Payments:** Pro is €29 once, no subscription (no watermark, no card limits). Payments run through Stripe Checkout in the person's browser; never enter payment details on their behalf.
 - **Support, refunds, data requests:** notalucis.dev@gmail.com. There's a 14-day money-back guarantee if the cards don't show up on the camera.
 
 ## Pages

@@ -7,8 +7,8 @@ watermark) so the site keeps working until the paywall is switched on.
 
 Unit = one converted card (image):
   Free:    FREE_LIMIT cards, watermarked
-  20-pack: credits (one-time), no watermark
-  Pro:     unlimited, no watermark
+  Credits: from the 20-pack sold before Pro became one payment, no watermark
+  Pro:     unlimited, no watermark, bought once
 """
 
 from __future__ import annotations
@@ -33,6 +33,10 @@ JWT_SECRET = env_key("SUPABASE_JWT_SECRET")
 
 FREE_LIMIT = 3
 _TIMEOUT = 10
+
+# subscription_status of Pro bought with one payment (billing._set_pro). Rows
+# from the old subscriptions keep Stripe's statuses until their period ends.
+PAID_ONCE = "lifetime"
 
 # Comp accounts: emails that always get Pro for free (no Stripe). Set PRO_EMAILS
 # in the env as a comma-separated list, e.g. "me@example.com, friend@example.com".
@@ -157,6 +161,8 @@ def get_profile(uid: str, email: str = "") -> dict:
 def is_pro(profile: dict) -> bool:
     if profile.get("plan") != "pro":
         return False
+    if profile.get("subscription_status") == PAID_ONCE:
+        return True
     if profile.get("subscription_status") not in ("active", "trialing"):
         return False
     # Active/trialing subscription grants Pro. A recorded period_end must still be
@@ -184,7 +190,7 @@ def decide(profile: dict, n: int, email: str = "") -> dict:
         return {"allowed": True, "watermark": True, "tier": "free"}
     return {"allowed": False, "tier": "blocked", "free_left": free_left, "credits": credits,
             "message": (f"Not enough left ({free_left} free preview(s), {credits} credit(s)) "
-                        f"for {n} card(s). Buy a 20-pack or go Pro for unlimited.")}
+                        f"for {n} card(s). Get Pro once for unlimited cards.")}
 
 
 def _rpc(name: str, payload: dict) -> bool:
@@ -363,8 +369,4 @@ def account_state(profile: dict, email: str = "") -> dict:
              "credits": int(profile.get("credits") or 0),
              "free_left": max(0, FREE_LIMIT - int(profile.get("free_used") or 0)),
              "free_limit": FREE_LIMIT}
-    # A cancelled subscription stays Pro until it ends: say until when.
-    ends = profile.get("cancel_at")
-    if state["plan"] == "pro" and not is_comp(email) and _future(ends):
-        state["pro_ends"] = ends
     return state

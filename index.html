@@ -82,44 +82,10 @@
     },
     {
      "@type": "Offer",
-     "name": "Pro monthly",
-     "price": "3.99",
+     "name": "Pro",
+     "price": "29.00",
      "priceCurrency": "EUR",
-     "priceSpecification": {
-      "@type": "UnitPriceSpecification",
-      "price": "3.99",
-      "priceCurrency": "EUR",
-      "unitCode": "MON",
-      "referenceQuantity": {
-       "@type": "QuantitativeValue",
-       "value": 1,
-       "unitCode": "MON"
-      }
-     }
-    },
-    {
-     "@type": "Offer",
-     "name": "Pro yearly",
-     "price": "30.00",
-     "priceCurrency": "EUR",
-     "priceSpecification": {
-      "@type": "UnitPriceSpecification",
-      "price": "30.00",
-      "priceCurrency": "EUR",
-      "unitCode": "ANN",
-      "referenceQuantity": {
-       "@type": "QuantitativeValue",
-       "value": 1,
-       "unitCode": "ANN"
-      }
-     }
-    },
-    {
-     "@type": "Offer",
-     "name": "20-card pack",
-     "price": "7.99",
-     "priceCurrency": "EUR",
-     "description": "20 cards without a watermark, one-time purchase."
+     "description": "One-time purchase, no subscription. No watermark, no card limits."
     }
    ]
   }
@@ -155,8 +121,7 @@
       <a href="#packs">Poses</a>
       <a href="#pricing" class="nav-pricing">Pricing</a>
       <a href="#faq">FAQ</a>
-      <!-- Phones: no room in the bar, so the account actions sit in the menu. -->
-      <button class="nav-acct" id="nav-billing" type="button" hidden>Billing</button>
+      <!-- Phones: no room in the bar, so the account action sits in the menu. -->
       <button class="nav-acct" id="nav-signout" type="button" hidden>Sign out</button>
     </nav>
     <div class="nav-right">
@@ -471,13 +436,8 @@
     <!-- Pricing -->
     <section class="pricing" id="pricing">
       <p class="eyebrow center">Pricing</p>
-      <h2 class="section-h center">Start free. Go Pro when it saves your day.</h2>
-      <div class="price-toggle" id="price-toggle" hidden>
-        <button class="active" type="button" data-cycle="monthly" aria-pressed="true">Monthly</button>
-        <button type="button" data-cycle="yearly" aria-pressed="false">Yearly</button>
-      </div>
+      <h2 class="section-h center">Start free. Pay once when it saves your day.</h2>
       <div class="price-grid" id="price-grid"><!-- rendered by app.js --></div>
-      <p class="price-extra" id="price-extra" hidden></p>
       <p class="guarantee"><strong>14-day money-back guarantee.</strong> If the cards don't show up on your camera,
         <a href="mailto:notalucis.dev@gmail.com?subject=Shoot%20Cards%20refund">tell us</a> and you get a full refund.</p>
     </section>
@@ -496,7 +456,7 @@
         <details class="faq-item"><summary>Is it safe for my camera and SD card?</summary><p>Yes. You only copy ordinary JPEG files to the card, the same kind your camera already makes. Nothing is installed and your existing photos are untouched.</p></details>
         <details class="faq-item"><summary>What's the difference between Pro and the pose pack?</summary><p>Pro is for the cards you make: unlimited timelines, family groups, shot lists, poses with your own photos, the bride&#8217;s Pinterest pins and your own designs, with no watermark. The pose pack is 50 ready-made wedding poses we shot ourselves, bought once in our studio's shop.</p></details>
         <details class="faq-item"><summary>Anything special per camera?</summary><p>No. Copy the cards into the folder your camera made and press play. Most Sony bodies show them straight away; if one doesn't, the included instructions have a one-minute fix (Recover Image Database). <a href="/demo?ref=faq#copy">See it in the demo</a>.</p></details>
-        <details class="faq-item"><summary>Can I cancel or get a refund?</summary><p>Cancel Pro anytime under Billing once you're signed in. And if the cards don't show up on your camera within 14 days of buying, <a href="mailto:notalucis.dev@gmail.com?subject=Shoot%20Cards%20refund">tell us</a> and we refund you in full.</p></details>
+        <details class="faq-item"><summary>Is Pro a subscription?</summary><p>No. You pay once and Pro stays on your account: nothing renews and there is nothing to cancel. You get a receipt and an invoice by email, with your VAT number on it if you add one at checkout. If the cards don't show up on your camera within 14 days of buying, <a href="mailto:notalucis.dev@gmail.com?subject=Shoot%20Cards%20refund">tell us</a> and we refund you in full.</p></details>
         <details class="faq-item"><summary>Who made this?</summary><p>We're Kim &amp; Ivan, wedding photographers at <a href="https://inprincipioweddings.com" target="_blank" rel="noopener">In Principio</a> and the people behind <a href="https://notalucis.com/#/landing" target="_blank" rel="noopener">NotaLucis</a>, the CRM for photographers. Shoot Cards is what we actually run on our own cameras every weekend. We built it for our shoots first, then opened it up to other photographers.</p></details>
       </div>
     </section>

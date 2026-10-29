@@ -24,5 +24,4 @@ def _cors(resp):
 def prices(path):
     if request.method == "OPTIONS":
         return ("", 204)
-    return jsonify(prices=billing.get_prices(),
-                   free_limit=auth.FREE_LIMIT, pack_size=billing.PACK20_CREDITS)
+    return jsonify(prices=billing.get_prices(), free_limit=auth.FREE_LIMIT)

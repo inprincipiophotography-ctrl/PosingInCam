@@ -107,11 +107,12 @@ def test_json_ld_describes_the_product_and_the_organization():
     assert site["url"] == app["url"] == SITE + "/"
     assert app["name"] == "Shoot Cards" and app["description"] and app["publisher"]["@id"] == org["@id"]
     prices = {o["name"]: o["price"] for o in app["offers"]}
-    assert prices == {"Free": "0", "Pro monthly": "3.99", "Pro yearly": "30.00", "20-card pack": "7.99"}, prices
+    assert prices == {"Free": "0", "Pro": "29.00"}, prices
     # The same prices in the Markdown and llms.txt, so agents never see two stories.
     md = read("agent/pages.js")
     for text in (md, read("llms.txt")):
-        assert "€3.99 per month" in text and "€30 per year" in text and "€7.99" in text
+        assert "€29 once" in text and "no subscription" in text, text[:200]
+        assert "per month" not in text and "per year" not in text and "€7.99" not in text
 
 
 def test_csp_hash_still_matches_the_inline_script():

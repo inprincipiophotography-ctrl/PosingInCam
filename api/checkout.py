@@ -1,4 +1,4 @@
-"""POST /api/checkout {kind: monthly|yearly|pack20} -> { url } Stripe Checkout."""
+"""POST /api/checkout {kind: pro} -> { url } Stripe Checkout (one payment)."""
 
 import os
 import sys
@@ -36,7 +36,7 @@ def checkout(path):
     except auth.AuthError as e:
         return jsonify(error=e.message), e.status
     kind = (request.get_json(silent=True) or {}).get("kind") or request.form.get("kind")
-    if kind not in ("monthly", "yearly", "pack20"):
+    if kind not in billing.PRICE_FOR:
         return jsonify(error="bad plan"), 400
     origin = billing.safe_origin(request.headers.get("Origin"))
     try:

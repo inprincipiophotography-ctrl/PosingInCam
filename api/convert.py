@@ -3,7 +3,7 @@ Vercel Python serverless function: POST design images -> SD-card ZIP.
 
 When the paywall env vars (SUPABASE_*) are set, requests must carry a signed-in
 session (HttpOnly cookie, see webauth/session.py) and are metered:
-  Free: 3 cards, watermarked · 20-pack: credits · Pro: unlimited.
+  Free: 3 cards, watermarked · old 20-pack credits · Pro (bought once): unlimited.
 Without those env vars the converter stays open (no login, no watermark).
 
 Uses the repo's converter/ + webauth/ packages (bundled via vercel.json).

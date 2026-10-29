@@ -16,7 +16,7 @@ Shoot Cards (cards.notalucis.com) turns poses, timelines, family groups, shot li
 The camera itself is the reference screen. A normal image won't show in playback; Shoot Cards writes each card in the camera's own format (size, metadata, folder) so it appears like a photo the body shot. Made and used every weekend by working wedding photographers, not a generic template app.
 
 ## Operating Context
-- Preparation: in the browser, a week or a day before the shoot; first card free without an account, then email sign-in, saved projects, Pro subscription (Stripe) and a separately sold 50-pose wedding pack from the In Principio shop.
+- Preparation: in the browser, a week or a day before the shoot; first card free without an account, then email sign-in, saved projects, Pro bought once for €29 (Stripe, no subscription) and a separately sold 50-pose wedding pack from the In Principio shop.
 - Use: on the day, in the camera's playback, read on a 3-inch screen in two seconds, often in bright sun.
 - Cards are dated 1 January 2024 so date view groups them away from the day's shoot.
 
@@ -25,7 +25,7 @@ The camera itself is the reference screen. A normal image won't show in playback
 - Strict CSP in `vercel.json`: scripts only from `'self'`, fonts only from Google Fonts, no third-party script CDNs.
 - Tested bodies: Sony A7 III/IV/V, Canon R6/R6 II/R6 III, Nikon Z6/Z8/Z9. Fujifilm and Panasonic are "coming soon", not supported.
 - Free cards carry a "preview" watermark; Pro removes it and all limits; 14-day money-back guarantee.
-- Pro is live in production ("Go Pro" button, featured as "Best value"). The "Coming soon" button only appears when no Stripe prices load, e.g. on a local run.
+- Pro is one payment (October 2026: the €3.99/month and €30/year subscription and the €7.99 20-card pack were dropped; wedding work is seasonal and photographers don't want another subscription). "Get Pro · €29" button, card badged "Pay once"; the amount comes from Stripe. The "Coming soon" button only appears when no Stripe price loads, e.g. on a local run.
 
 ## Brand Commitments
 - Shoot Cards is a NotaLucis tool and shares the NotaLucis look with notalucis.com: Inter + Instrument Serif, one red accent, light theme. These are binding; do not replace them.

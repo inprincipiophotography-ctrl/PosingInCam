@@ -415,9 +415,6 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 
 /* ---------- pricing ---------- */
 .pricing{max-width:var(--maxw);margin:0 auto;padding:clamp(48px,7vw,96px) var(--gutter) clamp(56px,8vw,96px)}
-.price-toggle{display:flex;justify-content:center;gap:4px;margin:22px auto 0;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:999px;padding:4px;width:max-content;max-width:100%}
-.price-toggle button{border:none;background:none;font-family:var(--sans);font-size:14px;font-weight:500;color:var(--muted);padding:8px 18px;border-radius:999px;cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
-.price-toggle button.active{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
 .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch;margin-top:38px}
 .price-card{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border-soft);border-radius:20px;padding:30px 26px;box-shadow:var(--shadow)}
 .price-card.featured{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,var(--shadow-lg)}
@@ -430,9 +427,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .price-feats li{position:relative;padding-left:24px;color:var(--ink-2);font-size:14px;line-height:1.45}
 .price-feats li::before{content:"✓";position:absolute;left:0;top:0;color:var(--accent-2);font-weight:700}
 .price-card .btn{width:100%;margin-top:auto}
-.price-extra{text-align:center;margin:26px auto 0;font-size:15px;color:var(--ink-2)}
-.price-extra .link-btn{font-size:15px;font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:2px 2px}
-.guarantee{text-align:center;margin:12px auto 0;font-size:14.5px;color:var(--ink-2);max-width:60ch}
+.guarantee{text-align:center;margin:26px auto 0;font-size:14.5px;color:var(--ink-2);max-width:60ch}
 .guarantee strong{color:var(--ink)}
 .guarantee a{text-decoration:underline;text-underline-offset:2px}
 
@@ -636,7 +631,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .signed-in .hero-grid{grid-template-areas:"studio visual"}
 /* The cold-visitor pitch, demo video and closing pitch are noise once you're in. */
 .signed-in .pitch,.signed-in .hero-why,.signed-in .vid,.signed-in .strip,.signed-in #final,.signed-in .nav-cta{display:none}
-/* Nothing left to sell a subscriber. */
+/* Nothing left to sell to Pro. */
 .is-pro #pricing,.is-pro .nav-pricing,.is-pro #upgrade-nudge{display:none}
 
 /* Copy that differs signed-out vs signed-in (CSS, not JS, so it can't flash). */
