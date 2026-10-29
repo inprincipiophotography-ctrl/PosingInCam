@@ -2272,9 +2272,24 @@ function handleCheckoutReturn() {
   // A belt-and-suspenders play() in case a browser ignored autoplay-on-load.
   if (!studio.previewing && v.play) v.play().catch(() => {});
   // Honour reduced-motion: stop the loop and leave the still poster frame.
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduced) {
     try { v.autoplay = false; v.pause(); } catch (_) {}
+    return;
   }
+  // Play only while it is on screen and the sign-in dialog isn't over it: a
+  // looping video behind the dialog made Chromium (Brave) flash the page.
+  const modal = $("login-modal");
+  let onScreen = true;
+  const sync = () => {
+    if (studio.previewing) return;
+    try {
+      if (onScreen && (!modal || modal.hidden)) v.play().catch(() => {});
+      else v.pause();
+    } catch (_) {}
+  };
+  if ("IntersectionObserver" in window) new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; sync(); }).observe(v);
+  if (modal) new MutationObserver(sync).observe(modal, { attributes: true, attributeFilter: ["hidden"] });
 })();
 
 /* ---------- scroll polish: reveal on scroll + nav shadow ---------- */

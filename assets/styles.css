@@ -70,7 +70,8 @@ button{font-family:var(--sans)}
 }
 .bg-grid.live .bg-grid-spot{opacity:1}
 .bg-grid-spot .bg-grid-lines{opacity:.4}
-.bg-grid-glow{position:absolute;right:-20%;top:-20%;width:40%;height:40%;border-radius:50%;background:var(--accent);opacity:.1;filter:blur(120px)}
+/* a soft red glow, drawn as a gradient: a blur() filter this size makes Chromium repaint the page and flicker */
+.bg-grid-glow{position:absolute;right:-40%;top:-40%;width:80%;height:80%;background:radial-gradient(closest-side,rgba(164,0,0,.1),rgba(164,0,0,.05) 45%,rgba(164,0,0,0))}
 @media (prefers-reduced-motion:no-preference){
   .bg-grid-lines{animation:gridDrift 22s linear infinite}
 }
@@ -308,7 +309,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 /* ---------- proof video / live preview ---------- */
 .vid{position:relative;width:min(440px,100%);border-radius:26px;overflow:hidden;box-shadow:var(--shadow-lg);aspect-ratio:4/5;background:#e9e7e3}
 .vid video{width:100%;height:100%;object-fit:cover;display:block}
-.vid-chip{position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--ink);box-shadow:var(--shadow)}
+.vid-chip{position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.95);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--ink);box-shadow:var(--shadow)}
 .vid-chip b{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-line)}
 .hero-media{animation:heroFade 1.1s ease both}
 @keyframes heroFade{from{opacity:0}to{opacity:1}}
@@ -319,7 +320,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .pitch-demo-play{position:relative;flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);border:1px solid var(--accent-line)}
 .pitch-demo-play::after{content:"";position:absolute;left:10.5px;top:8px;border-left:8px solid var(--accent);border-top:5.5px solid transparent;border-bottom:5.5px solid transparent}
 .pitch-demo-time{font-weight:400;color:var(--muted)}
-.vid-try{position:absolute;right:14px;top:14px;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--accent-2);box-shadow:var(--shadow)}
+.vid-try{position:absolute;right:14px;top:14px;background:rgba(255,255,255,.95);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--accent-2);box-shadow:var(--shadow)}
 .vid-try:hover{background:#fff}
 .strip-demo{margin:0;padding:0 var(--gutter) 16px;text-align:center;font-size:14px}
 .strip-demo a{font-weight:600}
