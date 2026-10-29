@@ -2,6 +2,21 @@
 
 Tracked so nothing gets lost between sessions. (Excluded from the public deploy.)
 
+## 📌 Open items (parked 29 Oct 2026, pick up later)
+- [ ] Legal name (obrt / d.o.o.), address and country of the business → add to the Organization
+      JSON-LD in `index.html` (`address` as PostalAddress) and to `/privacy` in `agent/pages.js`
+      (then `node scripts/build-pages.mjs`)
+- [ ] Have someone review the privacy policy (`/privacy`): it matches what the code does, but it
+      is not legal advice
+- [ ] Google Search Console: add `cards.notalucis.com`, submit `https://cards.notalucis.com/sitemap.xml`,
+      then re-run https://is-agentic.com/scan/cards.notalucis.com (was 68/100)
+- [ ] Prices are written in three places (JSON-LD in `index.html`, `agent/pages.js`, `llms.txt`):
+      update all three whenever a Stripe price changes (`qa/test_agents.py` checks they agree)
+- [ ] Live test of the sign-in limits: 6 link requests in a row get "Too many sign-in
+      attempts", and the CAPTCHA shows from the 4th
+- [ ] Before taking live payments: move Vercel from Hobby to Pro (Hobby is non-commercial only),
+      set Spend Management, and swap the Stripe test keys for live ones (section "Go live" below)
+
 ## Setup
 - [ ] Supabase: run `supabase/schema.sql` in the SQL Editor
 - [ ] Supabase: Authentication → Email provider ON (magic link)
@@ -53,7 +68,7 @@ CAPTCHA on `/api/auth` (see `docs/security-audit-auth.md`).
       at 50/75/100 % and "pause production deployments" at 100 %
 - [x] Supabase org "In Principio" is on the **Free** plan: no charges possible. If it moves to Pro,
       keep Billing → Spend Cap ON
-- [ ] Supabase SQL Editor: run `supabase/rls_check.sql` once (expect 0 in every others_* /
+- [x] Supabase SQL Editor: run `supabase/rls_check.sql` once (expect 0 in every others_* /
       *_visible column)
 
 ## ⚠️ After everything works
