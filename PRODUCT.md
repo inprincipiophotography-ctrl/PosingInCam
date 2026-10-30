@@ -29,7 +29,7 @@ The camera itself is the reference screen. A normal image won't show in playback
 
 ## Brand Commitments
 - Shoot Cards is a NotaLucis tool and shares the NotaLucis look with notalucis.com: Inter + Instrument Serif, one red accent, light theme. These are binding; do not replace them.
-- Background: a faint 40px line grid that drifts slowly, brighter in a circle around the cursor (`assets/grid-bg.js`), with lifting cards and nudging arrows on hover. Asked for by the makers in October 2026 after chaseai.io; it replaced the NotaLucis soft dot grid on this site. Whether notalucis.com follows is undecided.
+- Background: a faint 40px line grid that drifts slowly, brighter in a circle around the cursor, with a faint red pulse running through the squares every 9 s (`assets/grid-bg.js`), with lifting cards and nudging arrows on hover. Asked for by the makers in October 2026 after chaseai.io; it replaced the NotaLucis soft dot grid on this site. Whether notalucis.com follows is undecided.
 - Kim & Ivan, wedding photographers at In Principio and the people behind NotaLucis (the CRM for photographers), are the makers and the main proof of credibility.
 - Voice: short, concrete, a working photographer talking to another one. No marketing filler.
 - Formerly called Specula; accounts and cards carry over. The site no longer mentions the old name (FAQ entry removed October 2026).
