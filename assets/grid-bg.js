@@ -1,90 +1,137 @@
-/* Background grid: a faint 40px line grid that drifts slowly, with a brighter
-   copy revealed in a circle around the cursor and a pulse of light through
-   the squares every few seconds. Pure decoration (aria-hidden,
-   no pointer events); the look lives under "background grid" in styles.css. */
+/* Background grid: a faint 40px line grid that moves like a calm water
+   surface. Two slow waves lift and bend the lines, and their crests run
+   diagonally across the page a little brighter; a brighter copy shows in a
+   circle around the cursor; a soft accent glow sits off the top right.
+   Drawn on a canvas at 30 fps, paused while the tab is hidden. With reduced
+   motion (or no canvas) it falls back to the still CSS grid in styles.css.
+   Pure decoration (aria-hidden, no pointer events). */
 (function () {
   var grid = document.createElement("div");
   grid.className = "bg-grid";
   grid.setAttribute("aria-hidden", "true");
-  grid.innerHTML =
-    '<div class="bg-grid-lines"></div>' +
-    '<div class="bg-grid-spot"><div class="bg-grid-lines"></div></div>' +
-    '<div class="bg-grid-glow"></div>';
   document.body.prepend(grid);
-
-  var mouse = null;   // the cursor, when there is one: a wave can start there
-  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) wave();
-
-  // Every 9 s a ring of light runs out through the squares and dies away, like
-  // a pulse. Drawn on a canvas only while it runs (1.8 s); nothing between
-  // waves, none while the tab is hidden, none with reduced motion.
-  function wave() {
-    var cv = document.createElement("canvas");
-    var g = cv.getContext && cv.getContext("2d");
-    if (!g) return;
-    cv.className = "bg-grid-wave";
-    grid.insertBefore(cv, grid.querySelector(".bg-grid-glow"));
-    var lines = grid.querySelector(".bg-grid-lines");
-    var EVERY = 9000, RUN = 1800, CELL = 40, DRIFT = 22000, SIGMA = 45, PEAK = 0.11;
-    var turn = 0, t0 = 0, ox = 0, oy = 0, reach = 0;
-
-    // The lines drift 40px every 22 s (gridDrift); squares must sit between them.
-    function drift() {
-      var a = lines.getAnimations ? lines.getAnimations()[0] : null;
-      var t = a && a.currentTime != null ? Number(a.currentTime) : 0;
-      return (t % DRIFT) / DRIFT * CELL;
-    }
-    function start() {
-      if (document.hidden) { setTimeout(start, EVERY); return; }
-      var w = window.innerWidth, h = window.innerHeight, pick = turn++ % 3;
-      cv.width = w; cv.height = h;
-      if (pick === 0) { ox = w * 0.92; oy = h * 0.06; }        // from the red glow
-      else if (pick === 1 && mouse) { ox = mouse[0]; oy = mouse[1]; }
-      else { ox = w / 2; oy = h / 2; }
-      reach = Math.sqrt(Math.pow(Math.max(ox, w - ox), 2) + Math.pow(Math.max(oy, h - oy), 2)) + 3 * SIGMA;
-      t0 = performance.now();
-      requestAnimationFrame(frame);
-    }
-    function frame(now) {
-      var p = Math.min(1, (now - t0) / RUN);
-      var r = (1 - Math.pow(1 - p, 1.6)) * reach; // a gentle ease-out: the ring travels the whole run
-      var fade = Math.pow(1 - p, 1.3);
-      var w = cv.width, h = cv.height, d = drift();
-      g.clearRect(0, 0, w, h);
-      if (p >= 1) { setTimeout(start, EVERY - RUN); return; }
-      for (var y = d - CELL; y < h; y += CELL) {
-        for (var x = d - CELL; x < w; x += CELL) {
-          var dx = x + CELL / 2 - ox, dy = y + CELL / 2 - oy;
-          var off = Math.sqrt(dx * dx + dy * dy) - r;
-          if (off > 3 * SIGMA || off < -3 * SIGMA) continue;
-          g.fillStyle = "rgba(164,0,0," + (PEAK * fade * Math.exp(-off * off / (2 * SIGMA * SIGMA))).toFixed(3) + ")";
-          g.fillRect(x + 1, y + 1, CELL - 1, CELL - 1);
-        }
-      }
-      requestAnimationFrame(frame);
-    }
-    setTimeout(start, 2500);
-  }
-
+  var glow = '<div class="bg-grid-glow"></div>';
   // Touch screens have no cursor to follow.
-  if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  var fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var cv = still ? null : document.createElement("canvas");
+  var g = cv && cv.getContext ? cv.getContext("2d") : null;
 
-  var spot = grid.querySelector(".bg-grid-spot");
-  var x = 0, y = 0, queued = false;
-  function paint() {
-    queued = false;
-    spot.style.setProperty("--mx", x + "px");
-    spot.style.setProperty("--my", y + "px");
+  // The cursor, for the spotlight: calls back with its position, or null when it leaves.
+  function follow(cb) {
+    if (!fine) return;
+    window.addEventListener("pointermove", function (e) {
+      if (e.pointerType === "mouse") cb(e.clientX, e.clientY);
+    }, { passive: true });
+    document.addEventListener("mouseout", function (e) {
+      if (!e.relatedTarget) cb(null);
+    });
   }
-  window.addEventListener("pointermove", function (e) {
-    if (e.pointerType !== "mouse") return;
-    x = e.clientX; y = e.clientY;
-    mouse = [x, y];
-    grid.classList.add("live");
-    if (!queued) { queued = true; requestAnimationFrame(paint); }
-  }, { passive: true });
-  // The cursor left the window: fade the spotlight out where it was.
-  document.addEventListener("mouseout", function (e) {
-    if (!e.relatedTarget) { grid.classList.remove("live"); mouse = null; }
+
+  if (!g) {
+    // The still CSS grid, with the spotlight as a masked copy of it.
+    grid.innerHTML = '<div class="bg-grid-lines"></div>' +
+      '<div class="bg-grid-spot"><div class="bg-grid-lines"></div></div>' + glow;
+    var spotEl = grid.querySelector(".bg-grid-spot"), queued = false, sx = 0, sy = 0;
+    follow(function (x, y) {
+      if (x === null) { grid.classList.remove("live"); return; }
+      sx = x; sy = y;
+      grid.classList.add("live");
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () {
+        queued = false;
+        spotEl.style.setProperty("--mx", sx + "px");
+        spotEl.style.setProperty("--my", sy + "px");
+      });
+    });
+    return;
+  }
+
+  cv.className = "bg-grid-canvas";
+  grid.appendChild(cv);
+  grid.insertAdjacentHTML("beforeend", glow);
+
+  var CELL = 40, STEP = 20, FPS = 30, SPOT = 200;
+  var LO = 0.05, HI = 0.14;            // line opacity in the troughs and on the crests
+  var DRIFT = CELL / 22;               // px per second, as the old CSS drift
+  var hex = (getComputedStyle(document.documentElement).getPropertyValue("--muted") || "").trim() || "#6e6e73";
+  var rgb = hex.length === 7
+    ? [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)].join(",")
+    : "110,110,115";
+  // two waves: amplitude, wavelength, speed (px), direction
+  function wave(a, l, v, deg) { return { a: a, k: 2 * Math.PI / l, l: l, v: v, dx: Math.cos(deg * Math.PI / 180), dy: Math.sin(deg * Math.PI / 180) }; }
+  var A = wave(7, 520, 55, 35), B = wave(3, 300, 35, -25);
+  function lift(x, y, t) {
+    return A.a * Math.sin((x * A.dx + y * A.dy - A.v * t) * A.k) +
+           B.a * Math.sin((x * B.dx + y * B.dy - B.v * t) * B.k);
+  }
+
+  var W = 0, H = 0, dpr = 1;
+  function size() {
+    dpr = Math.min(window.devicePixelRatio || 1, fine ? 2 : 1.5);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  }
+
+  function draw(t) {
+    var d = (t * DRIFT) % CELL, x, y, z, first;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.clearRect(0, 0, W, H);
+    g.beginPath();
+    for (y = d - CELL; y < H + CELL; y += CELL) {
+      first = true;
+      for (x = -CELL; x <= W + CELL; x += STEP) {
+        z = lift(x, y, t);
+        if (first) { g.moveTo(x + z * 0.35, y + z); first = false; } else g.lineTo(x + z * 0.35, y + z);
+      }
+    }
+    for (x = d - CELL; x < W + CELL; x += CELL) {
+      first = true;
+      for (y = -CELL; y <= H + CELL; y += STEP) {
+        z = lift(x, y, t);
+        if (first) { g.moveTo(x + z * 0.35, y + z); first = false; } else g.lineTo(x + z * 0.35, y + z);
+      }
+    }
+    // the crests of the main wave, a little brighter, running across the page
+    var p0 = Math.min(0, W * A.dx, H * A.dy, W * A.dx + H * A.dy);
+    var p1 = Math.max(0, W * A.dx, H * A.dy, W * A.dx + H * A.dy);
+    var shade = g.createLinearGradient(p0 * A.dx, p0 * A.dy, p1 * A.dx, p1 * A.dy);
+    for (var i = 0; i <= 24; i++) {
+      var p = p0 + (p1 - p0) * i / 24;
+      var c = (1 + Math.sin((p - A.v * t) * A.k)) / 2;
+      shade.addColorStop(i / 24, "rgba(" + rgb + "," + (LO + (HI - LO) * c * c).toFixed(3) + ")");
+    }
+    g.lineWidth = 1;
+    g.strokeStyle = shade;
+    g.stroke();
+    if (spot > 0.01) {
+      var ring = g.createRadialGradient(mx, my, 0, mx, my, SPOT);
+      ring.addColorStop(0, "rgba(" + rgb + "," + (0.4 * spot).toFixed(3) + ")");
+      ring.addColorStop(1, "rgba(" + rgb + ",0)");
+      g.strokeStyle = ring;
+      g.stroke();
+    }
+  }
+
+  var mx = -9999, my = -9999, spot = 0, aim = 0;
+  follow(function (x, y) {
+    if (x === null) { aim = 0; return; }
+    mx = x; my = y; aim = 1;
   });
+
+  var t0 = performance.now(), last = 0, running = false;
+  function frame(now) {
+    if (document.hidden) { running = false; return; }
+    requestAnimationFrame(frame);
+    if (now - last < 1000 / FPS - 2) return;
+    last = now;
+    spot += (aim - spot) * 0.15;      // the spotlight fades in and out, like the old .4s
+    draw((now - t0) / 1000);
+  }
+  function run() { if (!running && !document.hidden) { running = true; requestAnimationFrame(frame); } }
+  size();
+  window.addEventListener("resize", size);
+  document.addEventListener("visibilitychange", run);
+  run();
 })();
