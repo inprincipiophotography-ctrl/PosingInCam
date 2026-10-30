@@ -3,6 +3,7 @@
    - cards catch a soft light where the cursor is and tilt a little towards it
    - the main buttons lean towards the cursor (magnetic)
    - the camera picker's selection slides between Sony, Canon and Nikon
+   - grids unfold like a paper map; a black flood carries you to the demo
    Decoration only: nothing here changes content or behaviour. With reduced
    motion the headlines simply show and nothing tilts, leans or slides; touch
    screens get no cursor effects. */
@@ -81,6 +82,80 @@
     fit();
     window.addEventListener("resize", fit);
   });
+
+  // ---------- grids unfold like a paper map ----------
+  // Centre first, then the plus around it, then the corners: each item gets
+  // its ring number as --d, and the CSS staggers the spring by it.
+  function unfold(grid) {
+    var items = Array.prototype.filter.call(grid.children, function (el) { return el.offsetWidth; });
+    if (!items.length) return;
+    var rects = items.map(function (el) { return el.getBoundingClientRect(); });
+    var left = Math.min.apply(null, rects.map(function (r) { return r.left; }));
+    var right = Math.max.apply(null, rects.map(function (r) { return r.right; }));
+    var top = Math.min.apply(null, rects.map(function (r) { return r.top; }));
+    var bottom = Math.max.apply(null, rects.map(function (r) { return r.bottom; }));
+    var cx = (left + right) / 2, cy = (top + bottom) / 2;
+    var ds = rects.map(function (r) {
+      return Math.round((Math.abs((r.left + r.width / 2 - cx) / r.width) + Math.abs((r.top + r.height / 2 - cy) / r.height)) * 2) / 2;
+    });
+    // one column (phones): no centre to start from, each item unfolds as it arrives
+    if (rects.every(function (r) { return Math.abs(r.left - rects[0].left) < 2; })) ds = ds.map(function () { return 0; });
+    var rings = ds.slice().sort(function (a, b) { return a - b; }).filter(function (d, i, all) { return i === 0 || d !== all[i - 1]; });
+    items.forEach(function (el, i) {
+      el.style.setProperty("--d", String(rings.indexOf(ds[i])));
+      el.style.transitionDelay = "";
+      el.classList.add("unfold-item");
+    });
+  }
+  if (!reduce) {
+    Array.prototype.forEach.call(document.querySelectorAll(".tiles"), unfold);
+    var prices = document.querySelector(".price-grid");
+    if (prices) {
+      // the price cards arrive from /api/prices: unfold them once they're in
+      var mo = new MutationObserver(function () { if (prices.children.length) { unfold(prices); mo.disconnect(); } });
+      mo.observe(prices, { childList: true });
+      if (prices.children.length) unfold(prices);
+    }
+  }
+
+  // ---------- leaving for the demo: a black flood ----------
+  // A click on a link to /demo floods the page from the click point, then
+  // goes; the demo page contracts the same flood into nothing on arrival.
+  if (!reduce) {
+    var arriving = false;
+    try { arriving = sessionStorage.getItem("sc-flood") === "1"; sessionStorage.removeItem("sc-flood"); } catch (_) {}
+    if (arriving) {
+      var shut = document.createElement("div");
+      shut.className = "flood";
+      shut.style.left = "50%"; shut.style.top = "50%";
+      var full = Math.hypot(window.innerWidth, window.innerHeight) / 12 * 1.15;
+      document.body.appendChild(shut);
+      shut.animate([{ transform: "scale(" + full + ")" }, { transform: "scale(0)" }],
+        { duration: 420, easing: "cubic-bezier(.7,0,.84,0)", fill: "forwards" }).onfinish = function () { shut.remove(); };
+    }
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest && e.target.closest('a[href^="/demo"]');
+      if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target === "_blank") return;
+      if (location.pathname.indexOf("/demo") === 0) return;
+      e.preventDefault();
+      var f = document.createElement("div");
+      f.className = "flood";
+      f.style.left = e.clientX + "px"; f.style.top = e.clientY + "px";
+      // overscale past the farthest corner so no edge is left in the last frame
+      var far = Math.max(Math.hypot(e.clientX, e.clientY), Math.hypot(innerWidth - e.clientX, e.clientY),
+        Math.hypot(e.clientX, innerHeight - e.clientY), Math.hypot(innerWidth - e.clientX, innerHeight - e.clientY));
+      document.body.appendChild(f);
+      f.animate([{ transform: "scale(0)" }, { transform: "scale(" + (far / 12 * 1.15) + ")" }],
+        { duration: 340, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" }).onfinish = function () {
+        try { sessionStorage.setItem("sc-flood", "1"); } catch (_) {}
+        location.href = a.href;
+      };
+    });
+    // Coming back with the browser's Back button: don't leave the flood up.
+    window.addEventListener("pageshow", function (e) {
+      if (e.persisted) Array.prototype.forEach.call(document.querySelectorAll(".flood"), function (f) { f.remove(); });
+    });
+  }
 
   if (!fine) return;
 

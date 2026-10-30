@@ -1060,11 +1060,24 @@ function chunkFiles(files, vendor) {
   return chunks;
 }
 
+// While a card is made the main button is one black shape whose label keeps
+// changing (made → converting → packing → downloaded), each line rising in.
+function goStage(text, done) {
+  const go = $("go");
+  go.classList.add("pill");
+  go.classList.toggle("done", !!done);
+  const label = document.createElement("span");
+  label.className = "go-label";
+  label.textContent = text;
+  go.replaceChildren(label);
+}
+
 async function convert() {
   const go = $("go");
+  let finished = false;
   go.disabled = true;
   go.setAttribute("aria-busy", "true");
-  go.textContent = "Making your card…";
+  goStage("Making your card…");
   setStatus("", "Making your cards…");
   const made = [];   // [first, last] file name of every request the server converted
 
@@ -1122,6 +1135,7 @@ async function convert() {
       else if (!appendProject(fd)) return;
       chunks[c].forEach((f) => fd.append("files", f.blob, f.name));
       setStatus("", "Converting for your camera…" + (chunks.length > 1 ? ` (${c + 1} of ${chunks.length})` : ""));
+      goStage("Converting for " + (VENDOR_LABEL[state.vendor] || "your camera") + (chunks.length > 1 ? ` · ${c + 1}/${chunks.length}` : "") + "…");
 
       try {
         resp = await fetch(API, { method: "POST", body: fd });
@@ -1162,10 +1176,13 @@ async function convert() {
         const m = last.match(/(\d{4})\.JPG$/i);
         if (m) try { localStorage.setItem("pic_start_" + state.vendor, m[1]); } catch (_) {}
       }
+      goStage("Packing your ZIP…");
       if (chunks.length === 1) await saveZip(resp, true);
       else zips.push(await zipBytes(resp));
     }
     if (zips.length) downloadBlob(mergeZips(zips));
+    goStage("✓ Downloaded", true);
+    finished = true;
 
     const wm = resp.headers.get("X-Watermarked") === "1";
     const first = made.length ? made[0][0] : null, last = made.length ? made[made.length - 1][1] : null;
@@ -1196,9 +1213,15 @@ async function convert() {
     setStatus("err", "✗ " + err.message + partial());
     if (err.retry) addRecovery();
   } finally {
-    go.disabled = false;
-    go.removeAttribute("aria-busy");
-    refresh();
+    // After a success the black shape holds "Downloaded" for a moment, then
+    // springs back into the button; after anything else it goes back at once.
+    const settle = () => {
+      go.disabled = false;
+      go.removeAttribute("aria-busy");
+      go.classList.remove("pill", "done");
+      refresh();
+    };
+    if (finished) setTimeout(settle, 1600); else settle();
   }
 }
 
@@ -1611,7 +1634,17 @@ function paintHistory() {
   const matches = q ? hist.groups.filter((g) => fold(g.name).includes(q)) : hist.groups;
   const shown = q || hist.all ? matches : matches.slice(0, PROJECTS_SHOWN);
   list.innerHTML = "";
-  shown.forEach((g) => list.appendChild(projectCard(g)));
+  shown.forEach((g, i) => {
+    const card = projectCard(g);
+    card.style.setProperty("--i", String(i));
+    list.appendChild(card);
+  });
+  // The cards pop in only the first time; a search or a delete doesn't replay it.
+  if (!list.dataset.painted) {
+    list.dataset.painted = "1";
+    list.classList.add("first-paint");
+    setTimeout(() => list.classList.remove("first-paint"), 1400);
+  }
   if (!shown.length) {
     const none = document.createElement("p");
     none.className = "proj-none";
