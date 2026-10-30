@@ -1756,7 +1756,14 @@ function projectCard(g) {
     showBatches(panel.hidden);
   });
 
-  if (g.id) actions.appendChild(projectMenu(g, [{ label: () => "Delete project", danger: true, run: () => deleteProject(g) }]));
+  if (g.id) actions.appendChild(projectMenu(g, [{ label: () => "Delete project", danger: true, run: async () => {
+    const sure = await confirmDialog({
+      title: "Delete “" + g.name + "”?",
+      text: "Its " + plural(g.cards, "card") + " are removed from your account. Cards already on your SD card stay.",
+      confirmLabel: "Delete project",
+    });
+    if (sure) deleteProject(g);
+  } }]));
 
   body.appendChild(actions);
   card.append(cover, body, panel);
@@ -1796,7 +1803,7 @@ function projectMenu(g, items) {
       b.setAttribute("role", "menuitem");
       b.className = "proj-menu-item" + (it.danger ? " danger" : "");
       b.textContent = it.label();
-      b.addEventListener("click", () => { close(!it.danger); it.run(); });
+      b.addEventListener("click", () => { close(true); it.run(); });
       menu.appendChild(b);
     });
     menu.hidden = false;
@@ -1814,6 +1821,133 @@ function projectMenu(g, items) {
   });
   wrap.append(btn, menu);
   return wrap;
+}
+
+// A closer look at a card: hover (or keyboard focus) on a thumbnail shows it
+// big beside the pointer; on touch screens a long press opens it full screen.
+// A plain click or tap still picks the card.
+(function cardPeek() {
+  const TARGETS = ".batch-pick, .batch-thumbs > img, .proj-cover img";
+  const peek = document.createElement("div");
+  peek.className = "peek";
+  peek.hidden = true;
+  peek.setAttribute("aria-hidden", "true");
+  const img = document.createElement("img");
+  img.alt = "";
+  const cap = document.createElement("span");
+  cap.className = "peek-cap";
+  peek.append(img, cap);
+  document.body.appendChild(peek);
+  let timer = 0, current = null;
+
+  const source = (el) => {
+    const i = el.tagName === "IMG" ? el : el.querySelector("img");
+    return i ? { src: i.currentSrc || i.src, name: el.title || i.alt || "" } : null;
+  };
+  function show(el, full) {
+    const s = source(el);
+    if (!s) return;
+    current = el;
+    img.src = s.src;
+    cap.textContent = s.name;
+    peek.classList.toggle("full", !!full);
+    peek.hidden = false;
+    if (full) return;
+    // beside the thumbnail, inside the window
+    const r = el.getBoundingClientRect(), w = Math.min(480, innerWidth - 24), h = 380;
+    let x = r.right + 14;
+    if (x + w > innerWidth - 12) x = Math.max(12, r.left - 14 - w);
+    const y = Math.min(Math.max(12, r.top + r.height / 2 - h / 2), innerHeight - h - 12);
+    peek.style.left = x + "px";
+    peek.style.top = y + "px";
+  }
+  function hide() {
+    clearTimeout(timer);
+    current = null;
+    peek.hidden = true;
+  }
+
+  if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    document.addEventListener("pointerover", (e) => {
+      const el = e.target.closest && e.target.closest(TARGETS);
+      if (!el || el === current) return;
+      clearTimeout(timer);
+      timer = setTimeout(() => show(el), 250);
+    });
+    document.addEventListener("pointerout", (e) => {
+      const el = e.target.closest && e.target.closest(TARGETS);
+      if (el && !el.contains(e.relatedTarget)) hide();
+    });
+    document.addEventListener("focusin", (e) => {
+      if (e.target.matches && e.target.matches(".batch-pick:focus-visible")) {
+        clearTimeout(timer);
+        timer = setTimeout(() => show(e.target), 250);
+      }
+    });
+    document.addEventListener("focusout", hide);
+    document.addEventListener("pointerdown", hide);
+    window.addEventListener("scroll", hide, { passive: true });
+  } else {
+    // touch: press and hold
+    let swallow = false, start = null;
+    document.addEventListener("touchstart", (e) => {
+      const el = e.target.closest && e.target.closest(TARGETS);
+      if (!el || !e.touches[0]) return;
+      start = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      clearTimeout(timer);
+      timer = setTimeout(() => { swallow = true; show(el, true); }, 450);
+    }, { passive: true });
+    document.addEventListener("touchmove", (e) => {
+      if (start && e.touches[0] && Math.hypot(e.touches[0].clientX - start.x, e.touches[0].clientY - start.y) > 10) clearTimeout(timer);
+    }, { passive: true });
+    document.addEventListener("touchend", () => clearTimeout(timer), { passive: true });
+    // the long press must not also pick the card
+    document.addEventListener("click", (e) => {
+      if (!swallow) return;
+      swallow = false;
+      e.preventDefault();
+      e.stopPropagation();
+    }, true);
+    document.addEventListener("contextmenu", (e) => { if (e.target.closest && e.target.closest(TARGETS)) e.preventDefault(); });
+    peek.addEventListener("click", hide);
+  }
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !peek.hidden) hide(); });
+})();
+
+// "Are you sure?": resolves true on the confirm button, false on Cancel, Esc or
+// a click outside. Focus starts on Cancel and goes back where it came from.
+function confirmDialog({ title, text, confirmLabel }) {
+  const modal = $("confirm-modal"), yes = $("confirm-yes"), no = $("confirm-no");
+  const back = document.activeElement;
+  $("confirm-title").textContent = title;
+  $("confirm-text").textContent = text;
+  yes.textContent = confirmLabel;
+  modal.hidden = false;
+  no.focus();
+  return new Promise((resolve) => {
+    const done = (answer) => {
+      modal.hidden = true;
+      modal.removeEventListener("keydown", keys);
+      modal.removeEventListener("click", outside);
+      yes.removeEventListener("click", onYes);
+      no.removeEventListener("click", onNo);
+      if (back && back.focus && document.contains(back)) back.focus();
+      resolve(answer);
+    };
+    const onYes = () => done(true), onNo = () => done(false);
+    const outside = (e) => { if (e.target === modal) done(false); };
+    const keys = (e) => {
+      if (e.key === "Escape") { e.preventDefault(); done(false); }
+      else if (e.key === "Tab") {   // keep Tab inside the dialog
+        e.preventDefault();
+        (document.activeElement === no ? yes : no).focus();
+      }
+    };
+    modal.addEventListener("keydown", keys);
+    modal.addEventListener("click", outside);
+    yes.addEventListener("click", onYes);
+    no.addEventListener("click", onNo);
+  });
 }
 
 // Deleting a project: it leaves the list at once and the toast offers Undo for

@@ -503,6 +503,19 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .modal-card input{width:100%;margin:14px 0 12px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:16px;background:var(--bg);color:var(--ink)}
 .modal-card .go{width:100%}
 .modal-card .link-btn{display:block;margin:10px auto 0}
+/* every dialog arrives the same way: the page dims, the card pops up */
+@media (prefers-reduced-motion:no-preference){
+  .modal:not([hidden]){animation:modalDim .2s ease-out both}
+  .modal:not([hidden]) .modal-card{animation:modalPop .28s cubic-bezier(.2,.9,.3,1.15) both}
+  @keyframes modalDim{from{background:rgba(0,0,0,0)}}
+  @keyframes modalPop{from{opacity:0;transform:translateY(10px) scale(.96)}}
+}
+.confirm-card{max-width:420px}
+.confirm-card .muted{font-size:15px;line-height:1.5;color:var(--ink-2)}
+.confirm-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+.btn-danger{background:var(--err);color:#fff;border-color:var(--err)}
+.btn-danger:hover{background:#9f1239;border-color:#9f1239}
+.btn-danger:focus-visible{outline:2px solid var(--err);outline-offset:2px}
 .login-spam-note{margin:12px 0 0;font-size:12.5px;line-height:1.5;color:var(--muted);background:var(--surface-2);border:1px solid var(--border-soft);border-radius:10px;padding:9px 12px}
 .login-spam-note strong{color:var(--ink-2);font-weight:600}
 .login-captcha{margin:0 0 12px;min-height:65px;display:flex;justify-content:center}
@@ -564,6 +577,15 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .batch-pick:active{transform:scale(.96)}
 .batch-all{grid-column:1;grid-row:3;font-size:13px;font-weight:600;padding:4px 0}
 .batch-dl{grid-column:2;grid-row:3;font-size:13px;font-weight:600;padding:4px 0}
+/* a closer look at a card (assets/app.js cardPeek) */
+.peek{position:fixed;z-index:80;max-width:min(480px,calc(100vw - 24px));padding:8px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.25),0 4px 12px rgba(0,0,0,.12);pointer-events:none}
+.peek img{display:block;max-width:100%;max-height:340px;width:auto;height:auto;border-radius:8px;background:#000}
+.peek-cap{display:block;padding:7px 4px 1px;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.peek.full{inset:0;max-width:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;border:0;border-radius:0;background:rgba(10,10,12,.86);box-shadow:none;pointer-events:auto}
+.peek.full img{max-height:78vh;max-width:100%}
+.peek.full .peek-cap{color:rgba(255,255,255,.8)}
+@media (prefers-reduced-motion:no-preference){.peek:not([hidden]){animation:peekIn .18s ease-out both}@keyframes peekIn{from{opacity:0;transform:scale(.96)}}}
+.batch-pick,.batch-thumbs img,.proj-cover img{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .proj-pick-hint{margin:8px 0 2px;font-size:12.5px;color:var(--muted)}
 .proj-pick-bar{position:sticky;bottom:10px;z-index:5;display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin:6px 0 8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg)}
 .proj-pick-count{flex:1 1 100%;font-size:14px;font-weight:600;color:var(--ink)}
@@ -646,6 +668,61 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   @keyframes heroUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 }
 
+/* ---------- motion system (assets/motion.js) ---------- */
+/* Headlines rise in word by word (.split is added by motion.js only when motion is welcome). */
+.split .w{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .02em .14em;margin:0 -.02em -.14em}
+.split .w>span{display:inline-block;transform:translateY(108%);transition:transform .8s cubic-bezier(.16,1,.3,1) calc(var(--i,0) * 55ms)}
+.split.lit .w>span{transform:none}
+/* the hero's "blank" gets a red stroke drawn under it once the words are in */
+.pitch h1 em{position:relative}
+.pitch h1 em::after{content:"";position:absolute;left:.04em;right:.02em;bottom:.02em;height:.07em;border-radius:1em;background:var(--accent);opacity:.85;transform:scaleX(0);transform-origin:left}
+@media (prefers-reduced-motion:no-preference){
+  .pitch h1.lit em::after{transition:transform .7s cubic-bezier(.65,0,.35,1) .75s;transform:scaleX(1)}
+}
+@media (prefers-reduced-motion:reduce){.pitch h1 em::after{transform:scaleX(1)}}
+
+/* Cards catch the light where the cursor is, and tilt a little towards it. */
+.proj::after,.price-card::after,.faq-list::after,.tile-screen::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s ease;
+  background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(164,0,0,.07),transparent 70%)}
+.tile-screen{position:relative}
+.tile-screen::after{background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.14),transparent 70%)}
+.faq-list{position:relative}
+.proj:hover::after,.price-card:hover::after,.faq-list:hover::after,.tile:hover .tile-screen::after{opacity:1}
+@media (prefers-reduced-motion:no-preference){
+  .proj{transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .35s ease,border-color .2s ease}
+  .proj:not(.open):hover{transform:perspective(900px) translateY(-4px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));box-shadow:0 18px 40px rgba(0,0,0,.10),var(--shadow)}
+  .price-card:hover{transform:perspective(900px) translateY(-4px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
+  .tile:hover .tile-screen{transform:perspective(900px) translateY(-4px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
+  .proj-cover img{transition:transform .5s cubic-bezier(.16,1,.3,1)}
+  .proj:hover .proj-cover img:nth-child(1){transform:translateY(-4px) scale(1.05)}
+  .proj:hover .proj-cover img:nth-child(2){transform:translateX(-62%) rotate(-11deg) scale(.95)}
+  .proj:hover .proj-cover img:nth-child(3){transform:translateX(62%) rotate(11deg) scale(.95)}
+  /* magnetic buttons ease back when the cursor leaves */
+  .go,.final-btn,.nav-cta{transition:translate .35s cubic-bezier(.16,1,.3,1),transform .05s,box-shadow .15s,background .15s,border-color .15s,color .15s}
+}
+
+/* The camera picker: one sliding selection instead of a jump. */
+.cameras.has-ind{position:relative}
+.cameras.has-ind .cam{position:relative;z-index:1}
+.cameras.has-ind .cam[aria-pressed="true"]{background:none;box-shadow:none}
+.cam-ind{position:absolute;top:3px;bottom:3px;left:3px;width:0;border-radius:9px;background:var(--surface);
+  box-shadow:0 1px 3px rgba(0,0,0,.1),0 0 0 1px var(--accent) inset;opacity:0;pointer-events:none}
+@media (prefers-reduced-motion:no-preference){.cam-ind{transition:transform .4s cubic-bezier(.16,1,.3,1),width .4s cubic-bezier(.16,1,.3,1),opacity .2s}}
+
+/* A slow reel of real cards and photos between the hero and the card types. */
+.reel{overflow:hidden;padding:clamp(18px,3vw,32px) 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.reel-track{display:flex;width:max-content}
+.reel-set{display:flex;gap:18px;padding-right:18px}
+.reel img{height:clamp(120px,14vw,170px);width:auto;border-radius:10px;border:1px solid var(--border-soft);box-shadow:var(--shadow);background:var(--surface)}
+.reel img:nth-child(odd){transform:rotate(-2deg)}
+.reel img:nth-child(even){transform:rotate(2deg) translateY(6px)}
+@media (prefers-reduced-motion:no-preference){
+  .reel-track{animation:reel 48s linear infinite}
+  .reel:hover .reel-track{animation-play-state:paused}
+  @keyframes reel{to{transform:translateX(-50%)}}
+}
+.signed-in .reel{display:none}
+
 /* ---------- signed-in: the studio first, the pitch below ---------- */
 /* Returning signed-in users land on the studio and their projects; new visitors
    keep the pitch on top. The class is set pre-paint from localStorage (inline
@@ -677,7 +754,9 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   /* The headline runs centred across the top; under it the studio and the
      camera (or the demo video) sit side by side, level at the top. */
   .hero-grid{grid-template-areas:"pitch pitch" "studio visual" "why ."}
-  .pitch{width:100%;max-width:820px;margin:0 auto 10px;text-align:center}
+  .pitch{width:100%;max-width:980px;margin:0 auto 10px;text-align:center}
+  .pitch h1{font-size:clamp(58px,6.4vw,94px);letter-spacing:-.028em;line-height:.95}
+  .pitch .lede{max-width:40em}
   .pitch .lede{margin:0 auto}
   /* Until you start a card, the demo video keeps its top level with the
      studio card and runs down to its bottom, so the two edges line up. That

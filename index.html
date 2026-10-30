@@ -330,6 +330,11 @@
       <p class="strip-demo"><a href="/demo?ref=how">Not sure how it works? Try the one-minute demo&nbsp;<span class="arr">&rarr;</span></a></p>
     </div>
 
+    <!-- A slow reel of real cards and the bride's board photos (decoration; assets/styles.css .reel) -->
+    <div class="reel" aria-hidden="true">
+      <div class="reel-track"><div class="reel-set"><img src="/assets/showcase/pack-03-thumb.jpg" alt="" width="300" height="450" loading="lazy" /><img src="/assets/showcase/pin-01.jpg" alt="" width="450" height="600" loading="lazy" /><img src="/assets/showcase/pack-01-thumb.jpg" alt="" width="300" height="450" loading="lazy" /><img src="/assets/showcase/pin-02.jpg" alt="" width="450" height="600" loading="lazy" /><img src="/assets/showcase/pack-04-thumb.jpg" alt="" width="300" height="450" loading="lazy" /><img src="/assets/showcase/pin-03.jpg" alt="" width="450" height="600" loading="lazy" /><img src="/assets/showcase/pack-02-thumb.jpg" alt="" width="300" height="450" loading="lazy" /><img src="/assets/showcase/pin-04.jpg" alt="" width="450" height="600" loading="lazy" /></div><div class="reel-set"><img src="/assets/showcase/pack-03-thumb.jpg" alt="" width="300" height="450" loading="lazy" /><img src="/assets/showcase/pin-01.jpg" alt="" width="450" height="600" loading="lazy" /><img src="/assets/showcase/pack-01-thumb.jpg" alt="" width="300" height="450" loading="lazy" /><img src="/assets/showcase/pin-02.jpg" alt="" width="450" height="600" loading="lazy" /><img src="/assets/showcase/pack-04-thumb.jpg" alt="" width="300" height="450" loading="lazy" /><img src="/assets/showcase/pin-03.jpg" alt="" width="450" height="600" loading="lazy" /><img src="/assets/showcase/pack-02-thumb.jpg" alt="" width="300" height="450" loading="lazy" /><img src="/assets/showcase/pin-04.jpg" alt="" width="450" height="600" loading="lazy" /></div></div>
+    </div>
+
     <!-- Your previous cards (signed-in users; rendered by app.js) -->
     <section class="history" id="history" hidden>
       <p class="eyebrow center">Your cards</p>
@@ -481,6 +486,18 @@
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
   <!-- Login modal (only used when the paywall is active) -->
+  <!-- "Are you sure?" before anything that can't be redone (assets/app.js confirmDialog()) -->
+  <div class="modal" id="confirm-modal" hidden>
+    <div class="modal-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+      <h3 id="confirm-title"></h3>
+      <p class="muted" id="confirm-text"></p>
+      <div class="confirm-actions">
+        <button class="btn btn-ghost" id="confirm-no" type="button">Cancel</button>
+        <button class="btn btn-danger" id="confirm-yes" type="button"></button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal" id="login-modal" hidden>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="login-title">
       <h3 id="login-title">Sign in</h3>
@@ -500,5 +517,6 @@
   <script src="/assets/builder.js"></script>
   <script src="/assets/app.js"></script>
   <script type="module" src="/assets/cam3d.js"></script>
+  <script src="/assets/motion.js"></script>
 </body>
 </html>
