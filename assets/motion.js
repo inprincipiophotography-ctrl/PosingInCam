@@ -63,6 +63,25 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
   });
 
+  // ---------- the reel: one seamless loop at any window width ----------
+  // The track scrolls by exactly one set; enough copies follow it that the
+  // window never sees an edge, so the end runs into the start with no seam.
+  Array.prototype.forEach.call(document.querySelectorAll(".reel-track"), function (track) {
+    var set = track.querySelector(".reel-set");
+    if (!set) return;
+    function fit() {
+      var w = set.getBoundingClientRect().width;
+      if (!w) return;
+      while (track.children.length < 2 || (track.children.length - 1) * w < window.innerWidth + 40) {
+        track.appendChild(set.cloneNode(true));
+      }
+      track.style.setProperty("--reel-shift", w + "px");
+      track.style.setProperty("--reel-time", Math.round(w / 38) + "s");   // ~38px a second
+    }
+    fit();
+    window.addEventListener("resize", fit);
+  });
+
   if (!fine) return;
 
   // ---------- cursor light and tilt on cards; magnetic buttons ----------
