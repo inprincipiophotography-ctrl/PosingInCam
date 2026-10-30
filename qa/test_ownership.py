@@ -329,6 +329,24 @@ def test_delete_own_project_removes_it_and_its_cards_but_not_the_count():
     assert ANA.delete_project(pid).status_code == 404
 
 
+def test_download_only_the_picked_cards():
+    import zipfile
+    r = ANA.convert(project_name="Pick some")
+    pid = r.headers["X-Project-Id"]
+    assert ANA.convert(project_id=pid).status_code == 200
+    names = sorted(n for c in FAKE.tables["conversions"] if c.get("project_id") == pid for n in c["files"])
+    assert len(names) == 2
+    r = ANA.get(HISTORY, f"/api/history?download_project={pid}&only={names[1]}")
+    assert r.status_code == 200
+    inside = [n.rsplit("/", 1)[-1] for n in zipfile.ZipFile(io.BytesIO(r.data)).namelist() if n.startswith("DCIM/")]
+    assert inside == [names[1]]
+    # someone else's project, cards not in this project, path tricks: nothing
+    assert BRUNO.get(HISTORY, f"/api/history?download_project={pid}&only={names[1]}").status_code == 404
+    assert ANA.get(HISTORY, f"/api/history?download_project={pid}&only=DSC09999.JPG").status_code == 404
+    assert ANA.get(HISTORY, f"/api/history?download_project={pid}&only=../{BRUNO.uid}/x/{names[0]}").status_code == 404
+    assert ANA.get(HISTORY, f"/api/history?download_project={pid}&only=").status_code == 400
+
+
 def test_no_session_no_data():
     assert HISTORY.get("/api/history").status_code == 401
     assert HISTORY.get(f"/api/history?download={ANA_BATCH}").status_code == 401

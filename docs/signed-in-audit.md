@@ -17,6 +17,7 @@ Layer 1 (every state of every action) was the weakest; this pass fixes it and qu
 | "Add cards" on a project | Studio scrolls up, the project is picked and flashes | Pick "+ New project" | Make cards; numbers continue |
 | "Download ZIP" | Button reads "Preparing…", then the ZIP saves | n/a | Copy to the SD card |
 | Click a project card (or its name) | The project's batches open inside its card; the arrow by the name turns | Click the card again | Download one batch |
+| Tap cards in an open project | Each picked card gets a red ring and a tick; a bar shows "N cards selected" | Tap again, "Clear", or close the project | "Download N cards": a ZIP with just those, same SD-card layout |
 | "Delete project" (⋯ menu) | Before: impossible ❌. Now: card leaves the list; toast "Deleted “X” and its N cards. Cards already on your SD card stay." | "Undo" in the toast for 8 s | Focus moves to the next project |
 | Delete fails (server/network) | Before: n/a. Now: card comes back; toast "Couldn't delete “X”. Nothing was removed." | n/a: nothing changed | "Try again" in the toast |
 

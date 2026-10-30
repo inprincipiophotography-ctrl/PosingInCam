@@ -547,15 +547,26 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .proj-menu-item:hover,.proj-menu-item:focus-visible{background:var(--surface-2);outline:none}
 .proj-menu-item.danger{color:var(--err)}
 .proj-batches{margin:0 10px 10px;background:var(--surface-2);border-radius:12px;padding:4px 14px}
-.batch{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:10px 0}
+.batch{display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:center;gap:6px 14px;padding:12px 0}
 .batch+.batch{border-top:1px solid var(--border-soft)}
-.batch-info{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.batch-info{grid-column:1/-1;grid-row:1;display:flex;flex-direction:column;gap:2px;min-width:0}
 .batch-title{font-weight:600;font-size:14px;color:var(--ink)}
 .batch-sub{font-size:12.5px;color:var(--muted)}
-.batch-thumbs{order:3;display:flex;align-items:center;gap:6px;flex:1 1 100%;min-width:0;overflow:hidden}
-.batch-thumbs img{height:40px;width:auto;border-radius:5px;border:1px solid var(--border-soft);display:block;flex:none}
-.batch-more{color:var(--muted);font-size:12.5px;font-weight:600;flex:none;padding:0 2px}
-.batch-dl{flex:none}
+.batch-thumbs{grid-column:1/-1;grid-row:2;display:flex;flex-wrap:wrap;align-items:center;gap:8px;flex:1 1 100%;min-width:0;padding:2px 0 4px}
+.batch-thumbs img{height:56px;width:auto;border-radius:5px;border:1px solid var(--border-soft);display:block;flex:none}
+/* a card you can pick for "Download N cards" */
+.batch-pick{position:relative;flex:none;padding:0;border:0;border-radius:6px;background:none;cursor:pointer;line-height:0;transition:transform .12s ease}
+.batch-pick img{transition:box-shadow .12s ease}
+.batch-pick:hover img{box-shadow:0 0 0 2px var(--border)}
+.batch-pick[aria-pressed="true"] img{box-shadow:0 0 0 2px var(--accent)}
+.batch-pick[aria-pressed="true"]::after{content:"\2713";position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center;box-shadow:0 0 0 2px var(--surface-2)}
+.batch-pick:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.batch-pick:active{transform:scale(.96)}
+.batch-all{grid-column:1;grid-row:3;font-size:13px;font-weight:600;padding:4px 0}
+.batch-dl{grid-column:2;grid-row:3;font-size:13px;font-weight:600;padding:4px 0}
+.proj-pick-hint{margin:8px 0 2px;font-size:12.5px;color:var(--muted)}
+.proj-pick-bar{position:sticky;bottom:10px;z-index:5;display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin:6px 0 8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg)}
+.proj-pick-count{flex:1 1 100%;font-size:14px;font-weight:600;color:var(--ink)}
 .proj-none{grid-column:1/-1;margin:0;padding:26px;text-align:center;color:var(--muted);font-size:14px;background:var(--surface);border:1px dashed var(--border);border-radius:18px}
 .proj-more{display:block;margin:18px auto 0}
 /* "Add cards" lands on the studio: point at the project it picked. */
@@ -754,9 +765,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   .proj-dl{padding:11px 6px}
   .proj-menu-wrap{position:absolute;top:8px;right:8px;margin:0}
   .proj-menu{top:calc(100% + 6px);bottom:auto}
-  .batch-dl{padding:10px 4px}
-  .batch{flex-wrap:wrap;gap:8px 12px}
-  .batch-info{flex:1 1 auto}
+  .batch-all,.batch-dl{padding:10px 0}
   .batch-thumbs{order:3;flex-basis:100%}
   /* 16px keeps iOS Safari from zooming into the form on focus */
   .fld input,.fld textarea,.row-in,#project-select,#project-new{font-size:16px}

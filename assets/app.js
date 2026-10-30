@@ -1470,7 +1470,6 @@ function renderUpgradeNudge(j) {
 }
 
 /* ---------- projects + history ---------- */
-const MAX_HISTORY_THUMBS = 6;
 
 function renderProjectPicker() {
   const field = $("project-field"), sel = $("project-select");
@@ -1694,13 +1693,57 @@ function projectCard(g) {
   panel.className = "proj-batches";
   panel.id = "proj-b-" + String(g.key).replace(/[^\w-]/g, "");
   panel.hidden = !isOpen;
-  const fill = () => { if (!panel.childElementCount) g.batches.forEach((b) => panel.appendChild(batchRow(b))); };
+  // Cards picked from any of the project's batches, for "Download N cards".
+  const picked = new Set();
+  const bar = document.createElement("div");
+  bar.className = "proj-pick-bar";
+  bar.hidden = true;
+  const count = document.createElement("span");
+  count.className = "proj-pick-count";
+  count.setAttribute("role", "status");
+  const getPicked = document.createElement("button");
+  getPicked.type = "button";
+  getPicked.className = "btn btn-primary btn-sm";
+  const clear = document.createElement("button");
+  clear.type = "button";
+  clear.className = "link-btn";
+  clear.textContent = "Clear";
+  bar.append(count, getPicked, clear);
+  const syncBar = () => {
+    bar.hidden = !picked.size;
+    count.textContent = plural(picked.size, "card") + " selected";
+    getPicked.textContent = "Download " + plural(picked.size, "card");
+  };
+  const clearPicks = () => {
+    picked.clear();
+    panel.querySelectorAll(".batch-pick").forEach((t) => t.setAttribute("aria-pressed", "false"));
+    panel.querySelectorAll(".batch").forEach((row) => row.syncPicks && row.syncPicks());
+    syncBar();
+  };
+  getPicked.addEventListener("click", () => downloadZip("/api/history?download_project=" + encodeURIComponent(g.id) +
+    "&only=" + encodeURIComponent(Array.from(picked).sort().join(",")), getPicked));
+  clear.addEventListener("click", clearPicks);
+  const pick = g.id ? {
+    has: (n) => picked.has(n),
+    toggle: (n, on) => { if (on) picked.add(n); else picked.delete(n); syncBar(); },
+  } : null;
+  const fill = () => {
+    if (panel.childElementCount) return;
+    if (pick) {
+      const hint = document.createElement("p");
+      hint.className = "proj-pick-hint";
+      hint.textContent = "Tap cards to pick just those, or download a whole batch.";
+      panel.appendChild(hint);
+    }
+    g.batches.forEach((b) => panel.appendChild(batchRow(b, pick)));
+    panel.appendChild(bar);
+  };
   if (isOpen) fill();
   card.classList.toggle("open", isOpen);
   opener.setAttribute("aria-controls", panel.id);
   opener.setAttribute("aria-expanded", String(isOpen));
   const showBatches = (open) => {
-    if (open) fill();
+    if (open) fill(); else clearPicks();
     panel.hidden = !open;
     card.classList.toggle("open", open);
     opener.setAttribute("aria-expanded", String(open));
@@ -1833,49 +1876,85 @@ window.addEventListener("pagehide", () => {
   pendingDeletes.forEach(({ g }) => commitDelete(g, true));
 });
 
-function batchRow(b) {
+// One batch inside an open project: every card as a thumbnail. With ``pick``
+// (projects that have an id) a thumbnail is a toggle that picks the card for
+// "Download N cards".
+function batchRow(b, pick) {
   const item = document.createElement("div");
   item.className = "batch";
   const files = b.files || [];
   const range = files.length
-    ? files[0].name.replace(/\.JPG$/i, "") + (files.length > 1 ? "–" + files[files.length - 1].name.replace(/\.JPG$/i, "") : "")
+    ? files[0].name.replace(/\.JPG$/i, "") + (files.length > 1 ? "–" + files[files.length - 1].name.replace(/\.JPG$/i, "").replace(/^[A-Z_]+/i, "") : "")
     : "";
   const info = document.createElement("div");
   info.className = "batch-info";
   const title = document.createElement("span");
   title.className = "batch-title";
-  title.textContent = [VENDOR_LABEL[b.vendor] || b.vendor || "", plural(b.cards || 0, "card")].filter(Boolean).join(" · ") +
-    (b.watermarked ? " · watermarked" : "");
+  title.textContent = [VENDOR_LABEL[b.vendor] || b.vendor || "", plural(b.cards || 0, "card"),
+    b.created_at ? shortDate(b.created_at) : ""].filter(Boolean).join(" · ") + (b.watermarked ? " · watermarked" : "");
   const sub = document.createElement("span");
   sub.className = "batch-sub";
-  sub.textContent = [range, b.created_at ? shortDate(b.created_at) : ""].filter(Boolean).join(" · ");
+  sub.textContent = range;
   info.append(title, sub);
 
   const strip = document.createElement("div");
   strip.className = "batch-thumbs";
-  files.slice(0, MAX_HISTORY_THUMBS).forEach((f) => {
+  const picks = [];
+  files.forEach((f) => {
     if (!f.url) return;
     const img = document.createElement("img");
     img.src = f.url;
-    img.alt = f.name || "card";
+    img.alt = pick ? "" : (f.name || "card");
     img.loading = "lazy";
-    strip.appendChild(img);
+    if (!pick) { strip.appendChild(img); return; }
+    const t = document.createElement("button");
+    t.type = "button";
+    t.className = "batch-pick";
+    t.dataset.name = f.name;
+    t.setAttribute("aria-label", f.name);
+    t.setAttribute("aria-pressed", String(pick.has(f.name)));
+    t.title = f.name;
+    t.appendChild(img);
+    t.addEventListener("click", () => {
+      const on = t.getAttribute("aria-pressed") !== "true";
+      t.setAttribute("aria-pressed", String(on));
+      pick.toggle(f.name, on);
+      syncAll();
+    });
+    picks.push(t);
+    strip.appendChild(t);
   });
-  if (files.length > MAX_HISTORY_THUMBS) {
-    const more = document.createElement("span");
-    more.className = "batch-more";
-    more.textContent = "+" + (files.length - MAX_HISTORY_THUMBS);
-    strip.appendChild(more);
+  // "Select all" / "Clear" for this batch
+  let all = null;
+  const syncAll = () => {
+    if (all) all.textContent = picks.every((t) => t.getAttribute("aria-pressed") === "true") ? "Clear" : "Select all";
+  };
+  item.syncPicks = syncAll;
+  if (pick && picks.length > 1) {
+    all = document.createElement("button");
+    all.type = "button";
+    all.className = "link-btn batch-all";
+    all.addEventListener("click", () => {
+      const on = !picks.every((t) => t.getAttribute("aria-pressed") === "true");
+      picks.forEach((t) => {
+        t.setAttribute("aria-pressed", String(on));
+        pick.toggle(t.dataset.name, on);
+      });
+      syncAll();
+    });
+    syncAll();
   }
 
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "link-btn batch-dl";
-  btn.textContent = "Download";
+  btn.textContent = "Download batch";
   btn.title = "This batch as a ZIP";
   btn.addEventListener("click", () =>
     downloadZip("/api/history?download=" + encodeURIComponent(b.id), btn));
-  item.append(info, strip, btn);
+  item.append(info);
+  if (all) item.append(all);
+  item.append(btn, strip);
   return item;
 }
 

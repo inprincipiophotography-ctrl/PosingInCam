@@ -2,6 +2,9 @@
 GET  /api/history                 -> the signed-in user's stored batches, with
                                      short-lived signed thumbnail URLs.
 GET  /api/history?download=<id>   -> rebuild that batch as an SD-card ZIP.
+GET  /api/history?download_project=<id>[&only=A.JPG,B.JPG]
+                                  -> the whole project (or just those cards)
+                                     as one SD-card ZIP.
 POST /api/history {"delete_project": <id>}
                                   -> delete one of the user's projects and the
                                      cards stored for it.
@@ -60,7 +63,7 @@ def history(path):
         return _download(uid, batch_id)
     project_id = request.args.get("download_project")
     if project_id:
-        return _download_project(uid, project_id)
+        return _download_project(uid, project_id, request.args.get("only"))
 
     try:
         rows = auth.list_history(uid)
@@ -168,9 +171,18 @@ def _download(uid: str, batch_id: str):
     return _zip_response(uid, pack.zip_from_cards(cards, vendor))
 
 
-def _download_project(uid: str, project_id: str):
+MAX_PICK = 500
+
+
+def _download_project(uid: str, project_id: str, only: str | None = None):
     """Merge every stored batch of a project into one SD-card ZIP. Numbering
-    already continues across batches, so the files simply line up."""
+    already continues across batches, so the files simply line up. With
+    ``only`` (comma-separated card names) just those cards go in."""
+    pick = None
+    if only is not None:
+        pick = {n for n in only.split(",")[:MAX_PICK] if n}
+        if not pick:
+            return jsonify(error="Pick at least one card."), 400
     try:
         project = auth.get_project(uid, project_id)
         rows = auth.list_project_batches(uid, project_id) if project else []
@@ -184,6 +196,8 @@ def _download_project(uid: str, project_id: str):
     for row in rows:
         prefix = row.get("storage_prefix") or ""
         for name in (row.get("files") or []):
+            if pick is not None and name not in pick:
+                continue
             if name in seen:  # same number converted twice: keep the newest
                 cards = [(n, d) for n, d in cards if n != name]
             path = storage.owned_path(uid, prefix, name)
@@ -193,5 +207,7 @@ def _download_project(uid: str, project_id: str):
             cards.append((name, data))
             seen.add(name)
 
+    if not cards:
+        return jsonify(error="None of these cards are in this project."), 404
     cards.sort(key=lambda c: c[0])
     return _zip_response(uid, pack.zip_from_cards(cards, vendor))
