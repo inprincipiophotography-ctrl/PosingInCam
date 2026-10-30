@@ -179,7 +179,7 @@
             </span>
           </div>
 
-          <!-- Pose: one of ours, or your own photo with your notes -->
+          <!-- Pose: one of ours, or your own photos, each with its own notes -->
           <div class="panel" data-panel="pose">
             <div id="pose-pick">
               <p class="panel-label"><span><b>Pick a pose</b> from our wedding pack</span><span class="panel-aside">50 in the full pack</span></p>
@@ -188,15 +188,19 @@
                 <button class="pz" type="button" data-sample="pack-01" aria-pressed="false" aria-label="Dance and spin"><img src="/assets/showcase/pack-01-thumb.jpg" alt="" width="300" height="450" /></button>
                 <button class="pz" type="button" data-sample="pack-04" aria-pressed="false" aria-label="Vogue"><img src="/assets/showcase/pack-04-thumb.jpg" alt="" width="300" height="450" /></button>
                 <button class="pz" type="button" data-sample="pack-02" aria-pressed="false" aria-label="The first look"><img src="/assets/showcase/pack-02-thumb.jpg" alt="" width="300" height="450" /></button>
-                <button class="pz pz-own" type="button" id="pose-own-btn">+ Use your own photo</button>
+                <button class="pz pz-own" type="button" id="pose-own-btn">+ Use your own photos</button>
               </div>
             </div>
             <div id="pose-own" hidden>
               <label class="photo-drop" id="photo-drop">
-                <input type="file" id="pose-photo" accept="image/*,.heic,.heif" class="sr-only" />
-                <span class="photo-drop-title" id="photo-drop-title">Add your reference photo</span>
-                <span class="photo-drop-sub">A pose you love: yours, or one you found</span>
+                <input type="file" id="pose-photo" accept="image/*,.heic,.heif" multiple class="sr-only" />
+                <span class="photo-drop-title" id="photo-drop-title">Add your reference photos</span>
+                <span class="photo-drop-sub" id="photo-drop-sub">One or many: each photo becomes its own pose card</span>
               </label>
+              <div class="pose-strip" id="pose-strip" hidden>
+                <div class="filmstrip" id="pose-thumbs"></div>
+                <p class="pose-at"><span id="pose-at"></span><button class="link-btn" id="pose-next" type="button">Next photo&nbsp;<span class="arr">&rarr;</span></button></p>
+              </div>
               <div class="fields">
                 <label class="fld full"><span>Pose name</span><input type="text" data-pose="title" name="pose-title" autocomplete="off" maxlength="40" placeholder="e.g. The first look" /></label>
                 <label class="fld"><span>Energy</span><input type="text" data-pose="energy" name="pose-energy" autocomplete="off" maxlength="60" placeholder="e.g. Tender, unhurried" /></label>

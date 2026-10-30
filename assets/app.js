@@ -252,7 +252,9 @@ const clone = (o) => JSON.parse(JSON.stringify(o));
 
 const studio = {
   type: "pose",
-  pose: { mode: "sample", sample: "pack-03", photo: null, photoUrl: null,
+  // photos: your own reference photos, each { photo, url, title, energy, … };
+  // `at` is the one whose notes the form shows. The fields here mirror it.
+  pose: { mode: "sample", sample: "pack-03", photos: [], at: 0,
           title: "", energy: "", camera: "", hack: "", say: "", source: "" },
   lists: { timeline: clone(DEFAULTS.timeline), groups: clone(DEFAULTS.groups),
            shotlist: clone(DEFAULTS.shotlist), settings: clone(DEFAULTS.settings) },
@@ -276,7 +278,7 @@ function sampleImage(key) {
 function cardData(type = studio.type) {
   if (type === "pose") {
     const p = studio.pose;
-    return { mode: p.mode, sampleImg: sampleImage(p.sample), photo: p.photo,
+    return { mode: p.mode, sampleImg: sampleImage(p.sample), photo: null, poses: p.photos,
              title: p.title, energy: p.energy, camera: p.camera, hack: p.hack, say: p.say, source: p.source };
   }
   if (type === "found") return studio.found;
@@ -332,10 +334,16 @@ function touched() {
 }
 
 /* ----- pose ----- */
+// Your own reference photos: drop or pick as many as you like; each becomes
+// its own pose card. The thumbnails (and the preview's pager) choose which
+// photo the notes below belong to.
+const POSE_FIELDS = ["title", "energy", "camera", "hack", "say", "source"];
+
 function syncPoseMode() {
   const own = studio.pose.mode === "photo";
   $("pose-pick").hidden = own;
   $("pose-own").hidden = !own;
+  if (own) studio.page = studio.pose.at;
 }
 
 $("pose-samples").addEventListener("click", (e) => {
@@ -349,7 +357,7 @@ $("pose-own-btn").addEventListener("click", () => {
   studio.pose.mode = "photo";
   syncPoseMode();
   touched();
-  if (!studio.pose.photo) $("pose-photo").click();
+  if (!studio.pose.photos.length) $("pose-photo").click();
 });
 
 $("pose-back").addEventListener("click", () => {
@@ -361,9 +369,9 @@ $("pose-back").addEventListener("click", () => {
 });
 
 $("pose-photo").addEventListener("change", (e) => {
-  const file = e.target.files && e.target.files[0];
+  const files = Array.from(e.target.files || []);
   e.target.value = "";
-  if (file) setPosePhoto(file);
+  if (files.length) addPosePhotos(files);
 });
 
 const photoDrop = $("photo-drop");
@@ -372,39 +380,120 @@ const photoDrop = $("photo-drop");
 ["dragleave", "drop"].forEach((ev) =>
   photoDrop.addEventListener(ev, (e) => { e.preventDefault(); photoDrop.classList.remove("over"); }));
 photoDrop.addEventListener("drop", (e) => {
-  const file = e.dataTransfer.files && e.dataTransfer.files[0];
-  if (file) setPosePhoto(file);
+  const files = Array.from(e.dataTransfer.files || []);
+  if (files.length) addPosePhotos(files);
 });
 
-async function setPosePhoto(file) {
-  if (!file.type.startsWith("image/") && !/\.(heic|heif)$/i.test(file.name)) {
-    setStatus("err", "✗ That file isn't an image. Use a JPG, PNG, WEBP or HEIC photo.");
-    return;
-  }
-  if (!(await canDecode(file))) {
-    setStatus("err", "✗ This browser can't open that photo. HEIC photos work in Safari on iPhone and Mac; elsewhere export it as JPG or PNG.");
-    return;
-  }
+const openImage = (file) => new Promise((res) => {
   const url = URL.createObjectURL(file);
   const img = new Image();
-  img.onload = () => {
-    if (studio.pose.photoUrl) URL.revokeObjectURL(studio.pose.photoUrl);
-    studio.pose.photo = img;
-    studio.pose.photoUrl = url;
-    $("photo-drop-title").textContent = "Photo added · choose another";
-    photoDrop.classList.add("has-photo");
-    setStatus("", "");
-    touched();
-  };
-  img.onerror = () => {
-    URL.revokeObjectURL(url);
-    setStatus("err", "✗ Couldn't open that photo. Try a JPG or PNG.");
-  };
+  img.onload = () => res({ img, url });
+  img.onerror = () => { URL.revokeObjectURL(url); res(null); };
   img.src = url;
+});
+
+async function addPosePhotos(files) {
+  const p = studio.pose;
+  let notImage = 0, unreadable = 0, overflow = 0, first = -1;
+  for (const file of files) {
+    if (!file.type.startsWith("image/") && !/\.(heic|heif)$/i.test(file.name)) { notImage++; continue; }
+    if (p.photos.length >= MAX_FILES) { overflow++; continue; }
+    const got = await openImage(file);
+    if (!got) { unreadable++; continue; }
+    const entry = { photo: got.img, url: got.url };
+    // The first photo takes the notes already typed; later ones start blank,
+    // except the source, which is usually the same for the whole lot.
+    POSE_FIELDS.forEach((k) => { entry[k] = !p.photos.length || k === "source" ? (p[k] || "") : ""; });
+    p.photos.push(entry);
+    if (first < 0) first = p.photos.length - 1;
+  }
+  if (overflow) setStatus("err", `✗ Up to ${MAX_FILES} photos at a time. Kept the first ${MAX_FILES}, skipped ${overflow}.`);
+  else if (unreadable) setStatus("err", unreadable === 1 && files.length === 1
+    ? "✗ This browser can't open that photo. HEIC photos work in Safari on iPhone and Mac; elsewhere export it as JPG or PNG."
+    : `✗ Couldn't open ${unreadable} of the photos. HEIC photos work in Safari on iPhone and Mac; elsewhere export them as JPG or PNG.`);
+  else if (notImage) setStatus("err", notImage === files.length
+    ? "✗ That file isn't an image. Use a JPG, PNG, WEBP or HEIC photo."
+    : `✗ Skipped ${notImage} file${notImage > 1 ? "s" : ""} that ${notImage > 1 ? "aren't images" : "isn't an image"}.`);
+  else setStatus("", "");
+  if (first >= 0) showPose(first);
 }
 
+// Show photo i: its notes in the form, its card in the preview.
+function showPose(i) {
+  const p = studio.pose;
+  p.at = Math.max(0, Math.min(i, p.photos.length - 1));
+  const cur = p.photos[p.at];
+  if (cur) POSE_FIELDS.forEach((k) => { p[k] = cur[k] || ""; });
+  document.querySelectorAll("[data-pose]").forEach((el) => { el.value = p[el.dataset.pose] || ""; });
+  studio.page = p.at;
+  renderPoseStrip();
+  touched();
+}
+
+function removePose(i) {
+  const p = studio.pose;
+  const [gone] = p.photos.splice(i, 1);
+  try { URL.revokeObjectURL(gone.url); } catch (_) {}
+  if (p.photos.length) showPose(i < p.at || p.at >= p.photos.length ? p.at - 1 : p.at);
+  else { p.at = 0; studio.page = 0; renderPoseStrip(); touched(); }
+  const t = $("pose-thumbs").querySelector(".thumb-btn[aria-current]") || photoDrop;
+  t.focus();
+}
+
+function renderPoseStrip() {
+  const p = studio.pose, n = p.photos.length;
+  $("pose-strip").hidden = !n;
+  photoDrop.classList.toggle("has-photo", n > 0);
+  $("photo-drop-title").textContent = n ? "+ Add more photos" : "Add your reference photos";
+  $("photo-drop-sub").textContent = n
+    ? plural(n, "photo") + ", " + plural(n, "card") + " · drop or pick more"
+    : "One or many: each photo becomes its own pose card";
+  const strip = $("pose-thumbs");
+  strip.innerHTML = "";
+  p.photos.forEach((q, i) => {
+    const w = document.createElement("div");
+    w.className = "thumb-wrap" + (i === p.at ? " sel" : "");
+    const name = q.title ? "“" + q.title + "”" : "photo " + (i + 1);
+    const t = document.createElement("button");
+    t.type = "button";
+    t.className = "thumb-btn";
+    t.setAttribute("aria-label", "Notes for " + name);
+    if (i === p.at) t.setAttribute("aria-current", "true");
+    const img = document.createElement("img");
+    img.src = q.url;
+    img.alt = "";
+    img.className = "thumb";
+    t.appendChild(img);
+    t.addEventListener("click", () => showPose(i));
+    const x = document.createElement("button");
+    x.type = "button";
+    x.className = "thumb-x";
+    x.textContent = "×";
+    x.setAttribute("aria-label", "Remove " + name);
+    x.addEventListener("click", (e) => { e.stopPropagation(); removePose(i); });
+    w.append(t, x);
+    strip.appendChild(w);
+  });
+  $("pose-at").textContent = n > 1 ? "Notes for photo " + (p.at + 1) + " of " + n : "Notes for this photo";
+  $("pose-next").hidden = n < 2;
+  const sel = strip.querySelector(".sel");
+  if (sel) sel.scrollIntoView({ block: "nearest", inline: "nearest" });
+}
+$("pose-next").addEventListener("click", () => {
+  const n = studio.pose.photos.length;
+  if (n > 1) showPose((studio.pose.at + 1) % n);
+});
+
 document.querySelectorAll("[data-pose]").forEach((el) =>
-  el.addEventListener("input", () => { studio.pose[el.dataset.pose] = el.value; touched(); }));
+  el.addEventListener("input", () => {
+    const p = studio.pose, k = el.dataset.pose, cur = p.mode === "photo" && p.photos[p.at];
+    // The source is usually the same for every photo: photos still sharing the
+    // old one follow along; one given its own source keeps it.
+    if (cur && k === "source") p.photos.forEach((q) => { if (q !== cur && (q.source || "") === (cur.source || "")) q.source = el.value; });
+    p[k] = el.value;
+    if (cur) cur[k] = el.value;
+    touched();
+  }));
 
 /* ----- timeline / groups / shot list / settings ----- */
 function renderListEditor() {
@@ -631,7 +720,7 @@ document.addEventListener("paste", (e) => {
   if (!files.length) return;
   e.preventDefault();
   track("Pasted image", { type: studio.type, n: files.length });
-  if (studio.type === "pose" && studio.pose.mode === "photo") { setPosePhoto(files[0]); return; }
+  if (studio.type === "pose" && studio.pose.mode === "photo") { addPosePhotos(files); return; }
   if (studio.type !== "upload") selectType("upload", true);
   addFiles(files);
   const st = $("studio");
@@ -849,6 +938,8 @@ function flipPage(step) {
     // Your own designs: the pager walks through the uploaded images.
     state.selected = (state.selected + step + n) % n;
     renderFilmstrip();
+  } else if (studio.type === "pose" && studio.pose.mode === "photo") {
+    showPose((studio.pose.at + step + n) % n);   // the notes follow the card on show
   } else {
     studio.page = (studio.page + step + n) % n;
   }
@@ -898,7 +989,7 @@ camButtons.forEach((btn) => {
 /* ---------- the button and its hint ---------- */
 function emptyHint() {
   if (studio.type === "pose") {
-    return studio.pose.mode === "photo" ? "Add your reference photo to make this card." : "Loading the pose, one moment…";
+    return studio.pose.mode === "photo" ? "Add your reference photos to make your cards." : "Loading the pose, one moment…";
   }
   if (studio.type === "found") return "Add your name, phone or email.";
   if (studio.type === "upload") return "Add an image: the bride's Pinterest pins, a Canva export, a screenshot or a photo (or paste one with " + PASTE_KEY + ").";
@@ -911,6 +1002,7 @@ const freeLimitHit = (n) => paywallOn() && !isSignedIn() && n > 1;
 function hintText(n) {
   if (n === 0) return emptyHint();
   if (freeLimitHit(n)) {
+    if (studio.type === "pose") return "Your free card is one pose. Remove the other photos, or sign in free to make up to 3.";
     return studio.type === "upload"
       ? "Your free card is one image. Remove the others, or sign in free to convert up to 3."
       : "This makes " + n + " cards and your free card is one: trim it to " +
@@ -2426,7 +2518,7 @@ document.addEventListener("click", (e) => {
   const b = e.target.closest("[data-make]");
   if (!b) return;
   const type = b.dataset.make;
-  if (type === "pose" && studio.pose.mode === "photo" && !studio.pose.photo) {
+  if (type === "pose" && studio.pose.mode === "photo" && !studio.pose.photos.length) {
     studio.pose.mode = "sample";   // "try one free" means one of ours
   }
   if (type !== studio.type) selectType(type);
@@ -2579,6 +2671,10 @@ function startFresh() {
   LIST_TYPES.forEach((t) => { studio.lists[t] = clone(DEFAULTS[t]); });
   studio.found = clone(DEFAULTS.found);
   Object.keys(FIELD_MAX.pose).forEach((k) => { studio.pose[k] = ""; });
+  studio.pose.photos.forEach((q) => { try { URL.revokeObjectURL(q.url); } catch (_) {} });
+  studio.pose.photos = [];
+  studio.pose.at = 0;
+  renderPoseStrip();
   studio.pose.mode = "sample";
   setPoseSample("pack-03");
   document.querySelectorAll("[data-pose]").forEach((el) => { el.value = ""; });

@@ -198,6 +198,13 @@ button{font-family:var(--sans)}
 .photo-drop.has-photo{border-style:solid;border-color:rgba(4,120,87,.45);background:#f3fbf7}
 .photo-drop-title{font-weight:600;font-size:15px;color:var(--ink)}
 .photo-drop-sub{font-size:12.5px;color:var(--muted)}
+.photo-drop.has-photo{padding:11px 14px}
+.photo-drop.has-photo .photo-drop-title{font-size:14px;color:var(--accent-2)}
+/* your reference photos: pick one to write its notes */
+.pose-strip{margin:-4px 0 10px}
+.pose-strip .filmstrip{padding:8px 4px 4px}
+.pose-at{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 0;font-size:13px;font-weight:600;color:var(--ink-2)}
+.pose-at .link-btn{font-size:13px;font-weight:600;padding:4px 0}
 
 /* form fields */
 .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}

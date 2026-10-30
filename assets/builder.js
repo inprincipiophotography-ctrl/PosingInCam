@@ -55,7 +55,11 @@ window.CardRenderer = (function () {
   /** How many cards this data makes (0 = nothing to make yet). */
   function pages(type, data) {
     if (!data) return 0;
-    if (type === "pose") return loaded(data.mode === "photo" ? data.photo : data.sampleImg) ? 1 : 0;
+    if (type === "pose") {
+      // Your own photos: one card per photo (data.poses), each with its own notes.
+      if (data.mode === "photo" && data.poses) return data.poses.filter((q) => loaded(q.photo)).length;
+      return loaded(data.mode === "photo" ? data.photo : data.sampleImg) ? 1 : 0;
+    }
     if (type === "found") return [data.name, data.phone, data.email].some((v) => clean(v)) ? 1 : 0;
     if (!PER_PAGE[type]) return 0;
     const n = rowsOf(type, data).length;
@@ -335,10 +339,12 @@ window.CardRenderer = (function () {
     ctx.fillText(line.slice(1), x + ctx.measureText(line[0]).width, y);
   }
 
-  function drawPose(ctx, d) {
+  function drawPose(ctx, data, page) {
+    // Several photos: this page's photo and notes; none yet: the form as it stands.
+    const d = data.mode === "photo" && data.poses && data.poses[page] ? data.poses[page] : data;
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, PORT.w, PORT.h);
-    if (d.mode !== "photo") {
+    if (data.mode !== "photo") {
       // A ready-made card from the pose pack, already laid out at 2:3.
       if (loaded(d.sampleImg)) drawCover(ctx, d.sampleImg, 0, 0, PORT.w, PORT.h);
       return;
