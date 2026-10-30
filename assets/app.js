@@ -1488,24 +1488,23 @@ function renderProjectPicker() {
     return;
   }
 
-  const keep = state.activeProject || sel.value;
+  // A new wedding is the usual reason to be here, so "+ New project" comes first
+  // and is the default. An existing project is only kept when it was picked on
+  // purpose this visit ("Add cards", the menu, or the cards just made in it).
+  const keep = state.activeProject;
   sel.hidden = false;
   sel.innerHTML = "";
-  state.projects.forEach((p) => {
-    const o = document.createElement("option");
-    o.value = p.id;
-    o.textContent = p.name;
-    sel.appendChild(o);
-  });
   const o = document.createElement("option");
   o.value = NEW_PROJECT;
-  o.textContent = "+ New project…";
+  o.textContent = "+ New project";
   sel.appendChild(o);
-
-  // A refresh (after a conversion, or a background token renewal) must not undo
-  // "+ New project…" while someone is typing its name.
-  if (keep === NEW_PROJECT) sel.value = NEW_PROJECT;
-  else sel.value = state.projects.some((p) => p.id === keep) ? keep : state.projects[0].id;
+  state.projects.forEach((p) => {
+    const opt = document.createElement("option");
+    opt.value = p.id;
+    opt.textContent = p.name;
+    sel.appendChild(opt);
+  });
+  sel.value = keep && state.projects.some((p) => p.id === keep) ? keep : NEW_PROJECT;
   state.activeProject = sel.value === NEW_PROJECT ? null : sel.value;
   syncProjectRow();
 }
@@ -1518,14 +1517,12 @@ function syncProjectRow() {
   const creating = first || sel.value === NEW_PROJECT;
   fresh.hidden = !creating;
   if (!creating) fresh.value = "";
-  label.textContent = first ? "Name this job" : "Project";
+  label.textContent = "Which wedding?";
   // With no <select> showing, point the label at the box people actually type in.
   label.htmlFor = first ? "project-new" : "project-select";
-  hint.textContent = first
-    ? "Group a wedding under one name, so you can make its cards in several goes and the numbers keep counting up."
-    : creating
-      ? "A new project starts its card numbers at 0001."
-      : "Cards in this project keep counting up, so you can make a wedding's cards in several goes.";
+  hint.textContent = creating
+    ? "A new project: its cards start at 0001."
+    : "Adds to this project: card numbers keep counting up.";
 }
 
 async function loadHistory() {
@@ -1541,7 +1538,8 @@ async function loadHistory() {
     const r = await fetch("/api/history");
     if (!r.ok) throw new Error("history unavailable");
     const j = await r.json();
-    state.projects = j.projects || [];
+    // A project waiting out its Undo stays gone if the list refreshes meanwhile.
+    state.projects = (j.projects || []).filter((p) => !pendingDeletes.has(p.id));
     renderProjectPicker();
     renderHistory(j.batches || [], state.projects);
   } catch (_) {
@@ -1590,6 +1588,7 @@ function renderHistory(batches, projects) {
   const byId = new Map();
   hist.groups = [];
   batches.forEach((b) => {
+    if (b.project_id && pendingDeletes.has(b.project_id)) return;
     const key = b.project_id || "_none";
     let g = byId.get(key);
     if (!g) {
@@ -1613,11 +1612,11 @@ function paintHistory() {
   const matches = q ? hist.groups.filter((g) => fold(g.name).includes(q)) : hist.groups;
   const shown = q || hist.all ? matches : matches.slice(0, PROJECTS_SHOWN);
   list.innerHTML = "";
-  shown.forEach((g) => list.appendChild(projectRow(g)));
+  shown.forEach((g) => list.appendChild(projectCard(g)));
   if (!shown.length) {
     const none = document.createElement("p");
     none.className = "proj-none";
-    none.textContent = "No project matches “" + hist.query.trim() + "”.";
+    none.textContent = total ? "No project matches “" + hist.query.trim() + "”." : "No projects yet. Your next cards will start one.";
     list.appendChild(none);
   }
   more.hidden = !!q || total <= PROJECTS_SHOWN;
@@ -1625,50 +1624,43 @@ function paintHistory() {
   more.setAttribute("aria-expanded", String(hist.all));
 }
 
-function projectRow(g) {
-  const row = document.createElement("div");
-  row.className = "proj";
+// One card per project: its first cards on a camera screen, the name, and two
+// quiet actions. Batches and "Delete" live in the ⋯ menu.
+function projectCard(g) {
+  const card = document.createElement("article");
+  card.className = "proj";
+  card.dataset.key = g.key;
   const isOpen = hist.open.has(g.key);
   const latest = g.batches[0];
 
-  const head = document.createElement("div");
-  head.className = "proj-head";
-  const toggle = document.createElement("button");
-  toggle.type = "button";
-  toggle.className = "proj-toggle";
-  const panelId = "proj-b-" + String(g.key).replace(/[^\w-]/g, "");
-  toggle.setAttribute("aria-controls", panelId);
-  toggle.setAttribute("aria-expanded", String(isOpen));
-
-  const thumb = document.createElement("span");
-  thumb.className = "proj-thumb";
-  const first = (latest.files || []).find((f) => f.url);
-  if (first) {
+  const cover = document.createElement("div");
+  cover.className = "proj-cover";
+  cover.setAttribute("aria-hidden", "true");
+  const seen = [];
+  g.batches.some((b) => (b.files || []).some((f) => { if (f.url) seen.push(f.url); return seen.length >= 3; }));
+  seen.slice(0, 3).forEach((url) => {
     const img = document.createElement("img");
-    img.src = first.url;
+    img.src = url;
     img.alt = "";
     img.loading = "lazy";
-    thumb.appendChild(img);
-  }
-  const text = document.createElement("span");
-  text.className = "proj-text";
-  const name = document.createElement("span");
+    cover.appendChild(img);
+  });
+
+  const body = document.createElement("div");
+  body.className = "proj-body";
+  const name = document.createElement("h3");
   name.className = "proj-name";
   name.textContent = g.name;
-  const meta = document.createElement("span");
+  name.title = g.name;
+  const meta = document.createElement("p");
   meta.className = "proj-meta";
   meta.textContent = [plural(g.cards, "card"), plural(g.batches.length, "batch", "batches"),
-    latest.created_at ? shortDate(latest.created_at) : ""].filter(Boolean).join(" · ");
-  text.append(name, meta);
-  const chev = document.createElement("span");
-  chev.className = "proj-chev";
-  chev.setAttribute("aria-hidden", "true");
-  toggle.append(thumb, text, chev);
-  head.appendChild(toggle);
+    latest.created_at ? "last " + shortDate(latest.created_at) : ""].filter(Boolean).join(" · ");
+  body.append(name, meta);
 
+  const actions = document.createElement("div");
+  actions.className = "proj-actions";
   if (g.id) {
-    const actions = document.createElement("div");
-    actions.className = "proj-actions";
     const add = document.createElement("button");
     add.type = "button";
     add.className = "btn btn-ghost btn-sm";
@@ -1677,34 +1669,150 @@ function projectRow(g) {
     add.addEventListener("click", () => useProject(g.id));
     const dl = document.createElement("button");
     dl.type = "button";
-    dl.className = "btn btn-primary btn-sm";
-    dl.textContent = "Download";
+    dl.className = "link-btn proj-dl";
+    dl.textContent = "Download ZIP";
     dl.title = "All " + plural(g.cards, "card") + " in one ZIP";
     dl.addEventListener("click", () =>
       downloadZip("/api/history?download_project=" + encodeURIComponent(g.id), dl));
     actions.append(add, dl);
-    head.appendChild(actions);
   }
 
-  // Batches (and their thumbnails) are only built when the row is opened.
+  // Batches (and their thumbnails) are only built when they're asked for.
   const panel = document.createElement("div");
   panel.className = "proj-batches";
-  panel.id = panelId;
+  panel.id = "proj-b-" + String(g.key).replace(/[^\w-]/g, "");
   panel.hidden = !isOpen;
   const fill = () => { if (!panel.childElementCount) g.batches.forEach((b) => panel.appendChild(batchRow(b))); };
   if (isOpen) fill();
-  row.classList.toggle("open", isOpen);
-  toggle.addEventListener("click", () => {
-    const open = panel.hidden;
+  card.classList.toggle("open", isOpen);
+  const showBatches = (open) => {
     if (open) fill();
     panel.hidden = !open;
-    toggle.setAttribute("aria-expanded", String(open));
-    row.classList.toggle("open", open);
+    card.classList.toggle("open", open);
     if (open) hist.open.add(g.key); else hist.open.delete(g.key);
-  });
-  row.append(head, panel);
-  return row;
+  };
+
+  const items = [{ label: () => (panel.hidden ? "Show batches" : "Hide batches") + " (" + g.batches.length + ")",
+    run: () => showBatches(panel.hidden) }];
+  if (g.id) items.push({ label: () => "Delete project", danger: true, run: () => deleteProject(g) });
+  actions.appendChild(projectMenu(g, items, panel.id));
+
+  body.appendChild(actions);
+  card.append(cover, body, panel);
+  return card;
 }
+
+// The ⋯ menu on a project card: opens on click, closes on Escape, outside
+// clicks and after a choice; arrow keys move between its items.
+function projectMenu(g, items, panelId) {
+  const wrap = document.createElement("div");
+  wrap.className = "proj-menu-wrap";
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "proj-menu-btn";
+  btn.setAttribute("aria-label", "More for " + g.name);
+  btn.setAttribute("aria-haspopup", "menu");
+  btn.setAttribute("aria-expanded", "false");
+  btn.setAttribute("aria-controls", panelId);
+  btn.innerHTML = "<span></span><span></span><span></span>";
+  const menu = document.createElement("div");
+  menu.className = "proj-menu";
+  menu.setAttribute("role", "menu");
+  menu.hidden = true;
+  const close = (refocus) => {
+    menu.hidden = true;
+    btn.setAttribute("aria-expanded", "false");
+    document.removeEventListener("click", outside, true);
+    if (refocus) btn.focus();
+  };
+  const outside = (e) => { if (!wrap.contains(e.target)) close(false); };
+  const open = () => {
+    menu.innerHTML = "";
+    items.forEach((it) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("role", "menuitem");
+      b.className = "proj-menu-item" + (it.danger ? " danger" : "");
+      b.textContent = it.label();
+      b.addEventListener("click", () => { close(!it.danger); it.run(); });
+      menu.appendChild(b);
+    });
+    menu.hidden = false;
+    btn.setAttribute("aria-expanded", "true");
+    menu.firstChild.focus();
+    setTimeout(() => document.addEventListener("click", outside, true), 0);
+  };
+  btn.addEventListener("click", () => (menu.hidden ? open() : close(false)));
+  menu.addEventListener("keydown", (e) => {
+    const all = Array.from(menu.children), i = all.indexOf(document.activeElement);
+    if (e.key === "Escape") { e.preventDefault(); close(true); }
+    else if (e.key === "ArrowDown") { e.preventDefault(); all[(i + 1) % all.length].focus(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); all[(i - 1 + all.length) % all.length].focus(); }
+    else if (e.key === "Tab") close(false);
+  });
+  wrap.append(btn, menu);
+  return wrap;
+}
+
+// Deleting a project: it leaves the list at once and the toast offers Undo for
+// 8 seconds; only then is it deleted on the server (or straight away if the
+// page is closed meanwhile). A failure puts it back and says so.
+const pendingDeletes = new Map();
+function deleteProject(g) {
+  const at = hist.groups.indexOf(g);
+  if (at < 0) return;
+  const pAt = state.projects.findIndex((p) => p.id === g.id);
+  const project = state.projects[pAt];
+  const wasActive = state.activeProject === g.id;
+  const next = hist.groups[at + 1] || hist.groups[at - 1];
+  hist.groups.splice(at, 1);
+  hist.open.delete(g.key);
+  if (pAt >= 0) state.projects.splice(pAt, 1);
+  if (wasActive) state.activeProject = null;
+  paintHistory();
+  renderProjectPicker();
+  // Keyboard focus moves to the next project instead of falling off the page.
+  const nextBtn = next && $("history-list").querySelector('[data-key="' + CSS.escape(String(next.key)) + '"] button');
+  if (nextBtn) nextBtn.focus();
+
+  const restore = () => {
+    if (hist.groups.includes(g)) return;
+    hist.groups.splice(Math.min(at, hist.groups.length), 0, g);
+    if (project && !state.projects.includes(project)) state.projects.splice(Math.min(pAt, state.projects.length), 0, project);
+    if (wasActive) state.activeProject = g.id;
+    paintHistory();
+    renderProjectPicker();
+  };
+  const timer = setTimeout(() => commitDelete(g), 8000);
+  pendingDeletes.set(g.id, { g, timer, restore });
+  toast("Deleted “" + g.name + "” and its " + plural(g.cards, "card") + ". Cards already on your SD card stay.", {
+    ms: 8000,
+    action: () => { clearTimeout(timer); pendingDeletes.delete(g.id); restore(); },
+  });
+}
+async function commitDelete(g, keepalive) {
+  const pending = pendingDeletes.get(g.id);
+  if (!pending) return;
+  pendingDeletes.delete(g.id);
+  clearTimeout(pending.timer);
+  try {
+    const r = await fetch("/api/history", {
+      method: "POST", keepalive: !!keepalive,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ delete_project: g.id }),
+    });
+    if (!r.ok && r.status !== 404) throw new Error("delete failed");
+  } catch (_) {
+    if (keepalive) return;
+    pending.restore();
+    toast("Couldn't delete “" + g.name + "”. Nothing was removed.", {
+      kind: "err", actionLabel: "Try again", action: () => deleteProject(g),
+    });
+  }
+}
+window.addEventListener("pagehide", () => {
+  pendingDeletes.forEach(({ g }) => commitDelete(g, true));
+});
 
 function batchRow(b) {
   const item = document.createElement("div");
