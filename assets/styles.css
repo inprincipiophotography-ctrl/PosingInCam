@@ -647,10 +647,15 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 /* ---------- responsive ---------- */
 @media(min-width:981px){
   .mini{display:none!important}
+  /* The headline runs centred across the top; under it the studio and the
+     camera (or the demo video) sit side by side, level at the top. */
+  .hero-grid{grid-template-areas:"pitch pitch" "studio visual" "why ."}
+  .pitch{width:100%;max-width:820px;margin:0 auto 10px;text-align:center}
+  .pitch .lede{margin:0 auto}
   /* Until you start a card, the demo video keeps its top level with the
-     headline and runs down to the bottom of the studio card, so the two
-     bottom edges line up. That tall card is close to the clip's own 9:16, so
-     nearly the whole frame shows: both hands, the camera and the leaves. */
+     studio card and runs down to its bottom, so the two edges line up. That
+     tall card is close to the clip's own 9:16, so nearly the whole frame
+     shows: both hands, the camera and the leaves. */
   html:not(.previewing):not(.signed-in) .visual{align-self:stretch}
   html:not(.previewing):not(.signed-in) .vid{position:absolute;top:0;bottom:0;left:0;right:0;margin:0 auto;max-height:900px;aspect-ratio:auto}
   /* Its caption hangs just under it, in the hero's bottom padding. */
