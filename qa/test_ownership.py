@@ -119,11 +119,28 @@ class FakeSupabase:
         raise AssertionError(f"POST {path}")
 
     def patch(self, url, params=None, json=None, headers=None, timeout=None):
+        path = url.split(".test", 1)[1]
+        if path.startswith("/rest/v1/") and params:
+            for row in self._rows(path[9:], params):
+                row.update(json or {})
         return R(204, [])
+
+    def delete(self, url, params=None, json=None, headers=None, timeout=None):
+        path = url.split(".test", 1)[1]
+        if path == "/storage/v1/object/cards":
+            for key in (json or {}).get("prefixes", []):
+                self.objects.pop(key, None)
+            return R(200, [])
+        if path.startswith("/rest/v1/") and params:
+            table = path[9:]
+            gone = self._rows(table, params)
+            self.tables[table] = [r for r in self.tables[table] if r not in gone]
+            return R(204, [])
+        raise AssertionError(f"DELETE {path}")
 
 
 FAKE = FakeSupabase()
-requests.get, requests.post, requests.patch = FAKE.get, FAKE.post, FAKE.patch
+requests.get, requests.post, requests.patch, requests.delete = FAKE.get, FAKE.post, FAKE.patch, FAKE.delete
 
 
 def _load(name):
@@ -148,6 +165,10 @@ class User:
 
     def get(self, client, url):
         return client.get(url, headers={"Cookie": self.cookie})
+
+    def delete_project(self, project_id, origin=ORIGIN):
+        return HISTORY.post("/api/history", json={"delete_project": project_id},
+                            headers={"Cookie": self.cookie, "Origin": origin})
 
     def convert(self, **form):
         return convert_as({"Cookie": self.cookie}, **form)
@@ -264,6 +285,48 @@ def test_input_is_capped():
     r = CONVERT.post("/api/convert", data=too_many, content_type="multipart/form-data",
                      headers={"Origin": ORIGIN, "Cookie": ANA.cookie})
     assert r.status_code == 400 and "max 30" in r.get_json()["error"]
+
+
+def _ana_files():
+    return [k for k in FAKE.objects if k.startswith(ANA.uid + "/")]
+
+
+def test_cannot_delete_another_users_project():
+    files, rows = _ana_files(), len(FAKE.tables["conversions"])
+    assert BRUNO.delete_project(ANA_PROJECT).status_code == 404
+    assert any(p["id"] == ANA_PROJECT for p in FAKE.tables["projects"])
+    assert _ana_files() == files and len(FAKE.tables["conversions"]) == rows
+    assert ANA.get(HISTORY, f"/api/history?download_project={ANA_PROJECT}").status_code == 200
+
+
+def test_delete_needs_a_session_and_the_same_site():
+    no_session = HISTORY.post("/api/history", json={"delete_project": ANA_PROJECT}, headers={"Origin": ORIGIN})
+    assert no_session.status_code == 401
+    assert ANA.delete_project(ANA_PROJECT, origin="https://evil.example").status_code == 403
+    assert any(p["id"] == ANA_PROJECT for p in FAKE.tables["projects"])
+
+
+def test_delete_own_project_removes_it_and_its_cards_but_not_the_count():
+    r = ANA.convert(project_name="To delete")
+    assert r.status_code == 200
+    pid = r.headers["X-Project-Id"]
+    stored = [k for k in FAKE.objects if k.startswith(ANA.uid + "/")]
+    batch = next(c for c in FAKE.tables["conversions"] if c.get("project_id") == pid)
+    files = [f"{batch['storage_prefix']}/{n}" for n in batch["files"]]
+    assert files and all(f in stored for f in files)
+    rows = len(FAKE.tables["conversions"])
+
+    r = ANA.delete_project(pid)
+    assert r.status_code == 200 and r.get_json()["deleted"] is True
+    assert not any(p["id"] == pid for p in FAKE.tables["projects"])
+    assert not any(f in FAKE.objects for f in files)
+    assert len(FAKE.tables["conversions"]) == rows        # the daily cap still counts them
+    j = ANA.get(HISTORY, "/api/history").get_json()
+    assert pid not in {p["id"] for p in j["projects"]}
+    assert all(b["project_id"] != pid for b in j["batches"])
+    # the other project is untouched
+    assert ANA.get(HISTORY, f"/api/history?download_project={ANA_PROJECT}").status_code == 200
+    assert ANA.delete_project(pid).status_code == 404
 
 
 def test_no_session_no_data():

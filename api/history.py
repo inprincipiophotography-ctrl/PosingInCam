@@ -2,6 +2,9 @@
 GET  /api/history                 -> the signed-in user's stored batches, with
                                      short-lived signed thumbnail URLs.
 GET  /api/history?download=<id>   -> rebuild that batch as an SD-card ZIP.
+POST /api/history {"delete_project": <id>}
+                                  -> delete one of the user's projects and the
+                                     cards stored for it.
 
 Both require a signed-in session (cookie, see webauth/session.py). Cards live in
 the private ``cards`` storage bucket; clients never talk to storage directly,
@@ -26,23 +29,31 @@ session.install(app)
 def _cors(resp):
     resp.headers["Access-Control-Allow-Origin"] = billing.safe_origin(request.headers.get("Origin"))
     resp.headers["Vary"] = "Origin"
-    resp.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
-    resp.headers["Access-Control-Allow-Headers"] = "Authorization"
+    resp.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    resp.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type"
     return resp
 
 
-@app.route("/", defaults={"path": ""}, methods=["GET", "OPTIONS"])
-@app.route("/<path:path>", methods=["GET", "OPTIONS"])
+@app.route("/", defaults={"path": ""}, methods=["GET", "POST", "OPTIONS"])
+@app.route("/<path:path>", methods=["GET", "POST", "OPTIONS"])
 def history(path):
     if request.method == "OPTIONS":
         return ("", 204)
     if not auth.paywall_enabled():
         return jsonify(batches=[])
+    if request.method == "POST" and not session.same_origin(request):
+        return jsonify(error="Cross-site request refused."), 403
 
     try:
         uid, _email = session.current_user(request)
     except auth.AuthError as e:
         return jsonify(error=e.message), e.status
+
+    if request.method == "POST":
+        project_id = str((request.get_json(silent=True) or {}).get("delete_project") or "")
+        if not project_id:
+            return jsonify(error="Nothing to delete."), 400
+        return _delete_project(uid, project_id)
 
     batch_id = request.args.get("download")
     if batch_id:
@@ -84,6 +95,37 @@ def history(path):
                         "project_id": row.get("project_id"),
                         "files": files})
     return jsonify(batches=batches, projects=projects)
+
+
+def _delete_project(uid: str, project_id: str):
+    """Remove a project: its stored cards, its link to its batches, then the
+    project itself. Only the owner's own project is ever touched."""
+    try:
+        project = auth.get_project(uid, project_id)
+    except Exception:
+        project = None
+    if not project:
+        return jsonify(error="Project not found."), 404
+    try:
+        rows = auth.list_project_batches(uid, project_id)
+    except Exception:
+        return jsonify(error="Could not delete this project. Please try again."), 503
+    paths = []
+    for row in rows:
+        prefix = row.get("storage_prefix") or ""
+        for name in (row.get("files") or []):
+            p = storage.owned_path(uid, prefix, name)
+            if p:
+                paths.append(p)
+    # Detach first: if storage cleanup then fails, the files are orphaned but
+    # never shown again, which beats a project that half-exists.
+    try:
+        if not auth.forget_project_batches(uid, project_id) or not auth.delete_project_row(uid, project_id):
+            return jsonify(error="Could not delete this project. Please try again."), 503
+    except Exception:
+        return jsonify(error="Could not delete this project. Please try again."), 503
+    storage.remove(paths)
+    return jsonify(deleted=True, cards=len(paths))
 
 
 def _zip_response(uid: str, zip_bytes: bytes):

@@ -126,3 +126,19 @@ def download(path: str) -> bytes | None:
         return r.content if r.ok else None
     except Exception:
         return None
+
+
+def remove(paths: list[str]) -> bool:
+    """Delete objects (bucket-relative paths) as the service role. Callers pass
+    only paths from owned_path(). True when storage accepted the request."""
+    if not paths:
+        return True
+    try:
+        r = requests.delete(_url(f"object/{BUCKET}"),
+                            headers={"apikey": auth.SERVICE_KEY,
+                                     "Authorization": f"Bearer {auth.SERVICE_KEY}",
+                                     "Content-Type": "application/json"},
+                            json={"prefixes": paths}, timeout=_TIMEOUT)
+        return r.ok
+    except Exception:
+        return False

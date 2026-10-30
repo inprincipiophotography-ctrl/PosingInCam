@@ -352,6 +352,25 @@ def list_project_batches(uid: str, project_id: str) -> list[dict]:
     return r.json()
 
 
+def forget_project_batches(uid: str, project_id: str) -> bool:
+    """Detach a project's batches from storage and from the project. The rows
+    themselves stay: the daily card cap counts them, so deleting a project never
+    hands cards back."""
+    r = requests.patch(f"{SUPABASE_URL}/rest/v1/conversions",
+                       params={"user_id": f"eq.{uid}", "project_id": f"eq.{project_id}"},
+                       headers=_headers({"Prefer": "return=minimal"}),
+                       json={"storage_prefix": None, "files": None, "project_id": None},
+                       timeout=_TIMEOUT)
+    return r.ok
+
+
+def delete_project_row(uid: str, project_id: str) -> bool:
+    r = requests.delete(f"{SUPABASE_URL}/rest/v1/projects",
+                        params={"id": f"eq.{project_id}", "user_id": f"eq.{uid}"},
+                        headers=_headers({"Prefer": "return=minimal"}), timeout=_TIMEOUT)
+    return r.ok
+
+
 def get_batch(uid: str, batch_id: int) -> dict | None:
     """One stored batch, only if it belongs to this user."""
     r = requests.get(f"{SUPABASE_URL}/rest/v1/conversions",
