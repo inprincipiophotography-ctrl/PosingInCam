@@ -16,12 +16,12 @@ Layer 1 (every state of every action) was the weakest; this pass fixes it and qu
 | Open the studio (signed in) | Before: last project pre-selected ❌; now: "+ New project" with the name field ready | Pick a project in "Which wedding?" | Name the wedding, make cards |
 | "Add cards" on a project | Studio scrolls up, the project is picked and flashes | Pick "+ New project" | Make cards; numbers continue |
 | "Download ZIP" | Button reads "Preparing…", then the ZIP saves | n/a | Copy to the SD card |
-| "Show batches" (⋯ menu) | The project's batches open inside its card | "Hide batches" | Download one batch |
+| Click a project card (or its name) | The project's batches open inside its card; the arrow by the name turns | Click the card again | Download one batch |
 | "Delete project" (⋯ menu) | Before: impossible ❌. Now: card leaves the list; toast "Deleted “X” and its N cards. Cards already on your SD card stay." | "Undo" in the toast for 8 s | Focus moves to the next project |
 | Delete fails (server/network) | Before: n/a. Now: card comes back; toast "Couldn't delete “X”. Nothing was removed." | n/a: nothing changed | "Try again" in the toast |
 
 S2: every button gives immediate feedback (busy "Preparing…", optimistic removal, toasts).
-S3: no dead controls. The ⋯ menu works by mouse and keyboard (Enter, ↑/↓, Esc, Tab).
+S3: no dead controls. The card name is a real button (Enter/Space, `aria-expanded`); the ⋯ menu (Delete project) works by mouse and keyboard (Enter, ↑/↓, Esc, Tab).
 
 ## Layer 2: one product
 - Destructive actions now use the site's one undo pattern (the same toast as a removed line or a pasted list).

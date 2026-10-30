@@ -524,7 +524,15 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .proj-cover img:nth-child(2){transform:translateX(-44%) rotate(-7deg) scale(.92);z-index:2;opacity:.9}
 .proj-cover img:nth-child(3){transform:translateX(44%) rotate(7deg) scale(.92);z-index:1;opacity:.9}
 .proj-body{display:flex;flex-direction:column;gap:3px;padding:14px 16px 14px}
-.proj-name{margin:0;font-weight:600;font-size:17px;line-height:1.3;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proj{cursor:pointer;transition:border-color .2s ease,box-shadow .2s ease}
+.proj:hover{border-color:var(--border)}
+.proj-batches,.proj-actions{cursor:auto}
+.proj-name{margin:0;font-size:17px;line-height:1.3}
+.proj-open{display:flex;align-items:center;gap:8px;width:100%;min-width:0;padding:0;border:0;background:none;font:inherit;font-weight:600;color:var(--ink);text-align:left;cursor:pointer}
+.proj-open-label{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proj-open:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.proj-chev{flex:none;width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translateY(-2px) rotate(45deg);transition:transform .2s ease}
+.proj.open .proj-chev{transform:translateY(1px) rotate(-135deg)}
 .proj-meta{margin:0;font-size:13px;color:var(--muted)}
 .proj-actions{display:flex;align-items:center;gap:6px;margin-top:12px}
 .proj-actions .btn-sm{padding:8px 14px}

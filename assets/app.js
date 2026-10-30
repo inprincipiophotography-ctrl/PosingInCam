@@ -1648,10 +1648,22 @@ function projectCard(g) {
 
   const body = document.createElement("div");
   body.className = "proj-body";
+  // The name is the card's toggle: a click anywhere on the card (but its
+  // buttons) opens or closes the batches; the button keeps it keyboard-reachable.
   const name = document.createElement("h3");
   name.className = "proj-name";
-  name.textContent = g.name;
-  name.title = g.name;
+  const opener = document.createElement("button");
+  opener.type = "button";
+  opener.className = "proj-open";
+  opener.title = g.name;
+  const label = document.createElement("span");
+  label.className = "proj-open-label";
+  label.textContent = g.name;
+  const chev = document.createElement("span");
+  chev.className = "proj-chev";
+  chev.setAttribute("aria-hidden", "true");
+  opener.append(label, chev);
+  name.appendChild(opener);
   const meta = document.createElement("p");
   meta.className = "proj-meta";
   meta.textContent = [plural(g.cards, "card"), plural(g.batches.length, "batch", "batches"),
@@ -1685,17 +1697,23 @@ function projectCard(g) {
   const fill = () => { if (!panel.childElementCount) g.batches.forEach((b) => panel.appendChild(batchRow(b))); };
   if (isOpen) fill();
   card.classList.toggle("open", isOpen);
+  opener.setAttribute("aria-controls", panel.id);
+  opener.setAttribute("aria-expanded", String(isOpen));
   const showBatches = (open) => {
     if (open) fill();
     panel.hidden = !open;
     card.classList.toggle("open", open);
+    opener.setAttribute("aria-expanded", String(open));
     if (open) hist.open.add(g.key); else hist.open.delete(g.key);
   };
+  opener.addEventListener("click", () => showBatches(panel.hidden));
+  card.addEventListener("click", (e) => {
+    if (e.target.closest("button, a, input, .proj-batches, .proj-menu")) return;
+    if (window.getSelection && String(window.getSelection())) return;   // selecting the name, not opening
+    showBatches(panel.hidden);
+  });
 
-  const items = [{ label: () => (panel.hidden ? "Show batches" : "Hide batches") + " (" + g.batches.length + ")",
-    run: () => showBatches(panel.hidden) }];
-  if (g.id) items.push({ label: () => "Delete project", danger: true, run: () => deleteProject(g) });
-  actions.appendChild(projectMenu(g, items, panel.id));
+  if (g.id) actions.appendChild(projectMenu(g, [{ label: () => "Delete project", danger: true, run: () => deleteProject(g) }]));
 
   body.appendChild(actions);
   card.append(cover, body, panel);
@@ -1704,7 +1722,7 @@ function projectCard(g) {
 
 // The ⋯ menu on a project card: opens on click, closes on Escape, outside
 // clicks and after a choice; arrow keys move between its items.
-function projectMenu(g, items, panelId) {
+function projectMenu(g, items) {
   const wrap = document.createElement("div");
   wrap.className = "proj-menu-wrap";
   const btn = document.createElement("button");
@@ -1713,10 +1731,11 @@ function projectMenu(g, items, panelId) {
   btn.setAttribute("aria-label", "More for " + g.name);
   btn.setAttribute("aria-haspopup", "menu");
   btn.setAttribute("aria-expanded", "false");
-  btn.setAttribute("aria-controls", panelId);
   btn.innerHTML = "<span></span><span></span><span></span>";
   const menu = document.createElement("div");
   menu.className = "proj-menu";
+  menu.id = "proj-m-" + String(g.key).replace(/[^\w-]/g, "");
+  btn.setAttribute("aria-controls", menu.id);
   menu.setAttribute("role", "menu");
   menu.hidden = true;
   const close = (refocus) => {
