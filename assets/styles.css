@@ -574,7 +574,20 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .proj-menu-item.danger{color:var(--err)}
 .proj-batches{margin:0 10px 10px;background:var(--surface-2);border-radius:12px;padding:4px 14px}
 .batch{display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:center;gap:6px 14px;padding:12px 0}
-.batch+.batch{border-top:1px solid var(--border-soft)}
+/* the batches, side by side (assets/app.js batchCarousel) */
+.batch-track{position:relative;display:flex;align-items:flex-start;gap:10px;margin:0 -14px;padding:2px 14px 12px;scroll-padding:0 14px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;box-sizing:content-box}
+.batch-track::-webkit-scrollbar{display:none}
+.batch-track>.batch{flex:0 0 calc(100% - 34px);scroll-snap-align:start;background:var(--surface);border:1px solid var(--border-soft);border-radius:12px;padding:12px 12px 8px}
+.batch-track>.batch:only-child{flex-basis:100%}
+.batch-nav{display:flex;align-items:center;gap:6px;padding:10px 0 8px}
+.batch-where{margin-right:auto;font-size:12.5px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.batch-arrow{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;padding:0}
+.batch-arrow::before{content:"";width:7px;height:7px;border-right:2px solid var(--ink-2);border-bottom:2px solid var(--ink-2);transform:translateX(-1px) rotate(-45deg)}
+.batch-arrow.prev::before{transform:translateX(1px) rotate(135deg)}
+.batch-arrow:hover:not(:disabled){border-color:var(--ink-2)}
+.batch-arrow:disabled{opacity:.35;cursor:default}
+.batch-arrow:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){.batch-track{transition:height .25s ease}}
 .batch-info{grid-column:1/-1;grid-row:1;display:flex;flex-direction:column;gap:2px;min-width:0}
 .batch-title{font-weight:600;font-size:14px;color:var(--ink)}
 .batch-sub{font-size:12.5px;color:var(--muted)}

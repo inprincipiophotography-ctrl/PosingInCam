@@ -16,7 +16,7 @@ Layer 1 (every state of every action) was the weakest; this pass fixes it and qu
 | Open the studio (signed in) | Before: last project pre-selected ❌; now: "+ New project" with the name field ready | Pick a project in "Which wedding?" | Name the wedding, make cards |
 | "Add cards" on a project | Studio scrolls up, the project is picked and flashes | Pick "+ New project" | Make cards; numbers continue |
 | "Download ZIP" | Button reads "Preparing…", then the ZIP saves | n/a | Copy to the SD card |
-| Click a project card (or its name) | The project's batches open inside its card; the arrow by the name turns | Click the card again | Download one batch |
+| Click a project card (or its name) | The project's batches open inside its card, side by side: swipe or use the arrows, "2 / 6" shows where you are | Click the card again | Download one batch |
 | Tap cards in an open project | Each picked card gets a red ring and a tick; a bar shows "N cards selected" | Tap again, "Clear", or close the project | "Download N cards": a ZIP with just those, same SD-card layout |
 | Hover or long-press a card thumbnail | The card shows large (beside it, or full screen on touch) | Move away / tap anywhere / Esc | Tap to pick it |
 | "Delete project" (⋯ menu) | Before: impossible ❌. Now: "Delete “X”? Its N cards are removed… [Cancel] [Delete project]" first (focus on Cancel, Esc cancels); then the card leaves the list; toast "Deleted “X” and its N cards. Cards already on your SD card stay." | "Undo" in the toast for 8 s | Focus moves to the next project |

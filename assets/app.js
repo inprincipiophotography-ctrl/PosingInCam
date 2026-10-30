@@ -1768,8 +1768,11 @@ function projectCard(g) {
       hint.textContent = "Tap cards to pick just those, or download a whole batch.";
       panel.appendChild(hint);
     }
-    g.batches.forEach((b) => panel.appendChild(batchRow(b, pick)));
-    panel.appendChild(bar);
+    const track = document.createElement("div");
+    track.className = "batch-track";
+    g.batches.forEach((b) => track.appendChild(batchRow(b, pick)));
+    if (g.batches.length > 1) panel.appendChild(batchCarousel(track));
+    panel.append(track, bar);
   };
   if (isOpen) fill();
   card.classList.toggle("open", isOpen);
@@ -2046,6 +2049,53 @@ window.addEventListener("pagehide", () => {
 // One batch inside an open project: every card as a thumbnail. With ``pick``
 // (projects that have an id) a thumbnail is a toggle that picks the card for
 // "Download N cards".
+// A project's batches side by side: swipe (or the arrows) to move between
+// them; the next one peeks in at the edge, and the track takes the height of
+// the batch on show so a short batch doesn't leave a gap under it.
+function batchCarousel(track) {
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const slides = Array.from(track.children);
+  const n = slides.length;
+  track.setAttribute("role", "group");
+  track.setAttribute("aria-label", "Batches");
+  slides.forEach((s, i) => s.setAttribute("aria-label", "Batch " + (i + 1) + " of " + n));
+  const nav = document.createElement("div");
+  nav.className = "batch-nav";
+  const where = document.createElement("span");
+  where.className = "batch-where";
+  const arrow = (label, dir) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "batch-arrow " + dir;
+    b.setAttribute("aria-label", label);
+    b.addEventListener("click", () => go(at + (dir === "next" ? 1 : -1)));
+    return b;
+  };
+  const prev = arrow("Previous batch", "prev"), next = arrow("Next batch", "next");
+  nav.append(where, prev, next);
+  let at = 0, raf = 0;
+  const go = (i) => {
+    const s = slides[Math.max(0, Math.min(n - 1, i))];
+    track.scrollTo({ left: s.offsetLeft - slides[0].offsetLeft, behavior: reduce ? "auto" : "smooth" });
+  };
+  const sync = () => {
+    raf = 0;
+    const x = track.scrollLeft;
+    at = slides.reduce((best, s, i) =>
+      Math.abs(s.offsetLeft - slides[0].offsetLeft - x) < Math.abs(slides[best].offsetLeft - slides[0].offsetLeft - x) ? i : best, 0);
+    where.textContent = (at + 1) + " / " + n;
+    prev.disabled = at === 0;
+    next.disabled = at === n - 1;
+    track.style.height = slides[at].offsetHeight + "px";
+  };
+  const later = () => { if (!raf) raf = requestAnimationFrame(sync); };
+  track.addEventListener("scroll", later, { passive: true });
+  track.addEventListener("load", later, true);     // thumbnails arriving can rewrap a batch
+  window.addEventListener("resize", later);
+  requestAnimationFrame(sync);
+  return nav;
+}
+
 function batchRow(b, pick) {
   const item = document.createElement("div");
   item.className = "batch";
