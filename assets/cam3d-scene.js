@@ -10,8 +10,8 @@ import { RoomEnvironment } from "./vendor/three/addons/RoomEnvironment.js";
 
 const DEG = Math.PI / 180;
 const FOV = 16;
-const BASE = { x: 7 * DEG, y: -10 * DEG };   // a little from above, grip side turned in
-const TILT = { x: 4 * DEG, y: 7 * DEG };     // how far the mouse can turn it
+const BASE = { x: 5 * DEG, y: 0 };          // square on, a little from above
+const TILT = { x: 4 * DEG, y: 6 * DEG };     // how far the mouse can turn it
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const finePointer = matchMedia("(pointer: fine)").matches;
 
@@ -430,7 +430,7 @@ export async function mount(host) {
     return busy;
   }
 
-  const target = { x: BASE.x, y: BASE.y }, now = { x: BASE.x, y: BASE.y - (reduced ? 0 : 12 * DEG) };
+  const target = { x: BASE.x, y: BASE.y }, now = { x: BASE.x, y: BASE.y };
   let visible = true, queued = false, dirty = true;
   function frame() {
     queued = false;

@@ -10,13 +10,21 @@ function webgl2() {
 
 if (hosts.length && "IntersectionObserver" in window && webgl2()) {
   let scene = null;
+  const load = () => (scene = scene || import("./cam3d-scene.js"));
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
       if (!e.isIntersecting) return;
       io.unobserve(e.target);
-      scene = scene || import("./cam3d-scene.js");
-      scene.then((m) => m.mount(e.target)).catch(() => {});
+      load().then((m) => m.mount(e.target)).catch(() => {});
     });
   }, { rootMargin: "200px" });
   hosts.forEach((h) => io.observe(h));
+  // The homepage camera only appears once you start a card: start loading on
+  // the first touch of the studio, so it is ready by the time it shows.
+  const studio = document.getElementById("studio");
+  if (studio && matchMedia("(min-width: 981px)").matches) {
+    const early = () => { load().catch(() => {}); studio.removeEventListener("pointerdown", early); studio.removeEventListener("focusin", early); };
+    studio.addEventListener("pointerdown", early, { passive: true });
+    studio.addEventListener("focusin", early);
+  }
 }

@@ -350,7 +350,8 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .cam-body.portrait .cam-screen{width:100%}
 .cam-body.portrait .cam-buttons{flex-direction:row;width:auto;justify-content:center}
 /* the 3D camera (cam3d.js) draws the body; the CSS one stays for layout and as the fallback */
-.cam3d-gl{position:absolute;z-index:-1;pointer-events:none}
+.cam3d-gl{position:absolute;z-index:-1;pointer-events:none;opacity:0;transition:opacity .2s ease}
+[data-cam3d-ready] .cam3d-gl{opacity:1}
 .cam-body[data-cam3d-ready]{background:none;box-shadow:none;isolation:isolate}
 .cam-body[data-cam3d-ready]::before{visibility:hidden}
 .cam-body[data-cam3d-ready] .cam-buttons,.cam-body[data-cam3d-ready] .cam-screen canvas,.cam-body[data-cam3d-ready] .cam-screen::after{visibility:hidden}
