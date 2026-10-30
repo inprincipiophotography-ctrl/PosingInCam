@@ -777,8 +777,6 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .go.pill{background:var(--ink);border-color:var(--ink);border-radius:999px;box-shadow:none;cursor:progress}
 .go.pill.done{background:var(--ink);cursor:default}
 .go.pill:disabled{opacity:1}
-/* Leaving for the demo: a black shape floods the page from where you clicked, and contracts on arrival. */
-.flood{position:fixed;z-index:200;left:0;top:0;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background:var(--ink);pointer-events:none;will-change:transform}
 
 /* ---------- signed-in: the studio first, the pitch below ---------- */
 /* Returning signed-in users land on the studio and their projects; new visitors
@@ -926,3 +924,16 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   .type{padding:6px 11px;font-size:13px}
   .studio-sub{display:none}
 }
+
+/* Between pages: one shutter blink. The old page closes from top and bottom,
+   the new one opens from the middle, over black. Native cross-document view
+   transitions keep the old page on screen until the new one is ready; browsers
+   without them just navigate. Nothing with reduced motion. */
+@media (prefers-reduced-motion:no-preference){
+  @view-transition{navigation:auto}
+  ::view-transition{background:#0b0b0c}
+  ::view-transition-old(root){animation:shutter-close .13s cubic-bezier(.55,0,1,.45) both}
+  ::view-transition-new(root){animation:shutter-open .2s cubic-bezier(0,.55,.45,1) .1s both}
+}
+@keyframes shutter-close{from{clip-path:inset(0)}to{clip-path:inset(50% 0)}}
+@keyframes shutter-open{from{clip-path:inset(50% 0)}to{clip-path:inset(0)}}

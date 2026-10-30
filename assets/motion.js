@@ -3,7 +3,7 @@
    - cards catch a soft light where the cursor is and tilt a little towards it
    - the main buttons lean towards the cursor (magnetic)
    - the camera picker's selection slides between Sony, Canon and Nikon
-   - grids unfold like a paper map; a black flood carries you to the demo
+   - grids unfold like a paper map
    Decoration only: nothing here changes content or behaviour. With reduced
    motion the headlines simply show and nothing tilts, leans or slides; touch
    screens get no cursor effects. */
@@ -116,45 +116,6 @@
       mo.observe(prices, { childList: true });
       if (prices.children.length) unfold(prices);
     }
-  }
-
-  // ---------- leaving for the demo: a black flood ----------
-  // A click on a link to /demo floods the page from the click point, then
-  // goes; the demo page contracts the same flood into nothing on arrival.
-  if (!reduce) {
-    var arriving = false;
-    try { arriving = sessionStorage.getItem("sc-flood") === "1"; sessionStorage.removeItem("sc-flood"); } catch (_) {}
-    if (arriving) {
-      var shut = document.createElement("div");
-      shut.className = "flood";
-      shut.style.left = "50%"; shut.style.top = "50%";
-      var full = Math.hypot(window.innerWidth, window.innerHeight) / 12 * 1.15;
-      document.body.appendChild(shut);
-      shut.animate([{ transform: "scale(" + full + ")" }, { transform: "scale(0)" }],
-        { duration: 420, easing: "cubic-bezier(.7,0,.84,0)", fill: "forwards" }).onfinish = function () { shut.remove(); };
-    }
-    document.addEventListener("click", function (e) {
-      var a = e.target.closest && e.target.closest('a[href^="/demo"]');
-      if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target === "_blank") return;
-      if (location.pathname.indexOf("/demo") === 0) return;
-      e.preventDefault();
-      var f = document.createElement("div");
-      f.className = "flood";
-      f.style.left = e.clientX + "px"; f.style.top = e.clientY + "px";
-      // overscale past the farthest corner so no edge is left in the last frame
-      var far = Math.max(Math.hypot(e.clientX, e.clientY), Math.hypot(innerWidth - e.clientX, e.clientY),
-        Math.hypot(e.clientX, innerHeight - e.clientY), Math.hypot(innerWidth - e.clientX, innerHeight - e.clientY));
-      document.body.appendChild(f);
-      f.animate([{ transform: "scale(0)" }, { transform: "scale(" + (far / 12 * 1.15) + ")" }],
-        { duration: 340, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" }).onfinish = function () {
-        try { sessionStorage.setItem("sc-flood", "1"); } catch (_) {}
-        location.href = a.href;
-      };
-    });
-    // Coming back with the browser's Back button: don't leave the flood up.
-    window.addEventListener("pageshow", function (e) {
-      if (e.persisted) Array.prototype.forEach.call(document.querySelectorAll(".flood"), function (f) { f.remove(); });
-    });
   }
 
   if (!fine) return;
