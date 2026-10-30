@@ -8,6 +8,9 @@ GET  /api/history?download_project=<id>[&only=A.JPG,B.JPG]
 POST /api/history {"delete_project": <id>}
                                   -> delete one of the user's projects and the
                                      cards stored for it.
+POST /api/history {"delete_unfiled": true}
+                                  -> delete the cards stored outside any project
+                                     (the "Earlier cards" group).
 
 Both require a signed-in session (cookie, see webauth/session.py). Cards live in
 the private ``cards`` storage bucket; clients never talk to storage directly,
@@ -53,7 +56,10 @@ def history(path):
         return jsonify(error=e.message), e.status
 
     if request.method == "POST":
-        project_id = str((request.get_json(silent=True) or {}).get("delete_project") or "")
+        body = request.get_json(silent=True) or {}
+        if body.get("delete_unfiled") is True:
+            return _delete_unfiled(uid)
+        project_id = str(body.get("delete_project") or "")
         if not project_id:
             return jsonify(error="Nothing to delete."), 400
         return _delete_project(uid, project_id)
@@ -127,6 +133,31 @@ def _delete_project(uid: str, project_id: str):
             return jsonify(error="Could not delete this project. Please try again."), 503
     except Exception:
         return jsonify(error="Could not delete this project. Please try again."), 503
+    storage.remove(paths)
+    return jsonify(deleted=True, cards=len(paths))
+
+
+def _delete_unfiled(uid: str):
+    """Remove the user's stored cards that sit in no project ("Earlier cards"),
+    the same way _delete_project removes a project's."""
+    try:
+        rows = auth.list_unfiled_batches(uid)
+    except Exception:
+        return jsonify(error="Could not delete these cards. Please try again."), 503
+    if not rows:
+        return jsonify(error="Nothing to delete."), 404
+    paths = []
+    for row in rows:
+        prefix = row.get("storage_prefix") or ""
+        for name in (row.get("files") or []):
+            p = storage.owned_path(uid, prefix, name)
+            if p:
+                paths.append(p)
+    try:
+        if not auth.forget_unfiled_batches(uid):
+            return jsonify(error="Could not delete these cards. Please try again."), 503
+    except Exception:
+        return jsonify(error="Could not delete these cards. Please try again."), 503
     storage.remove(paths)
     return jsonify(deleted=True, cards=len(paths))
 

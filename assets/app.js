@@ -1702,7 +1702,7 @@ function renderHistory(batches, projects) {
   const byId = new Map();
   hist.groups = [];
   batches.forEach((b) => {
-    if (b.project_id && pendingDeletes.has(b.project_id)) return;
+    if (pendingDeletes.has(b.project_id || "_none")) return;
     const key = b.project_id || "_none";
     let g = byId.get(key);
     if (!g) {
@@ -1884,11 +1884,13 @@ function projectCard(g) {
     showBatches(panel.hidden);
   });
 
-  if (g.id) actions.appendChild(projectMenu(g, [{ label: () => "Delete project", danger: true, run: async () => {
+  // "Earlier cards" (no project) can go too: its cards, not a project.
+  const what = g.id ? "project" : "cards";
+  actions.appendChild(projectMenu(g, [{ label: () => g.id ? "Delete project" : "Delete these cards", danger: true, run: async () => {
     const sure = await confirmDialog({
       title: "Delete “" + g.name + "”?",
       text: "Its " + plural(g.cards, "card") + " are removed from your account. Cards already on your SD card stay.",
-      confirmLabel: "Delete project",
+      confirmLabel: "Delete " + what,
     });
     if (sure) deleteProject(g);
   } }]));
@@ -2108,22 +2110,22 @@ function deleteProject(g) {
     renderProjectPicker();
   };
   const timer = setTimeout(() => commitDelete(g), 8000);
-  pendingDeletes.set(g.id, { g, timer, restore });
+  pendingDeletes.set(g.key, { g, timer, restore });
   toast("Deleted “" + g.name + "” and its " + plural(g.cards, "card") + ". Cards already on your SD card stay.", {
     ms: 8000,
-    action: () => { clearTimeout(timer); pendingDeletes.delete(g.id); restore(); },
+    action: () => { clearTimeout(timer); pendingDeletes.delete(g.key); restore(); },
   });
 }
 async function commitDelete(g, keepalive) {
-  const pending = pendingDeletes.get(g.id);
+  const pending = pendingDeletes.get(g.key);
   if (!pending) return;
-  pendingDeletes.delete(g.id);
+  pendingDeletes.delete(g.key);
   clearTimeout(pending.timer);
   try {
     const r = await fetch("/api/history", {
       method: "POST", keepalive: !!keepalive,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ delete_project: g.id }),
+      body: JSON.stringify(g.id ? { delete_project: g.id } : { delete_unfiled: true }),
     });
     if (!r.ok && r.status !== 404) throw new Error("delete failed");
   } catch (_) {
@@ -2138,9 +2140,6 @@ window.addEventListener("pagehide", () => {
   pendingDeletes.forEach(({ g }) => commitDelete(g, true));
 });
 
-// One batch inside an open project: every card as a thumbnail. With ``pick``
-// (projects that have an id) a thumbnail is a toggle that picks the card for
-// "Download N cards".
 // A project's batches side by side: swipe (or the arrows) to move between
 // them; the next one peeks in at the edge, and the track takes the height of
 // the batch on show so a short batch doesn't leave a gap under it.
@@ -2188,6 +2187,9 @@ function batchCarousel(track) {
   return nav;
 }
 
+// One batch inside an open project: every card as a thumbnail. With ``pick``
+// (projects that have an id) a thumbnail is a toggle that picks the card for
+// "Download N cards".
 function batchRow(b, pick) {
   const item = document.createElement("div");
   item.className = "batch";

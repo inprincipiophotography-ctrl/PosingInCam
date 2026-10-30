@@ -59,6 +59,8 @@ def _match(row, key, cond):
         return str(v) == cond[3:]
     if cond == "not.is.null":
         return v is not None
+    if cond == "is.null":
+        return v is None
     if cond.startswith("in.("):
         return str(v) in cond[4:-1].split(",")
     if cond.startswith("gte."):
@@ -327,6 +329,45 @@ def test_delete_own_project_removes_it_and_its_cards_but_not_the_count():
     # the other project is untouched
     assert ANA.get(HISTORY, f"/api/history?download_project={ANA_PROJECT}").status_code == 200
     assert ANA.delete_project(pid).status_code == 404
+
+
+def _unfiled_batch(user, name):
+    """A stored batch from before projects existed: files, no project_id."""
+    prefix = f"{user.uid}/old-{name}"
+    FAKE.objects[f"{prefix}/{name}.JPG"] = b"jpg"
+    row = {"id": FAKE.next_id, "user_id": user.uid, "created_at": "2026-08-04T10:00:00+00:00",
+           "vendor": "sony", "cards": 1, "storage_prefix": prefix, "files": [f"{name}.JPG"],
+           "project_id": None}
+    FAKE.next_id += 1
+    FAKE.tables["conversions"].append(row)
+    return row, f"{prefix}/{name}.JPG"
+
+
+def test_delete_earlier_cards_only_touches_your_own_unfiled_cards():
+    mine, mine_file = _unfiled_batch(ANA, "DSC00001")
+    theirs, theirs_file = _unfiled_batch(BRUNO, "DSC00002")
+    in_project = [c for c in FAKE.tables["conversions"] if c.get("project_id") == ANA_PROJECT and c.get("files")]
+    assert in_project
+    rows = len(FAKE.tables["conversions"])
+
+    no_session = HISTORY.post("/api/history", json={"delete_unfiled": True}, headers={"Origin": ORIGIN})
+    assert no_session.status_code == 401
+    cross = HISTORY.post("/api/history", json={"delete_unfiled": True},
+                         headers={"Cookie": ANA.cookie, "Origin": "https://evil.example"})
+    assert cross.status_code == 403 and mine_file in FAKE.objects
+
+    r = HISTORY.post("/api/history", json={"delete_unfiled": True}, headers={"Cookie": ANA.cookie, "Origin": ORIGIN})
+    assert r.status_code == 200 and r.get_json() == {"deleted": True, "cards": 1}
+    assert mine_file not in FAKE.objects and mine["storage_prefix"] is None
+    assert len(FAKE.tables["conversions"]) == rows         # the daily cap still counts them
+    j = ANA.get(HISTORY, "/api/history").get_json()
+    assert mine["id"] not in {b["id"] for b in j["batches"]}
+    # someone else's earlier cards and your projects are untouched
+    assert theirs_file in FAKE.objects and theirs["storage_prefix"]
+    assert all(c.get("storage_prefix") for c in in_project)
+    assert ANA.get(HISTORY, f"/api/history?download_project={ANA_PROJECT}").status_code == 200
+    again = HISTORY.post("/api/history", json={"delete_unfiled": True}, headers={"Cookie": ANA.cookie, "Origin": ORIGIN})
+    assert again.status_code == 404
 
 
 def test_download_only_the_picked_cards():

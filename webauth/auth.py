@@ -364,6 +364,29 @@ def forget_project_batches(uid: str, project_id: str) -> bool:
     return r.ok
 
 
+def list_unfiled_batches(uid: str) -> list[dict]:
+    """Stored batches that belong to no project (made before projects existed)."""
+    r = requests.get(f"{SUPABASE_URL}/rest/v1/conversions",
+                     params={"user_id": f"eq.{uid}", "project_id": "is.null",
+                             "storage_prefix": "not.is.null",
+                             "select": "id,storage_prefix,files", "limit": "500"},
+                     headers=_headers(), timeout=_TIMEOUT)
+    r.raise_for_status()
+    return r.json()
+
+
+def forget_unfiled_batches(uid: str) -> bool:
+    """Detach those batches from storage; the rows stay for the daily card cap,
+    as with forget_project_batches."""
+    r = requests.patch(f"{SUPABASE_URL}/rest/v1/conversions",
+                       params={"user_id": f"eq.{uid}", "project_id": "is.null",
+                               "storage_prefix": "not.is.null"},
+                       headers=_headers({"Prefer": "return=minimal"}),
+                       json={"storage_prefix": None, "files": None},
+                       timeout=_TIMEOUT)
+    return r.ok
+
+
 def delete_project_row(uid: str, project_id: str) -> bool:
     r = requests.delete(f"{SUPABASE_URL}/rest/v1/projects",
                         params={"id": f"eq.{project_id}", "user_id": f"eq.{uid}"},
