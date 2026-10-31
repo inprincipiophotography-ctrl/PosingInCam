@@ -2,63 +2,77 @@
 name: Shoot Cards
 description: Pose, timeline and shot-list cards that show up in your camera's playback, by NotaLucis.
 colors:
-  record-red: "#a40000"
-  record-red-deep: "#7e0000"
-  record-red-soft: "rgba(164,0,0,.08)"
-  record-red-line: "rgba(164,0,0,.18)"
-  record-red-wash: "#fff4f4"
-  paper: "#fbfbfd"
+  galactic-violet: "#105bff"
+  galactic-violet-deep: "#0a47d9"
+  galactic-violet-soft: "rgba(16,91,255,.08)"
+  galactic-violet-line: "rgba(16,91,255,.2)"
+  galactic-violet-wash: "#eaf0ff"
+  bubblegum: "#fe8500"
+  bubblegum-ink: "#a65100"
+  bubblegum-soft: "rgba(254,133,0,.14)"
+  bloom-pink: "oklch(.66 .22 345)"
+  bloom-violet: "oklch(.58 .24 295)"
+  marshmallow: "#f0f0f0"
   surface: "#ffffff"
-  surface-sunk: "#f4f3f1"
-  ink: "#1d1d1f"
-  ink-soft: "#424245"
-  muted: "#6e6e73"
-  border: "rgba(0,0,0,.12)"
-  border-soft: "rgba(0,0,0,.08)"
+  surface-sunk: "#e7e8ee"
+  well: "rgba(240,240,243,.72)"
+  glass-edge: "rgba(255,255,255,.95)"
+  ink: "#15161c"
+  ink-soft: "#3c3e48"
+  muted: "#62646e"
+  border: "rgba(20,28,58,.13)"
+  border-soft: "rgba(20,28,58,.08)"
   camera-black: "#1c1c1e"
   ok: "#047857"
   error: "#be123c"
 typography:
   display:
     fontFamily: "Instrument Serif, Georgia, serif"
-    fontSize: "clamp(40px, 5.2vw, 66px)"
+    fontSize: "clamp(58px, 6.4vw, 94px)"
     fontWeight: 400
-    lineHeight: 0.98
-    letterSpacing: "-0.02em"
+    lineHeight: 0.95
+    letterSpacing: "-0.028em"
   headline:
     fontFamily: "Instrument Serif, Georgia, serif"
     fontSize: "clamp(30px, 4.4vw, 48px)"
     fontWeight: 400
     lineHeight: 1.06
     letterSpacing: "-0.012em"
+  numeral:
+    fontFamily: "Instrument Serif, Georgia, serif"
+    fontSize: "28px"
+    fontWeight: 400
+    lineHeight: 1
   title:
-    fontFamily: "Inter, -apple-system, Segoe UI, Roboto, sans-serif"
+    fontFamily: "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif"
     fontSize: "17px"
     fontWeight: 700
     lineHeight: 1.3
     letterSpacing: "-0.01em"
   body:
-    fontFamily: "Inter, -apple-system, Segoe UI, Roboto, sans-serif"
+    fontFamily: "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif"
     fontSize: "16px"
     fontWeight: 400
     lineHeight: 1.6
   label:
-    fontFamily: "Inter, -apple-system, Segoe UI, Roboto, sans-serif"
+    fontFamily: "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif"
     fontSize: "13px"
     fontWeight: 600
     letterSpacing: "0.06em"
-  accent-italic:
-    fontFamily: "Instrument Serif, Georgia, serif"
-    fontSize: "19px"
-    fontWeight: 400
-    lineHeight: 1.2
 rounded:
   control: "10px"
   button: "12px"
+  bevel-button: "14px 8px 14px 8px"
   card-sm: "16px"
-  card: "20px"
+  tile-screen: "18px"
+  nav: "20px"
   panel: "22px"
-  feature: "28px"
+  price: "24px"
+  studio: "26px"
+  bevel-studio: "30px 18px 30px 18px"
+  video: "30px"
+  pane: "40px"
+  bevel-frame: "56px 40px 56px 40px"
   pill: "999px"
 spacing:
   gutter: "clamp(16px, 4vw, 40px)"
@@ -68,40 +82,48 @@ spacing:
   wide: "1180px"
 components:
   button-primary:
-    backgroundColor: "{colors.record-red}"
+    backgroundColor: "{colors.galactic-violet}"
     textColor: "{colors.surface}"
-    rounded: "{rounded.button}"
+    rounded: "{rounded.bevel-button}"
     padding: "13px 24px"
-    typography: "{typography.title}"
   button-primary-hover:
-    backgroundColor: "{colors.record-red-deep}"
+    backgroundColor: "{colors.galactic-violet-deep}"
+  button-nav-cta:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.surface}"
+    rounded: "{rounded.pill}"
+    padding: "10px 20px"
   button-ghost:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
     rounded: "{rounded.button}"
     padding: "13px 24px"
   button-ghost-hover:
-    textColor: "{colors.record-red-deep}"
+    textColor: "{colors.galactic-violet-deep}"
   chip:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink-soft}"
     rounded: "{rounded.pill}"
     padding: "7px 13px"
   chip-selected:
-    backgroundColor: "{colors.record-red-wash}"
-    textColor: "{colors.record-red-deep}"
+    backgroundColor: "{colors.galactic-violet-wash}"
+    textColor: "{colors.galactic-violet-deep}"
   input:
-    backgroundColor: "{colors.paper}"
+    backgroundColor: "{colors.well}"
     textColor: "{colors.ink}"
     rounded: "{rounded.control}"
     padding: "9px 11px"
-  card:
+  glass-panel:
     backgroundColor: "{colors.surface}"
-    rounded: "{rounded.card}"
+    rounded: "{rounded.panel}"
     padding: "30px 26px"
+  price-badge:
+    backgroundColor: "{colors.bubblegum}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.pill}"
   camera-screen:
     backgroundColor: "{colors.camera-black}"
-    rounded: "{rounded.card-sm}"
+    rounded: "{rounded.tile-screen}"
     padding: "9px"
 ---
 
@@ -109,144 +131,185 @@ components:
 
 ## Overview
 
-**Creative North Star: "The Camera Back"**
+**Creative North Star: "Marshmallow Glass"**
 
-The back of a camera is a calm, dark, exact surface where everything has to read in two seconds: a lit screen, a few firm buttons, one red dot that means something is happening. Shoot Cards borrows that discipline for a light web page. The page itself stays quiet (cool paper, black ink, a faint grid), so the real heroes, the camera body, the cards on its screen and the wedding photographs, carry the colour and the emotion.
+The page is one frosted pane on a marshmallow-white ground, lit from its lower left by a Bubblegum-to-Violet bloom; the real camera is the subject the HUD points at. Every panel is the same material: a white glass gradient with a bright top edge and a cool shadow, holding paler wells for inputs and lists the way a dashboard card holds its chart. Bevelled corners, diagonal hatch marks and ringed HUD nodes give the glass an instrument's precision, so it reads as equipment rather than candy.
 
-Density is moderate and editorial: generous section spacing, short copy, one clear action per block. Type pairs a condensed, slightly literary serif for headlines with a precise grotesque for everything you read or press. The red is rare on purpose; when it appears it marks the action, the selected state or the word that matters.
+Density is moderate and editorial: generous section spacing, short copy, one clear action per block. Instrument Serif speaks in headlines; Inter instructs in everything you read in detail or press. Galactic Violet is the only action colour. Bubblegum is light, not ink: it lives in the bloom and in a handful of small marks, never on a button.
 
-Controls feel like a camera's own dials and buttons: precise and tactile. They have firm edges, a definite pressed state, and a small lift with a deeper shadow under the finger or cursor.
+The camera keeps its own world inside this one. Camera bodies, bezels and the cards drawn on their screens stay camera black and keep the card's own colours; the glass frames them, it never tints them.
 
 **Key Characteristics:**
-- Light, cool paper with a faint 40px line grid that drifts and brightens around the cursor.
-- One red accent (Record Red), used for action, selection and emphasis only.
-- Instrument Serif for display and headlines, Inter for body, labels and controls.
-- Real camera bodies and real wedding photographs; cards framed as camera screens.
-- Precise, tactile controls: lift on hover, press on click, visible focus rings.
+- Marshmallow #F0F0F0 ground under a faint 40px line grid that rolls like calm water, with two soft blooms.
+- Frosted glass panels with white hairline edges, cool shadows and darker inner wells.
+- Galactic Violet for every action, selection and focus; Bubblegum only as bloom and small HUD marks.
+- The OKLCH bloom (Bubblegum through pink and violet to Galactic Violet) rising from a corner of each large pane.
+- Bevelled corners (`corner-shape: bevel`) on the hero frame, studio, panes, primary buttons and closing card.
+- Real camera bodies and real wedding photographs; cards always shown in a camera bezel.
+- Shape, not fade: things rise, unfold, iris open and blink; nothing crossfades.
 
 ## Colors
 
-A near-monochrome, cool-white paper palette with a single camera-red signal.
+A pale, cool marshmallow ground and white glass, one blue-violet signal for action, and a warm Bubblegum light that only ever glows.
 
 ### Primary
-- **Record Red** (`record-red`): primary buttons, selected states, focus rings, italic emphasis in the hero headline, card accents. The camera's record dot: it means "this is the action".
-- **Record Red Deep** (`record-red-deep`): hover on primary buttons and red text on white (links, eyebrows, numerals) where the brighter red would be too loud for small type.
-- **Record Red Soft** (`record-red-soft`): tinted fills behind upsells, nudges and the 4px focus halo on drop zones.
-- **Record Red Line** (`record-red-line`): the hairline around a red-tinted fill, and text selection.
-- **Record Red Wash** (`record-red-wash`): selected chips, the "Shoot Cards" column of the comparison table, hover on the white button inside the red closing card.
+- **Galactic Violet** (`galactic-violet`): primary buttons, the studio's "Make my card", selected chips and camera picker, the featured plan's ring, focus outlines, the italic "blank" in the hero headline, caret and accent-color. It reads blue; the makers chose the hex over the name. 4.7:1 on Marshmallow, 5.3:1 with white text on it.
+- **Galactic Violet Deep** (`galactic-violet-deep`): hover on primary buttons and every small violet text: links, link buttons, the white closing button's label.
+- **Galactic Violet Soft** (`galactic-violet-soft`): tinted fills behind upsells and nudges, focus halos on drop zones.
+- **Galactic Violet Line** (`galactic-violet-line`): hairline on a tinted fill, text selection, link underlines on text pages.
+- **Galactic Violet Wash** (`galactic-violet-wash`): selected chips and the Shoot Cards column of the comparison table.
+
+### Tertiary
+- **Bubblegum** (`bubblegum`): the light source. The bloom, the dot in the "Real Sony" HUD chip, the diagonal hatch stripes beside "Made for wedding & portrait photographers" and the upgrade line, and the one "Pay once" badge on the featured plan (Ink text on it). It reads orange; the hex is binding.
+- **Bubblegum Ink** (`bubblegum-ink`): Bubblegum dark enough for text (4.7:1): the serif step numerals in "how it works" and the numbered parts lists.
+- **Bubblegum Soft** (`bubblegum-soft`): the 4px halo around the HUD chip's dot.
+- **Bloom Pink** (`bloom-pink`) and **Bloom Violet** (`bloom-violet`): the middle stops of the bloom, so the gradient passes through pink and violet instead of muddy grey. Used only inside bloom gradients, at 24–50% alpha.
 
 ### Neutral
-- **Paper** (`paper`): page background and inset fields; a cool off-white, never warm cream.
-- **Surface** (`surface`): cards, the studio panel, pricing, FAQ, table.
-- **Surface Sunk** (`surface-sunk`): segmented controls (camera picker, price toggle) and pressed-in areas.
-- **Ink** (`ink`): headings and primary text. **Ink Soft** (`ink-soft`): body copy and secondary lines. **Muted** (`muted`): captions, notes, meta (darkened to pass AA).
-- **Border** / **Border Soft**: control outlines and section dividers.
-- **Camera Black** (`camera-black`): the bezel around card previews and the camera bodies; the only dark surface on the page.
+- **Marshmallow** (`marshmallow`): the page ground. Cool and neutral, never cream.
+- **Surface** (`surface`): solid white for dialogs, menus, the peek preview, focused inputs and the base of the glass gradient.
+- **Surface Sunk** (`surface-sunk`): pressed-in areas, inline code on text pages.
+- **Well** (`well`): the paler inset a glass panel holds: inputs, drop zones, the camera picker, project batches, code blocks.
+- **Glass Edge** (`glass-edge`): the white hairline around every glass panel and pane.
+- **Ink** (`ink`): headings, primary text, the black nav pill and the "Make my card" busy pill. **Ink Soft** (`ink-soft`): body copy. **Muted** (`muted`): captions, notes, meta, and the grid lines (5.2:1 on Marshmallow).
+- **Border** / **Border Soft**: control outlines and dividers, tinted cool navy rather than black.
+- **Camera Black** (`camera-black`): the bezel around card previews and the camera bodies; the only dark surface besides the ink pills.
 
 ### Status
-- **OK** (`ok`) for success messages and "yes" ticks; **Error** (`error`) for failures and destructive hovers.
+- **OK** (`ok`) for success and "yes" ticks; **Error** (`error`) for failures and destructive hovers.
 
-**The Record Dot Rule.** Red marks action, selection or the single emphasised word, never decoration. If a screen has more than one red-filled element competing above the fold, one of them is wrong.
+### The Bloom
+The bloom is `linear-gradient(in oklch 120deg, #fe8500, #105bff)` for strokes and the brand mark, and a stack of radial gradients (Bubblegum at the corner, Bloom Pink, Bloom Violet, then Galactic Violet farthest out) for panes. The hero frame anchors it lower left; the card-types and pricing panes anchor it lower right so they answer the hero; the closing card carries it at full strength (Bubblegum lower left over a Violet-to-pink OKLCH field, white text). The live camera preview sits in a soft conic Violet/Bubblegum halo.
 
-**The Paper Stays Cool Rule.** Backgrounds are cool off-white (`paper`) and pure white (`surface`). No warm creams, beiges or tinted section bands.
+**The One Signal Rule.** Galactic Violet marks the action, the selection and the focus; nothing else on the page is violet-filled. The nav CTA is black precisely so it never competes with the studio's violet button.
+
+**The Bubblegum Glows Rule.** Bubblegum is light, not paint: bloom, HUD dot, hatch marks, numerals (as Bubblegum Ink) and the single "Pay once" badge. It never fills a button, a chip or a body of text.
+
+**The Camera Keeps Its Colours Rule.** Cards rendered for the camera (pose cards with their red bars, the card-type tile SVGs, everything `assets/builder.js` draws) keep their own palette, including red. That is product output, not site UI; the site palette never recolours it, and its red never leaks into site UI.
 
 ## Typography
 
 **Display Font:** Instrument Serif (with Georgia, serif)
-**Body Font:** Inter (with -apple-system, Segoe UI, Roboto, sans-serif)
-**Card Font:** Noto Serif (semi-condensed 600 and italic 400), only inside the pose cards the studio draws on canvas; never on the page itself.
+**Body Font:** Inter (with -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif)
+**Card Font:** Noto Serif, only inside the cards the studio draws on canvas; never on the page itself.
 
-**Character:** A tall, condensed serif with a handwritten-italic voice for headlines, paired with a neutral, exact grotesque for reading and pressing. The serif speaks; Inter instructs.
+**Character:** A tall, condensed serif with a handwritten-italic voice for headlines and numerals, paired with a neutral, exact grotesque for reading and pressing. The serif speaks; Inter instructs. Both are binding NotaLucis identity.
 
 ### Hierarchy
-- **Display** (400, clamp(40px, 5.2vw, 66px), 0.98): the hero headline only. The italic serif word in Record Red carries the hook ("blank").
-- **Headline** (400, clamp(30px, 4.4vw, 48px), 1.06): section headings, balanced (`text-wrap: balance`).
-- **Accent Italic** (400 italic, 19–20px, 1.2): the short serif italic line above a section heading and the serif numerals (1, 2, 3) in lists and steps.
-- **Title** (700, 15.5–17px): card and panel titles, list item leads.
-- **Body** (400, 16–18.5px, 1.6): copy in Ink Soft, measure capped around 34–46em/ch; `text-wrap: pretty`.
-- **Label** (600, 11–13px, 0.05–0.06em, uppercase): pricing tier names, table headers, badges.
+- **Display** (400, clamp(58px, 6.4vw, 94px), 0.95, -0.028em on desktop; clamp(40px, 5.2vw, 66px) below 981px; clamp(36px, 10.5vw, 44px) on phones): the hero headline only, centred over the studio and camera. The italic "blank" is Galactic Violet over a bloom stroke.
+- **Headline** (400, clamp(30px, 4.4vw, 48px), 1.06): section headings and the closing card (up to 52px, white), balanced.
+- **Numeral** (400, 28px, 1): serif step numbers in Bubblegum Ink; they pop in on the spring.
+- **Title** (700, 17px, -0.01em): studio and panel titles, list item leads.
+- **Body** (400, 16–18.5px, 1.6): copy in Ink Soft, measure capped around 34–40em (68ch on text pages at 16.5px/1.7); `text-wrap: pretty`.
+- **Label** (600, 11–13px, 0.04–0.06em, uppercase): pricing tier names, table headers, the "Made for…" line under the hero copy.
 
-**The Two Voices Rule.** Serif for what we say, sans for what you do. Buttons, fields, labels and data are always Inter; headlines and the occasional emphasised italic are always Instrument Serif.
+**The Two Voices Rule.** Serif for what we say, sans for what you do. Buttons, fields, labels and data are always Inter; headlines, numerals and the emphasised italic word are always Instrument Serif.
+
+**The Heading Stands Alone Rule.** No kicker, eyebrow or tagline line above a heading. A section opens on its serif headline.
 
 ## Layout
 
-A centred single column of sections, each capped at 1060px (content) or 1180px (wide), with a fluid side gutter of clamp(16px, 4vw, 40px) and section padding of clamp(48px, 7vw, 96px). The hero is a two-column grid (pitch + studio on the left, the sticky camera video on the right) that collapses to one column below 980px. Card grids run three across, two below 980px, one below 640px; pricing stacks below 880px with the purchasable Pro plan first.
+A centred column of sections capped at 1060px (content) or 1180px (wide), with a fluid gutter of clamp(16px, 4vw, 40px) and section padding of clamp(48px, 7vw, 96px). Large panes (the hero frame, card types, pricing) are inset from the viewport by `gutter - 22px` so their glass edge sits just outside the content.
 
-The background grid is 40px; it is decoration, not a layout grid, and content does not snap to it.
+On desktop (981px and up) the hero headline runs centred across the top of the frame; under it the studio card (left) and the camera video (right) sit level at the top, the video stretching to the studio's height. While a card is being made, the two columns go equal and the camera stays level with the middle of the screen. Below 981px the hero stacks pitch, video, studio; the frame drops its border and keeps only the bloom. Card-type tiles run three across, two below 981px, one below 641px; pricing stacks below 881px with the purchasable Pro plan first.
 
-On touch screens every tappable control has a 44px-tall hit area. Anchor sections keep a 76px scroll margin for the sticky nav.
+The background grid is 40px; it is decoration, not a layout grid, and content does not snap to it. On touch screens every tappable control has a 44px-tall hit area. Anchor sections keep a 76px scroll margin for the floating nav.
 
 ## Elevation & Depth
 
-Layered and soft. Surfaces sit on the paper with long, low-opacity ambient shadows; depth increases as a response to interaction. The only dark, heavy object is the camera itself, which gets a deep shadow of its own.
+Layered glass. Depth comes from translucency, a bright inset top edge and long, cool, low-opacity shadows tinted navy (`rgba(20,28,58,…)`), never black. The bloom lights panes from behind. The camera body is the one heavy dark object and gets a deep shadow of its own. Backdrop blur is used on the studio (22px), pricing cards (16px), HUD chips (12px) and the nav (20px), never on dialogs or over the looping video at page scale.
 
 ### Shadow Vocabulary
-- **Ambient** (`0 1px 2px rgba(0,0,0,.04), 0 10px 30px rgba(0,0,0,.05)`): tiles, FAQ, table, pricing cards at rest.
-- **Lifted** (`0 2px 6px rgba(0,0,0,.05), 0 24px 60px rgba(0,0,0,.10)`): the studio panel, the video, the pose stack, hovered cards.
-- **Hover contact** (`0 8px 20px rgba(0,0,0,.08)`, added under Lifted): the tighter shadow that appears as a card rises 4px.
-- **Accent** (`0 6px 20px rgba(164,0,0,.24)` at rest, `0 10px 26px rgba(164,0,0,.3)` on hover): primary buttons only.
-- **Camera** (`0 36px 70px rgba(0,0,0,.24), 0 4px 10px rgba(0,0,0,.18)`): the camera body in the live preview.
+- **Glass** (`inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(20,28,58,.05), 0 18px 44px rgba(20,28,58,.09)`): every glass panel at rest.
+- **Ambient** (`0 1px 2px rgba(20,28,58,.05), 0 12px 32px rgba(20,28,58,.07)`): tile screens and small surfaces.
+- **Lifted** (`0 2px 6px rgba(20,28,58,.05), 0 28px 64px rgba(20,28,58,.12)`): the video, the featured plan, hovered cards.
+- **Pane** (`inset 0 1px 0 #fff, 0 30px 70px rgba(20,28,58,.07)`): the hero frame and the card-type and pricing panes.
+- **Accent** (`0 8px 22px rgba(16,91,255,.28)` at rest, `0 12px 30px rgba(16,91,255,.36)` on hover): violet primary buttons only.
+- **Ink pill** (`0 6px 16px rgba(20,22,28,.18)`, `0 10px 22px rgba(20,22,28,.24)` on hover): the black nav CTA and the demo play button.
+- **Rim** (`0 0 0 6–8px rgba(255,255,255,.38–.55)`): a white halo ring around the video, tile screens and project covers, so dark screens sit inside the glass.
 
-**The Lift On Touch Rule.** Surfaces are calm at rest. Hover lifts a card 4px (a button 2px) and deepens its shadow; pressing snaps a button 1px down in 50ms. With reduced motion, nothing moves; colour and border still change.
+**The Glass Is The Material Rule.** Every panel (studio, pricing, FAQ, table, projects, dialogs, menus, the how-it-works strip) is the same glass: the white 90%→64% gradient, the white hairline edge, the Glass shadow. Inner content sits in Wells a step darker. Don't invent a second panel material.
+
+**The Lift On Touch Rule.** Surfaces are calm at rest. Hover lifts a card 4px (a button 2px) and deepens its shadow; pressing snaps a button 1px down. With reduced motion, nothing moves; colour and border still change.
 
 ## Shapes
 
-Rounded, consistent and slightly generous: corners grow with the size of the object. Fields 10px, buttons 12px, small cards and camera screens 16px, cards 20px, the studio panel 22px, the video and the closing card 26–28px, chips and badges fully pill-shaped. Borders are 1px hairlines; a selected state adds an inset 1px Record Red ring rather than a thicker border.
+Rounded glass with bevelled cuts. Corners grow with the object: fields 10px, small buttons 10px, buttons 12px, the floating nav 20px, panels 22px, price cards 24px, the studio 26px, the video 30px, large panes 40px, chips, badges and the nav CTA fully pill-shaped.
+
+Where `corner-shape: bevel` is supported, the defining objects alternate bevel and round corners (`bevel round bevel round`): the hero frame (56px/40px), the studio and the featured plan (30px/18px), the closing card (44px/28px), primary buttons (14px/8px) and the brand mark. The card-types and pricing panes flip the pattern (`round bevel round bevel`, 40px/56px). The nav links sit on one tab bevelled at its two lower corners. Elsewhere the same objects fall back to plain rounding.
+
+**Hatch marks** are the system's measuring ticks: 30px squares of 135° diagonal lines (`rgba(20,28,58,.16)`, 2px on 7px) in the top-left and top-right corners of the hero frame and each pane; small 120° Bubblegum stripe bars beside the "Made for…" label and the upgrade line; white 120° stripes in the closing card's lower right.
+
+Borders are 1px hairlines; a selected state adds an inset 1px Galactic Violet ring rather than a thicker border.
 
 ## Components
 
 ### Buttons
-- **Shape:** gently rounded (12px); small buttons 10px.
-- **Primary:** Record Red fill, white Inter 600 text, 13px × 24px padding, Accent shadow. Hover: Record Red Deep, lifts 2px, larger Accent shadow. Active: 1px down. Disabled: 50% opacity, no shadow, no lift.
-- **Ghost:** white fill, hairline border, Ink text; hover turns border Record Red and text Record Red Deep.
-- **Text buttons and links:** Record Red Deep, 600, underline on hover (3px offset); trailing arrows nudge 3px forward on hover and never wrap away from their last word.
-- **Focus:** 2px Record Red outline, 2px offset, on every control.
+- **Shape:** bevelled 14px/8px where supported, else 12px; small buttons 10px.
+- **Primary:** Galactic Violet fill, white Inter 600 16px, 13px × 24px padding, Accent shadow. Hover: Galactic Violet Deep, lifts 2px, larger Accent shadow, leans up to 6px towards the cursor. Active: 1px down. Disabled: 50% opacity, no shadow.
+- **Nav CTA:** a black Ink pill (999px, 10px × 20px), white text, Ink pill shadow; hover goes pure black. It stays black even while the studio's own button is on screen. On phones it shortens to "Free card".
+- **Ghost:** 72% white glass, hairline border, Ink text; hover turns white with a Violet border and Violet Deep text.
+- **Closing button:** white on the bloom card, Violet Deep label, turning Ink on hover.
+- **Text buttons and links:** Violet Deep, underline on hover (3px offset); trailing arrows nudge forward and never wrap away from their last word.
+- **Focus:** 2px Galactic Violet outline, 2px offset, on every control.
 
 ### Chips
-- **Style:** white pills with a hairline border, Ink Soft 500 text.
-- **State:** hover tints the border red; selected gets Record Red Wash, an inset red ring and 600 weight.
+- **Style:** 70% white pills with a hairline border, Ink Soft 500 13.5px; "+ 3 more" is a dashed transparent pill.
+- **State:** hover tints the border violet; selected gets Violet Wash, Violet Deep text, an inset Violet ring and 600 weight.
 
 ### Cards / Containers
-- **Corner Style:** 20px (pricing, table), 22px (studio), 16px (FAQ list, tiles).
-- **Background:** Surface on Paper.
-- **Shadow Strategy:** Ambient at rest, Lifted plus hover contact on hover.
-- **Border:** Border Soft hairline; on hover a pricing card's border warms to 25% Record Red and its tier name turns red. The featured plan keeps a full Record Red ring.
+- **Corner Style:** see Shapes; price cards 24px, FAQ and table 22px, projects 22px.
+- **Background:** the glass gradient on Marshmallow; dialogs, menus and the peek preview are solid white.
+- **Shadow Strategy:** Glass at rest, Lifted on hover; cursor light and tilt up to 5°.
+- **Border:** Glass Edge hairline. The featured plan carries a full Galactic Violet ring and the Bubblegum "Pay once" badge; other tier names turn Violet Deep on hover.
 - **Internal Padding:** 26–30px.
+- **Panes:** card types and pricing sit in their own large bevelled glass panes with hatch marks top-left and top-right and the bloom anchored lower right.
 
 ### Inputs / Fields
-- **Style:** Paper fill, hairline border, 10px radius, 9px × 11px padding, 15px text (16px on phones to stop iOS zoom).
-- **Focus:** 2px Record Red outline, border turns red, fill turns white.
-- **Drop zones:** dashed 1.5px border; hover/drag/focus turns it red with a 4px Record Red Soft halo; filled turns solid green.
+- **Style:** Well fill, Border hairline, 10px radius, 9px × 11px padding, 15px text (16px on phones to stop iOS zoom).
+- **Focus:** 2px Violet outline, Violet border, fill turns white.
+- **Drop zones:** dashed border at 28% Violet over a Well; hover, drag and focus turn it Violet with a Violet Soft halo; filled turns solid green.
 
 ### Navigation
-- Sticky, translucent paper bar (86% opacity, 20px blur, saturate 180%) with a hairline bottom border and a soft shadow once scrolled. Links Ink Soft 500 14px, hover Ink. Below 860px the links fold into a menu panel; the primary CTA shortens to "Free card".
+- A frosted bar floating 10px below the top of the page, inset from the edges, 20px radius, white hairline edge and an inset highlight, its shadow deepening once scrolled. On desktop the links (Ink Soft 500 14px, hover Ink) sit together on one bevelled white tab; the brand mark is a small bevelled square filled with the bloom. Below 861px the links fold into a menu panel behind a round glass toggle.
+
+### HUD Callouts (signature)
+- On desktop, signed out, the hero video carries two ringed nodes on the camera's screen (white core, Violet ring, white outer ring, a slow white ping on a 2.6s loop, staggered) with white 1.25px leader lines running to two glass chips: "Real Sony · scrolling pose cards" with a Bubblegum dot and halo, and "Try it yourself →", which turns white with Violet Deep text on hover. Chips are 80% white with 12px backdrop blur. The ping stops with reduced motion; phones and the signed-in view show the chips without the nodes and lines.
 
 ### Camera Screen (signature)
-- Card previews always sit inside a Camera Black bezel (16px radius, 9px padding), and live previews inside a full camera body (dark gradient, viewfinder hump, dial and buttons). Cards are never shown floating on paper without the camera around them, except in the fanned pose stack.
+- Card previews always sit inside a Camera Black bezel (18px radius on tiles, 9px padding) with a white Rim halo, and live previews inside a full camera body (dark gradient, viewfinder hump, dial and buttons). Cards are never shown floating on the glass without the camera around them, except in the fanned pose stack. The bezel stays camera black; only its caption picks up violet on hover.
 - The camera bodies (the live preview on the homepage, the camera in `/demo`) are drawn in 3D with three.js (`assets/cam3d.js` loads `assets/cam3d-scene.js` only once a camera is on screen). The model is built in code and measured off the CSS camera it covers, so its screen lands on the CSS screen canvas. The CSS camera keeps drawing the card, turning the wheel and pressing keys; the 3D model reads that state and only renders when something changes. It turns 10° to show its grip side, follows the mouse by up to 7°, and holds still with reduced motion or a touch screen. Without WebGL2 the CSS camera is shown, unchanged.
+- Signed in, the live camera preview floats in a soft conic Violet-and-Bubblegum halo beside the studio.
 
 ### Motion (assets/motion.js, signature)
-- One system, used the same way everywhere: headlines (hero, section headings, closing card) rise in word by word as they come into view, and the hero's italic "blank" gets a red stroke drawn under it. Cards (projects, card-type tiles, pricing, the FAQ list) catch a soft light where the cursor is and tilt up to 5° towards it; project covers and the pose-pack stack fan out. The main buttons lean up to 6px towards the cursor. The camera picker's selection slides. A slow reel of real pose cards and the bride's-board photos runs under the hero and pauses on hover.
-- Dialogs (sign-in, "Delete project?") dim the page and pop the card in; no backdrop blur (a blur over the looping video made Chromium flash the page).
+- One system, used the same way everywhere: headlines (hero, section headings, closing card) rise in word by word as they come into view, and the hero's italic "blank" gets a bloom stroke (Bubblegum to Violet) drawn under it. Cards (projects, card-type tiles, pricing, the FAQ list) catch a soft light where the cursor is and tilt up to 5° towards it; project covers and the pose-pack stack fan out. The main buttons lean up to 6px towards the cursor. The camera picker's selection slides. A slow reel of real pose cards and the bride's-board photos runs under the hero and pauses on hover.
+- Dialogs (sign-in, "Delete project?") dim the page to a cool ink (`rgba(20,24,40,.32)`) and pop the card in; no backdrop blur on dialogs (a blur over the looping video made Chromium flash the page).
 - A closer look at a stored card: hover (or keyboard focus) shows it large beside the thumbnail; on touch screens a long press opens it full screen. A click or tap still picks the card.
-- Shape, not fade (borrowed from a product-launch motion brief, October 2026): things change shape instead of crossfading or blurring in. The hero video and the studio camera open through a hexagonal iris. "Make my card" turns into a black pill that says what it is doing ("Making your card…", "Converting for Sony…", "Packing your ZIP…", "✓ Downloaded"), then springs back. Grids (card-type tiles, pricing) unfold like a paper map, centre first, then the plus, then the corners; on one column each item unfolds as it arrives. Ticks and numbers pop from zero on a spring (`--spring`, a `linear()` under-damped curve). Saved projects pop in once, one after another. On scroll the wordmark squeezes into its red mark. Going to another page is one shutter blink: the page closes from top and bottom and the next one opens from the middle (a native cross-document view transition, about 0.3s; browsers without it just navigate). No glows, particles or glass.
-- Reduced motion: headlines show at once, nothing tilts, leans, slides, scrolls, unfolds or blinks; touch screens get no cursor effects.
+- Shape, not fade: things change shape instead of crossfading or blurring in. The hero video and the studio camera open through a hexagonal iris. "Make my card" turns into a black Ink pill that says what it is doing ("Making your card…", "Converting for Sony…", "Packing your ZIP…", "✓ Downloaded"), then springs back. Grids (card-type tiles, pricing) unfold like a paper map, centre first, then the plus, then the corners; on one column each item unfolds as it arrives. Ticks and numbers pop from zero on a spring (`--spring`, a `linear()` under-damped curve). Saved projects pop in once, one after another. On scroll the wordmark squeezes into its bloom mark. Going to another page is one shutter blink: the page closes from top and bottom over near-black and the next one opens from the middle (a native cross-document view transition, about 0.3s; browsers without it just navigate). Glass and the bloom are the material; there are still no particles, and no glow that moves.
+- Reduced motion: headlines show at once, nothing tilts, leans, slides, scrolls, unfolds, pings or blinks; touch screens get no cursor effects.
 
 ### Background Grid (signature)
-- A 40px line grid in Muted at 6% opacity drifts diagonally (40px every 22s); a 40% copy shows in a 200px radial circle around the cursor and fades out when the cursor leaves; a soft Record Red glow (10%, drawn as a radial gradient, not a blur filter) sits off the top-right corner. The lines are drawn on a canvas and move like a calm water surface: two slow waves (7px over 520px at 55px/s, 3px over 300px at 35px/s) lift and bend them, and the main wave's crests run diagonally a little brighter (5% to 14%); 30 fps, paused while the tab is hidden. With reduced motion it is the still CSS grid. Fixed behind content, pointer-events none, still under reduced motion, no cursor spotlight on touch.
+- A 40px line grid in Muted at 6% opacity drifts diagonally (40px every 22s); a 40% copy shows in a 200px radial circle around the cursor and fades out when the cursor leaves. Two soft blooms sit behind it, drawn as radial gradients, not a blur filter: Galactic Violet (12%) off the top-right corner and Bubblegum (10%) off the bottom-left. The lines are drawn on a canvas and move like a calm water surface: two slow waves (7px over 520px at 55px/s, 3px over 300px at 35px/s) lift and bend them, and the main wave's crests run diagonally a little brighter (5% to 14%); 30 fps, paused while the tab is hidden. With reduced motion it is the still CSS grid. Fixed behind content, pointer-events none, no cursor spotlight on touch.
 
 ## Do's and Don'ts
 
 ### Do:
 - **Do** show the real thing: real camera bodies, real cards in a camera bezel, photographs from real weddings.
-- **Do** keep Record Red for the action, the selection and the one emphasised word.
-- **Do** use Instrument Serif for headlines and Inter for everything you read in detail or press.
-- **Do** lift cards 4px and buttons 2px on hover, with the matching shadow step, and keep the 2px Record Red focus ring.
+- **Do** build every panel from the one glass material, with Wells for the content it holds.
+- **Do** keep Galactic Violet for the action, the selection and the focus, with the 2px Violet focus ring on every control.
+- **Do** keep Bubblegum to the bloom, HUD marks, hatch stripes, Bubblegum Ink numerals and the single "Pay once" badge.
+- **Do** interpolate the bloom in OKLCH so it passes through pink and violet.
+- **Do** use Instrument Serif for headlines and numerals, Inter for everything you read in detail or press.
+- **Do** lift cards 4px and buttons 2px on hover, with the matching shadow step.
 - **Do** give every tappable control a 44px hit area on touch screens.
 
 ### Don't:
-- **Don't** introduce a second accent colour or warm the paper toward cream.
+- **Don't** put a kicker, eyebrow or tagline line above a heading.
+- **Don't** fill a button, chip or body text with Bubblegum, or add a second action colour.
+- **Don't** recolour cards rendered for the camera to the site palette, or use their red in site UI.
+- **Don't** warm the Marshmallow ground toward cream or tint shadows black; shadows stay cool navy.
 - **Don't** replace Inter or Instrument Serif; both are part of the shared NotaLucis identity.
 - **Don't** use stock imagery or invented testimonials, ratings or counts.
 - **Don't** show a card preview without its camera bezel.
+- **Don't** blur a dialog backdrop or use a blur() filter for the blooms; draw them as gradients.
 - **Don't** add motion that ignores `prefers-reduced-motion`.

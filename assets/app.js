@@ -2826,11 +2826,11 @@ function handleCheckoutReturn() {
 
   const groups = [
     ".packs .pack-stack, .packs .packs-copy",
-    ".more .eyebrow, .more .section-h, .more-lede",
+    ".more .section-h, .more-lede",
     "stagger:.more .tile",
-    ".why .eyebrow, .why .section-h, .why-table, .why-safe",
-    ".pricing .eyebrow, .pricing .section-h, .price-grid",
-    ".faq .eyebrow, .faq .section-h",
+    ".why .section-h, .why-table, .why-safe",
+    ".pricing .section-h, .price-grid",
+    ".faq .section-h",
     "stagger:.faq .faq-item",
     ".final .final-card",
   ];

@@ -99,8 +99,6 @@ button{font-family:var(--sans)}
 
 /* shared section rhythm */
 .hero,.packs,.more,.why,.pricing,.faq,.history,#studio{scroll-margin-top:76px}
-.eyebrow{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--accent-2);margin:0 0 10px}
-.eyebrow.center{text-align:center}
 .section-h{font-family:var(--serif);font-weight:400;font-size:clamp(30px,4.4vw,48px);line-height:1.06;letter-spacing:-.012em;margin:0 0 10px;color:var(--ink)}
 .section-h.center{text-align:center}
 .section-h,.pitch h1,.final-card h2{text-wrap:balance}
@@ -125,7 +123,7 @@ button{font-family:var(--sans)}
 .nav-links>a:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
 .nav-right{display:flex;align-items:center;gap:12px;flex:0 0 auto;min-width:0}
 .nav-cta .sm{display:none}
-/* one red button at a time: while the studio's own button is on screen */
+/* while the studio's own button is on screen the nav pill drops its shadow (styled in the glass block) */
 .nav-cta.quiet{background:var(--surface);color:var(--accent-2);border-color:var(--border);box-shadow:none}
 .nav-toggle{display:none;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;padding:0}
 .nav-toggle span{display:block;width:16px;height:1.5px;background:var(--ink);transition:transform .2s ease}
@@ -163,7 +161,6 @@ button{font-family:var(--sans)}
 .pitch{grid-area:pitch}
 .studio{grid-area:studio}
 .visual{grid-area:visual;position:sticky;top:84px;display:flex;flex-direction:column;align-items:center}
-.eyebrow-pill{font-family:var(--serif);font-style:italic;font-size:20px;line-height:1.2;color:var(--accent-2);margin:0}
 .pitch h1{font-family:var(--serif);font-weight:400;font-size:clamp(40px,5.2vw,66px);line-height:.98;letter-spacing:-.02em;margin:16px 0 14px;color:var(--ink)}
 .pitch h1 em{font-style:italic;color:var(--accent)}
 .pitch .lede{font-size:clamp(16px,1.6vw,18.5px);color:var(--ink-2);margin:0;max-width:34em}

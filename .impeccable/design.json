@@ -1,405 +1,630 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-24T18:47:17+00:00",
+  "generatedAt": "2026-10-31T12:00:00+00:00",
   "title": "Design System: Shoot Cards",
   "extensions": {
     "colorMeta": {
-      "record-red": {
+      "galactic-violet": {
         "role": "primary",
-        "displayName": "Record Red",
+        "displayName": "Galactic Violet",
         "tonalRamp": [
-          "#4c0000",
-          "#800000",
-          "#b20000",
-          "#e60000",
-          "#ff3333",
-          "#ff8080",
-          "#ffc2c2",
-          "#ffebeb"
+          "#071f5c",
+          "#0a2f8a",
+          "#0a47d9",
+          "#105bff",
+          "#4a82ff",
+          "#86aaff",
+          "#c2d4ff",
+          "#eaf0ff"
+        ],
+        "note": "Exact hex binding (PRODUCT.md); reads blue."
+      },
+      "galactic-violet-deep": {
+        "role": "primary",
+        "displayName": "Galactic Violet Deep",
+        "tonalRamp": [
+          "#071f5c",
+          "#0a2f8a",
+          "#0a47d9",
+          "#105bff",
+          "#4a82ff",
+          "#86aaff",
+          "#c2d4ff",
+          "#eaf0ff"
         ]
       },
-      "record-red-deep": {
+      "galactic-violet-soft": {
         "role": "primary",
-        "displayName": "Record Red Deep",
+        "displayName": "Galactic Violet Soft",
         "tonalRamp": [
-          "#4c0000",
-          "#800000",
-          "#b20000",
-          "#e60000",
-          "#ff3333",
-          "#ff8080",
-          "#ffc2c2",
-          "#ffebeb"
+          "#071f5c",
+          "#0a2f8a",
+          "#0a47d9",
+          "#105bff",
+          "#4a82ff",
+          "#86aaff",
+          "#c2d4ff",
+          "#eaf0ff"
         ]
       },
-      "record-red-soft": {
+      "galactic-violet-line": {
         "role": "primary",
-        "displayName": "Record Red Soft"
-      },
-      "record-red-line": {
-        "role": "primary",
-        "displayName": "Record Red Line"
-      },
-      "record-red-wash": {
-        "role": "primary",
-        "displayName": "Record Red Wash",
+        "displayName": "Galactic Violet Line",
         "tonalRamp": [
-          "#4c0000",
-          "#800000",
-          "#b20000",
-          "#e60000",
-          "#ff3333",
-          "#ff8080",
-          "#ffc2c2",
-          "#ffebeb"
+          "#071f5c",
+          "#0a2f8a",
+          "#0a47d9",
+          "#105bff",
+          "#4a82ff",
+          "#86aaff",
+          "#c2d4ff",
+          "#eaf0ff"
         ]
       },
-      "paper": {
+      "galactic-violet-wash": {
+        "role": "primary",
+        "displayName": "Galactic Violet Wash",
+        "tonalRamp": [
+          "#071f5c",
+          "#0a2f8a",
+          "#0a47d9",
+          "#105bff",
+          "#4a82ff",
+          "#86aaff",
+          "#c2d4ff",
+          "#eaf0ff"
+        ]
+      },
+      "bubblegum": {
+        "role": "tertiary",
+        "displayName": "Bubblegum",
+        "tonalRamp": [
+          "#3d1f00",
+          "#6b3700",
+          "#a65100",
+          "#d96d00",
+          "#fe8500",
+          "#ffab52",
+          "#ffd2a3",
+          "#fff1e0"
+        ],
+        "note": "Exact hex binding (PRODUCT.md); reads orange."
+      },
+      "bubblegum-ink": {
+        "role": "tertiary",
+        "displayName": "Bubblegum Ink",
+        "tonalRamp": [
+          "#3d1f00",
+          "#6b3700",
+          "#a65100",
+          "#d96d00",
+          "#fe8500",
+          "#ffab52",
+          "#ffd2a3",
+          "#fff1e0"
+        ]
+      },
+      "bubblegum-soft": {
+        "role": "tertiary",
+        "displayName": "Bubblegum Soft",
+        "tonalRamp": [
+          "#3d1f00",
+          "#6b3700",
+          "#a65100",
+          "#d96d00",
+          "#fe8500",
+          "#ffab52",
+          "#ffd2a3",
+          "#fff1e0"
+        ]
+      },
+      "bloom-pink": {
+        "role": "tertiary",
+        "displayName": "Bloom Pink",
+        "tonalRamp": [
+          "oklch(15% 0.099 345)",
+          "oklch(25% 0.154 345)",
+          "oklch(36% 0.198 345)",
+          "oklch(48% 0.22 345)",
+          "oklch(60% 0.22 345)",
+          "oklch(72% 0.165 345)",
+          "oklch(84% 0.099 345)",
+          "oklch(95% 0.033 345)"
+        ],
+        "canonical": "oklch(.66 .22 345)"
+      },
+      "bloom-violet": {
+        "role": "tertiary",
+        "displayName": "Bloom Violet",
+        "tonalRamp": [
+          "oklch(15% 0.108 295)",
+          "oklch(25% 0.168 295)",
+          "oklch(36% 0.216 295)",
+          "oklch(48% 0.24 295)",
+          "oklch(60% 0.24 295)",
+          "oklch(72% 0.18 295)",
+          "oklch(84% 0.108 295)",
+          "oklch(95% 0.036 295)"
+        ],
+        "canonical": "oklch(.58 .24 295)"
+      },
+      "marshmallow": {
         "role": "neutral",
-        "displayName": "Paper",
+        "displayName": "Marshmallow",
         "tonalRamp": [
-          "#191933",
-          "#2a2a55",
-          "#3b3b77",
-          "#4c4c99",
-          "#7777bb",
-          "#aaaad5",
-          "#d6d6eb",
-          "#f1f1f8"
+          "#15161c",
+          "#2a2c35",
+          "#3c3e48",
+          "#62646e",
+          "#9a9ca5",
+          "#cfd0d6",
+          "#e7e8ee",
+          "#f0f0f0"
         ]
       },
       "surface": {
         "role": "neutral",
         "displayName": "Surface",
         "tonalRamp": [
-          "#262626",
-          "#404040",
-          "#595959",
-          "#737373",
-          "#999999",
-          "#bfbfbf",
-          "#e0e0e0",
-          "#f5f5f5"
+          "#15161c",
+          "#2a2c35",
+          "#3c3e48",
+          "#62646e",
+          "#9a9ca5",
+          "#cfd0d6",
+          "#e7e8ee",
+          "#f0f0f0"
         ]
       },
       "surface-sunk": {
         "role": "neutral",
         "displayName": "Surface Sunk",
         "tonalRamp": [
-          "#2b2822",
-          "#474238",
-          "#645d4f",
-          "#817765",
-          "#a59d8d",
-          "#c7c2b8",
-          "#e4e2dd",
-          "#f6f5f4"
+          "#15161c",
+          "#2a2c35",
+          "#3c3e48",
+          "#62646e",
+          "#9a9ca5",
+          "#cfd0d6",
+          "#e7e8ee",
+          "#f0f0f0"
+        ]
+      },
+      "well": {
+        "role": "neutral",
+        "displayName": "Well",
+        "tonalRamp": [
+          "#15161c",
+          "#2a2c35",
+          "#3c3e48",
+          "#62646e",
+          "#9a9ca5",
+          "#cfd0d6",
+          "#e7e8ee",
+          "#f0f0f0"
+        ]
+      },
+      "glass-edge": {
+        "role": "neutral",
+        "displayName": "Glass Edge",
+        "tonalRamp": [
+          "#15161c",
+          "#2a2c35",
+          "#3c3e48",
+          "#62646e",
+          "#9a9ca5",
+          "#cfd0d6",
+          "#e7e8ee",
+          "#f0f0f0"
         ]
       },
       "ink": {
         "role": "neutral",
         "displayName": "Ink",
         "tonalRamp": [
-          "#252528",
-          "#3e3e42",
-          "#56565c",
-          "#6f6f77",
-          "#96969c",
-          "#bdbdc1",
-          "#dfdfe1",
-          "#f4f4f5"
+          "#15161c",
+          "#2a2c35",
+          "#3c3e48",
+          "#62646e",
+          "#9a9ca5",
+          "#cfd0d6",
+          "#e7e8ee",
+          "#f0f0f0"
         ]
       },
       "ink-soft": {
         "role": "neutral",
         "displayName": "Ink Soft",
         "tonalRamp": [
-          "#252527",
-          "#3e3e41",
-          "#57575b",
-          "#707075",
-          "#97979b",
-          "#bebec1",
-          "#e0e0e1",
-          "#f5f5f5"
+          "#15161c",
+          "#2a2c35",
+          "#3c3e48",
+          "#62646e",
+          "#9a9ca5",
+          "#cfd0d6",
+          "#e7e8ee",
+          "#f0f0f0"
         ]
       },
       "muted": {
         "role": "neutral",
         "displayName": "Muted",
         "tonalRamp": [
-          "#252527",
-          "#3e3e41",
-          "#57575b",
-          "#707075",
-          "#97979b",
-          "#bebec1",
-          "#e0e0e1",
-          "#f5f5f5"
+          "#15161c",
+          "#2a2c35",
+          "#3c3e48",
+          "#62646e",
+          "#9a9ca5",
+          "#cfd0d6",
+          "#e7e8ee",
+          "#f0f0f0"
         ]
       },
       "border": {
         "role": "neutral",
-        "displayName": "Border"
+        "displayName": "Border",
+        "tonalRamp": [
+          "#15161c",
+          "#2a2c35",
+          "#3c3e48",
+          "#62646e",
+          "#9a9ca5",
+          "#cfd0d6",
+          "#e7e8ee",
+          "#f0f0f0"
+        ]
       },
       "border-soft": {
         "role": "neutral",
-        "displayName": "Border Soft"
+        "displayName": "Border Soft",
+        "tonalRamp": [
+          "#15161c",
+          "#2a2c35",
+          "#3c3e48",
+          "#62646e",
+          "#9a9ca5",
+          "#cfd0d6",
+          "#e7e8ee",
+          "#f0f0f0"
+        ]
       },
       "camera-black": {
         "role": "neutral",
         "displayName": "Camera Black",
         "tonalRamp": [
-          "#252528",
-          "#3e3e42",
-          "#56565c",
-          "#6f6f77",
-          "#95959d",
-          "#bdbdc1",
-          "#dfdfe1",
-          "#f4f4f5"
+          "#0b0b0c",
+          "#1c1c1e",
+          "#2c2c30",
+          "#3a3a3e",
+          "#5a5a60",
+          "#8a8a90",
+          "#c4c4c9",
+          "#ececef"
         ]
       },
       "ok": {
         "role": "status",
         "displayName": "OK",
         "tonalRamp": [
-          "#024a36",
-          "#047b59",
-          "#06ad7d",
-          "#07dea1",
-          "#3af8c2",
-          "#84fbd9",
-          "#c4fded",
-          "#ebfef9"
+          "#022c20",
+          "#03513b",
+          "#047857",
+          "#05a378",
+          "#34c79a",
+          "#7fdcbe",
+          "#bff0e0",
+          "#ecfbf6"
         ]
       },
       "error": {
         "role": "status",
         "displayName": "Error",
         "tonalRamp": [
-          "#460716",
-          "#740b25",
-          "#a30f33",
-          "#d21442",
-          "#ed456e",
-          "#f48ba4",
-          "#fac7d3",
-          "#fdecf0"
+          "#4a0717",
+          "#7d0c27",
+          "#be123c",
+          "#e11d48",
+          "#f05a7c",
+          "#f7a0b4",
+          "#fbd0da",
+          "#fff1f4"
         ]
       }
     },
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "Hero headline only."
+        "purpose": "Hero headline only; italic 'blank' in Galactic Violet over the bloom stroke."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Section headings."
+        "purpose": "Section headings and the closing card, balanced."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "Serif step numerals in Bubblegum Ink."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Card and panel titles."
+        "purpose": "Studio and panel titles, list item leads."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Reading copy."
+        "purpose": "Reading copy in Ink Soft, 34-40em measure."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Uppercase tier names, table headers, badges."
-      },
-      "accent-italic": {
-        "displayName": "Accent Italic",
-        "purpose": "Serif italic line above headings, serif numerals."
+        "purpose": "Uppercase tier names, table headers, the 'Made for' line."
       }
     },
     "shadows": [
       {
+        "name": "glass",
+        "value": "inset 0 1px 0 rgba(255,255,255,.95),0 1px 2px rgba(20,28,58,.05),0 18px 44px rgba(20,28,58,.09)",
+        "purpose": "Every glass panel at rest."
+      },
+      {
         "name": "ambient",
-        "value": "0 1px 2px rgba(0,0,0,.04), 0 10px 30px rgba(0,0,0,.05)",
-        "purpose": "Cards at rest."
+        "value": "0 1px 2px rgba(20,28,58,.05),0 12px 32px rgba(20,28,58,.07)",
+        "purpose": "Tile screens and small surfaces."
       },
       {
         "name": "lifted",
-        "value": "0 2px 6px rgba(0,0,0,.05), 0 24px 60px rgba(0,0,0,.10)",
-        "purpose": "Studio panel, video, hovered cards."
+        "value": "0 2px 6px rgba(20,28,58,.05),0 28px 64px rgba(20,28,58,.12)",
+        "purpose": "Video, featured plan, hovered cards."
       },
       {
-        "name": "hover-contact",
-        "value": "0 8px 20px rgba(0,0,0,.08)",
-        "purpose": "Added under lifted as a card rises."
+        "name": "pane",
+        "value": "inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)",
+        "purpose": "Hero frame, card-type and pricing panes."
       },
       {
         "name": "accent",
-        "value": "0 6px 20px rgba(164,0,0,.24)",
-        "purpose": "Primary button at rest."
+        "value": "0 8px 22px rgba(16,91,255,.28)",
+        "purpose": "Violet primary buttons at rest."
       },
       {
         "name": "accent-lg",
-        "value": "0 10px 26px rgba(164,0,0,.3)",
-        "purpose": "Primary button on hover."
+        "value": "0 12px 30px rgba(16,91,255,.36)",
+        "purpose": "Violet primary buttons on hover."
       },
       {
-        "name": "camera",
-        "value": "0 36px 70px rgba(0,0,0,.24), 0 4px 10px rgba(0,0,0,.18)",
-        "purpose": "Camera body in the live preview."
+        "name": "ink-pill",
+        "value": "0 6px 16px rgba(20,22,28,.18)",
+        "purpose": "Black nav CTA and demo play button."
+      },
+      {
+        "name": "rim",
+        "value": "0 0 0 6px rgba(255,255,255,.55)",
+        "purpose": "White halo ring around dark screens inside the glass."
       }
     ],
     "motion": [
       {
-        "name": "hover-lift",
-        "value": "transform .3s ease, box-shadow .3s ease",
-        "purpose": "Cards lift 4px, buttons 2px."
+        "name": "spring",
+        "value": "linear(0, 0.038, 0.135, 0.268, 0.417, 0.568, 0.708, 0.831, 0.933, 1.011, 1.067, 1.103, 1.122, 1.126, 1.121, 1.108, 1.091, 1.072, 1.053, 1.035, 1.02, 1.007, 0.998, 0.991, 0.987, 0.985, 0.984, 0.985, 0.987, 0.989, 0.991, 0.994, 0.996, 0.998, 0.999, 1, 1)",
+        "purpose": "Everything that pops or settles; fallback cubic-bezier(.2,1.35,.4,1)."
       },
       {
         "name": "press",
-        "value": "50ms",
-        "purpose": "Buttons snap 1px down on active."
+        "value": "transform .05s",
+        "purpose": "Button press, 1px down."
       },
       {
-        "name": "reveal",
-        "value": ".6s cubic-bezier(.2,.6,.2,1)",
-        "purpose": "Sections fade up 20px on scroll."
+        "name": "state",
+        "value": ".15s",
+        "purpose": "Border, background and colour changes on controls."
+      },
+      {
+        "name": "hud-ping",
+        "value": "2.6s cubic-bezier(.16,1,.3,1) infinite",
+        "purpose": "Ring ping on HUD nodes, second node delayed 1.3s."
+      },
+      {
+        "name": "shutter-close",
+        "value": ".13s cubic-bezier(.55,0,1,.45)",
+        "purpose": "Page transition: old page closes from top and bottom."
+      },
+      {
+        "name": "shutter-open",
+        "value": ".2s cubic-bezier(0,.55,.45,1) .1s",
+        "purpose": "Page transition: new page opens from the middle."
       },
       {
         "name": "grid-drift",
         "value": "22s linear infinite",
-        "purpose": "Background grid moves 40px diagonally."
-      },
-      {
-        "name": "arrow-nudge",
-        "value": "left .25s ease",
-        "purpose": "Trailing arrows move 3px on hover."
+        "purpose": "Still-grid fallback drift, 40px diagonal."
       }
     ],
     "breakpoints": [
       {
-        "name": "xs",
+        "name": "phone-xs",
         "value": "380px"
       },
       {
-        "name": "sm",
+        "name": "phone",
         "value": "640px"
       },
       {
-        "name": "nav",
+        "name": "nav-fold",
         "value": "860px"
       },
       {
-        "name": "pricing",
+        "name": "pricing-stack",
         "value": "880px"
       },
       {
-        "name": "md",
+        "name": "hero-stack",
         "value": "980px"
       }
-    ]
+    ],
+    "glass": {
+      "material": "linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.64))",
+      "edge": "rgba(255,255,255,.95)",
+      "hatch": "repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px)",
+      "bloom": "linear-gradient(in oklch 120deg,#fe8500,#105bff)",
+      "bevel": "corner-shape: bevel round bevel round (progressive; round fallback)"
+    }
   },
   "components": [
     {
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "The one action in a block: make a card, go Pro.",
-      "html": "<button class=\"ds-btn-primary\">Make my free card <span class=\"ds-arr\">&rarr;</span></button>",
-      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-btn-primary{background:var(--accent);color:#fff;border:1px solid transparent;border-radius:12px;font:600 16px/1.25 inherit;font-family:inherit;padding:13px 24px;cursor:pointer;box-shadow:0 6px 20px rgba(164,0,0,.24);transition:transform .3s ease,box-shadow .3s ease,background .15s} .ds-btn-primary:hover{background:var(--accent-2);transform:translateY(-2px);box-shadow:0 10px 26px rgba(164,0,0,.3)} .ds-btn-primary:active{transform:translateY(1px);transition-duration:.05s} .ds-btn-primary:focus-visible{outline:2px solid var(--accent);outline-offset:2px} .ds-arr{position:relative;left:0;transition:left .25s ease} .ds-btn-primary:hover .ds-arr{left:3px}"
+      "description": "Galactic Violet, bevelled; the one action per block.",
+      "html": "<button class=\"ds-btn-primary\">Make my card</button>",
+      "css": ".ds-btn-primary{background:var(--accent,#105bff);color:#fff;font:600 16px/1.25 Inter,-apple-system,sans-serif;padding:13px 24px;border:1px solid transparent;border-radius:14px 8px 14px 8px;corner-shape:bevel round bevel round;box-shadow:0 8px 22px rgba(16,91,255,.28);cursor:pointer;transition:transform .05s,box-shadow .15s,background .15s}.ds-btn-primary:hover{background:var(--accent-2,#0a47d9);transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,91,255,.36)}.ds-btn-primary:active{transform:translateY(1px)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent,#105bff);outline-offset:2px}"
+    },
+    {
+      "name": "Nav CTA Pill",
+      "kind": "button",
+      "refersTo": "button-nav-cta",
+      "description": "Black ink pill in the floating nav; never violet.",
+      "html": "<a class=\"ds-nav-cta\" href=\"#\">Make a free card</a>",
+      "css": ".ds-nav-cta{display:inline-flex;background:var(--ink,#15161c);color:#fff;font:600 14px/1.25 Inter,-apple-system,sans-serif;padding:10px 20px;border-radius:999px;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18);transition:background .15s,box-shadow .15s}.ds-nav-cta:hover{background:#000;box-shadow:0 10px 22px rgba(20,22,28,.24)}.ds-nav-cta:focus-visible{outline:2px solid var(--accent,#105bff);outline-offset:2px}"
     },
     {
       "name": "Ghost Button",
       "kind": "button",
       "refersTo": "button-ghost",
-      "description": "Secondary action beside or below a primary one.",
-      "html": "<button class=\"ds-btn-ghost\">See the pose pack</button>",
-      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--border);border-radius:12px;font-family:inherit;font-weight:600;font-size:16px;padding:13px 24px;cursor:pointer;transition:transform .3s ease,border-color .15s,color .15s} .ds-btn-ghost:hover{border-color:var(--accent);color:var(--accent-2);transform:translateY(-2px)} .ds-btn-ghost:focus-visible{outline:2px solid var(--accent);outline-offset:2px}"
+      "description": "Translucent white secondary action.",
+      "html": "<button class=\"ds-btn-ghost\">Download all</button>",
+      "css": ".ds-btn-ghost{background:rgba(255,255,255,.72);color:var(--ink,#15161c);font:600 16px/1.25 Inter,-apple-system,sans-serif;padding:13px 24px;border:1px solid var(--border,rgba(20,28,58,.13));border-radius:12px;cursor:pointer;transition:background .15s,border-color .15s,color .15s}.ds-btn-ghost:hover{background:#fff;border-color:var(--accent,#105bff);color:var(--accent-2,#0a47d9)}.ds-btn-ghost:focus-visible{outline:2px solid var(--accent,#105bff);outline-offset:2px}"
     },
     {
       "name": "Card Type Chip",
       "kind": "chip",
       "refersTo": "chip",
-      "description": "Pick one card type in the studio.",
-      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\" aria-pressed=\"true\">Pose</button><button class=\"ds-chip\" aria-pressed=\"false\">Timeline</button><button class=\"ds-chip\" aria-pressed=\"false\">Shot list</button></div>",
-      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-chips{display:flex;gap:7px;flex-wrap:wrap} .ds-chip{border:1px solid var(--border);background:#fff;border-radius:999px;padding:7px 13px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:border-color .15s,background .15s,color .15s} .ds-chip:hover{border-color:rgba(164,0,0,.4);color:var(--ink)} .ds-chip[aria-pressed=true]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-2);box-shadow:0 0 0 1px var(--accent) inset;font-weight:600} .ds-chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}"
+      "description": "Pill toggle; selected gets the violet wash and inset ring.",
+      "html": "<div style=\"display:flex;gap:7px\"><button class=\"ds-chip\" aria-pressed=\"true\">Pose</button><button class=\"ds-chip\" aria-pressed=\"false\">Timeline</button></div>",
+      "css": ".ds-chip{background:rgba(255,255,255,.7);border:1px solid var(--border,rgba(20,28,58,.13));border-radius:999px;padding:7px 13px;font:500 13.5px Inter,-apple-system,sans-serif;color:var(--ink-2,#3c3e48);cursor:pointer;transition:border-color .15s,background .15s,color .15s}.ds-chip:hover{border-color:rgba(16,91,255,.4);color:var(--ink,#15161c)}.ds-chip[aria-pressed=\"true\"]{background:#eaf0ff;border-color:#105bff;color:#0a47d9;box-shadow:0 0 0 1px #105bff inset;font-weight:600}.ds-chip:focus-visible{outline:2px solid #105bff;outline-offset:2px}"
     },
     {
-      "name": "Text Field",
+      "name": "Field in a Well",
       "kind": "input",
       "refersTo": "input",
-      "description": "Studio form fields.",
-      "html": "<label class=\"ds-fld\"><span>Pose name</span><input class=\"ds-input\" placeholder=\"e.g. The first look\"></label>",
-      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-fld{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:var(--ink-2)} .ds-input{font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 11px;transition:border-color .15s,background .15s} .ds-input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);background:#fff}"
+      "description": "Pale well inside the glass; white and violet on focus.",
+      "html": "<label class=\"ds-fld\"><span>Pose name</span><input placeholder=\"e.g. The first look\"></label>",
+      "css": ".ds-fld{display:grid;gap:5px;font:500 13px Inter,-apple-system,sans-serif;color:#62646e}.ds-fld input{font:400 15px Inter,-apple-system,sans-serif;color:#15161c;background:rgba(240,240,243,.72);border:1px solid rgba(20,28,58,.13);border-radius:10px;padding:9px 11px;transition:border-color .15s,background .15s}.ds-fld input:focus-visible{outline:2px solid #105bff;outline-offset:0;border-color:#105bff;background:#fff}"
     },
     {
-      "name": "Pricing Card",
+      "name": "Glass Panel",
       "kind": "card",
-      "refersTo": "card",
-      "description": "A plan; lifts and warms on hover.",
-      "html": "<div class=\"ds-card\"><div class=\"ds-card-name\">Pose pack</div><div class=\"ds-card-amt\">50 <small>poses</small></div><p>Ready-made, bought once</p></div>",
-      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:20px;padding:30px 26px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;max-width:280px} .ds-card:hover{transform:translateY(-4px);border-color:rgba(164,0,0,.25);box-shadow:0 8px 20px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.05),0 24px 60px rgba(0,0,0,.10)} .ds-card-name{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;transition:color .3s} .ds-card:hover .ds-card-name{color:var(--accent-2)} .ds-card-amt{font-family:'Instrument Serif',Georgia,serif;font-size:46px;line-height:1;margin:12px 0 2px;color:var(--ink)} .ds-card-amt small{font-family:inherit;font-size:15px;color:var(--muted)} .ds-card p{color:var(--muted);font-size:13px;margin:2px 0 0}"
+      "refersTo": "glass-panel",
+      "description": "The one panel material: glass gradient, white edge, cool shadow, holding a well.",
+      "html": "<div class=\"ds-glass\"><h3>Make your first card free</h3><div class=\"ds-well\">Pick a pose from our wedding pack</div></div>",
+      "css": ".ds-glass{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.64));border:1px solid rgba(255,255,255,.95);border-radius:30px 18px 30px 18px;corner-shape:bevel round bevel round;box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 1px 2px rgba(20,28,58,.05),0 18px 44px rgba(20,28,58,.09);padding:22px;max-width:360px;font-family:Inter,-apple-system,sans-serif;transition:transform .3s,box-shadow .3s}.ds-glass:hover{transform:translateY(-4px);box-shadow:0 2px 6px rgba(20,28,58,.05),0 28px 64px rgba(20,28,58,.12)}.ds-glass h3{margin:0 0 12px;font-size:17px;font-weight:700;letter-spacing:-.01em;color:#15161c}.ds-well{background:rgba(240,240,243,.72);border-radius:12px;padding:14px;font-size:13.5px;color:#62646e}"
+    },
+    {
+      "name": "Bloom Pane",
+      "kind": "custom",
+      "refersTo": "glass-panel",
+      "description": "Large bevelled pane with hatch marks top-left and top-right and the OKLCH bloom from a corner.",
+      "html": "<section class=\"ds-pane\"><h2>Every card your day needs</h2></section>",
+      "css": ".ds-pane{position:relative;min-height:220px;padding:56px 32px;border:1px solid rgba(255,255,255,.95);border-radius:56px 40px 56px 40px;corner-shape:bevel round bevel round;background:radial-gradient(46% 62% at 0% 100%,rgba(254,133,0,.58),rgba(254,133,0,0) 72%),radial-gradient(52% 78% at 10% 92%,oklch(.66 .22 345 / .5),transparent 72%),radial-gradient(46% 70% at 30% 100%,oklch(.58 .24 295 / .34),transparent 74%),radial-gradient(40% 50% at 46% 104%,rgba(16,91,255,.22),rgba(16,91,255,0) 72%),linear-gradient(170deg,rgba(255,255,255,.72),rgba(255,255,255,.34)),#f0f0f0;box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)}.ds-pane::after{content:\"\";position:absolute;top:22px;left:22px;right:22px;height:30px;background:repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px),repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px);background-size:30px 30px;background-position:0 0,100% 0;background-repeat:no-repeat}.ds-pane h2{margin:0;text-align:center;font:400 40px/1.06 'Instrument Serif',Georgia,serif;letter-spacing:-.012em;color:#15161c}"
+    },
+    {
+      "name": "Floating Nav",
+      "kind": "nav",
+      "refersTo": "button-nav-cta",
+      "description": "Frosted floating bar, links on one bevelled tab, black pill CTA.",
+      "html": "<nav class=\"ds-nav\"><span class=\"ds-brand\"><i></i>Shoot Cards</span><span class=\"ds-links\"><a href=\"#\">Card types</a><a href=\"#\">Pricing</a><a href=\"#\">FAQ</a></span><a class=\"ds-cta\" href=\"#\">Make a free card</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 10px 9px 16px;background:rgba(244,244,246,.72);backdrop-filter:saturate(180%) blur(20px);border:1px solid rgba(255,255,255,.95);border-radius:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 26px rgba(20,28,58,.06);font-family:Inter,-apple-system,sans-serif}.ds-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:#15161c}.ds-brand i{width:22px;height:22px;border-radius:8px 3px 8px 3px;corner-shape:bevel round bevel round;background:linear-gradient(in oklch 120deg,#fe8500,#105bff)}.ds-links{display:flex;gap:24px;padding:9px 26px;background:rgba(255,255,255,.62);border-radius:0 0 18px 18px;corner-shape:bevel;box-shadow:inset 0 0 0 1px rgba(255,255,255,.9)}.ds-links a{color:#3c3e48;font-size:14px;font-weight:500;text-decoration:none}.ds-links a:hover{color:#15161c}.ds-links a:focus-visible{outline:2px solid #105bff;outline-offset:4px;border-radius:4px}.ds-cta{background:#15161c;color:#fff;border-radius:999px;padding:10px 20px;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18)}.ds-cta:hover{background:#000}"
+    },
+    {
+      "name": "HUD Chip",
+      "kind": "custom",
+      "refersTo": "glass-panel",
+      "description": "Glass callout chip on the hero video with the Bubblegum dot.",
+      "html": "<span class=\"ds-hud\"><b></b>Real Sony · scrolling pose cards</span>",
+      "css": ".ds-hud{display:inline-flex;align-items:center;gap:9px;padding:8px 14px;background:rgba(255,255,255,.8);backdrop-filter:blur(12px) saturate(150%);border:1px solid rgba(255,255,255,.9);border-radius:14px;box-shadow:0 8px 22px rgba(20,28,58,.14);font:600 13px Inter,-apple-system,sans-serif;color:#15161c}.ds-hud b{width:8px;height:8px;border-radius:50%;background:#fe8500;box-shadow:0 0 0 4px rgba(254,133,0,.14)}"
+    },
+    {
+      "name": "Pay Once Badge",
+      "kind": "chip",
+      "refersTo": "price-badge",
+      "description": "The single Bubblegum fill on the site, on the featured plan.",
+      "html": "<span class=\"ds-badge\">Pay once</span>",
+      "css": ".ds-badge{display:inline-block;background:#fe8500;color:#15161c;font:700 12px Inter,-apple-system,sans-serif;letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 6px 16px rgba(254,133,0,.32)}"
     },
     {
       "name": "Camera Screen",
       "kind": "custom",
       "refersTo": "camera-screen",
-      "description": "Every card preview sits in a camera-black bezel.",
-      "html": "<figure class=\"ds-screen\"><div class=\"ds-screen-card\"><span>SATURDAY</span><b>Timeline</b><i>14:00 Getting ready</i></div></figure>",
-      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-screen{margin:0;background:#1c1c1e;border-radius:16px;padding:9px;max-width:300px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05)} .ds-screen-card{background:#fff;border-radius:6px;aspect-ratio:3/2;padding:14px 18px;border-right:14px solid var(--accent);display:flex;flex-direction:column;gap:4px} .ds-screen-card span{font-size:8px;letter-spacing:.2em;font-weight:600;color:var(--accent)} .ds-screen-card b{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:26px;color:var(--ink)} .ds-screen-card i{font-style:normal;font-size:11px;color:var(--ink)}"
-    },
-    {
-      "name": "Sticky Nav",
-      "kind": "nav",
-      "refersTo": null,
-      "description": "Translucent paper bar with the primary CTA.",
-      "html": "<nav class=\"ds-nav\"><span class=\"ds-brand\"><i></i>Shoot Cards</span><span class=\"ds-links\"><a>More cards</a><a>Poses</a><a>Pricing</a></span><a class=\"ds-cta\">Make a free card</a></nav>",
-      "css": ":host{--accent:#a40000;--accent-2:#7e0000;--accent-soft:rgba(164,0,0,.08);--accent-wash:#fff4f4;--ink:#1d1d1f;--ink-2:#424245;--muted:#6e6e73;--border:rgba(0,0,0,.12);--bg:#fbfbfd;font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif} .ds-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px;background:rgba(251,251,253,.86);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.08)} .ds-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:var(--ink)} .ds-brand i{width:20px;height:20px;border-radius:7px;background:linear-gradient(135deg,#c01818,#7e0000)} .ds-links{display:flex;gap:24px} .ds-links a{font-size:14px;font-weight:500;color:var(--ink-2);cursor:pointer} .ds-links a:hover{color:var(--ink)} .ds-cta{background:var(--accent);color:#fff;font-size:14px;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer}"
+      "description": "Camera Black bezel with a white rim; cards inside keep their own colours.",
+      "html": "<div class=\"ds-screen\"><div class=\"ds-card\"></div></div>",
+      "css": ".ds-screen{width:220px;background:#1c1c1e;border-radius:18px;padding:9px;box-shadow:0 0 0 6px rgba(255,255,255,.55),0 1px 2px rgba(20,28,58,.05),0 12px 32px rgba(20,28,58,.07);transition:transform .3s}.ds-screen:hover{transform:translateY(-4px)}.ds-card{aspect-ratio:3/2;border-radius:6px;background:linear-gradient(90deg,#a40000 0 6px,#f4f3f1 6px)}"
     }
   ],
   "narrative": {
-    "northStar": "The Camera Back",
-    "overview": "The back of a camera is a calm, dark, exact surface where everything has to read in two seconds: a lit screen, a few firm buttons, one red dot that means something is happening. Shoot Cards borrows that discipline for a light web page. The page itself stays quiet (cool paper, black ink, a faint grid), so the real heroes, the camera body, the cards on its screen and the wedding photographs, carry the colour and the emotion.\n\nDensity is moderate and editorial: generous section spacing, short copy, one clear action per block. Type pairs a condensed, slightly literary serif for headlines with a precise grotesque for everything you read or press. The red is rare on purpose; when it appears it marks the action, the selected state or the word that matters.\n\nControls feel like a camera's own dials and buttons: precise and tactile. They have firm edges, a definite pressed state, and a small lift with a deeper shadow under the finger or cursor.",
+    "northStar": "Marshmallow Glass",
+    "overview": "The page is one frosted pane on a marshmallow-white ground, lit from its lower left by a Bubblegum-to-Violet bloom; the real camera is the subject the HUD points at. Every panel is the same material: a white glass gradient with a bright top edge and a cool shadow, holding paler wells for inputs and lists the way a dashboard card holds its chart. Bevelled corners, diagonal hatch marks and ringed HUD nodes give the glass an instrument's precision, so it reads as equipment rather than candy.\n\nDensity is moderate and editorial: generous section spacing, short copy, one clear action per block. Instrument Serif speaks in headlines; Inter instructs in everything you read in detail or press. Galactic Violet is the only action colour. Bubblegum is light, not ink: it lives in the bloom and in a handful of small marks, never on a button.\n\nThe camera keeps its own world inside this one. Camera bodies, bezels and the cards drawn on their screens stay camera black and keep the card's own colours; the glass frames them, it never tints them.",
     "keyCharacteristics": [
-      "Light, cool paper with a faint 40px line grid that drifts and brightens around the cursor.",
-      "One red accent (Record Red), used for action, selection and emphasis only.",
-      "Instrument Serif for display and headlines, Inter for body, labels and controls.",
-      "Real camera bodies and real wedding photographs; cards framed as camera screens.",
-      "Precise, tactile controls: lift on hover, press on click, visible focus rings."
+      "Marshmallow #F0F0F0 ground under a faint 40px line grid that rolls like calm water, with two soft blooms.",
+      "Frosted glass panels with white hairline edges, cool shadows and darker inner wells.",
+      "Galactic Violet for every action, selection and focus; Bubblegum only as bloom and small HUD marks.",
+      "The OKLCH bloom (Bubblegum through pink and violet to Galactic Violet) rising from a corner of each large pane.",
+      "Bevelled corners (`corner-shape: bevel`) on the hero frame, studio, panes, primary buttons and closing card.",
+      "Real camera bodies and real wedding photographs; cards always shown in a camera bezel.",
+      "Shape, not fade: things rise, unfold, iris open and blink; nothing crossfades."
     ],
     "rules": [
       {
-        "name": "The Record Dot Rule",
-        "body": "Red marks action, selection or the single emphasised word, never decoration. If a screen has more than one red-filled element competing above the fold, one of them is wrong.",
+        "name": "The One Signal Rule",
+        "body": "Galactic Violet marks the action, the selection and the focus; nothing else on the page is violet-filled. The nav CTA is black precisely so it never competes with the studio's violet button.",
         "section": "colors"
       },
       {
-        "name": "The Paper Stays Cool Rule",
-        "body": "Backgrounds are cool off-white (`paper`) and pure white (`surface`). No warm creams, beiges or tinted section bands.",
+        "name": "The Bubblegum Glows Rule",
+        "body": "Bubblegum is light, not paint: bloom, HUD dot, hatch marks, numerals (as Bubblegum Ink) and the single \"Pay once\" badge. It never fills a button, a chip or a body of text.",
+        "section": "colors"
+      },
+      {
+        "name": "The Camera Keeps Its Colours Rule",
+        "body": "Cards rendered for the camera (pose cards with their red bars, the card-type tile SVGs, everything `assets/builder.js` draws) keep their own palette, including red. That is product output, not site UI; the site palette never recolours it, and its red never leaks into site UI.",
         "section": "colors"
       },
       {
         "name": "The Two Voices Rule",
-        "body": "Serif for what we say, sans for what you do. Buttons, fields, labels and data are always Inter; headlines and the occasional emphasised italic are always Instrument Serif.",
+        "body": "Serif for what we say, sans for what you do. Buttons, fields, labels and data are always Inter; headlines, numerals and the emphasised italic word are always Instrument Serif.",
         "section": "typography"
       },
       {
+        "name": "The Heading Stands Alone Rule",
+        "body": "No kicker, eyebrow or tagline line above a heading. A section opens on its serif headline.",
+        "section": "typography"
+      },
+      {
+        "name": "The Glass Is The Material Rule",
+        "body": "Every panel (studio, pricing, FAQ, table, projects, dialogs, menus, the how-it-works strip) is the same glass: the white 90%→64% gradient, the white hairline edge, the Glass shadow. Inner content sits in Wells a step darker. Don't invent a second panel material.",
+        "section": "elevation"
+      },
+      {
         "name": "The Lift On Touch Rule",
-        "body": "Surfaces are calm at rest. Hover lifts a card 4px (a button 2px) and deepens its shadow; pressing snaps a button 1px down in 50ms. With reduced motion, nothing moves; colour and border still change.",
+        "body": "Surfaces are calm at rest. Hover lifts a card 4px (a button 2px) and deepens its shadow; pressing snaps a button 1px down. With reduced motion, nothing moves; colour and border still change.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "**Do** show the real thing: real camera bodies, real cards in a camera bezel, photographs from real weddings.",
-      "**Do** keep Record Red for the action, the selection and the one emphasised word.",
-      "**Do** use Instrument Serif for headlines and Inter for everything you read in detail or press.",
-      "**Do** lift cards 4px and buttons 2px on hover, with the matching shadow step, and keep the 2px Record Red focus ring.",
-      "**Do** give every tappable control a 44px hit area on touch screens."
+      "Do show the real thing: real camera bodies, real cards in a camera bezel, photographs from real weddings.",
+      "Do build every panel from the one glass material, with Wells for the content it holds.",
+      "Do keep Galactic Violet for the action, the selection and the focus, with the 2px Violet focus ring on every control.",
+      "Do keep Bubblegum to the bloom, HUD marks, hatch stripes, Bubblegum Ink numerals and the single \"Pay once\" badge.",
+      "Do interpolate the bloom in OKLCH so it passes through pink and violet.",
+      "Do use Instrument Serif for headlines and numerals, Inter for everything you read in detail or press.",
+      "Do lift cards 4px and buttons 2px on hover, with the matching shadow step.",
+      "Do give every tappable control a 44px hit area on touch screens."
     ],
     "donts": [
-      "**Don't** introduce a second accent colour or warm the paper toward cream.",
-      "**Don't** replace Inter or Instrument Serif; both are part of the shared NotaLucis identity.",
-      "**Don't** use stock imagery or invented testimonials, ratings or counts.",
-      "**Don't** show a card preview without its camera bezel.",
-      "**Don't** add motion that ignores `prefers-reduced-motion`."
+      "Don't put a kicker, eyebrow or tagline line above a heading.",
+      "Don't fill a button, chip or body text with Bubblegum, or add a second action colour.",
+      "Don't recolour cards rendered for the camera to the site palette, or use their red in site UI.",
+      "Don't warm the Marshmallow ground toward cream or tint shadows black; shadows stay cool navy.",
+      "Don't replace Inter or Instrument Serif; both are part of the shared NotaLucis identity.",
+      "Don't use stock imagery or invented testimonials, ratings or counts.",
+      "Don't show a card preview without its camera bezel.",
+      "Don't blur a dialog backdrop or use a blur() filter for the blooms; draw them as gradients.",
+      "Don't add motion that ignores `prefers-reduced-motion`."
     ]
   }
 }
