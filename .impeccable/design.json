@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-31T12:00:00+00:00",
+  "generatedAt": "2026-10-31T12:40:00+00:00",
   "title": "Design System: Shoot Cards",
   "extensions": {
     "colorMeta": {
@@ -17,7 +17,7 @@
           "#f6b9b9",
           "#fff4f4"
         ],
-        "note": "NotaLucis Record Red; the only action colour: buttons, selection, focus, accent text."
+        "note": "NotaLucis Record Red: actions, selection, focus, accent text, the 'blank' stroke, the HUD dot and ring."
       },
       "record-red-deep": {
         "role": "primary",
@@ -31,7 +31,8 @@
           "#e87272",
           "#f6b9b9",
           "#fff4f4"
-        ]
+        ],
+        "note": "Hover on primary buttons; small red text, links, numerals."
       },
       "record-red-soft": {
         "role": "primary",
@@ -45,7 +46,8 @@
           "#e87272",
           "#f6b9b9",
           "#fff4f4"
-        ]
+        ],
+        "note": "Tinted fills behind upsells and nudges; focus halos on drop zones."
       },
       "record-red-line": {
         "role": "primary",
@@ -59,7 +61,8 @@
           "#e87272",
           "#f6b9b9",
           "#fff4f4"
-        ]
+        ],
+        "note": "Hairline on a tinted fill, link underlines, the HUD dot halo."
       },
       "record-red-wash": {
         "role": "primary",
@@ -73,66 +76,8 @@
           "#e87272",
           "#f6b9b9",
           "#fff4f4"
-        ]
-      },
-      "leaf-green": {
-        "role": "tertiary",
-        "displayName": "Leaf Green",
-        "tonalRamp": [
-          "#1b2c11",
-          "#2d491c",
-          "#446e2b",
-          "#5a9239",
-          "#8cb374",
-          "#b5cea6",
-          "#dbe7d3",
-          "#f2f6ef"
         ],
-        "note": "Light only: bloom, HUD dot, hatch stripes, the one Pay once badge."
-      },
-      "leaf-ink": {
-        "role": "tertiary",
-        "displayName": "Leaf Ink",
-        "tonalRamp": [
-          "#122109",
-          "#1e3710",
-          "#2c5217",
-          "#3b6e1f",
-          "#769a62",
-          "#a7be9a",
-          "#d4dfce",
-          "#eff3ed"
-        ],
-        "note": "Text-safe leaf green, the leaf in shadow (5.4:1 on Marshmallow), for numerals."
-      },
-      "leaf-soft": {
-        "role": "tertiary",
-        "displayName": "Leaf Soft",
-        "tonalRamp": [
-          "#3d0a24",
-          "#6e1443",
-          "#3b6e1f",
-          "#e0418f",
-          "#5a9239",
-          "#ff90cb",
-          "#ffc5e3",
-          "#fff0f7"
-        ]
-      },
-      "bloom-leaf": {
-        "role": "tertiary",
-        "displayName": "Bloom Leaf",
-        "tonalRamp": [
-          "oklch(15% 0.099 345)",
-          "oklch(25% 0.154 345)",
-          "oklch(36% 0.198 345)",
-          "oklch(48% 0.22 345)",
-          "oklch(60% 0.22 345)",
-          "oklch(72% 0.165 345)",
-          "oklch(84% 0.099 345)",
-          "oklch(95% 0.033 345)"
-        ],
-        "canonical": "oklch(.74 .12 140)"
+        "note": "Selected chips and the Shoot Cards column header."
       },
       "marshmallow": {
         "role": "neutral",
@@ -146,7 +91,8 @@
           "#cfd0d6",
           "#e7e8ee",
           "#f0f0f0"
-        ]
+        ],
+        "note": "The page ground; cool and neutral, never cream. The bloom on it is white light."
       },
       "surface": {
         "role": "neutral",
@@ -160,7 +106,8 @@
           "#cfd0d6",
           "#e7e8ee",
           "#f0f0f0"
-        ]
+        ],
+        "note": "Solid white: dialogs, menus, peek preview, focused inputs, glass base."
       },
       "surface-sunk": {
         "role": "neutral",
@@ -188,7 +135,8 @@
           "#cfd0d6",
           "#e7e8ee",
           "#f0f0f0"
-        ]
+        ],
+        "note": "The paler inset a glass panel holds."
       },
       "glass-edge": {
         "role": "neutral",
@@ -202,7 +150,8 @@
           "#cfd0d6",
           "#e7e8ee",
           "#f0f0f0"
-        ]
+        ],
+        "note": "White hairline around every glass panel and pane."
       },
       "ink": {
         "role": "neutral",
@@ -216,7 +165,8 @@
           "#cfd0d6",
           "#e7e8ee",
           "#f0f0f0"
-        ]
+        ],
+        "note": "Structure: headings, the black nav pill, the 'Pay once' badge (white text), the closing card."
       },
       "ink-soft": {
         "role": "neutral",
@@ -244,7 +194,8 @@
           "#cfd0d6",
           "#e7e8ee",
           "#f0f0f0"
-        ]
+        ],
+        "note": "Captions, meta and the grid lines (5.2:1 on Marshmallow)."
       },
       "border": {
         "role": "neutral",
@@ -286,7 +237,8 @@
           "#8a8a90",
           "#c4c4c9",
           "#ececef"
-        ]
+        ],
+        "note": "Bezels and camera bodies; the camera keeps its own world."
       },
       "ok": {
         "role": "status",
@@ -320,15 +272,15 @@
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "Hero headline only; italic 'blank' in Record Red over the bloom stroke."
+        "purpose": "Hero headline only, centred over the studio and camera; the italic 'blank' is Record Red over a Record Red stroke."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Section headings and the closing card, balanced."
+        "purpose": "Section headings and the closing card (up to 52px, white), balanced."
       },
       "numeral": {
         "displayName": "Numeral",
-        "purpose": "Serif step numerals in Leaf Ink."
+        "purpose": "Serif step numbers and parts-list numbers in Record Red Deep; they pop in on the spring."
       },
       "title": {
         "displayName": "Title",
@@ -336,11 +288,11 @@
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Reading copy in Ink Soft, 34-40em measure."
+        "purpose": "Copy in Ink Soft, measure about 34-40em; text-wrap: pretty."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Uppercase tier names, table headers, the 'Made for' line."
+        "purpose": "Uppercase pricing tier names, table headers, the 'Made for' line."
       }
     },
     "shadows": [
@@ -357,12 +309,12 @@
       {
         "name": "lifted",
         "value": "0 2px 6px rgba(20,28,58,.05),0 28px 64px rgba(20,28,58,.12)",
-        "purpose": "Video, featured plan, hovered cards."
+        "purpose": "The video, the featured plan, hovered cards."
       },
       {
         "name": "pane",
         "value": "inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)",
-        "purpose": "Hero frame, card-type and pricing panes."
+        "purpose": "The hero frame and the card-type and pricing panes."
       },
       {
         "name": "accent",
@@ -377,22 +329,27 @@
       {
         "name": "ink-pill",
         "value": "0 6px 16px rgba(20,22,28,.18)",
-        "purpose": "Black nav CTA and demo play button."
+        "purpose": "The black nav CTA and the demo play button at rest."
+      },
+      {
+        "name": "ink-pill-lg",
+        "value": "0 10px 22px rgba(20,22,28,.24)",
+        "purpose": "The black nav CTA on hover."
+      },
+      {
+        "name": "badge",
+        "value": "0 6px 16px rgba(20,22,28,.22)",
+        "purpose": "The black 'Pay once' badge on the featured plan."
+      },
+      {
+        "name": "closing-card",
+        "value": "0 30px 70px rgba(20,22,28,.28),0 6px 16px rgba(20,28,58,.12)",
+        "purpose": "The Ink black closing card."
       },
       {
         "name": "rim",
         "value": "0 0 0 6px rgba(255,255,255,.55)",
-        "purpose": "White halo ring around dark screens inside the glass."
-      },
-      {
-        "name": "badge",
-        "value": "0 6px 16px rgba(90,146,57,.32)",
-        "purpose": "The Leaf Green Pay once badge."
-      },
-      {
-        "name": "closing-card",
-        "value": "0 30px 70px rgba(90,146,57,.22),0 6px 16px rgba(20,28,58,.12)",
-        "purpose": "The black closing card with the leaf in its corner."
+        "purpose": "White halo ring (6-8px, .38-.55) around the video, tile screens and project covers."
       }
     ],
     "motion": [
@@ -412,9 +369,24 @@
         "purpose": "Border, background and colour changes on controls."
       },
       {
+        "name": "word-rise",
+        "value": ".8s cubic-bezier(.16,1,.3,1), 55ms per word",
+        "purpose": "Headlines rise in word by word."
+      },
+      {
+        "name": "blank-stroke",
+        "value": ".7s cubic-bezier(.65,0,.35,1) .75s",
+        "purpose": "The Record Red stroke drawn under the hero's 'blank'."
+      },
+      {
         "name": "hud-ping",
         "value": "2.6s cubic-bezier(.16,1,.3,1) infinite",
-        "purpose": "Ring ping on HUD nodes, second node delayed 1.3s."
+        "purpose": "White ring ping on HUD nodes, second node delayed 1.3s."
+      },
+      {
+        "name": "reel",
+        "value": "linear infinite, about 20px/s (duration = set width / 20)",
+        "purpose": "The half-size reel under the hero: images clamp(66px,7.5vw,90px) tall, level, 16% edge fade, paused on hover."
       },
       {
         "name": "shutter-close",
@@ -457,8 +429,11 @@
     "glass": {
       "material": "linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.64))",
       "edge": "rgba(255,255,255,.95)",
+      "light": "rgba(255,255,255,.95)",
       "hatch": "repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px)",
-      "bloom": "linear-gradient(in oklch 120deg,#5a9239,#3b6e1f)",
+      "tick": "repeating-linear-gradient(120deg,rgba(20,28,58,.32) 0 3px,transparent 3px 7px)",
+      "bloom": "radial-gradient(46% 62% at 0% 100%,rgba(255,255,255,.87),rgba(255,255,255,0) 72%),radial-gradient(52% 78% at 10% 92%,rgba(255,255,255,.5),transparent 72%)",
+      "bloom-answer": "radial-gradient(40% 45% at 100% 0%,rgba(164,0,0,.07),rgba(164,0,0,0) 75%)",
       "bevel": "corner-shape: bevel round bevel round (progressive; round fallback)"
     }
   },
@@ -469,15 +444,15 @@
       "refersTo": "button-primary",
       "description": "Record Red, bevelled; the one action per block.",
       "html": "<button class=\"ds-btn-primary\">Make my card</button>",
-      "css": ".ds-btn-primary{background:var(--accent,#a40000);color:#fff;font:600 16px/1.25 Inter,-apple-system,sans-serif;padding:13px 24px;border:1px solid transparent;border-radius:14px 8px 14px 8px;corner-shape:bevel round bevel round;box-shadow:0 6px 20px rgba(164,0,0,.24);cursor:pointer;transition:transform .05s,box-shadow .15s,background .15s}.ds-btn-primary:hover{background:var(--accent-2,#7e0000);transform:translateY(-2px);box-shadow:0 10px 26px rgba(164,0,0,.3)}.ds-btn-primary:active{transform:translateY(1px)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:2px}"
+      "css": ".ds-btn-primary{background:var(--accent,#a40000);color:#fff;font:600 16px/1.25 Inter,-apple-system,sans-serif;padding:13px 24px;border:1px solid transparent;border-radius:14px 8px 14px 8px;corner-shape:bevel round bevel round;box-shadow:0 6px 20px rgba(164,0,0,.24);cursor:pointer;transition:transform .05s,box-shadow .15s,background .15s}.ds-btn-primary:hover{background:var(--accent-2,#7e0000);transform:translateY(-2px);box-shadow:0 10px 26px rgba(164,0,0,.3)}.ds-btn-primary:active{transform:translateY(1px)}.ds-btn-primary:disabled{opacity:.5;box-shadow:none;cursor:not-allowed}.ds-btn-primary:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:2px}"
     },
     {
       "name": "Nav CTA Pill",
       "kind": "button",
       "refersTo": "button-nav-cta",
-      "description": "Black ink pill in the floating nav; never red, so it never competes with the studio button.",
+      "description": "Black Ink pill in the floating nav; never red, so it never competes with the studio button.",
       "html": "<a class=\"ds-nav-cta\" href=\"#\">Make a free card</a>",
-      "css": ".ds-nav-cta{display:inline-flex;background:var(--ink,#15161c);color:#fff;font:600 14px/1.25 Inter,-apple-system,sans-serif;padding:10px 20px;border-radius:999px;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18);transition:background .15s,box-shadow .15s}.ds-nav-cta:hover{background:#000;box-shadow:0 10px 22px rgba(20,22,28,.24)}.ds-nav-cta:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:2px}"
+      "css": ".ds-nav-cta{display:inline-flex;background:var(--ink,#15161c);color:#fff;font:600 14px/1.25 Inter,-apple-system,sans-serif;padding:10px 20px;border:1px solid var(--ink,#15161c);border-radius:999px;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18);transition:background .15s,box-shadow .15s}.ds-nav-cta:hover{background:#000;box-shadow:0 10px 22px rgba(20,22,28,.24)}.ds-nav-cta:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:2px}"
     },
     {
       "name": "Ghost Button",
@@ -485,7 +460,7 @@
       "refersTo": "button-ghost",
       "description": "Translucent white secondary action; red border and Red Deep text on hover.",
       "html": "<button class=\"ds-btn-ghost\">Download all</button>",
-      "css": ".ds-btn-ghost{background:rgba(255,255,255,.72);color:var(--ink,#15161c);font:600 16px/1.25 Inter,-apple-system,sans-serif;padding:13px 24px;border:1px solid var(--border,rgba(20,28,58,.13));border-radius:12px;cursor:pointer;transition:background .15s,border-color .15s,color .15s}.ds-btn-ghost:hover{background:#fff;border-color:var(--accent,#a40000);color:var(--accent-2,#7e0000)}.ds-btn-ghost:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:2px}"
+      "css": ".ds-btn-ghost{background:rgba(255,255,255,.72);color:var(--ink,#15161c);font:600 16px/1.25 Inter,-apple-system,sans-serif;padding:13px 24px;border:1px solid var(--border,rgba(20,28,58,.13));border-radius:12px;cursor:pointer;transition:transform .05s,background .15s,border-color .15s,color .15s}.ds-btn-ghost:hover{background:#fff;border-color:var(--accent,#a40000);color:var(--accent-2,#7e0000);transform:translateY(-2px)}.ds-btn-ghost:active{transform:translateY(1px)}.ds-btn-ghost:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:2px}"
     },
     {
       "name": "Card Type Chip",
@@ -501,7 +476,7 @@
       "refersTo": "input",
       "description": "Pale well inside the glass; turns white with a red border and outline on focus.",
       "html": "<label class=\"ds-fld\"><span>Pose name</span><input placeholder=\"e.g. The first look\"></label>",
-      "css": ".ds-fld{display:grid;gap:5px;font:500 13px Inter,-apple-system,sans-serif;color:#62646e}.ds-fld input{font:400 15px Inter,-apple-system,sans-serif;color:#15161c;caret-color:var(--accent,#a40000);background:var(--well,rgba(240,240,243,.72));border:1px solid var(--border,rgba(20,28,58,.13));border-radius:10px;padding:9px 11px;transition:border-color .15s,background .15s}.ds-fld input:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:0;border-color:var(--accent,#a40000);background:#fff}"
+      "css": ".ds-fld{display:grid;gap:5px;font:500 13px Inter,-apple-system,sans-serif;color:var(--muted,#62646e)}.ds-fld input{font:400 15px Inter,-apple-system,sans-serif;color:var(--ink,#15161c);caret-color:var(--accent,#a40000);background:var(--well,rgba(240,240,243,.72));border:1px solid var(--border,rgba(20,28,58,.13));border-radius:10px;padding:9px 11px;transition:border-color .15s,background .15s}.ds-fld input:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:1px;border-color:var(--accent,#a40000);background:#fff}"
     },
     {
       "name": "Glass Panel",
@@ -509,39 +484,39 @@
       "refersTo": "glass-panel",
       "description": "The one panel material: glass gradient, white edge, cool shadow, holding a well.",
       "html": "<div class=\"ds-glass\"><h3>Make your first card free</h3><div class=\"ds-well\">Pick a pose from our wedding pack</div></div>",
-      "css": ".ds-glass{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.64));border:1px solid rgba(255,255,255,.95);border-radius:30px 18px 30px 18px;corner-shape:bevel round bevel round;box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 1px 2px rgba(20,28,58,.05),0 18px 44px rgba(20,28,58,.09);padding:22px;max-width:360px;font-family:Inter,-apple-system,sans-serif;transition:transform .3s,box-shadow .3s}.ds-glass:hover{transform:translateY(-4px);box-shadow:0 2px 6px rgba(20,28,58,.05),0 28px 64px rgba(20,28,58,.12)}.ds-glass h3{margin:0 0 12px;font-size:17px;font-weight:700;letter-spacing:-.01em;color:#15161c}.ds-well{background:rgba(240,240,243,.72);border-radius:12px;padding:14px;font-size:13.5px;color:#62646e}"
+      "css": ".ds-glass{background:var(--glass,linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.64)));border:1px solid var(--glass-edge,rgba(255,255,255,.95));border-radius:30px 18px 30px 18px;corner-shape:bevel round bevel round;box-shadow:var(--glass-shadow,inset 0 1px 0 rgba(255,255,255,.95),0 1px 2px rgba(20,28,58,.05),0 18px 44px rgba(20,28,58,.09));padding:22px;max-width:360px;font-family:Inter,-apple-system,sans-serif;transition:transform .3s,box-shadow .3s}.ds-glass:hover{transform:translateY(-4px);box-shadow:0 2px 6px rgba(20,28,58,.05),0 28px 64px rgba(20,28,58,.12)}.ds-glass h3{margin:0 0 12px;font-size:17px;font-weight:700;letter-spacing:-.01em;color:var(--ink,#15161c)}.ds-well{background:var(--well,rgba(240,240,243,.72));border-radius:12px;padding:14px;font-size:13.5px;color:var(--muted,#62646e)}"
     },
     {
       "name": "Bloom Pane",
       "kind": "custom",
       "refersTo": "glass-panel",
-      "description": "Large bevelled pane with hatch marks top-left and top-right and the Leaf Green bloom from a corner.",
-      "html": "<section class=\"ds-pane\"><h2>Every card your day needs</h2></section>",
-      "css": ".ds-pane{position:relative;min-height:220px;padding:56px 32px;border:1px solid rgba(255,255,255,.95);border-radius:56px 40px 56px 40px;corner-shape:bevel round bevel round;background:radial-gradient(46% 62% at 0% 100%,rgba(90,146,57,.58),rgba(90,146,57,0) 72%),radial-gradient(52% 78% at 10% 92%,oklch(.74 .12 140 / .5),transparent 72%),radial-gradient(46% 70% at 30% 100%,oklch(.58 .24 295 / .34),transparent 74%),radial-gradient(40% 50% at 46% 104%,rgba(90,146,57,.22),rgba(90,146,57,0) 72%),linear-gradient(170deg,rgba(255,255,255,.72),rgba(255,255,255,.34)),#f0f0f0;box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)}.ds-pane::after{content:\"\";position:absolute;top:22px;left:22px;right:22px;height:30px;background:repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px),repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px);background-size:30px 30px;background-position:0 0,100% 0;background-repeat:no-repeat}.ds-pane h2{margin:0;text-align:center;font:400 40px/1.06 'Instrument Serif',Georgia,serif;letter-spacing:-.012em;color:#15161c}"
+      "description": "Large bevelled glass pane with hatch marks top-left and top-right, white light rising from its lower left and a faint red glow opposite.",
+      "html": "<section class=\"ds-pane\"><h2>Make the <em>blank</em> card</h2></section>",
+      "css": ".ds-pane{position:relative;min-height:220px;padding:64px 32px;border:1px solid rgba(255,255,255,.95);border-radius:56px 40px 56px 40px;corner-shape:bevel round bevel round;background:radial-gradient(46% 62% at 0% 100%,rgba(255,255,255,.87),rgba(255,255,255,0) 72%),radial-gradient(52% 78% at 10% 92%,rgba(255,255,255,.5),transparent 72%),radial-gradient(46% 70% at 28% 100%,rgba(255,255,255,.33),transparent 74%),radial-gradient(40% 50% at 100% 0%,rgba(164,0,0,.06),transparent 72%),linear-gradient(170deg,rgba(255,255,255,.72),rgba(255,255,255,.34)),#f0f0f0;box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)}.ds-pane::after{content:\"\";position:absolute;top:22px;left:22px;right:22px;height:30px;background:repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px),repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px);background-size:30px 30px;background-position:0 0,100% 0;background-repeat:no-repeat}.ds-pane h2{margin:0;text-align:center;font:400 44px/1 'Instrument Serif',Georgia,serif;letter-spacing:-.028em;color:#15161c}.ds-pane em{position:relative;color:var(--accent,#a40000)}.ds-pane em::after{content:\"\";position:absolute;left:.04em;right:.02em;bottom:.02em;height:.07em;border-radius:1em;background:var(--accent,#a40000);opacity:.85}"
     },
     {
       "name": "Floating Nav",
       "kind": "nav",
       "refersTo": "button-nav-cta",
-      "description": "Frosted floating bar, links on one bevelled tab, bloom brand mark, black pill CTA.",
+      "description": "Frosted floating bar, links on one bevelled white tab, the red bevelled brand mark, black pill CTA.",
       "html": "<nav class=\"ds-nav\"><span class=\"ds-brand\"><i></i>Shoot Cards</span><span class=\"ds-links\"><a href=\"#\">Card types</a><a href=\"#\">Pricing</a><a href=\"#\">FAQ</a></span><a class=\"ds-cta\" href=\"#\">Make a free card</a></nav>",
-      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 10px 9px 16px;background:rgba(244,244,246,.72);backdrop-filter:saturate(180%) blur(20px);border:1px solid rgba(255,255,255,.95);border-radius:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 26px rgba(20,28,58,.06);font-family:Inter,-apple-system,sans-serif}.ds-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:#15161c}.ds-brand i{width:22px;height:22px;border-radius:8px 3px 8px 3px;corner-shape:bevel round bevel round;background:linear-gradient(in oklch 120deg,#5a9239,#3b6e1f);box-shadow:0 3px 10px rgba(90,146,57,.3)}.ds-links{display:flex;gap:24px;padding:9px 26px;background:rgba(255,255,255,.62);border-radius:0 0 18px 18px;corner-shape:bevel;box-shadow:inset 0 0 0 1px rgba(255,255,255,.9)}.ds-links a{color:#3c3e48;font-size:14px;font-weight:500;text-decoration:none}.ds-links a:hover{color:#15161c}.ds-links a:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:4px;border-radius:4px}.ds-cta{background:#15161c;color:#fff;border-radius:999px;padding:10px 20px;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18)}.ds-cta:hover{background:#000}"
+      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 10px 9px 16px;background:rgba(244,244,246,.72);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border:1px solid rgba(255,255,255,.95);border-radius:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 26px rgba(20,28,58,.06);font-family:Inter,-apple-system,sans-serif}.ds-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:#15161c}.ds-brand i{width:22px;height:22px;border-radius:8px 3px 8px 3px;corner-shape:bevel round bevel round;background:linear-gradient(135deg,#c01818,#7e0000);box-shadow:0 3px 10px rgba(164,0,0,.3)}.ds-links{display:flex;gap:24px;padding:9px 26px;background:rgba(255,255,255,.62);border-radius:0 0 18px 18px;corner-shape:bevel;box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 1px 2px rgba(20,28,58,.05)}.ds-links a{color:#3c3e48;font-size:14px;font-weight:500;text-decoration:none}.ds-links a:hover{color:#15161c}.ds-links a:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:4px;border-radius:4px}.ds-cta{background:#15161c;color:#fff;border-radius:999px;padding:10px 20px;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18)}.ds-cta:hover{background:#000;box-shadow:0 10px 22px rgba(20,22,28,.24)}.ds-cta:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:2px}"
     },
     {
-      "name": "HUD Chip",
+      "name": "HUD Callout",
       "kind": "custom",
       "refersTo": "glass-panel",
-      "description": "Glass callout chip on the hero video with the Leaf Green dot and halo.",
-      "html": "<span class=\"ds-hud\"><b></b>Real Sony · scrolling pose cards</span>",
-      "css": ".ds-hud{display:inline-flex;align-items:center;gap:9px;padding:8px 14px;background:rgba(255,255,255,.8);backdrop-filter:blur(12px) saturate(150%);border:1px solid rgba(255,255,255,.9);border-radius:999px;box-shadow:0 8px 22px rgba(20,28,58,.14);font:600 13px Inter,-apple-system,sans-serif;color:#15161c}.ds-hud b{width:8px;height:8px;border-radius:50%;background:var(--pop,#5a9239);box-shadow:0 0 0 4px var(--pop-soft,rgba(90,146,57,.16))}"
+      "description": "Ringed HUD node (white core, Record Red ring, white ping) and glass chips: the record-light dot chip and the 'Try it yourself' pill.",
+      "html": "<div class=\"ds-hud-wrap\"><span class=\"ds-node\"></span><span class=\"ds-hud\"><b></b>Real Sony &middot; scrolling pose cards</span><a class=\"ds-try\" href=\"#\">Try it yourself &rarr;</a></div>",
+      "css": ".ds-hud-wrap{display:flex;align-items:center;gap:14px;padding:22px;background:#1c1c1e;border-radius:18px;font:600 13px Inter,-apple-system,sans-serif}.ds-node{position:relative;flex:0 0 16px;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#fff 0 3px,rgba(164,0,0,.9) 3.5px 5px,rgba(255,255,255,.5) 5.5px);box-shadow:0 0 0 1px rgba(255,255,255,.9),0 2px 8px rgba(20,28,58,.3)}.ds-node::after{content:\"\";position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(255,255,255,.8);animation:ds-ping 2.6s cubic-bezier(.16,1,.3,1) infinite}@keyframes ds-ping{0%{transform:scale(.6);opacity:1}70%,100%{transform:scale(1.9);opacity:0}}@media (prefers-reduced-motion:reduce){.ds-node::after{animation:none;opacity:0}}.ds-hud,.ds-try{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(255,255,255,.8);-webkit-backdrop-filter:blur(12px) saturate(150%);backdrop-filter:blur(12px) saturate(150%);border:1px solid rgba(255,255,255,.9);box-shadow:0 8px 22px rgba(20,28,58,.14);color:#15161c;text-decoration:none}.ds-hud{border-radius:14px}.ds-hud b{width:8px;height:8px;border-radius:50%;background:var(--accent,#a40000);box-shadow:0 0 0 4px var(--accent-line,rgba(164,0,0,.18))}.ds-try{border-radius:999px;transition:background .15s,color .15s}.ds-try:hover{background:#fff;color:var(--accent-2,#7e0000)}.ds-try:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:2px}"
     },
     {
       "name": "Pay Once Badge",
       "kind": "chip",
       "refersTo": "price-badge",
-      "description": "The single Leaf Green fill on the site, on the featured plan; Ink text.",
+      "description": "The black Ink badge on the featured plan, white text; the plan itself carries the Record Red ring.",
       "html": "<span class=\"ds-badge\">Pay once</span>",
-      "css": ".ds-badge{display:inline-block;white-space:nowrap;background:var(--pop,#5a9239);color:var(--ink,#15161c);font:700 11px Inter,-apple-system,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 6px 16px rgba(90,146,57,.32)}"
+      "css": ".ds-badge{display:inline-block;white-space:nowrap;background:var(--ink,#15161c);color:#fff;font:700 11px Inter,-apple-system,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 6px 16px rgba(20,22,28,.22)}"
     },
     {
       "name": "Camera Screen",
@@ -549,17 +524,17 @@
       "refersTo": "camera-screen",
       "description": "Camera Black bezel with a white rim; cards inside keep their own colours.",
       "html": "<div class=\"ds-screen\"><div class=\"ds-card\"></div></div>",
-      "css": ".ds-screen{width:220px;background:#1c1c1e;border-radius:18px;padding:9px;box-shadow:0 0 0 6px rgba(255,255,255,.55),0 1px 2px rgba(20,28,58,.05),0 12px 32px rgba(20,28,58,.07);transition:transform .3s}.ds-screen:hover{transform:translateY(-4px)}.ds-card{aspect-ratio:3/2;border-radius:6px;background:linear-gradient(90deg,#a40000 0 6px,#f4f3f1 6px)}"
+      "css": ".ds-screen{width:220px;background:#1c1c1e;border-radius:18px;padding:9px;box-shadow:0 0 0 6px rgba(255,255,255,.55),0 1px 2px rgba(20,28,58,.05),0 12px 32px rgba(20,28,58,.07);transition:transform .3s}.ds-screen:hover{transform:translateY(-4px)}@media (prefers-reduced-motion:reduce){.ds-screen:hover{transform:none}}.ds-card{aspect-ratio:3/2;border-radius:6px;background:linear-gradient(90deg,#a40000 0 6px,#f4f3f1 6px)}"
     }
   ],
   "narrative": {
     "northStar": "Marshmallow Glass",
-    "overview": "The page is one frosted pane on a marshmallow-white ground, lit from its lower left by a Leaf Green bloom, the green of the plant in the hero video; the real camera is the subject the HUD points at. Every panel is the same material: a white glass gradient with a bright top edge and a cool shadow, holding paler wells for inputs and lists the way a dashboard card holds its chart. Bevelled corners, diagonal hatch marks and ringed HUD nodes give the glass an instrument's precision, so it reads as equipment rather than candy.\n\nDensity is moderate and editorial: generous section spacing, short copy, one clear action per block. Instrument Serif speaks in headlines; Inter instructs in everything you read in detail or press. Record Red is the only action colour. Leaf Green is light, not ink: it lives in the bloom and in a handful of small marks, never on a button.\n\nThe camera keeps its own world inside this one. Camera bodies, bezels and the cards drawn on their screens stay camera black and keep the card's own colours; the glass frames them, it never tints them.",
+    "overview": "The page is one frosted pane on a marshmallow-white ground, lit from its lower left by a soft white light; the real camera is the subject the HUD points at. Every panel is the same material: a white glass gradient with a bright top edge and a cool shadow, holding paler wells for inputs and lists the way a dashboard card holds its chart. Bevelled corners, diagonal hatch marks and ringed HUD nodes give the glass an instrument's precision, so it reads as equipment rather than candy.\n\nDensity is moderate and editorial: generous section spacing, short copy, one clear action per block. Instrument Serif speaks in headlines; Inter instructs in everything you read in detail or press. Record Red is the only action colour. The light is white: it lives in the bloom and in a handful of small marks, never on a button.\n\nThe camera keeps its own world inside this one. Camera bodies, bezels and the cards drawn on their screens stay camera black and keep the card's own colours; the glass frames them, it never tints them.",
     "keyCharacteristics": [
       "Marshmallow #F0F0F0 ground under a faint 40px line grid that rolls like calm water, with two soft blooms.",
       "Frosted glass panels with white hairline edges, cool shadows and darker inner wells.",
-      "Four colours: Marshmallow white, Record Red, Leaf Green and Ink black. Red for every action, selection and focus; green only as light (bloom and small HUD marks); black for structure (nav pill, closing card, camera).",
-      "The Leaf Green bloom rising from a corner of each large pane, answered by a faint red glow in the opposite corner.",
+      "Three colours: Marshmallow white, Record Red and Ink black. Red for every action, selection and focus; white for the light (bloom, glass); black for structure (nav pill, badge, closing card, camera).",
+      "A white light rising from a corner of each large pane, answered by a faint red glow in the opposite corner.",
       "Bevelled corners (`corner-shape: bevel`) on the hero frame, studio, panes, primary buttons and closing card.",
       "Real camera bodies and real wedding photographs; cards always shown in a camera bezel.",
       "Shape, not fade: things rise, unfold, iris open and blink; nothing crossfades."
@@ -571,8 +546,8 @@
         "section": "colors"
       },
       {
-        "name": "The Light Never Acts Rule",
-        "body": "Leaf Green is light, not paint: bloom, the HUD dot, hatch marks, numerals (as Leaf Ink), the closing card's corner and the single \"Pay once\" badge. It never fills a button, a chip or a body of text, and it never marks a selection.",
+        "name": "The Three Colours Rule",
+        "body": "The palette is Marshmallow white (with white glass and white light), Record Red and Ink black. No other hue appears in site UI: no green, violet, blue, orange or pink. Light is white; colour means action.",
         "section": "colors"
       },
       {
@@ -605,15 +580,14 @@
       "Do show the real thing: real camera bodies, real cards in a camera bezel, photographs from real weddings.",
       "Do build every panel from the one glass material, with Wells for the content it holds.",
       "Do keep Record Red for the action, the selection and the focus, with the 2px Red focus ring on every control.",
-      "Do keep Leaf Green to the bloom, HUD marks, hatch stripes, Leaf Ink numerals, the closing card's corner and the single \"Pay once\" badge.",
-      "Do keep the palette to four colours: Marshmallow white, Record Red, Leaf Green, Ink black.",
+      "Do keep the palette to three colours: Marshmallow white, Record Red, Ink black; light is white.",
       "Do use Instrument Serif for headlines and numerals, Inter for everything you read in detail or press.",
       "Do lift cards 4px and buttons 2px on hover, with the matching shadow step.",
       "Do give every tappable control a 44px hit area on touch screens."
     ],
     "donts": [
       "Don't put a kicker, eyebrow or tagline line above a heading.",
-      "Don't fill a button, chip or body text with Green, or add a fifth colour (no violet, blue, orange or pink).",
+      "Don't add a fourth colour (no green, violet, blue, orange or pink).",
       "Don't recolour cards rendered for the camera to the site palette.",
       "Don't warm the Marshmallow ground toward cream or tint shadows black; shadows stay cool navy.",
       "Don't replace Inter or Instrument Serif; both are part of the shared NotaLucis identity.",
