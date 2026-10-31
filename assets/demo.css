@@ -18,8 +18,8 @@
 @supports (corner-shape:bevel){.film{border-radius:44px 28px 44px 28px;corner-shape:bevel round bevel round}}
 .film.cut *,.film.cut *::before,.film.cut *::after{transition:none!important}
 .stage{position:relative;isolation:isolate;aspect-ratio:16/9.6;overflow:hidden;container:stage/inline-size;background:#f0f0f0}
-/* backdrop: marshmallow with the Leaf Green to Violet bloom rising from the lower left */
-.stage::before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(48% 70% at 0% 100%,rgba(90,146,57,.5),rgba(90,146,57,0) 72%),radial-gradient(54% 80% at 12% 96%,oklch(.74 .12 140 / .4),transparent 72%),radial-gradient(50% 70% at 100% 0%,rgba(123,59,255,.2),transparent 72%),#f0f0f0}
+/* backdrop: marshmallow with the Leaf Green bloom rising from the lower left */
+.stage::before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(48% 70% at 0% 100%,rgba(90,146,57,.5),rgba(90,146,57,0) 72%),radial-gradient(54% 80% at 12% 96%,oklch(.74 .12 140 / .4),transparent 72%),radial-gradient(50% 70% at 100% 0%,rgba(164,0,0,.06),transparent 72%),#f0f0f0}
 .stage::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(80% 90% at 75% 50%,rgba(255,255,255,0),rgba(255,255,255,.35) 85%),linear-gradient(90deg,rgba(255,255,255,.55),rgba(255,255,255,0) 50%)}
 
 /* ---------- the story (left) ---------- */

@@ -75,21 +75,6 @@
           "#fff4f4"
         ]
       },
-      "galactic-violet": {
-        "role": "secondary",
-        "displayName": "Galactic Violet",
-        "tonalRamp": [
-          "#1b0a4a",
-          "#2e1482",
-          "#4a20c6",
-          "#6a2cf0",
-          "#7b3bff",
-          "#a17cff",
-          "#cdb8ff",
-          "#f1ebff"
-        ],
-        "note": "Light only: bloom, HUD node rings, closing card, brand-mark glow. Never fills a control."
-      },
       "leaf-green": {
         "role": "tertiary",
         "displayName": "Leaf Green",
@@ -148,21 +133,6 @@
           "oklch(95% 0.033 345)"
         ],
         "canonical": "oklch(.74 .12 140)"
-      },
-      "bloom-violet": {
-        "role": "tertiary",
-        "displayName": "Bloom Violet",
-        "tonalRamp": [
-          "oklch(15% 0.108 295)",
-          "oklch(25% 0.168 295)",
-          "oklch(36% 0.216 295)",
-          "oklch(48% 0.24 295)",
-          "oklch(60% 0.24 295)",
-          "oklch(72% 0.18 295)",
-          "oklch(84% 0.108 295)",
-          "oklch(95% 0.036 295)"
-        ],
-        "canonical": "oklch(.58 .24 295)"
       },
       "marshmallow": {
         "role": "neutral",
@@ -421,8 +391,8 @@
       },
       {
         "name": "closing-card",
-        "value": "0 30px 70px rgba(123,59,255,.22),0 6px 16px rgba(20,28,58,.12)",
-        "purpose": "The violet closing card."
+        "value": "0 30px 70px rgba(90,146,57,.22),0 6px 16px rgba(20,28,58,.12)",
+        "purpose": "The black closing card with the leaf in its corner."
       }
     ],
     "motion": [
@@ -488,7 +458,7 @@
       "material": "linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.64))",
       "edge": "rgba(255,255,255,.95)",
       "hatch": "repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px)",
-      "bloom": "linear-gradient(in oklch 120deg,#5a9239,#7b3bff)",
+      "bloom": "linear-gradient(in oklch 120deg,#5a9239,#3b6e1f)",
       "bevel": "corner-shape: bevel round bevel round (progressive; round fallback)"
     }
   },
@@ -545,9 +515,9 @@
       "name": "Bloom Pane",
       "kind": "custom",
       "refersTo": "glass-panel",
-      "description": "Large bevelled pane with hatch marks top-left and top-right and the OKLCH Pink-to-Violet bloom from a corner.",
+      "description": "Large bevelled pane with hatch marks top-left and top-right and the Leaf Green bloom from a corner.",
       "html": "<section class=\"ds-pane\"><h2>Every card your day needs</h2></section>",
-      "css": ".ds-pane{position:relative;min-height:220px;padding:56px 32px;border:1px solid rgba(255,255,255,.95);border-radius:56px 40px 56px 40px;corner-shape:bevel round bevel round;background:radial-gradient(46% 62% at 0% 100%,rgba(90,146,57,.58),rgba(90,146,57,0) 72%),radial-gradient(52% 78% at 10% 92%,oklch(.74 .12 140 / .5),transparent 72%),radial-gradient(46% 70% at 30% 100%,oklch(.58 .24 295 / .34),transparent 74%),radial-gradient(40% 50% at 46% 104%,rgba(123,59,255,.22),rgba(123,59,255,0) 72%),linear-gradient(170deg,rgba(255,255,255,.72),rgba(255,255,255,.34)),#f0f0f0;box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)}.ds-pane::after{content:\"\";position:absolute;top:22px;left:22px;right:22px;height:30px;background:repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px),repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px);background-size:30px 30px;background-position:0 0,100% 0;background-repeat:no-repeat}.ds-pane h2{margin:0;text-align:center;font:400 40px/1.06 'Instrument Serif',Georgia,serif;letter-spacing:-.012em;color:#15161c}"
+      "css": ".ds-pane{position:relative;min-height:220px;padding:56px 32px;border:1px solid rgba(255,255,255,.95);border-radius:56px 40px 56px 40px;corner-shape:bevel round bevel round;background:radial-gradient(46% 62% at 0% 100%,rgba(90,146,57,.58),rgba(90,146,57,0) 72%),radial-gradient(52% 78% at 10% 92%,oklch(.74 .12 140 / .5),transparent 72%),radial-gradient(46% 70% at 30% 100%,oklch(.58 .24 295 / .34),transparent 74%),radial-gradient(40% 50% at 46% 104%,rgba(90,146,57,.22),rgba(90,146,57,0) 72%),linear-gradient(170deg,rgba(255,255,255,.72),rgba(255,255,255,.34)),#f0f0f0;box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)}.ds-pane::after{content:\"\";position:absolute;top:22px;left:22px;right:22px;height:30px;background:repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px),repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px);background-size:30px 30px;background-position:0 0,100% 0;background-repeat:no-repeat}.ds-pane h2{margin:0;text-align:center;font:400 40px/1.06 'Instrument Serif',Georgia,serif;letter-spacing:-.012em;color:#15161c}"
     },
     {
       "name": "Floating Nav",
@@ -555,7 +525,7 @@
       "refersTo": "button-nav-cta",
       "description": "Frosted floating bar, links on one bevelled tab, bloom brand mark, black pill CTA.",
       "html": "<nav class=\"ds-nav\"><span class=\"ds-brand\"><i></i>Shoot Cards</span><span class=\"ds-links\"><a href=\"#\">Card types</a><a href=\"#\">Pricing</a><a href=\"#\">FAQ</a></span><a class=\"ds-cta\" href=\"#\">Make a free card</a></nav>",
-      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 10px 9px 16px;background:rgba(244,244,246,.72);backdrop-filter:saturate(180%) blur(20px);border:1px solid rgba(255,255,255,.95);border-radius:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 26px rgba(20,28,58,.06);font-family:Inter,-apple-system,sans-serif}.ds-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:#15161c}.ds-brand i{width:22px;height:22px;border-radius:8px 3px 8px 3px;corner-shape:bevel round bevel round;background:linear-gradient(in oklch 120deg,#5a9239,#7b3bff);box-shadow:0 3px 10px rgba(123,59,255,.3)}.ds-links{display:flex;gap:24px;padding:9px 26px;background:rgba(255,255,255,.62);border-radius:0 0 18px 18px;corner-shape:bevel;box-shadow:inset 0 0 0 1px rgba(255,255,255,.9)}.ds-links a{color:#3c3e48;font-size:14px;font-weight:500;text-decoration:none}.ds-links a:hover{color:#15161c}.ds-links a:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:4px;border-radius:4px}.ds-cta{background:#15161c;color:#fff;border-radius:999px;padding:10px 20px;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18)}.ds-cta:hover{background:#000}"
+      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 10px 9px 16px;background:rgba(244,244,246,.72);backdrop-filter:saturate(180%) blur(20px);border:1px solid rgba(255,255,255,.95);border-radius:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 26px rgba(20,28,58,.06);font-family:Inter,-apple-system,sans-serif}.ds-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:#15161c}.ds-brand i{width:22px;height:22px;border-radius:8px 3px 8px 3px;corner-shape:bevel round bevel round;background:linear-gradient(in oklch 120deg,#5a9239,#3b6e1f);box-shadow:0 3px 10px rgba(90,146,57,.3)}.ds-links{display:flex;gap:24px;padding:9px 26px;background:rgba(255,255,255,.62);border-radius:0 0 18px 18px;corner-shape:bevel;box-shadow:inset 0 0 0 1px rgba(255,255,255,.9)}.ds-links a{color:#3c3e48;font-size:14px;font-weight:500;text-decoration:none}.ds-links a:hover{color:#15161c}.ds-links a:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:4px;border-radius:4px}.ds-cta{background:#15161c;color:#fff;border-radius:999px;padding:10px 20px;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18)}.ds-cta:hover{background:#000}"
     },
     {
       "name": "HUD Chip",
@@ -584,12 +554,12 @@
   ],
   "narrative": {
     "northStar": "Marshmallow Glass",
-    "overview": "The page is one frosted pane on a marshmallow-white ground, lit from its lower left by a Leaf Green to Galactic Violet bloom; the real camera is the subject the HUD points at. Every panel is the same material: a white glass gradient with a bright top edge and a cool shadow, holding paler wells for inputs and lists the way a dashboard card holds its chart. Bevelled corners, diagonal hatch marks and ringed HUD nodes give the glass an instrument's precision, so it reads as equipment rather than candy.\n\nDensity is moderate and editorial: generous section spacing, short copy, one clear action per block. Instrument Serif speaks in headlines; Inter instructs in everything you read in detail or press. Record Red is the only action colour. Galactic Violet and Leaf Green are light, not ink: they live in the bloom and in a handful of small marks, never on a button.\n\nThe camera keeps its own world inside this one. Camera bodies, bezels and the cards drawn on their screens stay camera black and keep the card's own colours; the glass frames them, it never tints them.",
+    "overview": "The page is one frosted pane on a marshmallow-white ground, lit from its lower left by a Leaf Green bloom, the green of the plant in the hero video; the real camera is the subject the HUD points at. Every panel is the same material: a white glass gradient with a bright top edge and a cool shadow, holding paler wells for inputs and lists the way a dashboard card holds its chart. Bevelled corners, diagonal hatch marks and ringed HUD nodes give the glass an instrument's precision, so it reads as equipment rather than candy.\n\nDensity is moderate and editorial: generous section spacing, short copy, one clear action per block. Instrument Serif speaks in headlines; Inter instructs in everything you read in detail or press. Record Red is the only action colour. Leaf Green is light, not ink: it lives in the bloom and in a handful of small marks, never on a button.\n\nThe camera keeps its own world inside this one. Camera bodies, bezels and the cards drawn on their screens stay camera black and keep the card's own colours; the glass frames them, it never tints them.",
     "keyCharacteristics": [
       "Marshmallow #F0F0F0 ground under a faint 40px line grid that rolls like calm water, with two soft blooms.",
       "Frosted glass panels with white hairline edges, cool shadows and darker inner wells.",
-      "Record Red for every action, selection and focus; Galactic Violet and Leaf Green only as bloom and small HUD marks.",
-      "The OKLCH bloom (Leaf Green through magenta to Galactic Violet) rising from a corner of each large pane.",
+      "Four colours: Marshmallow white, Record Red, Leaf Green and Ink black. Red for every action, selection and focus; green only as light (bloom and small HUD marks); black for structure (nav pill, closing card, camera).",
+      "The Leaf Green bloom rising from a corner of each large pane, answered by a faint red glow in the opposite corner.",
       "Bevelled corners (`corner-shape: bevel`) on the hero frame, studio, panes, primary buttons and closing card.",
       "Real camera bodies and real wedding photographs; cards always shown in a camera bezel.",
       "Shape, not fade: things rise, unfold, iris open and blink; nothing crossfades."
@@ -602,7 +572,7 @@
       },
       {
         "name": "The Light Never Acts Rule",
-        "body": "Galactic Violet and Leaf Green are light, not paint: bloom, HUD node rings, the HUD dot, hatch marks, numerals (as Leaf Ink), the closing card's field and the single \"Pay once\" badge. They never fill a button, a chip or a body of text, and they never mark a selection.",
+        "body": "Leaf Green is light, not paint: bloom, the HUD dot, hatch marks, numerals (as Leaf Ink), the closing card's corner and the single \"Pay once\" badge. It never fills a button, a chip or a body of text, and it never marks a selection.",
         "section": "colors"
       },
       {
@@ -635,15 +605,15 @@
       "Do show the real thing: real camera bodies, real cards in a camera bezel, photographs from real weddings.",
       "Do build every panel from the one glass material, with Wells for the content it holds.",
       "Do keep Record Red for the action, the selection and the focus, with the 2px Red focus ring on every control.",
-      "Do keep Galactic Violet and Leaf Green to the bloom, HUD marks, hatch stripes, Leaf Ink numerals, the closing card and the single \"Pay once\" badge.",
-      "Do interpolate the bloom in OKLCH so the green runs cleanly through teal into Violet.",
+      "Do keep Leaf Green to the bloom, HUD marks, hatch stripes, Leaf Ink numerals, the closing card's corner and the single \"Pay once\" badge.",
+      "Do keep the palette to four colours: Marshmallow white, Record Red, Leaf Green, Ink black.",
       "Do use Instrument Serif for headlines and numerals, Inter for everything you read in detail or press.",
       "Do lift cards 4px and buttons 2px on hover, with the matching shadow step.",
       "Do give every tappable control a 44px hit area on touch screens."
     ],
     "donts": [
       "Don't put a kicker, eyebrow or tagline line above a heading.",
-      "Don't fill a button, chip or body text with Violet or Green, or add a second action colour.",
+      "Don't fill a button, chip or body text with Green, or add a fifth colour (no violet, blue, orange or pink).",
       "Don't recolour cards rendered for the camera to the site palette.",
       "Don't warm the Marshmallow ground toward cream or tint shadows black; shadows stay cool navy.",
       "Don't replace Inter or Instrument Serif; both are part of the shared NotaLucis identity.",

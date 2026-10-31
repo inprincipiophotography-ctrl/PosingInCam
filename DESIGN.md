@@ -7,12 +7,10 @@ colors:
   record-red-soft: "rgba(164,0,0,.08)"
   record-red-line: "rgba(164,0,0,.18)"
   record-red-wash: "#fff4f4"
-  galactic-violet: "#7b3bff"
   leaf-green: "#5a9239"
   leaf-ink: "#3b6e1f"
   leaf-soft: "rgba(90,146,57,.16)"
   bloom-leaf: "oklch(.74 .12 140)"
-  bloom-violet: "oklch(.58 .24 295)"
   marshmallow: "#f0f0f0"
   surface: "#ffffff"
   surface-sunk: "#e7e8ee"
@@ -134,24 +132,24 @@ components:
 
 **Creative North Star: "Marshmallow Glass"**
 
-The page is one frosted pane on a marshmallow-white ground, lit from its lower left by a Leaf Green to Galactic Violet bloom; the real camera is the subject the HUD points at. Every panel is the same material: a white glass gradient with a bright top edge and a cool shadow, holding paler wells for inputs and lists the way a dashboard card holds its chart. Bevelled corners, diagonal hatch marks and ringed HUD nodes give the glass an instrument's precision, so it reads as equipment rather than candy.
+The page is one frosted pane on a marshmallow-white ground, lit from its lower left by a Leaf Green bloom, the green of the plant in the hero video; the real camera is the subject the HUD points at. Every panel is the same material: a white glass gradient with a bright top edge and a cool shadow, holding paler wells for inputs and lists the way a dashboard card holds its chart. Bevelled corners, diagonal hatch marks and ringed HUD nodes give the glass an instrument's precision, so it reads as equipment rather than candy.
 
-Density is moderate and editorial: generous section spacing, short copy, one clear action per block. Instrument Serif speaks in headlines; Inter instructs in everything you read in detail or press. Record Red is the only action colour. Galactic Violet and Leaf Green are light, not ink: they live in the bloom and in a handful of small marks, never on a button.
+Density is moderate and editorial: generous section spacing, short copy, one clear action per block. Instrument Serif speaks in headlines; Inter instructs in everything you read in detail or press. Record Red is the only action colour. Leaf Green is light, not ink: it lives in the bloom and in a handful of small marks, never on a button.
 
 The camera keeps its own world inside this one. Camera bodies, bezels and the cards drawn on their screens stay camera black and keep the card's own colours; the glass frames them, it never tints them.
 
 **Key Characteristics:**
 - Marshmallow #F0F0F0 ground under a faint 40px line grid that rolls like calm water, with two soft blooms.
 - Frosted glass panels with white hairline edges, cool shadows and darker inner wells.
-- Record Red for every action, selection and focus; Galactic Violet and Leaf Green only as bloom and small HUD marks.
-- The OKLCH bloom (Leaf Green through magenta to Galactic Violet) rising from a corner of each large pane.
+- Four colours: Marshmallow white, Record Red, Leaf Green and Ink black. Red for every action, selection and focus; green only as light (bloom and small HUD marks); black for structure (nav pill, closing card, camera).
+- The Leaf Green bloom rising from a corner of each large pane, answered by a faint red glow in the opposite corner.
 - Bevelled corners (`corner-shape: bevel`) on the hero frame, studio, panes, primary buttons and closing card.
 - Real camera bodies and real wedding photographs; cards always shown in a camera bezel.
 - Shape, not fade: things rise, unfold, iris open and blink; nothing crossfades.
 
 ## Colors
 
-A pale, cool marshmallow ground and white glass, one red signal for action (the NotaLucis Record Red), and a Leaf Green to Galactic Violet light that only ever glows.
+A pale, cool marshmallow ground and white glass, one red signal for action (the NotaLucis Record Red), a Leaf Green light that only ever glows, and Ink black for structure.
 
 ### Primary
 - **Record Red** (`record-red`): primary buttons, the studio's "Make my card", selected chips and camera picker, the featured plan's ring, focus outlines, the italic "blank" in the hero headline, caret and accent-color. The camera's record dot: it means "this is the action".
@@ -161,11 +159,11 @@ A pale, cool marshmallow ground and white glass, one red signal for action (the 
 - **Record Red Wash** (`record-red-wash`): selected chips and the Shoot Cards header of the comparison table; its body cells take a fainter #fffafa.
 
 ### Secondary and tertiary: the light
-- **Galactic Violet** (`galactic-violet`): the far end of the bloom, the ring of the HUD nodes, the field of the closing card (white text on it), the brand mark's glow.
+- **Ink** doubles as the fourth brand colour: the black nav pill, the "Make my card" busy pill, the closing card (white text on near-black #121317 to #25272e) and the camera bodies.
 - **Leaf Green** (`leaf-green`): the green of the plant behind the camera in the hero video, sampled from its lit leaves. The near end of the bloom, the dot in the "Real Sony" HUD chip, the diagonal hatch stripes beside "Made for wedding & portrait photographers" and the upgrade line, and the one "Pay once" badge on the featured plan (Ink text on it).
 - **Leaf Ink** (`leaf-ink`): the leaf in shadow, dark enough for text (5.4:1 on Marshmallow): the serif step numerals in "how it works" and the numbered parts lists.
 - **Leaf Soft** (`leaf-soft`): the 4px halo around the HUD chip's dot.
-- **Bloom Leaf** (`bloom-leaf`) and **Bloom Violet** (`bloom-violet`): the middle stops of the bloom. Used only inside bloom gradients, at 24–50% alpha.
+- **Bloom Leaf** (`bloom-leaf`): a lighter leaf stop inside bloom gradients only, at 24–50% alpha.
 
 ### Neutral
 - **Marshmallow** (`marshmallow`): the page ground. Cool and neutral, never cream.
@@ -181,11 +179,11 @@ A pale, cool marshmallow ground and white glass, one red signal for action (the 
 - **OK** (`ok`) for success and "yes" ticks; **Error** (`error`) for failures and destructive hovers.
 
 ### The Bloom
-The bloom is `linear-gradient(in oklch 120deg, #5a9239, #7b3bff)` for strokes and the brand mark, and a stack of radial gradients (Leaf Green at the corner, Bloom Leaf, Bloom Violet, then Galactic Violet farthest out) for panes. The hero frame anchors it lower left; the card-types and pricing panes anchor it lower right so they answer the hero; the closing card carries it at full strength (an OKLCH radial from Leaf Green in the lower left through teal into Galactic Violet and a deep violet #4a1fc0, white text over the violet half) to magenta OKLCH field, white text). The live camera preview sits in a soft conic Violet/Leaf halo.
+The bloom is `linear-gradient(120deg, #5a9239, #3b6e1f)` (the leaf, lit to shadow) for the stroke under "blank", and a stack of radial gradients (Leaf Green at the corner, Bloom Leaf, then the leaf in shadow) for panes. The hero frame anchors it lower left; the card-types and pricing panes anchor it lower right so they answer the hero, with a faint Record Red glow in the opposite corner; the closing card is Ink black with the leaf rising from its lower left and a red glow in its upper right, white text. The live camera preview sits in a soft Leaf Green halo. The brand mark stays the NotaLucis red square.
 
 **The One Signal Rule.** Record Red marks the action, the selection and the focus; nothing else on the page is red-filled. The nav CTA is black precisely so it never competes with the studio's red button.
 
-**The Light Never Acts Rule.** Galactic Violet and Leaf Green are light, not paint: bloom, HUD node rings, the HUD dot, hatch marks, numerals (as Leaf Ink), the closing card's field and the single "Pay once" badge. They never fill a button, a chip or a body of text, and they never mark a selection.
+**The Light Never Acts Rule.** Leaf Green is light, not paint: bloom, the HUD dot, hatch marks, numerals (as Leaf Ink), the closing card's corner and the single "Pay once" badge. It never fills a button, a chip or a body of text, and it never marks a selection.
 
 **The Camera Keeps Its Colours Rule.** Cards rendered for the camera (pose cards with their red bars, the card-type tile SVGs, everything `assets/builder.js` draws) keep their own palette. That is product output, not site UI; the site palette never recolours it.
 
@@ -276,22 +274,22 @@ Borders are 1px hairlines; a selected state adds an inset 1px Record Red ring ra
 - A frosted bar floating 10px below the top of the page, inset from the edges, 20px radius, white hairline edge and an inset highlight, its shadow deepening once scrolled. On desktop the links (Ink Soft 500 14px, hover Ink) sit together on one bevelled white tab; the brand mark is a small bevelled square filled with the bloom. Below 861px the links fold into a menu panel behind a round glass toggle.
 
 ### HUD Callouts (signature)
-- On desktop, signed out, the hero video carries two ringed nodes on the camera's screen (white core, Violet ring, white outer ring, a slow white ping on a 2.6s loop, staggered) with white 1.25px leader lines running to two glass chips: "Real Sony · scrolling pose cards" with a Leaf Green dot and halo, and "Try it yourself →", which turns white with Red Deep text on hover. Chips are 80% white with 12px backdrop blur. The ping stops with reduced motion; phones and the signed-in view show the chips without the nodes and lines.
+- On desktop, signed out, the hero video carries two ringed nodes on the camera's screen (white core, Record Red ring, white outer ring, a slow white ping on a 2.6s loop, staggered) with white 1.25px leader lines running to two glass chips: "Real Sony · scrolling pose cards" with a Leaf Green dot and halo, and "Try it yourself →", which turns white with Red Deep text on hover. Chips are 80% white with 12px backdrop blur. The ping stops with reduced motion; phones and the signed-in view show the chips without the nodes and lines.
 
 ### Camera Screen (signature)
 - Card previews always sit inside a Camera Black bezel (18px radius on tiles, 9px padding) with a white Rim halo, and live previews inside a full camera body (dark gradient, viewfinder hump, dial and buttons). Cards are never shown floating on the glass without the camera around them, except in the fanned pose stack. The bezel stays camera black; only its caption picks up red on hover.
 - The camera bodies (the live preview on the homepage, the camera in `/demo`) are drawn in 3D with three.js (`assets/cam3d.js` loads `assets/cam3d-scene.js` only once a camera is on screen). The model is built in code and measured off the CSS camera it covers, so its screen lands on the CSS screen canvas. The CSS camera keeps drawing the card, turning the wheel and pressing keys; the 3D model reads that state and only renders when something changes. It turns 10° to show its grip side, follows the mouse by up to 7°, and holds still with reduced motion or a touch screen. Without WebGL2 the CSS camera is shown, unchanged.
-- Signed in, the live camera preview floats in a soft conic Violet-and-Leaf halo beside the studio.
+- Signed in, the live camera preview floats in a soft Leaf Green halo beside the studio.
 
 ### Motion (assets/motion.js, signature)
-- One system, used the same way everywhere: headlines (hero, section headings, closing card) rise in word by word as they come into view, and the hero's italic "blank" gets a bloom stroke (Leaf Green to Galactic Violet) drawn under it. Cards (projects, card-type tiles, pricing, the FAQ list) catch a soft light where the cursor is and tilt up to 5° towards it; project covers and the pose-pack stack fan out. The main buttons lean up to 6px towards the cursor. The camera picker's selection slides. A slow reel of real pose cards and the bride's-board photos runs under the hero and pauses on hover.
+- One system, used the same way everywhere: headlines (hero, section headings, closing card) rise in word by word as they come into view, and the hero's italic "blank" gets a Leaf Green stroke drawn under it. Cards (projects, card-type tiles, pricing, the FAQ list) catch a soft light where the cursor is and tilt up to 5° towards it; project covers and the pose-pack stack fan out. The main buttons lean up to 6px towards the cursor. The camera picker's selection slides. A slow reel of real pose cards and the bride's-board photos runs under the hero and pauses on hover.
 - Dialogs (sign-in, "Delete project?") dim the page to a cool ink (`rgba(20,24,40,.32)`) and pop the card in; no backdrop blur on dialogs (a blur over the looping video made Chromium flash the page).
 - A closer look at a stored card: hover (or keyboard focus) shows it large beside the thumbnail; on touch screens a long press opens it full screen. A click or tap still picks the card.
 - Shape, not fade: things change shape instead of crossfading or blurring in. The hero video and the studio camera open through a hexagonal iris. "Make my card" turns into a black Ink pill that says what it is doing ("Making your card…", "Converting for Sony…", "Packing your ZIP…", "✓ Downloaded"), then springs back. Grids (card-type tiles, pricing) unfold like a paper map, centre first, then the plus, then the corners; on one column each item unfolds as it arrives. Ticks and numbers pop from zero on a spring (`--spring`, a `linear()` under-damped curve). Saved projects pop in once, one after another. On scroll the wordmark squeezes into its bloom mark. Going to another page is one shutter blink: the page closes from top and bottom over near-black and the next one opens from the middle (a native cross-document view transition, about 0.3s; browsers without it just navigate). Glass and the bloom are the material; there are still no particles, and no glow that moves.
 - Reduced motion: headlines show at once, nothing tilts, leans, slides, scrolls, unfolds, pings or blinks; touch screens get no cursor effects.
 
 ### Background Grid (signature)
-- A 40px line grid in Muted at 6% opacity drifts diagonally (40px every 22s); a 40% copy shows in a 200px radial circle around the cursor and fades out when the cursor leaves. Two soft blooms sit behind it, drawn as radial gradients, not a blur filter: Galactic Violet (12%) off the top-right corner and Leaf Green (10%) off the bottom-left. The lines are drawn on a canvas and move like a calm water surface: two slow waves (7px over 520px at 55px/s, 3px over 300px at 35px/s) lift and bend them, and the main wave's crests run diagonally a little brighter (5% to 14%); 30 fps, paused while the tab is hidden. With reduced motion it is the still CSS grid. Fixed behind content, pointer-events none, no cursor spotlight on touch.
+- A 40px line grid in Muted at 6% opacity drifts diagonally (40px every 22s); a 40% copy shows in a 200px radial circle around the cursor and fades out when the cursor leaves. Two soft blooms sit behind it, drawn as radial gradients, not a blur filter: a faint Record Red (7%) off the top-right corner and Leaf Green (10%) off the bottom-left. The lines are drawn on a canvas and move like a calm water surface: two slow waves (7px over 520px at 55px/s, 3px over 300px at 35px/s) lift and bend them, and the main wave's crests run diagonally a little brighter (5% to 14%); 30 fps, paused while the tab is hidden. With reduced motion it is the still CSS grid. Fixed behind content, pointer-events none, no cursor spotlight on touch.
 
 ## Do's and Don'ts
 
@@ -299,15 +297,15 @@ Borders are 1px hairlines; a selected state adds an inset 1px Record Red ring ra
 - **Do** show the real thing: real camera bodies, real cards in a camera bezel, photographs from real weddings.
 - **Do** build every panel from the one glass material, with Wells for the content it holds.
 - **Do** keep Record Red for the action, the selection and the focus, with the 2px Red focus ring on every control.
-- **Do** keep Galactic Violet and Leaf Green to the bloom, HUD marks, hatch stripes, Leaf Ink numerals, the closing card and the single "Pay once" badge.
-- **Do** interpolate the bloom in OKLCH so the green runs cleanly through teal into Violet.
+- **Do** keep Leaf Green to the bloom, HUD marks, hatch stripes, Leaf Ink numerals, the closing card's corner and the single "Pay once" badge.
+- **Do** keep the palette to four colours: Marshmallow white, Record Red, Leaf Green, Ink black.
 - **Do** use Instrument Serif for headlines and numerals, Inter for everything you read in detail or press.
 - **Do** lift cards 4px and buttons 2px on hover, with the matching shadow step.
 - **Do** give every tappable control a 44px hit area on touch screens.
 
 ### Don't:
 - **Don't** put a kicker, eyebrow or tagline line above a heading.
-- **Don't** fill a button, chip or body text with Violet or Green, or add a second action colour.
+- **Don't** fill a button, chip or body text with Green, or add a fifth colour (no violet, blue, orange or pink).
 - **Don't** recolour cards rendered for the camera to the site palette.
 - **Don't** warm the Marshmallow ground toward cream or tint shadows black; shadows stay cool navy.
 - **Don't** replace Inter or Instrument Serif; both are part of the shared NotaLucis identity.

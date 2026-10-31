@@ -1,6 +1,6 @@
 /* Shoot Cards — "Marshmallow Glass": Marshmallow white ground (#F0F0F0), frosted
-   glass panels, Record Red for every action and selection, and a Leaf Green
-   to Galactic Violet bloom with small HUD marks. Inter + Instrument Serif. */
+   glass panels, Record Red for every action and selection, Leaf Green (the plant
+   in the hero video) as the light, black for structure with small HUD marks. Inter + Instrument Serif. */
 :root{
   /* one spring for everything that pops or settles (a real under-damped step response) */
   --spring:cubic-bezier(.2,1.35,.4,1);
@@ -19,12 +19,11 @@
   --accent-soft:rgba(164,0,0,.08);   /* tinted fill: upsell, nudge, focus halo */
   --accent-line:rgba(164,0,0,.18);   /* hairline on a tinted fill; text selection */
   --accent-wash:#fff4f4;             /* selected chip, 'us' column */
-  --violet:#7b3bff;         /* Galactic Violet: the bloom, HUD nodes, the closing card */
   --pop:#5a9239;            /* Leaf Green, from the plant in the hero video: the bloom, HUD marks, the one badge */
   --pop-ink:#3b6e1f;        /* the leaf in shadow: dark enough for text on light (5.4:1 on marshmallow) */
   --pop-soft:rgba(90,146,57,.16);
-  /* the bloom: Leaf Green into Galactic Violet, interpolated in OKLCH */
-  --bloom:linear-gradient(in oklch 120deg,#5a9239,#7b3bff);
+  /* the bloom: the leaf, from its lit green into its shadow */
+  --bloom:linear-gradient(120deg,#5a9239,#3b6e1f);
   --shadow-accent:0 6px 20px rgba(164,0,0,.24);     /* primary CTA at rest */
   --shadow-accent-lg:0 10px 26px rgba(164,0,0,.3); /* primary CTA on hover */
   --ok:#047857;
@@ -89,9 +88,9 @@ button{font-family:var(--sans)}
 .bg-grid.live .bg-grid-spot{opacity:1}
 .bg-grid-canvas{position:absolute;inset:0;width:100%;height:100%}
 .bg-grid-spot .bg-grid-lines{opacity:.4}
-/* two soft blooms (Galactic Violet top right, Leaf Green bottom left), drawn as gradients: a blur() filter this size makes Chromium repaint the page and flicker */
+/* two soft blooms (a faint Record Red top right, Leaf Green bottom left), drawn as gradients: a blur() filter this size makes Chromium repaint the page and flicker */
 .bg-grid-glow{position:absolute;inset:0;background:
-  radial-gradient(40% 45% at 100% 0%,rgba(123,59,255,.12),rgba(123,59,255,0) 75%),
+  radial-gradient(40% 45% at 100% 0%,rgba(164,0,0,.07),rgba(164,0,0,0) 75%),
   radial-gradient(34% 40% at 0% 100%,rgba(90,146,57,.1),rgba(90,146,57,0) 75%)}
 @media (prefers-reduced-motion:no-preference){
   .bg-grid-lines{animation:gridDrift 22s linear infinite}
@@ -115,7 +114,7 @@ button{font-family:var(--sans)}
   border-bottom:1px solid var(--border-soft);
 }
 .brand{display:flex;align-items:center;gap:9px;color:var(--ink);flex:0 0 auto}
-.brand-mark{width:20px;height:20px;border-radius:7px;background:var(--bloom);box-shadow:0 2px 8px rgba(123,59,255,.35);flex:0 0 auto}
+.brand-mark{width:20px;height:20px;border-radius:7px;background:linear-gradient(135deg,#c01818,#7e0000);box-shadow:0 2px 8px rgba(164,0,0,.35);flex:0 0 auto}
 .brand-name{font-weight:600;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
 .brand-by{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--muted);white-space:nowrap}
 .nav-links{display:flex;align-items:center;gap:24px;min-width:0}
@@ -484,7 +483,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 
 /* ---------- closing call to action ---------- */
 .final{max-width:var(--wide);margin:0 auto;padding:0 var(--gutter) clamp(56px,7vw,96px)}
-.final-card{position:relative;overflow:hidden;isolation:isolate;background:radial-gradient(in oklch 95% 150% at 0% 100%,#5a9239,#2f7fb0 34%,#7b3bff 62%,#4a1fc0);color:#fff;border-radius:28px;padding:clamp(36px,6vw,72px) 24px;text-align:center;box-shadow:var(--shadow-lg)}
+.final-card{position:relative;overflow:hidden;isolation:isolate;background:radial-gradient(70% 130% at 0% 100%,rgba(90,146,57,.85),rgba(90,146,57,0) 62%),radial-gradient(50% 90% at 100% 0%,rgba(164,0,0,.35),rgba(164,0,0,0) 70%),linear-gradient(160deg,#25272e,#121317);color:#fff;border-radius:28px;padding:clamp(36px,6vw,72px) 24px;text-align:center;box-shadow:var(--shadow-lg)}
 .final-card h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4.4vw,52px);line-height:1.04;letter-spacing:-.012em;margin:0 0 12px;color:#fff}
 .final-card p{color:rgba(255,255,255,.86);font-size:18px;margin:0 0 26px}
 .final-btn{background:#fff;color:var(--accent-2)}
@@ -857,7 +856,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   .price-card.featured{border-radius:30px 18px 30px 18px;corner-shape:bevel round bevel round}
 }
 
-/* fields: a pale well inside the glass, white and ringed in violet on focus */
+/* fields: a pale well inside the glass, white and ringed in red on focus */
 .fld input,.fld textarea,.row-in,.modal-card input,#project-select,#project-new,.proj-tools input{background:var(--well);border-color:var(--border)}
 .photo-drop,.drop,.paste,.instructions pre{background:var(--well)}
 .drop,.photo-drop{border-color:rgba(164,0,0,.28)}
@@ -871,7 +870,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .nav{width:calc(100% - 2 * max(10px,calc(var(--gutter) - 22px)));max-width:calc(var(--wide) - 2 * max(0px,calc(var(--gutter) - 22px)));margin:10px auto 0;top:10px;border:1px solid var(--glass-edge);border-radius:20px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 26px rgba(20,28,58,.06);padding:9px 10px 9px 16px}
 .nav.scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 30px rgba(20,28,58,.1)}
-.brand-mark{width:22px;height:22px;border-radius:7px;box-shadow:0 3px 10px rgba(123,59,255,.3)}
+.brand-mark{width:22px;height:22px;border-radius:7px;box-shadow:0 3px 10px rgba(164,0,0,.3)}
 @supports (corner-shape:bevel){.brand-mark{border-radius:8px 3px 8px 3px;corner-shape:bevel round bevel round}}
 @media(min-width:861px){
   .nav-links{padding:9px 26px;border-radius:14px;background:rgba(255,255,255,.62);box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 1px 2px rgba(20,28,58,.05)}
@@ -890,8 +889,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   background:
     radial-gradient(46% 62% at 0% 100%,rgba(90,146,57,.58),rgba(90,146,57,0) 72%),
     radial-gradient(52% 78% at 10% 92%,oklch(.74 .12 140 / .5),transparent 72%),
-    radial-gradient(46% 70% at 30% 100%,oklch(.58 .24 295 / .34),transparent 74%),
-    radial-gradient(40% 50% at 46% 104%,rgba(123,59,255,.22),rgba(123,59,255,0) 72%),
+    radial-gradient(46% 70% at 28% 100%,rgba(59,110,31,.22),transparent 74%),
     linear-gradient(170deg,rgba(255,255,255,.72),rgba(255,255,255,.34));
   box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)}
 .hero::after{content:"";position:absolute;z-index:-1;pointer-events:none;
@@ -899,7 +897,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   background:var(--hatch),var(--hatch);background-size:30px 30px;background-position:0 0,100% 0;background-repeat:no-repeat}
 @supports (corner-shape:bevel){.hero::before{border-radius:56px 40px 56px 40px;corner-shape:bevel round bevel round}}
 .pitch h1 em{color:var(--accent)}
-/* the stroke under "blank" carries the bloom */
+/* the stroke under "blank" is the leaf */
 .pitch h1 em::after{background:var(--bloom);opacity:1;height:.075em}
 .pitch-for{display:inline-flex;align-items:center;gap:10px;margin:18px 0 0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2)}
 .pitch-for::before{content:"";width:34px;height:10px;background:repeating-linear-gradient(120deg,var(--pop) 0 3px,transparent 3px 7px)}
@@ -919,7 +917,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   html:not(.previewing):not(.signed-in) .vid-hud{display:block;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
   .vid-hud polyline{fill:none;stroke:rgba(255,255,255,.85);stroke-width:1.25;vector-effect:non-scaling-stroke}
   html:not(.previewing):not(.signed-in) .vid-node{display:block;position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;
-    background:radial-gradient(circle,#fff 0 3px,rgba(123,59,255,.9) 3.5px 5px,rgba(255,255,255,.5) 5.5px);box-shadow:0 0 0 1px rgba(255,255,255,.9),0 2px 8px rgba(20,28,58,.3);pointer-events:none}
+    background:radial-gradient(circle,#fff 0 3px,rgba(164,0,0,.9) 3.5px 5px,rgba(255,255,255,.5) 5.5px);box-shadow:0 0 0 1px rgba(255,255,255,.9),0 2px 8px rgba(20,28,58,.3);pointer-events:none}
   .vid-node.n1{left:35.5%;top:61%}
   .vid-node.n2{left:63%;top:44%}
   @media (prefers-reduced-motion:no-preference){
@@ -929,16 +927,16 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   }
 }
 
-/* the live preview floats in a soft violet-and-leaf halo, the way the reference lights its subject */
+/* the live preview floats in a soft leaf halo, the way the reference lights its subject */
 .cam-preview{position:relative;isolation:isolate}
 .cam-preview::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:min(120%,680px);aspect-ratio:1;transform:translate(-50%,-52%);border-radius:50%;pointer-events:none;
-  background:radial-gradient(closest-side,rgba(255,255,255,.9),rgba(255,255,255,0) 60%),conic-gradient(from 200deg in oklch,rgba(123,59,255,.2),rgba(90,146,57,.2),rgba(123,59,255,.2));
+  background:radial-gradient(closest-side,rgba(255,255,255,.9),rgba(255,255,255,0) 60%),radial-gradient(closest-side,rgba(90,146,57,.2),rgba(90,146,57,0));
   -webkit-mask-image:radial-gradient(closest-side,#000 55%,transparent);mask-image:radial-gradient(closest-side,#000 55%,transparent)}
 
 @media(max-width:980px){
   /* phones: no frame around the studio panel (one edge, not two); the bloom stays */
   .hero::before{inset:0;border:0;border-radius:0;box-shadow:none;
-    background:radial-gradient(70% 34% at 0% 62%,rgba(90,146,57,.4),transparent 72%),radial-gradient(80% 36% at 18% 70%,oklch(.74 .12 140 / .32),transparent 72%),radial-gradient(70% 30% at 100% 30%,rgba(123,59,255,.16),transparent 72%)}
+    background:radial-gradient(70% 34% at 0% 62%,rgba(90,146,57,.4),transparent 72%),radial-gradient(80% 36% at 18% 70%,oklch(.74 .12 140 / .32),transparent 72%),radial-gradient(70% 30% at 100% 30%,rgba(164,0,0,.06),transparent 72%)}
   .hero::after,.more::after,.pricing::after{display:none}
   .more::before,.pricing::before{left:6px;right:6px;border-radius:30px}
 }
@@ -951,11 +949,11 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   background:
     radial-gradient(40% 46% at 100% 100%,rgba(90,146,57,.34),rgba(90,146,57,0) 72%),
     radial-gradient(46% 60% at 92% 96%,oklch(.74 .12 140 / .26),transparent 72%),
-    radial-gradient(40% 56% at 74% 104%,rgba(123,59,255,.16),transparent 74%),
+    radial-gradient(40% 56% at 74% 104%,rgba(59,110,31,.16),transparent 74%),
     linear-gradient(170deg,rgba(255,255,255,.66),rgba(255,255,255,.3));
   box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.06)}
 .pricing::before{background:
-    radial-gradient(40% 50% at 0% 0%,rgba(123,59,255,.16),transparent 72%),
+    radial-gradient(40% 50% at 0% 0%,rgba(164,0,0,.06),transparent 72%),
     radial-gradient(42% 52% at 100% 100%,rgba(90,146,57,.32),rgba(90,146,57,0) 72%),
     radial-gradient(46% 60% at 90% 96%,oklch(.74 .12 140 / .24),transparent 72%),
     linear-gradient(170deg,rgba(255,255,255,.66),rgba(255,255,255,.3))}
@@ -977,21 +975,21 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .strip{max-width:var(--wide);margin:clamp(14px,2vw,22px) auto 0;border:1px solid var(--glass-edge);border-radius:22px;width:calc(100% - 2 * max(10px,calc(var(--gutter) - 22px)))}
 .st b,.parts .n{color:var(--pop-ink)}
 
-/* card types: the camera bezel stays camera black; the caption picks up the violet on hover */
+/* card types: the camera bezel stays camera black; the caption picks up the red on hover */
 .tile-screen{border-radius:18px;box-shadow:0 0 0 6px rgba(255,255,255,.55),var(--shadow)}
 
-/* pricing: the plan you can buy gets the violet ring and the one Leaf Green badge */
+/* pricing: the plan you can buy gets the red ring and the one Leaf Green badge */
 .price-card.featured{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,inset 0 1px 0 #fff,var(--shadow-lg)}
 .price-badge{background:var(--pop);color:var(--ink);font-weight:700;box-shadow:0 6px 16px rgba(90,146,57,.32)}
 .price-amount{letter-spacing:-.01em}
 
-/* why-table: the Shoot Cards column washed in violet */
+/* why-table: the Shoot Cards column washed in red */
 .why-table thead th.us{background:var(--accent-wash)}
 
-/* the closing card: the bloom at full strength, hatch stripes in its lower right */
+/* the closing card: black, the leaf rising from its lower left, hatch stripes in its lower right */
 .final-card::after{content:"";position:absolute;z-index:-1;right:clamp(20px,4vw,48px);bottom:clamp(20px,4vw,40px);width:120px;height:22px;
   background:repeating-linear-gradient(120deg,rgba(255,255,255,.55) 0 7px,transparent 7px 16px);opacity:.9}
-.final-card{box-shadow:0 30px 70px rgba(123,59,255,.22),0 6px 16px rgba(20,28,58,.12)}
+.final-card{box-shadow:0 30px 70px rgba(20,22,28,.28),0 6px 16px rgba(20,28,58,.12)}
 .final-btn{background:#fff;color:var(--accent-2);box-shadow:0 10px 24px rgba(20,28,58,.2)}
 .final-btn:hover{background:#fff;color:var(--ink)}
 
