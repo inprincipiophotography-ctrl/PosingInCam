@@ -90,53 +90,53 @@
         ],
         "note": "Light only: bloom, HUD node rings, closing card, brand-mark glow. Never fills a control."
       },
-      "bubblegum-pink": {
+      "leaf-green": {
         "role": "tertiary",
-        "displayName": "Bubblegum Pink",
+        "displayName": "Leaf Green",
         "tonalRamp": [
-          "#3d0a24",
-          "#6e1443",
-          "#b0246e",
-          "#e0418f",
-          "#ff5fb4",
-          "#ff90cb",
-          "#ffc5e3",
-          "#fff0f7"
+          "#1b2c11",
+          "#2d491c",
+          "#446e2b",
+          "#5a9239",
+          "#8cb374",
+          "#b5cea6",
+          "#dbe7d3",
+          "#f2f6ef"
         ],
         "note": "Light only: bloom, HUD dot, hatch stripes, the one Pay once badge."
       },
-      "bubblegum-ink": {
+      "leaf-ink": {
         "role": "tertiary",
-        "displayName": "Bubblegum Ink",
+        "displayName": "Leaf Ink",
         "tonalRamp": [
-          "#3d0a24",
-          "#6e1443",
-          "#b0246e",
-          "#e0418f",
-          "#ff5fb4",
-          "#ff90cb",
-          "#ffc5e3",
-          "#fff0f7"
+          "#122109",
+          "#1e3710",
+          "#2c5217",
+          "#3b6e1f",
+          "#769a62",
+          "#a7be9a",
+          "#d4dfce",
+          "#eff3ed"
         ],
-        "note": "Text-safe Bubblegum (5.5:1 on Marshmallow) for numerals."
+        "note": "Text-safe leaf green, the leaf in shadow (5.4:1 on Marshmallow), for numerals."
       },
-      "bubblegum-soft": {
+      "leaf-soft": {
         "role": "tertiary",
-        "displayName": "Bubblegum Soft",
+        "displayName": "Leaf Soft",
         "tonalRamp": [
           "#3d0a24",
           "#6e1443",
-          "#b0246e",
+          "#3b6e1f",
           "#e0418f",
-          "#ff5fb4",
+          "#5a9239",
           "#ff90cb",
           "#ffc5e3",
           "#fff0f7"
         ]
       },
-      "bloom-pink": {
+      "bloom-leaf": {
         "role": "tertiary",
-        "displayName": "Bloom Pink",
+        "displayName": "Bloom Leaf",
         "tonalRamp": [
           "oklch(15% 0.099 345)",
           "oklch(25% 0.154 345)",
@@ -147,7 +147,7 @@
           "oklch(84% 0.099 345)",
           "oklch(95% 0.033 345)"
         ],
-        "canonical": "oklch(.66 .22 345)"
+        "canonical": "oklch(.74 .12 140)"
       },
       "bloom-violet": {
         "role": "tertiary",
@@ -358,7 +358,7 @@
       },
       "numeral": {
         "displayName": "Numeral",
-        "purpose": "Serif step numerals in Bubblegum Ink."
+        "purpose": "Serif step numerals in Leaf Ink."
       },
       "title": {
         "displayName": "Title",
@@ -416,8 +416,8 @@
       },
       {
         "name": "badge",
-        "value": "0 6px 16px rgba(255,95,180,.32)",
-        "purpose": "The Bubblegum Pink Pay once badge."
+        "value": "0 6px 16px rgba(90,146,57,.32)",
+        "purpose": "The Leaf Green Pay once badge."
       },
       {
         "name": "closing-card",
@@ -488,7 +488,7 @@
       "material": "linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.64))",
       "edge": "rgba(255,255,255,.95)",
       "hatch": "repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px)",
-      "bloom": "linear-gradient(in oklch 120deg,#ff5fb4,#7b3bff)",
+      "bloom": "linear-gradient(in oklch 120deg,#5a9239,#7b3bff)",
       "bevel": "corner-shape: bevel round bevel round (progressive; round fallback)"
     }
   },
@@ -547,7 +547,7 @@
       "refersTo": "glass-panel",
       "description": "Large bevelled pane with hatch marks top-left and top-right and the OKLCH Pink-to-Violet bloom from a corner.",
       "html": "<section class=\"ds-pane\"><h2>Every card your day needs</h2></section>",
-      "css": ".ds-pane{position:relative;min-height:220px;padding:56px 32px;border:1px solid rgba(255,255,255,.95);border-radius:56px 40px 56px 40px;corner-shape:bevel round bevel round;background:radial-gradient(46% 62% at 0% 100%,rgba(255,95,180,.58),rgba(255,95,180,0) 72%),radial-gradient(52% 78% at 10% 92%,oklch(.66 .22 345 / .5),transparent 72%),radial-gradient(46% 70% at 30% 100%,oklch(.58 .24 295 / .34),transparent 74%),radial-gradient(40% 50% at 46% 104%,rgba(123,59,255,.22),rgba(123,59,255,0) 72%),linear-gradient(170deg,rgba(255,255,255,.72),rgba(255,255,255,.34)),#f0f0f0;box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)}.ds-pane::after{content:\"\";position:absolute;top:22px;left:22px;right:22px;height:30px;background:repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px),repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px);background-size:30px 30px;background-position:0 0,100% 0;background-repeat:no-repeat}.ds-pane h2{margin:0;text-align:center;font:400 40px/1.06 'Instrument Serif',Georgia,serif;letter-spacing:-.012em;color:#15161c}"
+      "css": ".ds-pane{position:relative;min-height:220px;padding:56px 32px;border:1px solid rgba(255,255,255,.95);border-radius:56px 40px 56px 40px;corner-shape:bevel round bevel round;background:radial-gradient(46% 62% at 0% 100%,rgba(90,146,57,.58),rgba(90,146,57,0) 72%),radial-gradient(52% 78% at 10% 92%,oklch(.74 .12 140 / .5),transparent 72%),radial-gradient(46% 70% at 30% 100%,oklch(.58 .24 295 / .34),transparent 74%),radial-gradient(40% 50% at 46% 104%,rgba(123,59,255,.22),rgba(123,59,255,0) 72%),linear-gradient(170deg,rgba(255,255,255,.72),rgba(255,255,255,.34)),#f0f0f0;box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)}.ds-pane::after{content:\"\";position:absolute;top:22px;left:22px;right:22px;height:30px;background:repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px),repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px);background-size:30px 30px;background-position:0 0,100% 0;background-repeat:no-repeat}.ds-pane h2{margin:0;text-align:center;font:400 40px/1.06 'Instrument Serif',Georgia,serif;letter-spacing:-.012em;color:#15161c}"
     },
     {
       "name": "Floating Nav",
@@ -555,23 +555,23 @@
       "refersTo": "button-nav-cta",
       "description": "Frosted floating bar, links on one bevelled tab, bloom brand mark, black pill CTA.",
       "html": "<nav class=\"ds-nav\"><span class=\"ds-brand\"><i></i>Shoot Cards</span><span class=\"ds-links\"><a href=\"#\">Card types</a><a href=\"#\">Pricing</a><a href=\"#\">FAQ</a></span><a class=\"ds-cta\" href=\"#\">Make a free card</a></nav>",
-      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 10px 9px 16px;background:rgba(244,244,246,.72);backdrop-filter:saturate(180%) blur(20px);border:1px solid rgba(255,255,255,.95);border-radius:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 26px rgba(20,28,58,.06);font-family:Inter,-apple-system,sans-serif}.ds-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:#15161c}.ds-brand i{width:22px;height:22px;border-radius:8px 3px 8px 3px;corner-shape:bevel round bevel round;background:linear-gradient(in oklch 120deg,#ff5fb4,#7b3bff);box-shadow:0 3px 10px rgba(123,59,255,.3)}.ds-links{display:flex;gap:24px;padding:9px 26px;background:rgba(255,255,255,.62);border-radius:0 0 18px 18px;corner-shape:bevel;box-shadow:inset 0 0 0 1px rgba(255,255,255,.9)}.ds-links a{color:#3c3e48;font-size:14px;font-weight:500;text-decoration:none}.ds-links a:hover{color:#15161c}.ds-links a:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:4px;border-radius:4px}.ds-cta{background:#15161c;color:#fff;border-radius:999px;padding:10px 20px;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18)}.ds-cta:hover{background:#000}"
+      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 10px 9px 16px;background:rgba(244,244,246,.72);backdrop-filter:saturate(180%) blur(20px);border:1px solid rgba(255,255,255,.95);border-radius:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 26px rgba(20,28,58,.06);font-family:Inter,-apple-system,sans-serif}.ds-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:#15161c}.ds-brand i{width:22px;height:22px;border-radius:8px 3px 8px 3px;corner-shape:bevel round bevel round;background:linear-gradient(in oklch 120deg,#5a9239,#7b3bff);box-shadow:0 3px 10px rgba(123,59,255,.3)}.ds-links{display:flex;gap:24px;padding:9px 26px;background:rgba(255,255,255,.62);border-radius:0 0 18px 18px;corner-shape:bevel;box-shadow:inset 0 0 0 1px rgba(255,255,255,.9)}.ds-links a{color:#3c3e48;font-size:14px;font-weight:500;text-decoration:none}.ds-links a:hover{color:#15161c}.ds-links a:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:4px;border-radius:4px}.ds-cta{background:#15161c;color:#fff;border-radius:999px;padding:10px 20px;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18)}.ds-cta:hover{background:#000}"
     },
     {
       "name": "HUD Chip",
       "kind": "custom",
       "refersTo": "glass-panel",
-      "description": "Glass callout chip on the hero video with the Bubblegum Pink dot and halo.",
+      "description": "Glass callout chip on the hero video with the Leaf Green dot and halo.",
       "html": "<span class=\"ds-hud\"><b></b>Real Sony · scrolling pose cards</span>",
-      "css": ".ds-hud{display:inline-flex;align-items:center;gap:9px;padding:8px 14px;background:rgba(255,255,255,.8);backdrop-filter:blur(12px) saturate(150%);border:1px solid rgba(255,255,255,.9);border-radius:999px;box-shadow:0 8px 22px rgba(20,28,58,.14);font:600 13px Inter,-apple-system,sans-serif;color:#15161c}.ds-hud b{width:8px;height:8px;border-radius:50%;background:var(--pop,#ff5fb4);box-shadow:0 0 0 4px var(--pop-soft,rgba(255,95,180,.16))}"
+      "css": ".ds-hud{display:inline-flex;align-items:center;gap:9px;padding:8px 14px;background:rgba(255,255,255,.8);backdrop-filter:blur(12px) saturate(150%);border:1px solid rgba(255,255,255,.9);border-radius:999px;box-shadow:0 8px 22px rgba(20,28,58,.14);font:600 13px Inter,-apple-system,sans-serif;color:#15161c}.ds-hud b{width:8px;height:8px;border-radius:50%;background:var(--pop,#5a9239);box-shadow:0 0 0 4px var(--pop-soft,rgba(90,146,57,.16))}"
     },
     {
       "name": "Pay Once Badge",
       "kind": "chip",
       "refersTo": "price-badge",
-      "description": "The single Bubblegum Pink fill on the site, on the featured plan; Ink text.",
+      "description": "The single Leaf Green fill on the site, on the featured plan; Ink text.",
       "html": "<span class=\"ds-badge\">Pay once</span>",
-      "css": ".ds-badge{display:inline-block;white-space:nowrap;background:var(--pop,#ff5fb4);color:var(--ink,#15161c);font:700 11px Inter,-apple-system,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 6px 16px rgba(255,95,180,.32)}"
+      "css": ".ds-badge{display:inline-block;white-space:nowrap;background:var(--pop,#5a9239);color:var(--ink,#15161c);font:700 11px Inter,-apple-system,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 6px 16px rgba(90,146,57,.32)}"
     },
     {
       "name": "Camera Screen",
@@ -584,12 +584,12 @@
   ],
   "narrative": {
     "northStar": "Marshmallow Glass",
-    "overview": "The page is one frosted pane on a marshmallow-white ground, lit from its lower left by a Bubblegum Pink to Galactic Violet bloom; the real camera is the subject the HUD points at. Every panel is the same material: a white glass gradient with a bright top edge and a cool shadow, holding paler wells for inputs and lists the way a dashboard card holds its chart. Bevelled corners, diagonal hatch marks and ringed HUD nodes give the glass an instrument's precision, so it reads as equipment rather than candy.\n\nDensity is moderate and editorial: generous section spacing, short copy, one clear action per block. Instrument Serif speaks in headlines; Inter instructs in everything you read in detail or press. Record Red is the only action colour. Galactic Violet and Bubblegum Pink are light, not ink: they live in the bloom and in a handful of small marks, never on a button.\n\nThe camera keeps its own world inside this one. Camera bodies, bezels and the cards drawn on their screens stay camera black and keep the card's own colours; the glass frames them, it never tints them.",
+    "overview": "The page is one frosted pane on a marshmallow-white ground, lit from its lower left by a Leaf Green to Galactic Violet bloom; the real camera is the subject the HUD points at. Every panel is the same material: a white glass gradient with a bright top edge and a cool shadow, holding paler wells for inputs and lists the way a dashboard card holds its chart. Bevelled corners, diagonal hatch marks and ringed HUD nodes give the glass an instrument's precision, so it reads as equipment rather than candy.\n\nDensity is moderate and editorial: generous section spacing, short copy, one clear action per block. Instrument Serif speaks in headlines; Inter instructs in everything you read in detail or press. Record Red is the only action colour. Galactic Violet and Leaf Green are light, not ink: they live in the bloom and in a handful of small marks, never on a button.\n\nThe camera keeps its own world inside this one. Camera bodies, bezels and the cards drawn on their screens stay camera black and keep the card's own colours; the glass frames them, it never tints them.",
     "keyCharacteristics": [
       "Marshmallow #F0F0F0 ground under a faint 40px line grid that rolls like calm water, with two soft blooms.",
       "Frosted glass panels with white hairline edges, cool shadows and darker inner wells.",
-      "Record Red for every action, selection and focus; Galactic Violet and Bubblegum Pink only as bloom and small HUD marks.",
-      "The OKLCH bloom (Bubblegum Pink through magenta to Galactic Violet) rising from a corner of each large pane.",
+      "Record Red for every action, selection and focus; Galactic Violet and Leaf Green only as bloom and small HUD marks.",
+      "The OKLCH bloom (Leaf Green through magenta to Galactic Violet) rising from a corner of each large pane.",
       "Bevelled corners (`corner-shape: bevel`) on the hero frame, studio, panes, primary buttons and closing card.",
       "Real camera bodies and real wedding photographs; cards always shown in a camera bezel.",
       "Shape, not fade: things rise, unfold, iris open and blink; nothing crossfades."
@@ -602,7 +602,7 @@
       },
       {
         "name": "The Light Never Acts Rule",
-        "body": "Galactic Violet and Bubblegum Pink are light, not paint: bloom, HUD node rings, the HUD dot, hatch marks, numerals (as Bubblegum Ink), the closing card's field and the single \"Pay once\" badge. They never fill a button, a chip or a body of text, and they never mark a selection.",
+        "body": "Galactic Violet and Leaf Green are light, not paint: bloom, HUD node rings, the HUD dot, hatch marks, numerals (as Leaf Ink), the closing card's field and the single \"Pay once\" badge. They never fill a button, a chip or a body of text, and they never mark a selection.",
         "section": "colors"
       },
       {
@@ -635,15 +635,15 @@
       "Do show the real thing: real camera bodies, real cards in a camera bezel, photographs from real weddings.",
       "Do build every panel from the one glass material, with Wells for the content it holds.",
       "Do keep Record Red for the action, the selection and the focus, with the 2px Red focus ring on every control.",
-      "Do keep Galactic Violet and Bubblegum Pink to the bloom, HUD marks, hatch stripes, Bubblegum Ink numerals, the closing card and the single \"Pay once\" badge.",
-      "Do interpolate the bloom in OKLCH so Pink runs cleanly into Violet.",
+      "Do keep Galactic Violet and Leaf Green to the bloom, HUD marks, hatch stripes, Leaf Ink numerals, the closing card and the single \"Pay once\" badge.",
+      "Do interpolate the bloom in OKLCH so the green runs cleanly through teal into Violet.",
       "Do use Instrument Serif for headlines and numerals, Inter for everything you read in detail or press.",
       "Do lift cards 4px and buttons 2px on hover, with the matching shadow step.",
       "Do give every tappable control a 44px hit area on touch screens."
     ],
     "donts": [
       "Don't put a kicker, eyebrow or tagline line above a heading.",
-      "Don't fill a button, chip or body text with Violet or Pink, or add a second action colour.",
+      "Don't fill a button, chip or body text with Violet or Green, or add a second action colour.",
       "Don't recolour cards rendered for the camera to the site palette.",
       "Don't warm the Marshmallow ground toward cream or tint shadows black; shadows stay cool navy.",
       "Don't replace Inter or Instrument Serif; both are part of the shared NotaLucis identity.",
