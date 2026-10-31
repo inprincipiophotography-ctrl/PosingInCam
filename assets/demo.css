@@ -17,9 +17,9 @@
 }
 @supports (corner-shape:bevel){.film{border-radius:44px 28px 44px 28px;corner-shape:bevel round bevel round}}
 .film.cut *,.film.cut *::before,.film.cut *::after{transition:none!important}
-.stage{position:relative;isolation:isolate;aspect-ratio:16/9.6;overflow:hidden;container:stage/inline-size;background:#e9ece4}
-/* backdrop: the homepage's hero photo (white wall, green leaves), blurred to a soft wash */
-.stage::before{content:"";position:absolute;inset:-80px;z-index:-2;background:url(/assets/showcase/hero-poster.jpg) 30% 0/260% auto no-repeat,#eef0ea;filter:blur(46px) saturate(.72) brightness(1.08);transform:scale(1.06)}
+.stage{position:relative;isolation:isolate;aspect-ratio:16/9.6;overflow:hidden;container:stage/inline-size;background:#f0f0f0}
+/* backdrop: marshmallow with the Bubblegum-to-Violet bloom rising from the lower left */
+.stage::before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(48% 70% at 0% 100%,rgba(254,133,0,.5),rgba(254,133,0,0) 72%),radial-gradient(54% 80% at 12% 96%,oklch(.66 .22 345 / .4),transparent 72%),radial-gradient(50% 70% at 100% 0%,rgba(16,91,255,.2),transparent 72%),#f0f0f0}
 .stage::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(80% 90% at 75% 50%,rgba(255,255,255,0),rgba(255,255,255,.35) 85%),linear-gradient(90deg,rgba(255,255,255,.55),rgba(255,255,255,0) 50%)}
 
 /* ---------- the story (left) ---------- */

@@ -34,3 +34,6 @@ template-a7iv*.JPG
 template-a7iv*.jpg
 real-a7iv*.JPG
 real-a7iv*.jpg
+
+# design review captures (local only)
+.impeccable/review/
