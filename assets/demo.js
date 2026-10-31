@@ -376,7 +376,7 @@
     ctx.font = "600 52px " + SANS;
     if (f.counter || f.file || f.play) pill(f.file ? PLAY + "  " + f.file : PLAY, 30, 16, "left");
     if (f.counter) pill(f.counter, cw - 30, 16, "right");
-    if (f.badge) pill(f.badge, cw - 30, 16, "right", "rgba(255,255,255,.94)", "#0a47d9");
+    if (f.badge) pill(f.badge, cw - 30, 16, "right", "rgba(255,255,255,.94)", "#7e0000");
     ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
 

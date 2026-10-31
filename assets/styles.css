@@ -1,6 +1,6 @@
-/* Shoot Cards — "Marshmallow Glass": Marshmallow white ground, frosted glass
-   panels, Galactic Violet (#105BFF) for every action and selection, Bubblegum
-   (#FE8500) only in the bloom and the small HUD marks. Inter + Instrument Serif. */
+/* Shoot Cards — "Marshmallow Glass": Marshmallow white ground (#F0F0F0), frosted
+   glass panels, Record Red for every action and selection, and a Bubblegum Pink
+   to Galactic Violet bloom with small HUD marks. Inter + Instrument Serif. */
 :root{
   /* one spring for everything that pops or settles (a real under-damped step response) */
   --spring:cubic-bezier(.2,1.35,.4,1);
@@ -13,19 +13,20 @@
   --ink:#15161c;            /* primary text */
   --ink-2:#3c3e48;
   --muted:#62646e;          /* 5.2:1 on marshmallow */
-  --accent:#105bff;         /* Galactic Violet: actions, selection, focus (4.7:1 on marshmallow, 5.3:1 white on it) */
-  --accent-2:#0a47d9;       /* deeper: small accent text, hover */
-  --accent-strong:#0a47d9;
-  --accent-soft:rgba(16,91,255,.08);   /* tinted fill: upsell, nudge, focus halo */
-  --accent-line:rgba(16,91,255,.2);    /* hairline on a tinted fill; text selection */
-  --accent-wash:#eaf0ff;               /* selected chip, 'us' column */
-  --pop:#fe8500;            /* Bubblegum: the bloom, HUD nodes, the one badge */
-  --pop-ink:#a65100;        /* Bubblegum dark enough for text on light (4.7:1) */
-  --pop-soft:rgba(254,133,0,.14);
-  /* the bloom: Bubblegum to Galactic Violet, interpolated in OKLCH so it passes through pink and violet */
-  --bloom:linear-gradient(in oklch 120deg,#fe8500,#105bff);
-  --shadow-accent:0 8px 22px rgba(16,91,255,.28);     /* primary CTA at rest */
-  --shadow-accent-lg:0 12px 30px rgba(16,91,255,.36); /* primary CTA on hover */
+  --accent:#a40000;         /* Record Red: actions, selection, focus, accent text */
+  --accent-2:#7e0000;       /* deeper: small accent text, hover */
+  --accent-strong:#7e0000;
+  --accent-soft:rgba(164,0,0,.08);   /* tinted fill: upsell, nudge, focus halo */
+  --accent-line:rgba(164,0,0,.18);   /* hairline on a tinted fill; text selection */
+  --accent-wash:#fff4f4;             /* selected chip, 'us' column */
+  --violet:#7b3bff;         /* Galactic Violet: the bloom, HUD nodes, the closing card */
+  --pop:#ff5fb4;            /* Bubblegum Pink: the bloom, HUD marks, the one badge */
+  --pop-ink:#b0246e;        /* Bubblegum dark enough for text on light (5.5:1 on marshmallow) */
+  --pop-soft:rgba(255,95,180,.16);
+  /* the bloom: Bubblegum Pink into Galactic Violet, interpolated in OKLCH */
+  --bloom:linear-gradient(in oklch 120deg,#ff5fb4,#7b3bff);
+  --shadow-accent:0 6px 20px rgba(164,0,0,.24);     /* primary CTA at rest */
+  --shadow-accent-lg:0 10px 26px rgba(164,0,0,.3); /* primary CTA on hover */
   --ok:#047857;
   --err:#be123c;
   --shadow:0 1px 2px rgba(20,28,58,.05),0 12px 32px rgba(20,28,58,.07);
@@ -63,7 +64,7 @@ body{
 }
 ::selection{background:var(--accent-line)}
 /* taps: no double-tap zoom delay, and a tap flash in the brand tint */
-html{-webkit-tap-highlight-color:rgba(16,91,255,.12)}
+html{-webkit-tap-highlight-color:rgba(164,0,0,.12)}
 a,button,summary,label,input,select,textarea,[role="button"]{touch-action:manipulation}
 a{color:var(--accent-2);text-decoration:none}
 img{max-width:100%}
@@ -90,8 +91,8 @@ button{font-family:var(--sans)}
 .bg-grid-spot .bg-grid-lines{opacity:.4}
 /* two soft blooms (Galactic top right, Bubblegum bottom left), drawn as gradients: a blur() filter this size makes Chromium repaint the page and flicker */
 .bg-grid-glow{position:absolute;inset:0;background:
-  radial-gradient(40% 45% at 100% 0%,rgba(16,91,255,.12),rgba(16,91,255,0) 75%),
-  radial-gradient(34% 40% at 0% 100%,rgba(254,133,0,.1),rgba(254,133,0,0) 75%)}
+  radial-gradient(40% 45% at 100% 0%,rgba(123,59,255,.12),rgba(123,59,255,0) 75%),
+  radial-gradient(34% 40% at 0% 100%,rgba(255,95,180,.1),rgba(255,95,180,0) 75%)}
 @media (prefers-reduced-motion:no-preference){
   .bg-grid-lines{animation:gridDrift 22s linear infinite}
 }
@@ -114,7 +115,7 @@ button{font-family:var(--sans)}
   border-bottom:1px solid var(--border-soft);
 }
 .brand{display:flex;align-items:center;gap:9px;color:var(--ink);flex:0 0 auto}
-.brand-mark{width:20px;height:20px;border-radius:7px;background:var(--bloom);box-shadow:0 2px 8px rgba(16,91,255,.35);flex:0 0 auto}
+.brand-mark{width:20px;height:20px;border-radius:7px;background:var(--bloom);box-shadow:0 2px 8px rgba(123,59,255,.35);flex:0 0 auto}
 .brand-name{font-weight:600;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
 .brand-by{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--muted);white-space:nowrap}
 .nav-links{display:flex;align-items:center;gap:24px;min-width:0}
@@ -180,13 +181,13 @@ button{font-family:var(--sans)}
 .studio-sub{font-size:13px;color:var(--muted);white-space:nowrap}
 .types{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
 .type{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:13.5px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:border-color .15s,background .15s,color .15s}
-.type:hover{border-color:rgba(16,91,255,.4);color:var(--ink)}
+.type:hover{border-color:rgba(164,0,0,.4);color:var(--ink)}
 .type[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-2);box-shadow:0 0 0 1px var(--accent) inset;font-weight:600}
 .type:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 /* the three less common types wait behind "+ 3 more" */
 .types-extra{display:contents}
 .types-more{border:1px dashed var(--border);background:transparent;border-radius:999px;padding:7px 13px;font-family:var(--sans);font-size:13.5px;font-weight:500;color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s}
-.types-more:hover{border-color:rgba(16,91,255,.4);color:var(--ink)}
+.types-more:hover{border-color:rgba(164,0,0,.4);color:var(--ink)}
 .types-more:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 .panel-label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13.5px;color:var(--muted);margin:0 0 9px}
@@ -201,7 +202,7 @@ button{font-family:var(--sans)}
 .pz[aria-pressed="true"]{outline:2.5px solid var(--accent);outline-offset:2px}
 .pz[aria-pressed="true"]::after{content:"✓";position:absolute;right:5px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .pz:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
-.pz-own{display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:600;color:var(--accent-2);border-style:dashed;border-color:rgba(16,91,255,.35);padding:6px;line-height:1.3}
+.pz-own{display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:600;color:var(--accent-2);border-style:dashed;border-color:rgba(164,0,0,.35);padding:6px;line-height:1.3}
 
 /* own pose photo */
 .photo-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:1.5px dashed rgba(0,0,0,.18);border-radius:14px;background:var(--bg);padding:18px 14px;cursor:pointer;text-align:center;margin-bottom:12px;transition:border-color .15s,box-shadow .15s}
@@ -298,7 +299,7 @@ button{font-family:var(--sans)}
   flex:1 1 200px;
   background:var(--accent);color:#fff;border:none;border-radius:12px;
   font-family:var(--sans);font-size:16px;font-weight:600;padding:13px 22px;cursor:pointer;
-  transition:background .15s,transform .05s,box-shadow .15s;box-shadow:0 6px 20px rgba(16,91,255,.22);
+  transition:background .15s,transform .05s,box-shadow .15s;box-shadow:0 6px 20px rgba(164,0,0,.22);
 }
 .go:hover{background:var(--accent-strong)}
 .go:active{transform:translateY(1px)}
@@ -442,7 +443,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .why-table thead th{font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:700;background:var(--bg)}
 .why-table thead th.us{color:var(--accent-2);background:var(--accent-wash)}
 .why-table tbody th{text-align:left;font-weight:500;color:var(--ink)}
-.why-table td.us{background:#f3f6ff;font-weight:600;color:var(--ink)}
+.why-table td.us{background:#fffafa;font-weight:600;color:var(--ink)}
 .why-table tr:last-child th,.why-table tr:last-child td{border-bottom:none}
 .why-table .yes{color:var(--ok);font-weight:700}
 .why-table .no{color:var(--err);font-weight:700}
@@ -454,7 +455,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch;margin-top:38px}
 .price-card{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border-soft);border-radius:20px;padding:30px 26px;box-shadow:var(--shadow)}
 .price-card.featured{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,var(--shadow-lg)}
-.price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--accent);color:#fff;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 4px 12px rgba(16,91,255,.3)}
+.price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--accent);color:#fff;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 4px 12px rgba(164,0,0,.3)}
 .price-name{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .price-amount{font-variant-numeric:tabular-nums;font-family:var(--serif);font-weight:400;font-size:46px;line-height:1;margin:12px 0 2px;color:var(--ink)}
 .price-amount .per{font-family:var(--sans);font-size:15px;color:var(--muted);font-weight:400;letter-spacing:0}
@@ -483,7 +484,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 
 /* ---------- closing call to action ---------- */
 .final{max-width:var(--wide);margin:0 auto;padding:0 var(--gutter) clamp(56px,7vw,96px)}
-.final-card{position:relative;overflow:hidden;isolation:isolate;background:radial-gradient(70% 120% at 0% 100%,#fe8500,rgba(254,133,0,0) 62%),linear-gradient(in oklch 200deg,#105bff 35%,oklch(.6 .25 330));color:#fff;border-radius:28px;padding:clamp(36px,6vw,72px) 24px;text-align:center;box-shadow:var(--shadow-lg)}
+.final-card{position:relative;overflow:hidden;isolation:isolate;background:radial-gradient(75% 130% at 0% 100%,#ff5fb4,rgba(255,95,180,0) 66%),linear-gradient(in oklch 200deg,#6a2cf0 40%,oklch(.52 .26 315));color:#fff;border-radius:28px;padding:clamp(36px,6vw,72px) 24px;text-align:center;box-shadow:var(--shadow-lg)}
 .final-card h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4.4vw,52px);line-height:1.04;letter-spacing:-.012em;margin:0 0 12px;color:#fff}
 .final-card p{color:rgba(255,255,255,.86);font-size:18px;margin:0 0 26px}
 .final-btn{background:#fff;color:var(--accent-2)}
@@ -516,7 +517,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   box-shadow:0 12px 32px rgba(0,0,0,.22)}
 .toast>span{flex:1 1 200px}
 .toast.err{background:#6b0f2a}
-.toast-act{background:none;border:none;padding:6px 4px;font:600 14.5px var(--sans);color:#b9cdff;cursor:pointer;text-decoration:none}
+.toast-act{background:none;border:none;padding:6px 4px;font:600 14.5px var(--sans);color:#ffb4b4;cursor:pointer;text-decoration:none}
 .toast-act:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}
 .toast-x{background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;line-height:1;width:32px;height:32px;border-radius:8px;cursor:pointer}
 .toast-x:hover{color:#fff;background:rgba(255,255,255,.1)}
@@ -636,7 +637,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .proj-none{grid-column:1/-1;margin:0;padding:26px;text-align:center;color:var(--muted);font-size:14px;background:var(--surface);border:1px dashed var(--border);border-radius:18px}
 .proj-more{display:block;margin:18px auto 0}
 /* "Add cards" lands on the studio: point at the project it picked. */
-@keyframes projFlash{0%,40%{box-shadow:0 0 0 3px rgba(16,91,255,.35)}100%{box-shadow:0 0 0 3px rgba(16,91,255,0)}}
+@keyframes projFlash{0%,40%{box-shadow:0 0 0 3px rgba(164,0,0,.35)}100%{box-shadow:0 0 0 3px rgba(164,0,0,0)}}
 .project-field.flash{animation:projFlash 1.6s ease-out .3s both;border-radius:12px}
 
 /* ---------- project picker (context strip at the top of the studio) ---------- */
@@ -654,14 +655,14 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   border:1px solid var(--accent-line);border-radius:12px}
 .nudge-text{font-size:14px;color:var(--ink-2)}
 .nudge-text strong{color:var(--accent-2);font-weight:600}
-.upgrade-nudge.spent{background:rgba(16,91,255,.13);border-color:rgba(16,91,255,.32)}
+.upgrade-nudge.spent{background:rgba(164,0,0,.13);border-color:rgba(164,0,0,.32)}
 .nudge-cta{font-size:14px;padding:9px 18px;white-space:nowrap}
 
 /* ---------- hover interactions ---------- */
 /* Cards lift, their border warms to the accent and the shadow deepens; their
    title takes the accent and any arrow (.arr) nudges forward. */
 .price-card{transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease}
-.price-card:hover{transform:translateY(-4px);border-color:rgba(16,91,255,.25);box-shadow:0 8px 20px rgba(0,0,0,.08),var(--shadow-lg)}
+.price-card:hover{transform:translateY(-4px);border-color:rgba(164,0,0,.25);box-shadow:0 8px 20px rgba(0,0,0,.08),var(--shadow-lg)}
 .price-card.featured:hover{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,0 8px 20px rgba(0,0,0,.08),var(--shadow-lg)}
 .price-name{transition:color .3s ease}
 .price-card:hover .price-name{color:var(--accent-2)}
@@ -727,7 +728,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 
 /* Cards catch the light where the cursor is, and tilt a little towards it. */
 .proj::after,.price-card::after,.faq-list::after,.tile-screen::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s ease;
-  background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(16,91,255,.07),transparent 70%)}
+  background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(164,0,0,.07),transparent 70%)}
 .tile-screen{position:relative}
 .tile-screen::after{background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.14),transparent 70%)}
 .faq-list{position:relative}
@@ -859,7 +860,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 /* fields: a pale well inside the glass, white and ringed in violet on focus */
 .fld input,.fld textarea,.row-in,.modal-card input,#project-select,#project-new,.proj-tools input{background:var(--well);border-color:var(--border)}
 .photo-drop,.drop,.paste,.instructions pre{background:var(--well)}
-.drop,.photo-drop{border-color:rgba(16,91,255,.28)}
+.drop,.photo-drop{border-color:rgba(164,0,0,.28)}
 .proj-batches{background:var(--well)}
 .cameras{background:var(--well);box-shadow:inset 0 1px 2px rgba(20,28,58,.06)}
 .type{background:rgba(255,255,255,.7)}
@@ -870,7 +871,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .nav{width:calc(100% - 2 * max(10px,calc(var(--gutter) - 22px)));max-width:calc(var(--wide) - 2 * max(0px,calc(var(--gutter) - 22px)));margin:10px auto 0;top:10px;border:1px solid var(--glass-edge);border-radius:20px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 26px rgba(20,28,58,.06);padding:9px 10px 9px 16px}
 .nav.scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 30px rgba(20,28,58,.1)}
-.brand-mark{width:22px;height:22px;border-radius:7px;box-shadow:0 3px 10px rgba(16,91,255,.3)}
+.brand-mark{width:22px;height:22px;border-radius:7px;box-shadow:0 3px 10px rgba(123,59,255,.3)}
 @supports (corner-shape:bevel){.brand-mark{border-radius:8px 3px 8px 3px;corner-shape:bevel round bevel round}}
 @media(min-width:861px){
   .nav-links{padding:9px 26px;border-radius:14px;background:rgba(255,255,255,.62);box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 1px 2px rgba(20,28,58,.05)}
@@ -887,10 +888,10 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .hero::before{content:"";position:absolute;z-index:-1;inset:clamp(10px,1.6vw,22px) max(0px,calc(var(--gutter) - 22px)) 0;
   border-radius:40px;border:1px solid var(--glass-edge);
   background:
-    radial-gradient(46% 62% at 0% 100%,rgba(254,133,0,.58),rgba(254,133,0,0) 72%),
+    radial-gradient(46% 62% at 0% 100%,rgba(255,95,180,.58),rgba(255,95,180,0) 72%),
     radial-gradient(52% 78% at 10% 92%,oklch(.66 .22 345 / .5),transparent 72%),
     radial-gradient(46% 70% at 30% 100%,oklch(.58 .24 295 / .34),transparent 74%),
-    radial-gradient(40% 50% at 46% 104%,rgba(16,91,255,.22),rgba(16,91,255,0) 72%),
+    radial-gradient(40% 50% at 46% 104%,rgba(123,59,255,.22),rgba(123,59,255,0) 72%),
     linear-gradient(170deg,rgba(255,255,255,.72),rgba(255,255,255,.34));
   box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)}
 .hero::after{content:"";position:absolute;z-index:-1;pointer-events:none;
@@ -918,7 +919,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   html:not(.previewing):not(.signed-in) .vid-hud{display:block;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
   .vid-hud polyline{fill:none;stroke:rgba(255,255,255,.85);stroke-width:1.25;vector-effect:non-scaling-stroke}
   html:not(.previewing):not(.signed-in) .vid-node{display:block;position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;
-    background:radial-gradient(circle,#fff 0 3px,rgba(16,91,255,.9) 3.5px 5px,rgba(255,255,255,.5) 5.5px);box-shadow:0 0 0 1px rgba(255,255,255,.9),0 2px 8px rgba(20,28,58,.3);pointer-events:none}
+    background:radial-gradient(circle,#fff 0 3px,rgba(123,59,255,.9) 3.5px 5px,rgba(255,255,255,.5) 5.5px);box-shadow:0 0 0 1px rgba(255,255,255,.9),0 2px 8px rgba(20,28,58,.3);pointer-events:none}
   .vid-node.n1{left:35.5%;top:61%}
   .vid-node.n2{left:63%;top:44%}
   @media (prefers-reduced-motion:no-preference){
@@ -931,13 +932,13 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 /* the live preview floats in a soft violet-and-Bubblegum halo, the way the reference lights its subject */
 .cam-preview{position:relative;isolation:isolate}
 .cam-preview::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:min(120%,680px);aspect-ratio:1;transform:translate(-50%,-52%);border-radius:50%;pointer-events:none;
-  background:radial-gradient(closest-side,rgba(255,255,255,.9),rgba(255,255,255,0) 60%),conic-gradient(from 200deg in oklch,rgba(16,91,255,.2),rgba(254,133,0,.2),rgba(16,91,255,.2));
+  background:radial-gradient(closest-side,rgba(255,255,255,.9),rgba(255,255,255,0) 60%),conic-gradient(from 200deg in oklch,rgba(123,59,255,.2),rgba(255,95,180,.2),rgba(123,59,255,.2));
   -webkit-mask-image:radial-gradient(closest-side,#000 55%,transparent);mask-image:radial-gradient(closest-side,#000 55%,transparent)}
 
 @media(max-width:980px){
   /* phones: no frame around the studio panel (one edge, not two); the bloom stays */
   .hero::before{inset:0;border:0;border-radius:0;box-shadow:none;
-    background:radial-gradient(70% 34% at 0% 62%,rgba(254,133,0,.4),transparent 72%),radial-gradient(80% 36% at 18% 70%,oklch(.66 .22 345 / .32),transparent 72%),radial-gradient(70% 30% at 100% 30%,rgba(16,91,255,.16),transparent 72%)}
+    background:radial-gradient(70% 34% at 0% 62%,rgba(255,95,180,.4),transparent 72%),radial-gradient(80% 36% at 18% 70%,oklch(.66 .22 345 / .32),transparent 72%),radial-gradient(70% 30% at 100% 30%,rgba(123,59,255,.16),transparent 72%)}
   .hero::after,.more::after,.pricing::after{display:none}
   .more::before,.pricing::before{left:6px;right:6px;border-radius:30px}
 }
@@ -948,14 +949,14 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .more,.pricing{margin-top:clamp(28px,4vw,48px)}
 .more::before,.pricing::before{content:"";position:absolute;z-index:-1;inset:0 max(0px,calc(var(--gutter) - 22px));border-radius:40px;border:1px solid var(--glass-edge);
   background:
-    radial-gradient(40% 46% at 100% 100%,rgba(254,133,0,.34),rgba(254,133,0,0) 72%),
+    radial-gradient(40% 46% at 100% 100%,rgba(255,95,180,.34),rgba(255,95,180,0) 72%),
     radial-gradient(46% 60% at 92% 96%,oklch(.66 .22 345 / .26),transparent 72%),
-    radial-gradient(40% 56% at 74% 104%,rgba(16,91,255,.16),transparent 74%),
+    radial-gradient(40% 56% at 74% 104%,rgba(123,59,255,.16),transparent 74%),
     linear-gradient(170deg,rgba(255,255,255,.66),rgba(255,255,255,.3));
   box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.06)}
 .pricing::before{background:
-    radial-gradient(40% 50% at 0% 0%,rgba(16,91,255,.16),transparent 72%),
-    radial-gradient(42% 52% at 100% 100%,rgba(254,133,0,.32),rgba(254,133,0,0) 72%),
+    radial-gradient(40% 50% at 0% 0%,rgba(123,59,255,.16),transparent 72%),
+    radial-gradient(42% 52% at 100% 100%,rgba(255,95,180,.32),rgba(255,95,180,0) 72%),
     radial-gradient(46% 60% at 90% 96%,oklch(.66 .22 345 / .24),transparent 72%),
     linear-gradient(170deg,rgba(255,255,255,.66),rgba(255,255,255,.3))}
 .more::after,.pricing::after{content:"";position:absolute;z-index:-1;pointer-events:none;top:22px;left:calc(max(0px,calc(var(--gutter) - 22px)) + 22px);right:calc(max(0px,calc(var(--gutter) - 22px)) + 22px);height:30px;
@@ -981,7 +982,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 
 /* pricing: the plan you can buy gets the violet ring and the one Bubblegum badge */
 .price-card.featured{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,inset 0 1px 0 #fff,var(--shadow-lg)}
-.price-badge{background:var(--pop);color:var(--ink);font-weight:700;box-shadow:0 6px 16px rgba(254,133,0,.32)}
+.price-badge{background:var(--pop);color:var(--ink);font-weight:700;box-shadow:0 6px 16px rgba(255,95,180,.32)}
 .price-amount{letter-spacing:-.01em}
 
 /* why-table: the Shoot Cards column washed in violet */
@@ -990,7 +991,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 /* the closing card: the bloom at full strength, hatch stripes in its lower right */
 .final-card::after{content:"";position:absolute;z-index:-1;right:clamp(20px,4vw,48px);bottom:clamp(20px,4vw,40px);width:120px;height:22px;
   background:repeating-linear-gradient(120deg,rgba(255,255,255,.55) 0 7px,transparent 7px 16px);opacity:.9}
-.final-card{box-shadow:0 30px 70px rgba(16,91,255,.22),0 6px 16px rgba(20,28,58,.12)}
+.final-card{box-shadow:0 30px 70px rgba(123,59,255,.22),0 6px 16px rgba(20,28,58,.12)}
 .final-btn{background:#fff;color:var(--accent-2);box-shadow:0 10px 24px rgba(20,28,58,.2)}
 .final-btn:hover{background:#fff;color:var(--ink)}
 
@@ -1001,7 +1002,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .upgrade-nudge,.upgrade-nudge.spent{background:none;border:0;border-bottom:1px solid var(--border-soft);border-radius:0;padding:0 0 16px;margin:0 0 18px}
 .upgrade-nudge .nudge-text{position:relative;padding-left:44px}
 .upgrade-nudge .nudge-text::before{content:"";position:absolute;left:0;top:.45em;width:32px;height:10px;background:repeating-linear-gradient(120deg,var(--pop) 0 3px,transparent 3px 7px)}
-.upsell{background:linear-gradient(100deg,rgba(254,133,0,.1),rgba(16,91,255,.08));border-radius:16px}
+.upsell{background:linear-gradient(100deg,rgba(255,95,180,.1),rgba(123,59,255,.08));border-radius:16px}
 
 /* dialogs dim to a cool ink, not black */
 .modal{background:rgba(20,24,40,.32)}
@@ -1009,7 +1010,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 
 /* browser surfaces in the palette */
 html{scrollbar-color:rgba(20,28,58,.28) transparent}
-::selection{background:rgba(16,91,255,.2)}
+::selection{background:rgba(164,0,0,.2)}
 .site-foot{border-top-color:var(--border)}
 
 /* ---------- responsive ---------- */

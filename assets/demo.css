@@ -19,7 +19,7 @@
 .film.cut *,.film.cut *::before,.film.cut *::after{transition:none!important}
 .stage{position:relative;isolation:isolate;aspect-ratio:16/9.6;overflow:hidden;container:stage/inline-size;background:#f0f0f0}
 /* backdrop: marshmallow with the Bubblegum-to-Violet bloom rising from the lower left */
-.stage::before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(48% 70% at 0% 100%,rgba(254,133,0,.5),rgba(254,133,0,0) 72%),radial-gradient(54% 80% at 12% 96%,oklch(.66 .22 345 / .4),transparent 72%),radial-gradient(50% 70% at 100% 0%,rgba(16,91,255,.2),transparent 72%),#f0f0f0}
+.stage::before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(48% 70% at 0% 100%,rgba(255,95,180,.5),rgba(255,95,180,0) 72%),radial-gradient(54% 80% at 12% 96%,oklch(.66 .22 345 / .4),transparent 72%),radial-gradient(50% 70% at 100% 0%,rgba(123,59,255,.2),transparent 72%),#f0f0f0}
 .stage::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(80% 90% at 75% 50%,rgba(255,255,255,0),rgba(255,255,255,.35) 85%),linear-gradient(90deg,rgba(255,255,255,.55),rgba(255,255,255,0) 50%)}
 
 /* ---------- the story (left) ---------- */
@@ -146,7 +146,7 @@
 .studio-cams{display:inline-flex;gap:2px;padding:3px;border-radius:.75em;background:var(--surface-2)}
 .studio-cams span{padding:.5em .8em;border-radius:.55em;font-weight:600;color:var(--ink-2);transition:background .25s,color .25s,box-shadow .25s}
 .studio-cams span.on{background:#fff;color:var(--accent-2);box-shadow:0 1px 3px rgba(0,0,0,.1),inset 0 0 0 1px var(--accent)}
-.studio-go{flex:1 1 auto;padding:.7em 1em;border-radius:.75em;background:var(--accent);color:#fff;font-weight:600;text-align:center;white-space:nowrap;box-shadow:0 6px 18px rgba(16,91,255,.22);transition:background .35s,opacity .35s}
+.studio-go{flex:1 1 auto;padding:.7em 1em;border-radius:.75em;background:var(--accent);color:#fff;font-weight:600;text-align:center;white-space:nowrap;box-shadow:0 6px 18px rgba(164,0,0,.22);transition:background .35s,opacity .35s}
 .studio-go.is-busy{opacity:.7}
 .studio-go.is-made{background:var(--ok);box-shadow:0 6px 18px rgba(4,120,87,.25)}
 
@@ -240,7 +240,7 @@
 
 /* ---------- the chapter bar ---------- */
 .bar{display:flex;align-items:center;gap:clamp(10px,1.6vw,18px);padding:12px clamp(14px,2vw,22px) 14px;border-top:1px solid var(--border-soft)}
-.bar-play{position:relative;flex:0 0 auto;width:42px;height:42px;padding:0;border:0;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 6px 16px rgba(16,91,255,.25);transition:background .15s,transform .05s}
+.bar-play{position:relative;flex:0 0 auto;width:42px;height:42px;padding:0;border:0;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 6px 16px rgba(164,0,0,.25);transition:background .15s,transform .05s}
 .bar-play:hover{background:var(--accent-strong)}
 .bar-play:active{transform:translateY(1px)}
 .bar-play:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
