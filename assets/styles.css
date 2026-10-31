@@ -1,29 +1,41 @@
-/* Shoot Cards — light theme in the NotaLucis design language:
-   Inter + Instrument Serif, red accent, drifting line grid, gentle shadows. */
+/* Shoot Cards — "Marshmallow Glass": Marshmallow white ground, frosted glass
+   panels, Galactic Violet (#105BFF) for every action and selection, Bubblegum
+   (#FE8500) only in the bloom and the small HUD marks. Inter + Instrument Serif. */
 :root{
   /* one spring for everything that pops or settles (a real under-damped step response) */
   --spring:cubic-bezier(.2,1.35,.4,1);
   --spring:linear(0, 0.038, 0.135, 0.268, 0.417, 0.568, 0.708, 0.831, 0.933, 1.011, 1.067, 1.103, 1.122, 1.126, 1.121, 1.108, 1.091, 1.072, 1.053, 1.035, 1.02, 1.007, 0.998, 0.991, 0.987, 0.985, 0.984, 0.985, 0.987, 0.989, 0.991, 0.994, 0.996, 0.998, 0.999, 1, 1);
-  --bg:#fbfbfd;
-  --surface:#ffffff;        /* cards */
-  --surface-2:#f4f3f1;      /* hover / segmented controls */
-  --border:rgba(0,0,0,.12);
-  --border-soft:rgba(0,0,0,.08);
-  --ink:#1d1d1f;            /* primary text */
-  --ink-2:#424245;
-  --muted:#6e6e73;          /* Apple gray, darkened to meet WCAG AA contrast */
-  --accent:#a40000;         /* red-600 (CTA on white) */
-  --accent-2:#7e0000;       /* red-700 (text accents) */
-  --accent-strong:#7e0000;
-  --accent-soft:rgba(164,0,0,.08);   /* tinted fill: upsell, nudge, focus halo */
-  --accent-line:rgba(164,0,0,.18);   /* hairline on a tinted fill; text selection */
-  --accent-wash:#fff4f4;             /* selected chip, 'us' column, hover on white CTA */
-  --shadow-accent:0 6px 20px rgba(164,0,0,.24);     /* primary CTA at rest */
-  --shadow-accent-lg:0 10px 26px rgba(164,0,0,.3);  /* primary CTA on hover */
+  --bg:#f0f0f0;             /* Marshmallow white: the page */
+  --surface:#ffffff;        /* solid panels, inputs in focus */
+  --surface-2:#e7e8ee;      /* pressed-in: segmented controls, menus */
+  --border:rgba(20,28,58,.13);
+  --border-soft:rgba(20,28,58,.08);
+  --ink:#15161c;            /* primary text */
+  --ink-2:#3c3e48;
+  --muted:#62646e;          /* 5.2:1 on marshmallow */
+  --accent:#105bff;         /* Galactic Violet: actions, selection, focus (4.7:1 on marshmallow, 5.3:1 white on it) */
+  --accent-2:#0a47d9;       /* deeper: small accent text, hover */
+  --accent-strong:#0a47d9;
+  --accent-soft:rgba(16,91,255,.08);   /* tinted fill: upsell, nudge, focus halo */
+  --accent-line:rgba(16,91,255,.2);    /* hairline on a tinted fill; text selection */
+  --accent-wash:#eaf0ff;               /* selected chip, 'us' column */
+  --pop:#fe8500;            /* Bubblegum: the bloom, HUD nodes, the one badge */
+  --pop-ink:#a65100;        /* Bubblegum dark enough for text on light (4.7:1) */
+  --pop-soft:rgba(254,133,0,.14);
+  /* the bloom: Bubblegum to Galactic Violet, interpolated in OKLCH so it passes through pink and violet */
+  --bloom:linear-gradient(in oklch 120deg,#fe8500,#105bff);
+  --shadow-accent:0 8px 22px rgba(16,91,255,.28);     /* primary CTA at rest */
+  --shadow-accent-lg:0 12px 30px rgba(16,91,255,.36); /* primary CTA on hover */
   --ok:#047857;
   --err:#be123c;
-  --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05);
-  --shadow-lg:0 2px 6px rgba(0,0,0,.05),0 24px 60px rgba(0,0,0,.10);
+  --shadow:0 1px 2px rgba(20,28,58,.05),0 12px 32px rgba(20,28,58,.07);
+  --shadow-lg:0 2px 6px rgba(20,28,58,.05),0 28px 64px rgba(20,28,58,.12);
+  /* frosted glass: a bright top edge, a faint cool body, the ground showing through */
+  --glass:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.64));
+  --glass-edge:rgba(255,255,255,.95);
+  --glass-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 1px 2px rgba(20,28,58,.05),0 18px 44px rgba(20,28,58,.09);
+  --well:rgba(240,240,243,.72);       /* the inner well a glass panel holds (inputs, lists) */
+  --hatch:repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px);
   --sans:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,sans-serif;
   --serif:'Instrument Serif',Georgia,serif;
   --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
@@ -51,7 +63,7 @@ body{
 }
 ::selection{background:var(--accent-line)}
 /* taps: no double-tap zoom delay, and a tap flash in the brand tint */
-html{-webkit-tap-highlight-color:rgba(164,0,0,.12)}
+html{-webkit-tap-highlight-color:rgba(16,91,255,.12)}
 a,button,summary,label,input,select,textarea,[role="button"]{touch-action:manipulation}
 a{color:var(--accent-2);text-decoration:none}
 img{max-width:100%}
@@ -76,8 +88,10 @@ button{font-family:var(--sans)}
 .bg-grid.live .bg-grid-spot{opacity:1}
 .bg-grid-canvas{position:absolute;inset:0;width:100%;height:100%}
 .bg-grid-spot .bg-grid-lines{opacity:.4}
-/* a soft red glow, drawn as a gradient: a blur() filter this size makes Chromium repaint the page and flicker */
-.bg-grid-glow{position:absolute;right:-40%;top:-40%;width:80%;height:80%;background:radial-gradient(closest-side,rgba(164,0,0,.1),rgba(164,0,0,.05) 45%,rgba(164,0,0,0))}
+/* two soft blooms (Galactic top right, Bubblegum bottom left), drawn as gradients: a blur() filter this size makes Chromium repaint the page and flicker */
+.bg-grid-glow{position:absolute;inset:0;background:
+  radial-gradient(40% 45% at 100% 0%,rgba(16,91,255,.12),rgba(16,91,255,0) 75%),
+  radial-gradient(34% 40% at 0% 100%,rgba(254,133,0,.1),rgba(254,133,0,0) 75%)}
 @media (prefers-reduced-motion:no-preference){
   .bg-grid-lines{animation:gridDrift 22s linear infinite}
 }
@@ -97,12 +111,12 @@ button{font-family:var(--sans)}
   position:sticky;top:0;z-index:40;
   display:flex;align-items:center;justify-content:space-between;gap:16px;
   padding:12px var(--gutter);
-  background:rgba(251,251,253,.86);
+  background:rgba(244,244,246,.72);
   -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
   border-bottom:1px solid var(--border-soft);
 }
 .brand{display:flex;align-items:center;gap:9px;color:var(--ink);flex:0 0 auto}
-.brand-mark{width:20px;height:20px;border-radius:7px;background:linear-gradient(135deg,#c01818,#7e0000);box-shadow:0 2px 8px rgba(164,0,0,.35);flex:0 0 auto}
+.brand-mark{width:20px;height:20px;border-radius:7px;background:var(--bloom);box-shadow:0 2px 8px rgba(16,91,255,.35);flex:0 0 auto}
 .brand-name{font-weight:600;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
 .brand-by{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--muted);white-space:nowrap}
 .nav-links{display:flex;align-items:center;gap:24px;min-width:0}
@@ -169,13 +183,13 @@ button{font-family:var(--sans)}
 .studio-sub{font-size:13px;color:var(--muted);white-space:nowrap}
 .types{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
 .type{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:13.5px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:border-color .15s,background .15s,color .15s}
-.type:hover{border-color:rgba(164,0,0,.4);color:var(--ink)}
+.type:hover{border-color:rgba(16,91,255,.4);color:var(--ink)}
 .type[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-2);box-shadow:0 0 0 1px var(--accent) inset;font-weight:600}
 .type:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 /* the three less common types wait behind "+ 3 more" */
 .types-extra{display:contents}
 .types-more{border:1px dashed var(--border);background:transparent;border-radius:999px;padding:7px 13px;font-family:var(--sans);font-size:13.5px;font-weight:500;color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s}
-.types-more:hover{border-color:rgba(164,0,0,.4);color:var(--ink)}
+.types-more:hover{border-color:rgba(16,91,255,.4);color:var(--ink)}
 .types-more:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 .panel-label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13.5px;color:var(--muted);margin:0 0 9px}
@@ -190,7 +204,7 @@ button{font-family:var(--sans)}
 .pz[aria-pressed="true"]{outline:2.5px solid var(--accent);outline-offset:2px}
 .pz[aria-pressed="true"]::after{content:"✓";position:absolute;right:5px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .pz:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
-.pz-own{display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:600;color:var(--accent-2);border-style:dashed;border-color:rgba(164,0,0,.35);padding:6px;line-height:1.3}
+.pz-own{display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:600;color:var(--accent-2);border-style:dashed;border-color:rgba(16,91,255,.35);padding:6px;line-height:1.3}
 
 /* own pose photo */
 .photo-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:1.5px dashed rgba(0,0,0,.18);border-radius:14px;background:var(--bg);padding:18px 14px;cursor:pointer;text-align:center;margin-bottom:12px;transition:border-color .15s,box-shadow .15s}
@@ -287,7 +301,7 @@ button{font-family:var(--sans)}
   flex:1 1 200px;
   background:var(--accent);color:#fff;border:none;border-radius:12px;
   font-family:var(--sans);font-size:16px;font-weight:600;padding:13px 22px;cursor:pointer;
-  transition:background .15s,transform .05s,box-shadow .15s;box-shadow:0 6px 20px rgba(164,0,0,.22);
+  transition:background .15s,transform .05s,box-shadow .15s;box-shadow:0 6px 20px rgba(16,91,255,.22);
 }
 .go:hover{background:var(--accent-strong)}
 .go:active{transform:translateY(1px)}
@@ -431,7 +445,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .why-table thead th{font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:700;background:var(--bg)}
 .why-table thead th.us{color:var(--accent-2);background:var(--accent-wash)}
 .why-table tbody th{text-align:left;font-weight:500;color:var(--ink)}
-.why-table td.us{background:#fffafa;font-weight:600;color:var(--ink)}
+.why-table td.us{background:#f3f6ff;font-weight:600;color:var(--ink)}
 .why-table tr:last-child th,.why-table tr:last-child td{border-bottom:none}
 .why-table .yes{color:var(--ok);font-weight:700}
 .why-table .no{color:var(--err);font-weight:700}
@@ -443,7 +457,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch;margin-top:38px}
 .price-card{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border-soft);border-radius:20px;padding:30px 26px;box-shadow:var(--shadow)}
 .price-card.featured{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,var(--shadow-lg)}
-.price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--accent);color:#fff;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 4px 12px rgba(164,0,0,.3)}
+.price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--accent);color:#fff;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 4px 12px rgba(16,91,255,.3)}
 .price-name{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .price-amount{font-variant-numeric:tabular-nums;font-family:var(--serif);font-weight:400;font-size:46px;line-height:1;margin:12px 0 2px;color:var(--ink)}
 .price-amount .per{font-family:var(--sans);font-size:15px;color:var(--muted);font-weight:400;letter-spacing:0}
@@ -472,7 +486,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 
 /* ---------- closing call to action ---------- */
 .final{max-width:var(--wide);margin:0 auto;padding:0 var(--gutter) clamp(56px,7vw,96px)}
-.final-card{background:linear-gradient(160deg,#a40000,#6a0000);color:#fff;border-radius:28px;padding:clamp(36px,6vw,72px) 24px;text-align:center;box-shadow:var(--shadow-lg)}
+.final-card{position:relative;overflow:hidden;isolation:isolate;background:radial-gradient(70% 120% at 0% 100%,#fe8500,rgba(254,133,0,0) 62%),linear-gradient(in oklch 200deg,#105bff 35%,oklch(.6 .25 330));color:#fff;border-radius:28px;padding:clamp(36px,6vw,72px) 24px;text-align:center;box-shadow:var(--shadow-lg)}
 .final-card h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4.4vw,52px);line-height:1.04;letter-spacing:-.012em;margin:0 0 12px;color:#fff}
 .final-card p{color:rgba(255,255,255,.86);font-size:18px;margin:0 0 26px}
 .final-btn{background:#fff;color:var(--accent-2)}
@@ -504,8 +518,8 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   background:var(--ink);color:#fff;border-radius:14px;padding:12px 10px 12px 18px;font-size:14.5px;line-height:1.4;
   box-shadow:0 12px 32px rgba(0,0,0,.22)}
 .toast>span{flex:1 1 200px}
-.toast.err{background:#5c0a1a}
-.toast-act{background:none;border:none;padding:6px 4px;font:600 14.5px var(--sans);color:#ffb4b4;cursor:pointer;text-decoration:none}
+.toast.err{background:#6b0f2a}
+.toast-act{background:none;border:none;padding:6px 4px;font:600 14.5px var(--sans);color:#b9cdff;cursor:pointer;text-decoration:none}
 .toast-act:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}
 .toast-x{background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;line-height:1;width:32px;height:32px;border-radius:8px;cursor:pointer}
 .toast-x:hover{color:#fff;background:rgba(255,255,255,.1)}
@@ -625,7 +639,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .proj-none{grid-column:1/-1;margin:0;padding:26px;text-align:center;color:var(--muted);font-size:14px;background:var(--surface);border:1px dashed var(--border);border-radius:18px}
 .proj-more{display:block;margin:18px auto 0}
 /* "Add cards" lands on the studio: point at the project it picked. */
-@keyframes projFlash{0%,40%{box-shadow:0 0 0 3px rgba(164,0,0,.35)}100%{box-shadow:0 0 0 3px rgba(164,0,0,0)}}
+@keyframes projFlash{0%,40%{box-shadow:0 0 0 3px rgba(16,91,255,.35)}100%{box-shadow:0 0 0 3px rgba(16,91,255,0)}}
 .project-field.flash{animation:projFlash 1.6s ease-out .3s both;border-radius:12px}
 
 /* ---------- project picker (context strip at the top of the studio) ---------- */
@@ -643,14 +657,14 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   border:1px solid var(--accent-line);border-radius:12px}
 .nudge-text{font-size:14px;color:var(--ink-2)}
 .nudge-text strong{color:var(--accent-2);font-weight:600}
-.upgrade-nudge.spent{background:rgba(164,0,0,.13);border-color:rgba(164,0,0,.32)}
+.upgrade-nudge.spent{background:rgba(16,91,255,.13);border-color:rgba(16,91,255,.32)}
 .nudge-cta{font-size:14px;padding:9px 18px;white-space:nowrap}
 
 /* ---------- hover interactions ---------- */
 /* Cards lift, their border warms to the accent and the shadow deepens; their
    title takes the accent and any arrow (.arr) nudges forward. */
 .price-card{transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease}
-.price-card:hover{transform:translateY(-4px);border-color:rgba(164,0,0,.25);box-shadow:0 8px 20px rgba(0,0,0,.08),var(--shadow-lg)}
+.price-card:hover{transform:translateY(-4px);border-color:rgba(16,91,255,.25);box-shadow:0 8px 20px rgba(0,0,0,.08),var(--shadow-lg)}
 .price-card.featured:hover{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,0 8px 20px rgba(0,0,0,.08),var(--shadow-lg)}
 .price-name{transition:color .3s ease}
 .price-card:hover .price-name{color:var(--accent-2)}
@@ -716,7 +730,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 
 /* Cards catch the light where the cursor is, and tilt a little towards it. */
 .proj::after,.price-card::after,.faq-list::after,.tile-screen::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s ease;
-  background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(164,0,0,.07),transparent 70%)}
+  background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(16,91,255,.07),transparent 70%)}
 .tile-screen{position:relative}
 .tile-screen::after{background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.14),transparent 70%)}
 .faq-list{position:relative}
@@ -823,6 +837,156 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .signed-in .if-in{display:inline}
 .signed-in .if-out{display:none}
 
+/* ---------- Marshmallow Glass ---------- */
+/* One material for every panel: frosted glass on the marshmallow ground, a
+   bright top edge, a cool shadow. Inner wells (inputs, lists) sit a step
+   darker inside it, the way the reference's charts sit inside their cards. */
+.studio,.price-card,.faq-list,.why-table,.proj,.modal-card,.proj-none,.strip,.proj-menu,.proj-pick-bar,.peek{
+  background:var(--glass);border-color:var(--glass-edge);box-shadow:var(--glass-shadow);
+}
+.studio{border-radius:26px}
+.price-card{border-radius:24px}
+.faq-list,.why-table{border-radius:22px}
+.proj{border-radius:22px}
+.modal-card{border-radius:22px;background:linear-gradient(160deg,#fff,rgba(255,255,255,.94))}
+.peek{background:#fff}
+.proj-menu{background:#fff}
+/* the bevel the reference cuts into its frame and its CTA: progressive, round where unsupported */
+@supports (corner-shape:bevel){
+  .studio{border-radius:30px 18px 30px 18px;corner-shape:bevel round bevel round}
+  .final-card{border-radius:44px 28px 44px 28px;corner-shape:bevel round bevel round}
+  .go:not(.pill),.btn-primary:not(.nav-cta),.final-btn{border-radius:14px 8px 14px 8px;corner-shape:bevel round bevel round}
+  .price-card.featured{border-radius:30px 18px 30px 18px;corner-shape:bevel round bevel round}
+}
+
+/* fields: a pale well inside the glass, white and ringed in violet on focus */
+.fld input,.fld textarea,.row-in,.modal-card input,#project-select,#project-new,.proj-tools input{background:var(--well);border-color:var(--border)}
+.photo-drop,.drop,.paste,.instructions pre{background:var(--well)}
+.drop,.photo-drop{border-color:rgba(16,91,255,.28)}
+.proj-batches{background:var(--well)}
+.cameras{background:var(--well);box-shadow:inset 0 1px 2px rgba(20,28,58,.06)}
+.type{background:rgba(255,255,255,.7)}
+.why-table thead th{background:rgba(240,240,243,.6)}
+.login-spam-note{background:var(--well)}
+
+/* the nav: a frosted bar floating inside the page, its links on one bevelled tab, the CTA a black pill */
+.nav{width:calc(100% - 2 * max(10px,calc(var(--gutter) - 22px)));max-width:calc(var(--wide) - 2 * max(0px,calc(var(--gutter) - 22px)));margin:10px auto 0;top:10px;border:1px solid var(--glass-edge);border-radius:20px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 26px rgba(20,28,58,.06);padding:9px 10px 9px 16px}
+.nav.scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 30px rgba(20,28,58,.1)}
+.brand-mark{width:22px;height:22px;border-radius:7px;box-shadow:0 3px 10px rgba(16,91,255,.3)}
+@supports (corner-shape:bevel){.brand-mark{border-radius:8px 3px 8px 3px;corner-shape:bevel round bevel round}}
+@media(min-width:861px){
+  .nav-links{padding:9px 26px;border-radius:14px;background:rgba(255,255,255,.62);box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 1px 2px rgba(20,28,58,.05)}
+  @supports (corner-shape:bevel){.nav-links{border-radius:0 0 18px 18px;corner-shape:bevel;margin:-9px 0}}
+}
+.nav-cta{background:var(--ink);color:#fff;border-color:var(--ink);border-radius:999px;box-shadow:0 6px 16px rgba(20,22,28,.18);padding:10px 20px}
+.nav-cta:hover,.btn-primary.nav-cta:not(:disabled):hover{background:#000;box-shadow:0 10px 22px rgba(20,22,28,.24)}
+.nav-cta.quiet{background:rgba(255,255,255,.75);color:var(--ink);border-color:var(--border)}
+.nav-cta.quiet:hover{background:#fff;border-color:var(--ink)}
+.nav-toggle{border-radius:50%;background:rgba(255,255,255,.8);border-color:var(--glass-edge);box-shadow:0 1px 3px rgba(20,28,58,.08)}
+
+/* the hero sits in one big glass frame: hatch marks in its top corners, the bloom rising from its lower left */
+.hero{position:relative;isolation:isolate;padding-top:clamp(30px,5vw,64px)}
+.hero::before{content:"";position:absolute;z-index:-1;inset:clamp(10px,1.6vw,22px) max(0px,calc(var(--gutter) - 22px)) 0;
+  border-radius:40px;border:1px solid var(--glass-edge);
+  background:
+    radial-gradient(52% 58% at 0% 100%,rgba(254,133,0,.42),rgba(254,133,0,0) 70%),
+    radial-gradient(48% 56% at 14% 100%,oklch(.66 .22 345 / .32),transparent 72%),
+    radial-gradient(40% 50% at 34% 104%,rgba(16,91,255,.2),rgba(16,91,255,0) 72%),
+    linear-gradient(170deg,rgba(255,255,255,.72),rgba(255,255,255,.34));
+  box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)}
+.hero::after{content:"";position:absolute;z-index:-1;pointer-events:none;
+  top:calc(clamp(10px,1.6vw,22px) + 22px);left:calc(max(0px,calc(var(--gutter) - 22px)) + 22px);right:calc(max(0px,calc(var(--gutter) - 22px)) + 22px);height:30px;
+  background:var(--hatch),var(--hatch);background-size:30px 30px;background-position:0 0,100% 0;background-repeat:no-repeat}
+@supports (corner-shape:bevel){.hero::before{border-radius:56px 40px 56px 40px;corner-shape:bevel round bevel round}}
+.pitch h1 em{color:var(--accent)}
+/* the stroke under "blank" carries the bloom */
+.pitch h1 em::after{background:var(--bloom);opacity:1;height:.075em}
+.eyebrow-pill,.eyebrow{color:var(--accent-2)}
+.pitch-demo-play{background:var(--ink);border-color:var(--ink);box-shadow:0 6px 16px rgba(20,22,28,.18)}
+.pitch-demo-play::after{border-left-color:#fff}
+
+/* the proof video: rounded glass edge, HUD callouts tied to the camera's screen */
+.vid{border-radius:30px;box-shadow:0 0 0 1px rgba(255,255,255,.9),0 0 0 8px rgba(255,255,255,.38),var(--shadow-lg)}
+.vid-chip,.vid-try{background:rgba(255,255,255,.8);-webkit-backdrop-filter:blur(12px) saturate(150%);backdrop-filter:blur(12px) saturate(150%);border:1px solid rgba(255,255,255,.9);box-shadow:0 8px 22px rgba(20,28,58,.14)}
+.vid-chip{border-radius:14px}
+.vid-chip b{background:var(--pop);box-shadow:0 0 0 4px var(--pop-soft)}
+.vid-try{color:var(--ink)}
+.vid-try:hover{background:#fff;color:var(--accent-2)}
+.vid-hud,.vid-node{display:none}
+@media(min-width:981px){
+  html:not(.previewing):not(.signed-in) .vid-hud{display:block;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+  .vid-hud polyline{fill:none;stroke:rgba(255,255,255,.85);stroke-width:1.25;vector-effect:non-scaling-stroke}
+  html:not(.previewing):not(.signed-in) .vid-node{display:block;position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;
+    background:radial-gradient(circle,#fff 0 3px,rgba(16,91,255,.9) 3.5px 5px,rgba(255,255,255,.5) 5.5px);box-shadow:0 0 0 1px rgba(255,255,255,.9),0 2px 8px rgba(20,28,58,.3);pointer-events:none}
+  .vid-node.n1{left:35.5%;top:61%}
+  .vid-node.n2{left:63%;top:44%}
+  @media (prefers-reduced-motion:no-preference){
+    .vid-node::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(255,255,255,.8);animation:nodePing 2.6s cubic-bezier(.16,1,.3,1) infinite}
+    .vid-node.n2::after{animation-delay:1.3s}
+    @keyframes nodePing{0%{transform:scale(.6);opacity:1}70%,100%{transform:scale(1.9);opacity:0}}
+  }
+}
+
+/* the live preview floats in a soft violet-and-Bubblegum halo, the way the reference lights its subject */
+.cam-preview{position:relative;isolation:isolate}
+.cam-preview::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:min(120%,680px);aspect-ratio:1;transform:translate(-50%,-52%);border-radius:50%;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(255,255,255,.9),rgba(255,255,255,0) 60%),conic-gradient(from 200deg in oklch,rgba(16,91,255,.2),rgba(254,133,0,.2),rgba(16,91,255,.2));
+  -webkit-mask-image:radial-gradient(closest-side,#000 55%,transparent);mask-image:radial-gradient(closest-side,#000 55%,transparent)}
+
+@media(max-width:980px){
+  .hero::before{left:6px;right:6px;border-radius:30px}
+  @supports (corner-shape:bevel){.hero::before{border-radius:40px 26px 40px 26px}}
+  .hero::after{display:none}
+}
+
+/* the studio's chips, picker and main button in the reference's language */
+.type[aria-pressed="true"]{background:var(--accent-wash)}
+.cam[aria-pressed="true"],.cam-ind{background:#fff}
+.go{background:var(--accent);box-shadow:var(--shadow-accent);letter-spacing:-.005em}
+.go:hover{background:var(--accent-2)}
+.go.pill,.go.pill.done{background:var(--ink)}
+.btn-ghost{background:rgba(255,255,255,.72);border-color:var(--border)}
+.btn-ghost:hover{background:#fff;border-color:var(--accent);color:var(--accent-2)}
+
+/* how it works: one frosted band, its numerals in Bubblegum ink */
+.strip{max-width:var(--wide);margin:clamp(14px,2vw,22px) auto 0;border:1px solid var(--glass-edge);border-radius:22px;width:calc(100% - 2 * max(10px,calc(var(--gutter) - 22px)))}
+.st b,.parts .n{color:var(--pop-ink)}
+
+/* card types: the camera bezel stays camera black; the caption picks up the violet on hover */
+.tile-screen{border-radius:18px;box-shadow:0 0 0 6px rgba(255,255,255,.55),var(--shadow)}
+
+/* pricing: the plan you can buy gets the violet ring and the one Bubblegum badge */
+.price-card.featured{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,inset 0 1px 0 #fff,var(--shadow-lg)}
+.price-badge{background:var(--pop);color:var(--ink);font-weight:700;box-shadow:0 6px 16px rgba(254,133,0,.32)}
+.price-amount{letter-spacing:-.01em}
+
+/* why-table: the Shoot Cards column washed in violet */
+.why-table thead th.us{background:var(--accent-wash)}
+
+/* the closing card: the bloom at full strength, hatch stripes in its lower right */
+.final-card::after{content:"";position:absolute;z-index:-1;right:clamp(20px,4vw,48px);bottom:clamp(20px,4vw,40px);width:120px;height:22px;
+  background:repeating-linear-gradient(120deg,rgba(255,255,255,.55) 0 7px,transparent 7px 16px);opacity:.9}
+.final-card{box-shadow:0 30px 70px rgba(16,91,255,.22),0 6px 16px rgba(20,28,58,.12)}
+.final-btn{background:#fff;color:var(--accent-2);box-shadow:0 10px 24px rgba(20,28,58,.2)}
+.final-btn:hover{background:#fff;color:var(--ink)}
+
+/* projects: glass cards, the cover a camera screen inside a white rim */
+.proj-cover{box-shadow:0 0 0 4px rgba(255,255,255,.6)}
+.batch-track>.batch{background:rgba(255,255,255,.85);border-color:var(--glass-edge)}
+.upgrade-nudge{background:linear-gradient(100deg,rgba(254,133,0,.12),rgba(16,91,255,.1));border-color:rgba(16,91,255,.18);border-radius:16px}
+.upgrade-nudge.spent{background:linear-gradient(100deg,rgba(254,133,0,.2),rgba(16,91,255,.16));border-color:rgba(16,91,255,.3)}
+.upsell{background:linear-gradient(100deg,rgba(254,133,0,.1),rgba(16,91,255,.08));border-radius:16px}
+
+/* dialogs dim to a cool ink, not black */
+.modal{background:rgba(20,24,40,.32)}
+@media (prefers-reduced-motion:no-preference){@keyframes modalDim{from{background:rgba(20,24,40,0)}}}
+
+/* browser surfaces in the palette */
+html{scrollbar-color:rgba(20,28,58,.28) transparent}
+::selection{background:rgba(16,91,255,.2)}
+.site-foot{border-top-color:var(--border)}
+
 /* ---------- responsive ---------- */
 @media(min-width:981px){
   .mini{display:none!important}
@@ -877,7 +1041,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
   .nav-links{
     display:none;position:absolute;top:100%;left:0;right:0;
     flex-direction:column;align-items:stretch;gap:0;
-    background:rgba(251,251,253,.98);border-bottom:1px solid var(--border-soft);
+    background:rgba(246,246,248,.97);border-bottom:1px solid var(--border-soft);
     box-shadow:0 14px 28px rgba(0,0,0,.08);padding:4px var(--gutter) 12px;
   }
   .nav.open .nav-links{display:flex}

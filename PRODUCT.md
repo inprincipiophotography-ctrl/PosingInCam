@@ -28,7 +28,8 @@ The camera itself is the reference screen. A normal image won't show in playback
 - Pro is one payment (October 2026: the €3.99/month and €30/year subscription and the €7.99 20-card pack were dropped; wedding work is seasonal and photographers don't want another subscription). "Get Pro · €29.99" button, card badged "Pay once"; the amount comes from Stripe. The "Coming soon" button only appears when no Stripe price loads, e.g. on a local run.
 
 ## Brand Commitments
-- Shoot Cards is a NotaLucis tool and shares the NotaLucis look with notalucis.com: Inter + Instrument Serif, one red accent, light theme. These are binding; do not replace them.
+- Shoot Cards is a NotaLucis tool: Inter + Instrument Serif, light theme. These are binding; do not replace them (the makers confirmed keeping both in the October 2026 redesign).
+- Palette (chosen by the makers on 31 October 2026, replacing the red accent): Marshmallow white #F0F0F0 as the ground, Galactic Violet #105BFF for actions and selection, Bubblegum #FE8500 as the tertiary colour. The exact hex values are binding (#105BFF reads blue and #FE8500 orange; the makers chose the values over the names). The look follows a frosted-glass, HUD-callout reference with a Bubblegum-to-Violet bloom. Cards rendered for the camera keep their own colours; this palette is the website's.
 - Background: a faint 40px line grid that drifts slowly, brighter in a circle around the cursor, gently rolling like a calm water surface (`assets/grid-bg.js`), with lifting cards and nudging arrows on hover. Asked for by the makers in October 2026 after chaseai.io; it replaced the NotaLucis soft dot grid on this site. Whether notalucis.com follows is undecided.
 - Kim & Ivan, wedding photographers at In Principio and the people behind NotaLucis (the CRM for photographers), are the makers and the main proof of credibility.
 - Voice: short, concrete, a working photographer talking to another one. No marketing filler.
