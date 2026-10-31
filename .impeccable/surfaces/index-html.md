@@ -11,13 +11,13 @@ Scope: `index.html` (signed-out landing = Persuade; signed-in studio + projects 
 
 Audience, job, proof: unchanged from PRODUCT.md (wedding photographers preparing cards; real camera video, real wedding poses).
 
-User-pinned direction (October 31, 2026): restyle the whole app after a supplied reference (a frosted-glass, HUD-callout landing page with a soft colour bloom). Palette as revised by the user the same day: four colours only, Marshmallow white #F0F0F0, Record Red #a40000 for actions, Leaf Green #5A9239 (the plant in the hero video) as the light, Ink black for structure. Instrument Serif + Inter kept by the user's choice.
+User-pinned direction (October 31, 2026): restyle the whole app after a supplied reference (a frosted-glass, HUD-callout landing page with a soft colour bloom). Palette as revised by the user the same day: three colours only, Marshmallow white #F0F0F0 (with white light), Record Red #a40000 for actions, Ink black for structure. Instrument Serif + Inter kept by the user's choice.
 
 ## Direction contract
 
-THESIS: The page is one frosted pane on marshmallow, lit from its lower left by a Leaf Green bloom; the real camera is the subject the HUD points at. Refuses the flat white-card SaaS page with a single accent.
+THESIS: The page is one frosted pane on marshmallow, lit from its lower left by a soft white light; the real camera is the subject the HUD points at. Refuses the flat white-card SaaS page with a single accent.
 
-OWN-WORLD: #F0F0F0 ground with the drifting line grid; glass panels (white 90%→64% gradient, white hairline edge, cool shadow) holding paler wells; Record Red for every action, selection and focus; Leaf Green only in the bloom, HUD dot, hatch stripes, numerals, the closing card's corner and the one "Pay once" badge; Ink black for the nav pill and the closing card; bevelled corners (corner-shape: bevel) on the hero frame, studio, primary buttons and closing card; diagonal hatch marks; black pill for the nav CTA.
+OWN-WORLD: #F0F0F0 ground with the drifting line grid; glass panels (white 90%→64% gradient, white hairline edge, cool shadow) holding paler wells; Record Red for every action, selection and focus; white light for the bloom; Ink black for the nav pill, the Pay once badge and the closing card; Ink black for the nav pill and the closing card; bevelled corners (corner-shape: bevel) on the hero frame, studio, primary buttons and closing card; diagonal hatch marks; black pill for the nav CTA.
 
 Below the hero the world continues: card types and pricing sit in their own bevelled glass panes with the bloom anchored lower right; no kickers above headings.
 

@@ -77,7 +77,7 @@
         track.appendChild(set.cloneNode(true));
       }
       track.style.setProperty("--reel-shift", w + "px");
-      track.style.setProperty("--reel-time", Math.round(w / 38) + "s");   // ~38px a second
+      track.style.setProperty("--reel-time", Math.round(w / 20) + "s");   // ~20px a second: slow enough to read past
     }
     fit();
     window.addEventListener("resize", fit);
