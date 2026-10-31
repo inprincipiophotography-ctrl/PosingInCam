@@ -4,118 +4,134 @@
   "title": "Design System: Shoot Cards",
   "extensions": {
     "colorMeta": {
-      "galactic-violet": {
+      "record-red": {
         "role": "primary",
+        "displayName": "Record Red",
+        "tonalRamp": [
+          "#2e0000",
+          "#520000",
+          "#7e0000",
+          "#a40000",
+          "#cf2a2a",
+          "#e87272",
+          "#f6b9b9",
+          "#fff4f4"
+        ],
+        "note": "NotaLucis Record Red; the only action colour: buttons, selection, focus, accent text."
+      },
+      "record-red-deep": {
+        "role": "primary",
+        "displayName": "Record Red Deep",
+        "tonalRamp": [
+          "#2e0000",
+          "#520000",
+          "#7e0000",
+          "#a40000",
+          "#cf2a2a",
+          "#e87272",
+          "#f6b9b9",
+          "#fff4f4"
+        ]
+      },
+      "record-red-soft": {
+        "role": "primary",
+        "displayName": "Record Red Soft",
+        "tonalRamp": [
+          "#2e0000",
+          "#520000",
+          "#7e0000",
+          "#a40000",
+          "#cf2a2a",
+          "#e87272",
+          "#f6b9b9",
+          "#fff4f4"
+        ]
+      },
+      "record-red-line": {
+        "role": "primary",
+        "displayName": "Record Red Line",
+        "tonalRamp": [
+          "#2e0000",
+          "#520000",
+          "#7e0000",
+          "#a40000",
+          "#cf2a2a",
+          "#e87272",
+          "#f6b9b9",
+          "#fff4f4"
+        ]
+      },
+      "record-red-wash": {
+        "role": "primary",
+        "displayName": "Record Red Wash",
+        "tonalRamp": [
+          "#2e0000",
+          "#520000",
+          "#7e0000",
+          "#a40000",
+          "#cf2a2a",
+          "#e87272",
+          "#f6b9b9",
+          "#fff4f4"
+        ]
+      },
+      "galactic-violet": {
+        "role": "secondary",
         "displayName": "Galactic Violet",
         "tonalRamp": [
-          "#071f5c",
-          "#0a2f8a",
-          "#0a47d9",
-          "#105bff",
-          "#4a82ff",
-          "#86aaff",
-          "#c2d4ff",
-          "#eaf0ff"
+          "#1b0a4a",
+          "#2e1482",
+          "#4a20c6",
+          "#6a2cf0",
+          "#7b3bff",
+          "#a17cff",
+          "#cdb8ff",
+          "#f1ebff"
         ],
-        "note": "Exact hex binding (PRODUCT.md); reads blue."
+        "note": "Light only: bloom, HUD node rings, closing card, brand-mark glow. Never fills a control."
       },
-      "galactic-violet-deep": {
-        "role": "primary",
-        "displayName": "Galactic Violet Deep",
-        "tonalRamp": [
-          "#071f5c",
-          "#0a2f8a",
-          "#0a47d9",
-          "#105bff",
-          "#4a82ff",
-          "#86aaff",
-          "#c2d4ff",
-          "#eaf0ff"
-        ]
-      },
-      "galactic-violet-soft": {
-        "role": "primary",
-        "displayName": "Galactic Violet Soft",
-        "tonalRamp": [
-          "#071f5c",
-          "#0a2f8a",
-          "#0a47d9",
-          "#105bff",
-          "#4a82ff",
-          "#86aaff",
-          "#c2d4ff",
-          "#eaf0ff"
-        ]
-      },
-      "galactic-violet-line": {
-        "role": "primary",
-        "displayName": "Galactic Violet Line",
-        "tonalRamp": [
-          "#071f5c",
-          "#0a2f8a",
-          "#0a47d9",
-          "#105bff",
-          "#4a82ff",
-          "#86aaff",
-          "#c2d4ff",
-          "#eaf0ff"
-        ]
-      },
-      "galactic-violet-wash": {
-        "role": "primary",
-        "displayName": "Galactic Violet Wash",
-        "tonalRamp": [
-          "#071f5c",
-          "#0a2f8a",
-          "#0a47d9",
-          "#105bff",
-          "#4a82ff",
-          "#86aaff",
-          "#c2d4ff",
-          "#eaf0ff"
-        ]
-      },
-      "bubblegum": {
+      "bubblegum-pink": {
         "role": "tertiary",
-        "displayName": "Bubblegum",
+        "displayName": "Bubblegum Pink",
         "tonalRamp": [
-          "#3d1f00",
-          "#6b3700",
-          "#a65100",
-          "#d96d00",
-          "#fe8500",
-          "#ffab52",
-          "#ffd2a3",
-          "#fff1e0"
+          "#3d0a24",
+          "#6e1443",
+          "#b0246e",
+          "#e0418f",
+          "#ff5fb4",
+          "#ff90cb",
+          "#ffc5e3",
+          "#fff0f7"
         ],
-        "note": "Exact hex binding (PRODUCT.md); reads orange."
+        "note": "Light only: bloom, HUD dot, hatch stripes, the one Pay once badge."
       },
       "bubblegum-ink": {
         "role": "tertiary",
         "displayName": "Bubblegum Ink",
         "tonalRamp": [
-          "#3d1f00",
-          "#6b3700",
-          "#a65100",
-          "#d96d00",
-          "#fe8500",
-          "#ffab52",
-          "#ffd2a3",
-          "#fff1e0"
-        ]
+          "#3d0a24",
+          "#6e1443",
+          "#b0246e",
+          "#e0418f",
+          "#ff5fb4",
+          "#ff90cb",
+          "#ffc5e3",
+          "#fff0f7"
+        ],
+        "note": "Text-safe Bubblegum (5.5:1 on Marshmallow) for numerals."
       },
       "bubblegum-soft": {
         "role": "tertiary",
         "displayName": "Bubblegum Soft",
         "tonalRamp": [
-          "#3d1f00",
-          "#6b3700",
-          "#a65100",
-          "#d96d00",
-          "#fe8500",
-          "#ffab52",
-          "#ffd2a3",
-          "#fff1e0"
+          "#3d0a24",
+          "#6e1443",
+          "#b0246e",
+          "#e0418f",
+          "#ff5fb4",
+          "#ff90cb",
+          "#ffc5e3",
+          "#fff0f7"
         ]
       },
       "bloom-pink": {
@@ -334,7 +350,7 @@
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "Hero headline only; italic 'blank' in Galactic Violet over the bloom stroke."
+        "purpose": "Hero headline only; italic 'blank' in Record Red over the bloom stroke."
       },
       "headline": {
         "displayName": "Headline",
@@ -380,13 +396,13 @@
       },
       {
         "name": "accent",
-        "value": "0 8px 22px rgba(16,91,255,.28)",
-        "purpose": "Violet primary buttons at rest."
+        "value": "0 6px 20px rgba(164,0,0,.24)",
+        "purpose": "Record Red primary buttons at rest."
       },
       {
         "name": "accent-lg",
-        "value": "0 12px 30px rgba(16,91,255,.36)",
-        "purpose": "Violet primary buttons on hover."
+        "value": "0 10px 26px rgba(164,0,0,.3)",
+        "purpose": "Record Red primary buttons on hover."
       },
       {
         "name": "ink-pill",
@@ -397,6 +413,16 @@
         "name": "rim",
         "value": "0 0 0 6px rgba(255,255,255,.55)",
         "purpose": "White halo ring around dark screens inside the glass."
+      },
+      {
+        "name": "badge",
+        "value": "0 6px 16px rgba(255,95,180,.32)",
+        "purpose": "The Bubblegum Pink Pay once badge."
+      },
+      {
+        "name": "closing-card",
+        "value": "0 30px 70px rgba(123,59,255,.22),0 6px 16px rgba(20,28,58,.12)",
+        "purpose": "The violet closing card."
       }
     ],
     "motion": [
@@ -462,7 +488,7 @@
       "material": "linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.64))",
       "edge": "rgba(255,255,255,.95)",
       "hatch": "repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px)",
-      "bloom": "linear-gradient(in oklch 120deg,#fe8500,#105bff)",
+      "bloom": "linear-gradient(in oklch 120deg,#ff5fb4,#7b3bff)",
       "bevel": "corner-shape: bevel round bevel round (progressive; round fallback)"
     }
   },
@@ -471,41 +497,41 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Galactic Violet, bevelled; the one action per block.",
+      "description": "Record Red, bevelled; the one action per block.",
       "html": "<button class=\"ds-btn-primary\">Make my card</button>",
-      "css": ".ds-btn-primary{background:var(--accent,#105bff);color:#fff;font:600 16px/1.25 Inter,-apple-system,sans-serif;padding:13px 24px;border:1px solid transparent;border-radius:14px 8px 14px 8px;corner-shape:bevel round bevel round;box-shadow:0 8px 22px rgba(16,91,255,.28);cursor:pointer;transition:transform .05s,box-shadow .15s,background .15s}.ds-btn-primary:hover{background:var(--accent-2,#0a47d9);transform:translateY(-2px);box-shadow:0 12px 30px rgba(16,91,255,.36)}.ds-btn-primary:active{transform:translateY(1px)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent,#105bff);outline-offset:2px}"
+      "css": ".ds-btn-primary{background:var(--accent,#a40000);color:#fff;font:600 16px/1.25 Inter,-apple-system,sans-serif;padding:13px 24px;border:1px solid transparent;border-radius:14px 8px 14px 8px;corner-shape:bevel round bevel round;box-shadow:0 6px 20px rgba(164,0,0,.24);cursor:pointer;transition:transform .05s,box-shadow .15s,background .15s}.ds-btn-primary:hover{background:var(--accent-2,#7e0000);transform:translateY(-2px);box-shadow:0 10px 26px rgba(164,0,0,.3)}.ds-btn-primary:active{transform:translateY(1px)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:2px}"
     },
     {
       "name": "Nav CTA Pill",
       "kind": "button",
       "refersTo": "button-nav-cta",
-      "description": "Black ink pill in the floating nav; never violet.",
+      "description": "Black ink pill in the floating nav; never red, so it never competes with the studio button.",
       "html": "<a class=\"ds-nav-cta\" href=\"#\">Make a free card</a>",
-      "css": ".ds-nav-cta{display:inline-flex;background:var(--ink,#15161c);color:#fff;font:600 14px/1.25 Inter,-apple-system,sans-serif;padding:10px 20px;border-radius:999px;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18);transition:background .15s,box-shadow .15s}.ds-nav-cta:hover{background:#000;box-shadow:0 10px 22px rgba(20,22,28,.24)}.ds-nav-cta:focus-visible{outline:2px solid var(--accent,#105bff);outline-offset:2px}"
+      "css": ".ds-nav-cta{display:inline-flex;background:var(--ink,#15161c);color:#fff;font:600 14px/1.25 Inter,-apple-system,sans-serif;padding:10px 20px;border-radius:999px;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18);transition:background .15s,box-shadow .15s}.ds-nav-cta:hover{background:#000;box-shadow:0 10px 22px rgba(20,22,28,.24)}.ds-nav-cta:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:2px}"
     },
     {
       "name": "Ghost Button",
       "kind": "button",
       "refersTo": "button-ghost",
-      "description": "Translucent white secondary action.",
+      "description": "Translucent white secondary action; red border and Red Deep text on hover.",
       "html": "<button class=\"ds-btn-ghost\">Download all</button>",
-      "css": ".ds-btn-ghost{background:rgba(255,255,255,.72);color:var(--ink,#15161c);font:600 16px/1.25 Inter,-apple-system,sans-serif;padding:13px 24px;border:1px solid var(--border,rgba(20,28,58,.13));border-radius:12px;cursor:pointer;transition:background .15s,border-color .15s,color .15s}.ds-btn-ghost:hover{background:#fff;border-color:var(--accent,#105bff);color:var(--accent-2,#0a47d9)}.ds-btn-ghost:focus-visible{outline:2px solid var(--accent,#105bff);outline-offset:2px}"
+      "css": ".ds-btn-ghost{background:rgba(255,255,255,.72);color:var(--ink,#15161c);font:600 16px/1.25 Inter,-apple-system,sans-serif;padding:13px 24px;border:1px solid var(--border,rgba(20,28,58,.13));border-radius:12px;cursor:pointer;transition:background .15s,border-color .15s,color .15s}.ds-btn-ghost:hover{background:#fff;border-color:var(--accent,#a40000);color:var(--accent-2,#7e0000)}.ds-btn-ghost:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:2px}"
     },
     {
       "name": "Card Type Chip",
       "kind": "chip",
       "refersTo": "chip",
-      "description": "Pill toggle; selected gets the violet wash and inset ring.",
+      "description": "Pill toggle; selected gets the Red Wash, Red Deep text and an inset red ring.",
       "html": "<div style=\"display:flex;gap:7px\"><button class=\"ds-chip\" aria-pressed=\"true\">Pose</button><button class=\"ds-chip\" aria-pressed=\"false\">Timeline</button></div>",
-      "css": ".ds-chip{background:rgba(255,255,255,.7);border:1px solid var(--border,rgba(20,28,58,.13));border-radius:999px;padding:7px 13px;font:500 13.5px Inter,-apple-system,sans-serif;color:var(--ink-2,#3c3e48);cursor:pointer;transition:border-color .15s,background .15s,color .15s}.ds-chip:hover{border-color:rgba(16,91,255,.4);color:var(--ink,#15161c)}.ds-chip[aria-pressed=\"true\"]{background:#eaf0ff;border-color:#105bff;color:#0a47d9;box-shadow:0 0 0 1px #105bff inset;font-weight:600}.ds-chip:focus-visible{outline:2px solid #105bff;outline-offset:2px}"
+      "css": ".ds-chip{background:rgba(255,255,255,.7);border:1px solid var(--border,rgba(20,28,58,.13));border-radius:999px;padding:7px 13px;font:500 13.5px Inter,-apple-system,sans-serif;color:var(--ink-2,#3c3e48);cursor:pointer;transition:border-color .15s,background .15s,color .15s}.ds-chip:hover{border-color:rgba(164,0,0,.4);color:var(--ink,#15161c)}.ds-chip[aria-pressed=\"true\"]{background:var(--accent-wash,#fff4f4);border-color:var(--accent,#a40000);color:var(--accent-2,#7e0000);box-shadow:0 0 0 1px var(--accent,#a40000) inset;font-weight:600}.ds-chip:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:2px}"
     },
     {
       "name": "Field in a Well",
       "kind": "input",
       "refersTo": "input",
-      "description": "Pale well inside the glass; white and violet on focus.",
+      "description": "Pale well inside the glass; turns white with a red border and outline on focus.",
       "html": "<label class=\"ds-fld\"><span>Pose name</span><input placeholder=\"e.g. The first look\"></label>",
-      "css": ".ds-fld{display:grid;gap:5px;font:500 13px Inter,-apple-system,sans-serif;color:#62646e}.ds-fld input{font:400 15px Inter,-apple-system,sans-serif;color:#15161c;background:rgba(240,240,243,.72);border:1px solid rgba(20,28,58,.13);border-radius:10px;padding:9px 11px;transition:border-color .15s,background .15s}.ds-fld input:focus-visible{outline:2px solid #105bff;outline-offset:0;border-color:#105bff;background:#fff}"
+      "css": ".ds-fld{display:grid;gap:5px;font:500 13px Inter,-apple-system,sans-serif;color:#62646e}.ds-fld input{font:400 15px Inter,-apple-system,sans-serif;color:#15161c;caret-color:var(--accent,#a40000);background:var(--well,rgba(240,240,243,.72));border:1px solid var(--border,rgba(20,28,58,.13));border-radius:10px;padding:9px 11px;transition:border-color .15s,background .15s}.ds-fld input:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:0;border-color:var(--accent,#a40000);background:#fff}"
     },
     {
       "name": "Glass Panel",
@@ -519,33 +545,33 @@
       "name": "Bloom Pane",
       "kind": "custom",
       "refersTo": "glass-panel",
-      "description": "Large bevelled pane with hatch marks top-left and top-right and the OKLCH bloom from a corner.",
+      "description": "Large bevelled pane with hatch marks top-left and top-right and the OKLCH Pink-to-Violet bloom from a corner.",
       "html": "<section class=\"ds-pane\"><h2>Every card your day needs</h2></section>",
-      "css": ".ds-pane{position:relative;min-height:220px;padding:56px 32px;border:1px solid rgba(255,255,255,.95);border-radius:56px 40px 56px 40px;corner-shape:bevel round bevel round;background:radial-gradient(46% 62% at 0% 100%,rgba(254,133,0,.58),rgba(254,133,0,0) 72%),radial-gradient(52% 78% at 10% 92%,oklch(.66 .22 345 / .5),transparent 72%),radial-gradient(46% 70% at 30% 100%,oklch(.58 .24 295 / .34),transparent 74%),radial-gradient(40% 50% at 46% 104%,rgba(16,91,255,.22),rgba(16,91,255,0) 72%),linear-gradient(170deg,rgba(255,255,255,.72),rgba(255,255,255,.34)),#f0f0f0;box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)}.ds-pane::after{content:\"\";position:absolute;top:22px;left:22px;right:22px;height:30px;background:repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px),repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px);background-size:30px 30px;background-position:0 0,100% 0;background-repeat:no-repeat}.ds-pane h2{margin:0;text-align:center;font:400 40px/1.06 'Instrument Serif',Georgia,serif;letter-spacing:-.012em;color:#15161c}"
+      "css": ".ds-pane{position:relative;min-height:220px;padding:56px 32px;border:1px solid rgba(255,255,255,.95);border-radius:56px 40px 56px 40px;corner-shape:bevel round bevel round;background:radial-gradient(46% 62% at 0% 100%,rgba(255,95,180,.58),rgba(255,95,180,0) 72%),radial-gradient(52% 78% at 10% 92%,oklch(.66 .22 345 / .5),transparent 72%),radial-gradient(46% 70% at 30% 100%,oklch(.58 .24 295 / .34),transparent 74%),radial-gradient(40% 50% at 46% 104%,rgba(123,59,255,.22),rgba(123,59,255,0) 72%),linear-gradient(170deg,rgba(255,255,255,.72),rgba(255,255,255,.34)),#f0f0f0;box-shadow:inset 0 1px 0 #fff,0 30px 70px rgba(20,28,58,.07)}.ds-pane::after{content:\"\";position:absolute;top:22px;left:22px;right:22px;height:30px;background:repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px),repeating-linear-gradient(135deg,rgba(20,28,58,.16) 0 2px,transparent 2px 7px);background-size:30px 30px;background-position:0 0,100% 0;background-repeat:no-repeat}.ds-pane h2{margin:0;text-align:center;font:400 40px/1.06 'Instrument Serif',Georgia,serif;letter-spacing:-.012em;color:#15161c}"
     },
     {
       "name": "Floating Nav",
       "kind": "nav",
       "refersTo": "button-nav-cta",
-      "description": "Frosted floating bar, links on one bevelled tab, black pill CTA.",
+      "description": "Frosted floating bar, links on one bevelled tab, bloom brand mark, black pill CTA.",
       "html": "<nav class=\"ds-nav\"><span class=\"ds-brand\"><i></i>Shoot Cards</span><span class=\"ds-links\"><a href=\"#\">Card types</a><a href=\"#\">Pricing</a><a href=\"#\">FAQ</a></span><a class=\"ds-cta\" href=\"#\">Make a free card</a></nav>",
-      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 10px 9px 16px;background:rgba(244,244,246,.72);backdrop-filter:saturate(180%) blur(20px);border:1px solid rgba(255,255,255,.95);border-radius:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 26px rgba(20,28,58,.06);font-family:Inter,-apple-system,sans-serif}.ds-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:#15161c}.ds-brand i{width:22px;height:22px;border-radius:8px 3px 8px 3px;corner-shape:bevel round bevel round;background:linear-gradient(in oklch 120deg,#fe8500,#105bff)}.ds-links{display:flex;gap:24px;padding:9px 26px;background:rgba(255,255,255,.62);border-radius:0 0 18px 18px;corner-shape:bevel;box-shadow:inset 0 0 0 1px rgba(255,255,255,.9)}.ds-links a{color:#3c3e48;font-size:14px;font-weight:500;text-decoration:none}.ds-links a:hover{color:#15161c}.ds-links a:focus-visible{outline:2px solid #105bff;outline-offset:4px;border-radius:4px}.ds-cta{background:#15161c;color:#fff;border-radius:999px;padding:10px 20px;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18)}.ds-cta:hover{background:#000}"
+      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 10px 9px 16px;background:rgba(244,244,246,.72);backdrop-filter:saturate(180%) blur(20px);border:1px solid rgba(255,255,255,.95);border-radius:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 26px rgba(20,28,58,.06);font-family:Inter,-apple-system,sans-serif}.ds-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:#15161c}.ds-brand i{width:22px;height:22px;border-radius:8px 3px 8px 3px;corner-shape:bevel round bevel round;background:linear-gradient(in oklch 120deg,#ff5fb4,#7b3bff);box-shadow:0 3px 10px rgba(123,59,255,.3)}.ds-links{display:flex;gap:24px;padding:9px 26px;background:rgba(255,255,255,.62);border-radius:0 0 18px 18px;corner-shape:bevel;box-shadow:inset 0 0 0 1px rgba(255,255,255,.9)}.ds-links a{color:#3c3e48;font-size:14px;font-weight:500;text-decoration:none}.ds-links a:hover{color:#15161c}.ds-links a:focus-visible{outline:2px solid var(--accent,#a40000);outline-offset:4px;border-radius:4px}.ds-cta{background:#15161c;color:#fff;border-radius:999px;padding:10px 20px;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 16px rgba(20,22,28,.18)}.ds-cta:hover{background:#000}"
     },
     {
       "name": "HUD Chip",
       "kind": "custom",
       "refersTo": "glass-panel",
-      "description": "Glass callout chip on the hero video with the Bubblegum dot.",
+      "description": "Glass callout chip on the hero video with the Bubblegum Pink dot and halo.",
       "html": "<span class=\"ds-hud\"><b></b>Real Sony · scrolling pose cards</span>",
-      "css": ".ds-hud{display:inline-flex;align-items:center;gap:9px;padding:8px 14px;background:rgba(255,255,255,.8);backdrop-filter:blur(12px) saturate(150%);border:1px solid rgba(255,255,255,.9);border-radius:14px;box-shadow:0 8px 22px rgba(20,28,58,.14);font:600 13px Inter,-apple-system,sans-serif;color:#15161c}.ds-hud b{width:8px;height:8px;border-radius:50%;background:#fe8500;box-shadow:0 0 0 4px rgba(254,133,0,.14)}"
+      "css": ".ds-hud{display:inline-flex;align-items:center;gap:9px;padding:8px 14px;background:rgba(255,255,255,.8);backdrop-filter:blur(12px) saturate(150%);border:1px solid rgba(255,255,255,.9);border-radius:999px;box-shadow:0 8px 22px rgba(20,28,58,.14);font:600 13px Inter,-apple-system,sans-serif;color:#15161c}.ds-hud b{width:8px;height:8px;border-radius:50%;background:var(--pop,#ff5fb4);box-shadow:0 0 0 4px var(--pop-soft,rgba(255,95,180,.16))}"
     },
     {
       "name": "Pay Once Badge",
       "kind": "chip",
       "refersTo": "price-badge",
-      "description": "The single Bubblegum fill on the site, on the featured plan.",
+      "description": "The single Bubblegum Pink fill on the site, on the featured plan; Ink text.",
       "html": "<span class=\"ds-badge\">Pay once</span>",
-      "css": ".ds-badge{display:inline-block;background:#fe8500;color:#15161c;font:700 12px Inter,-apple-system,sans-serif;letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 6px 16px rgba(254,133,0,.32)}"
+      "css": ".ds-badge{display:inline-block;white-space:nowrap;background:var(--pop,#ff5fb4);color:var(--ink,#15161c);font:700 11px Inter,-apple-system,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 6px 16px rgba(255,95,180,.32)}"
     },
     {
       "name": "Camera Screen",
@@ -558,12 +584,12 @@
   ],
   "narrative": {
     "northStar": "Marshmallow Glass",
-    "overview": "The page is one frosted pane on a marshmallow-white ground, lit from its lower left by a Bubblegum-to-Violet bloom; the real camera is the subject the HUD points at. Every panel is the same material: a white glass gradient with a bright top edge and a cool shadow, holding paler wells for inputs and lists the way a dashboard card holds its chart. Bevelled corners, diagonal hatch marks and ringed HUD nodes give the glass an instrument's precision, so it reads as equipment rather than candy.\n\nDensity is moderate and editorial: generous section spacing, short copy, one clear action per block. Instrument Serif speaks in headlines; Inter instructs in everything you read in detail or press. Galactic Violet is the only action colour. Bubblegum is light, not ink: it lives in the bloom and in a handful of small marks, never on a button.\n\nThe camera keeps its own world inside this one. Camera bodies, bezels and the cards drawn on their screens stay camera black and keep the card's own colours; the glass frames them, it never tints them.",
+    "overview": "The page is one frosted pane on a marshmallow-white ground, lit from its lower left by a Bubblegum Pink to Galactic Violet bloom; the real camera is the subject the HUD points at. Every panel is the same material: a white glass gradient with a bright top edge and a cool shadow, holding paler wells for inputs and lists the way a dashboard card holds its chart. Bevelled corners, diagonal hatch marks and ringed HUD nodes give the glass an instrument's precision, so it reads as equipment rather than candy.\n\nDensity is moderate and editorial: generous section spacing, short copy, one clear action per block. Instrument Serif speaks in headlines; Inter instructs in everything you read in detail or press. Record Red is the only action colour. Galactic Violet and Bubblegum Pink are light, not ink: they live in the bloom and in a handful of small marks, never on a button.\n\nThe camera keeps its own world inside this one. Camera bodies, bezels and the cards drawn on their screens stay camera black and keep the card's own colours; the glass frames them, it never tints them.",
     "keyCharacteristics": [
       "Marshmallow #F0F0F0 ground under a faint 40px line grid that rolls like calm water, with two soft blooms.",
       "Frosted glass panels with white hairline edges, cool shadows and darker inner wells.",
-      "Galactic Violet for every action, selection and focus; Bubblegum only as bloom and small HUD marks.",
-      "The OKLCH bloom (Bubblegum through pink and violet to Galactic Violet) rising from a corner of each large pane.",
+      "Record Red for every action, selection and focus; Galactic Violet and Bubblegum Pink only as bloom and small HUD marks.",
+      "The OKLCH bloom (Bubblegum Pink through magenta to Galactic Violet) rising from a corner of each large pane.",
       "Bevelled corners (`corner-shape: bevel`) on the hero frame, studio, panes, primary buttons and closing card.",
       "Real camera bodies and real wedding photographs; cards always shown in a camera bezel.",
       "Shape, not fade: things rise, unfold, iris open and blink; nothing crossfades."
@@ -571,17 +597,17 @@
     "rules": [
       {
         "name": "The One Signal Rule",
-        "body": "Galactic Violet marks the action, the selection and the focus; nothing else on the page is violet-filled. The nav CTA is black precisely so it never competes with the studio's violet button.",
+        "body": "Record Red marks the action, the selection and the focus; nothing else on the page is red-filled. The nav CTA is black precisely so it never competes with the studio's red button.",
         "section": "colors"
       },
       {
-        "name": "The Bubblegum Glows Rule",
-        "body": "Bubblegum is light, not paint: bloom, HUD dot, hatch marks, numerals (as Bubblegum Ink) and the single \"Pay once\" badge. It never fills a button, a chip or a body of text.",
+        "name": "The Light Never Acts Rule",
+        "body": "Galactic Violet and Bubblegum Pink are light, not paint: bloom, HUD node rings, the HUD dot, hatch marks, numerals (as Bubblegum Ink), the closing card's field and the single \"Pay once\" badge. They never fill a button, a chip or a body of text, and they never mark a selection.",
         "section": "colors"
       },
       {
         "name": "The Camera Keeps Its Colours Rule",
-        "body": "Cards rendered for the camera (pose cards with their red bars, the card-type tile SVGs, everything `assets/builder.js` draws) keep their own palette, including red. That is product output, not site UI; the site palette never recolours it, and its red never leaks into site UI.",
+        "body": "Cards rendered for the camera (pose cards with their red bars, the card-type tile SVGs, everything `assets/builder.js` draws) keep their own palette. That is product output, not site UI; the site palette never recolours it.",
         "section": "colors"
       },
       {
@@ -608,17 +634,17 @@
     "dos": [
       "Do show the real thing: real camera bodies, real cards in a camera bezel, photographs from real weddings.",
       "Do build every panel from the one glass material, with Wells for the content it holds.",
-      "Do keep Galactic Violet for the action, the selection and the focus, with the 2px Violet focus ring on every control.",
-      "Do keep Bubblegum to the bloom, HUD marks, hatch stripes, Bubblegum Ink numerals and the single \"Pay once\" badge.",
-      "Do interpolate the bloom in OKLCH so it passes through pink and violet.",
+      "Do keep Record Red for the action, the selection and the focus, with the 2px Red focus ring on every control.",
+      "Do keep Galactic Violet and Bubblegum Pink to the bloom, HUD marks, hatch stripes, Bubblegum Ink numerals, the closing card and the single \"Pay once\" badge.",
+      "Do interpolate the bloom in OKLCH so Pink runs cleanly into Violet.",
       "Do use Instrument Serif for headlines and numerals, Inter for everything you read in detail or press.",
       "Do lift cards 4px and buttons 2px on hover, with the matching shadow step.",
       "Do give every tappable control a 44px hit area on touch screens."
     ],
     "donts": [
       "Don't put a kicker, eyebrow or tagline line above a heading.",
-      "Don't fill a button, chip or body text with Bubblegum, or add a second action colour.",
-      "Don't recolour cards rendered for the camera to the site palette, or use their red in site UI.",
+      "Don't fill a button, chip or body text with Violet or Pink, or add a second action colour.",
+      "Don't recolour cards rendered for the camera to the site palette.",
       "Don't warm the Marshmallow ground toward cream or tint shadows black; shadows stay cool navy.",
       "Don't replace Inter or Instrument Serif; both are part of the shared NotaLucis identity.",
       "Don't use stock imagery or invented testimonials, ratings or counts.",

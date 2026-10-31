@@ -1002,7 +1002,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 .upgrade-nudge,.upgrade-nudge.spent{background:none;border:0;border-bottom:1px solid var(--border-soft);border-radius:0;padding:0 0 16px;margin:0 0 18px}
 .upgrade-nudge .nudge-text{position:relative;padding-left:44px}
 .upgrade-nudge .nudge-text::before{content:"";position:absolute;left:0;top:.45em;width:32px;height:10px;background:repeating-linear-gradient(120deg,var(--pop) 0 3px,transparent 3px 7px)}
-.upsell{background:linear-gradient(100deg,rgba(255,95,180,.1),rgba(123,59,255,.08));border-radius:16px}
+.upsell{border-radius:16px}
 
 /* dialogs dim to a cool ink, not black */
 .modal{background:rgba(20,24,40,.32)}
