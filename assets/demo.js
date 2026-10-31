@@ -535,8 +535,6 @@
     // the words
     if (t < END) {
       put("n", ch, () => {
-        $("cap-n").textContent = String(ch + 1);
-        $("cap-ch").textContent = chapter.name;
         $("bar-n").textContent = (ch + 1) + "/" + CHAPTERS.length;
         $("bar-name").textContent = chapter.name;
       });

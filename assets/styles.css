@@ -948,7 +948,7 @@ a.status-act{text-decoration:underline;text-underline-offset:3px}
 /* the world carries down the page: card types and pricing sit in their own glass panes,
    their bloom anchored lower right so it answers the hero's */
 .more,.pricing{position:relative;isolation:isolate}
-.more{margin-top:clamp(28px,4vw,48px)}
+.more,.pricing{margin-top:clamp(28px,4vw,48px)}
 .more::before,.pricing::before{content:"";position:absolute;z-index:-1;inset:0 max(0px,calc(var(--gutter) - 22px));border-radius:40px;border:1px solid var(--glass-edge);
   background:
     radial-gradient(40% 46% at 100% 100%,rgba(254,133,0,.34),rgba(254,133,0,0) 72%),
